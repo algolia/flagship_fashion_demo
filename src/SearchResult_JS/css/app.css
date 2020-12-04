@@ -1,0 +1,18 @@
+@import "./searchboxHeader.css";
+@import "./filters.css";
+@import "./searchBoxResults.css";
+
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+a{
+    text-decoration: none;
+}

@@ -1,0 +1,53 @@
+.ais-Hits-list{
+width: 90vw;
+margin: 2rem auto;
+}
+
+.result-img{
+    width: 50%;
+    margin: 0 auto;
+    justify-self: center;
+    margin-bottom: 3rem;
+    filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
+}
+
+  
+.ais-Hits-item{
+    height: 550px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    width: 380px;
+    background-color: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid rgba(240,240,239, 0.9);
+    box-shadow: none;
+    transition: 0.2s ease-in-out;
+}
+.ais-Hits-item div{
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+}
+.ais-Hits-item:hover{  
+  box-shadow: 4px 4px 20px rgba(240, 240, 239, 1) ;
+  transition: 0.2s ease-in-out;
+}
+
+.hit-name {
+    color: black;
+    font-family: 'Roboto';
+    font-weight: bold;
+    margin: 1rem auto;
+}
+
+.hit-description{
+    color: black;
+    font-family: 'Roboto';
+    font-weight: 100;
+    font-style: italic;
+    font-size: 0.8rem;
+    margin: 1rem auto;
+}
