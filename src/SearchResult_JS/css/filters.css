@@ -165,3 +165,19 @@
         opacity: 0;
     }
 }
+
+
+@media screen and (max-width: 768px){
+    .left-panel {
+        grid-template-columns: repeat(1, 1fr);  
+        padding: 0rem;   
+    }
+    .left-panel h2{
+        margin: 1rem 0rem;
+    }
+
+    .ais-RefinementList-list {
+        margin: 1rem 0rem;
+        font-size: 0.6rem;
+    }
+   }
