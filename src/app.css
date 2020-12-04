@@ -22,6 +22,11 @@ body {
 
 }
 
+.body-wrapper{
+  overflow-x: hidden;
+  position: relative
+}
+
 
 /* .searchbox{
 align-self: center;
