@@ -4,8 +4,8 @@
   "private": true,
   "main": "src/app.js",
   "scripts": {
-    "start": "parcel index.html searchResults.html --port 3000",
-    "build": "parcel build index.html searchResults.html",
+    "start": "parcel index.html searchResults.html categoryPageMan.html categoryPageWoman.html --port 3000",
+    "build": "parcel build index.html searchResults.html categoryPageMan.html categoryPageWoman.html",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix"
   },
