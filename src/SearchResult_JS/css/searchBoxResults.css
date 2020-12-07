@@ -1,6 +1,16 @@
+
+
 .ais-Hits-list{
 width: 90vw;
 margin: 2rem auto;
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+margin: 1rem auto;
+justify-content: center;
+align-items: center;
+}
+.image-wrapper{
+    display: flex
 }
 
 .result-img{
@@ -9,14 +19,21 @@ margin: 2rem auto;
     justify-self: center;
     margin-bottom: 3rem;
     filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
+    transition: 0.2s ease-in-out;
 }
+
+.result-img:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(16px 16px 20px rgb(240,240,239));
+    transition: 0.2s ease-in-out;
+    }
 
   
 .ais-Hits-item{
-    height: 550px;
+    height: 100%;
     padding: 1.5rem;
     margin: 1rem 0;
-    width: 380px;
+    width: 100%;
     background-color: white;
     position: relative;
     display: flex;
@@ -24,13 +41,10 @@ margin: 2rem auto;
     justify-content: center;
     border: 1px solid rgba(240,240,239, 0.9);
     box-shadow: none;
+    justify-self: center;
     transition: 0.2s ease-in-out;
 }
-.ais-Hits-item div{
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-}
+
 .ais-Hits-item:hover{  
   box-shadow: 4px 4px 20px rgba(240, 240, 239, 1) ;
   transition: 0.2s ease-in-out;
@@ -40,7 +54,23 @@ margin: 2rem auto;
     color: black;
     font-family: 'Roboto';
     font-weight: bold;
-    margin: 1rem auto;
+    font-size: 1rem;
+    margin: 1rem 0;
+    display: flex;
+    
+}
+
+.hit-infos{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.hit-price{
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
 }
 
 .hit-description{
@@ -50,4 +80,38 @@ margin: 2rem auto;
     font-style: italic;
     font-size: 0.8rem;
     margin: 1rem auto;
+}
+
+
+.hit-colors{
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.ais-Highlight-highlighted{
+    background-color: rgb(240, 240, 239);
+}
+
+@media screen and (max-width: 768px){
+    body {
+        overflow-x: hidden !important;
+    }
+    .ais-Hits-list{
+        grid-template-columns: repeat(2, 1fr);
+    }
+   }
+   @media screen and (max-width: 560px){
+    body {
+      overflow-x: hidden !important;
+  }
+  .ais-Hits-list{
+    grid-template-columns: repeat(1, 1fr);
+}
+
+.ais-Stats-text{
+    font-size: 0.8rem;
+}
+.btn-filter {
+    padding: 0.2rem 1rem;
+}
 }

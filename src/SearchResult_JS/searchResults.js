@@ -32,18 +32,20 @@ export function searchResults() {
             container: '#hits',
             templates: {
                 item: `
-          <div>
+       
             <div class="image-wrapper">
                 <img src="{{image_link}}" align="left" alt="{{name}}" class="result-img" />
             </div>
             <div class="hit-name">
-              {{#helpers.highlight}}{ "attribute": "name" }{{/helpers.highlight}}
+                <div class="hit-infos">
+               
+                <div>{{#helpers.highlight}}{ "attribute": "name" }{{/helpers.highlight}}</div>
+                    <div class="hit-colors">{{colourFilter}}</div>
+                </div>
+                <div class="hit-price">\${{price}}</div>
             </div>
-            <div class="hit-description">
-              {{#helpers.highlight}}{ "attribute": "description" }{{/helpers.highlight}}
-            </div>
-            <div class="hit-price">\${{price}}</div>
-          </div>
+            
+      
         `,
             },
         }),

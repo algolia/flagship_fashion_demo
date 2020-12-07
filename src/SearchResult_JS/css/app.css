@@ -16,3 +16,8 @@ body {
 a{
     text-decoration: none;
 }
+
+.body-wrapper{
+    overflow-x: hidden;
+    position: relative
+}
