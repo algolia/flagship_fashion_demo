@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix"
   },
+  "type": "module",
   "devDependencies": {
     "babel-eslint": "10.0.3",
     "eslint": "5.7.0",
