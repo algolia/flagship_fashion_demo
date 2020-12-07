@@ -5,8 +5,9 @@ export function burgerMenu() {
         const navlinks = document.querySelectorAll('.nav-list ul li a')
         const navlink = document.querySelectorAll('.nav-list ul li')
 
-        burger.addEventListener('click', () => {
+        burger.addEventListener('click', (e) => {
             // nav.classList.toggle("displayFlex")
+            console.log(e)
             nav.classList.toggle("nav-active")
             navlink.forEach((link, idx) => {
                 if (link.style.animation) {
@@ -25,8 +26,6 @@ export function burgerMenu() {
 
             burger.classList.toggle('toggle')
         })
-
-
     }
     navslide()
 }
