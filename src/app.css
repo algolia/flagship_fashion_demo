@@ -54,7 +54,9 @@ right: 5rem;
 } */
 
 /* CAROUSEL IMAGE GLIDEJS */
-
+.glide__slides{
+  padding: 0;
+}
 .banner-carousel{
   max-height: 70vh;
   overflow-y: hidden;
