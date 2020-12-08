@@ -6,8 +6,6 @@ export function burgerMenu() {
         const navlink = document.querySelectorAll('.nav-list ul li')
 
         burger.addEventListener('click', (e) => {
-            // nav.classList.toggle("displayFlex")
-            console.log(e)
             nav.classList.toggle("nav-active")
             navlink.forEach((link, idx) => {
                 if (link.style.animation) {
@@ -30,17 +28,3 @@ export function burgerMenu() {
     navslide()
 }
 
-export function searchBar() {
-    let searchBarDropdown = document.querySelector('.aa-dropdown-menu')
-    let searchbar = document.querySelector('#aa-search-input')
-
-    searchbar.addEventListener("keyup", (z) => {
-        console.log(searchbar.value)
-        if (searchbar.value === "") {
-            searchBarDropdown.style.opacity = 0
-        } else {
-            searchBarDropdown.style.opacity = 1
-        }
-
-    })
-}
