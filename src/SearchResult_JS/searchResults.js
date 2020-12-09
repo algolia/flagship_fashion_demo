@@ -32,7 +32,7 @@ export function searchResults() {
             container: '#hits',
             templates: {
                 item: `
-       
+         <a href="{{url}}" class="product-searchResult" data-id="{{objectID}}">
             <div class="image-wrapper">
                 <img src="{{image_link}}" align="left" alt="{{name}}" class="result-img" />
             </div>
@@ -44,6 +44,7 @@ export function searchResults() {
                 </div>
                 <div class="hit-price">\${{price}}</div>
             </div>
+        </a>
             
       
         `,
@@ -54,5 +55,9 @@ export function searchResults() {
         }),
     ]);
 
+
+
     search.start();
+
+
 }

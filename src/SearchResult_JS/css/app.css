@@ -1,6 +1,7 @@
 @import "./searchboxHeader.css";
 @import "./filters.css";
 @import "./searchBoxResults.css";
+@import "./modalRelatedItems.css";
 
 
 *{
