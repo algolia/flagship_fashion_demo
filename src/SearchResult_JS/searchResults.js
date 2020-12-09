@@ -55,6 +55,8 @@ export function searchResults() {
         }),
     ]);
 
+
+
     search.start();
 
 
