@@ -9,7 +9,7 @@
   "scripts": {
     "start": "parcel index.html searchResults.html categoryPageMan.html categoryPageWoman.html --public-url /",
     "dev": "parcel index.html searchResults.html categoryPageMan.html categoryPageWoman.html",
-    "build": "parcel build index.html searchResults.html categoryPageMan.html categoryPageWoman.html",
+    "build": "parcel build index.html searchResults.html categoryPageMan.html categoryPageWoman.html --public-url /",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "predeploy": "rm -rf dist && parcel build index.html searchResults.html categoryPageMan.html categoryPageWoman.html  --public-url ./",
