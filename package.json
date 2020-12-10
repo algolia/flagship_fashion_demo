@@ -1,5 +1,5 @@
 {
-  "name": "instantsearch.js-app",
+  "name": "flagship-fashion-demo",
   "version": "1.0.0",
   "private": true,
   "main": "src/app.js",
@@ -7,11 +7,13 @@
     "node": "14.15.1"
   },
   "scripts": {
-    "start": "parcel index.html searchResults.html categoryPageMan.html categoryPageWoman.html",
+    "start": "parcel index.html searchResults.html categoryPageMan.html categoryPageWoman.html --public-url /",
     "dev": "parcel index.html searchResults.html categoryPageMan.html categoryPageWoman.html",
     "build": "parcel build index.html searchResults.html categoryPageMan.html categoryPageWoman.html",
     "lint": "eslint .",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "predeploy": "rm -rf dist && parcel build index.html searchResults.html categoryPageMan.html categoryPageWoman.html  --public-url ./",
+    "deploy": "gh-pages -d dist"
   },
   "type": "module",
   "devDependencies": {
@@ -21,6 +23,7 @@
     "eslint-config-prettier": "3.6.0",
     "eslint-plugin-import": "2.19.1",
     "eslint-plugin-prettier": "3.1.2",
+    "gh-pages": "^3.1.0",
     "parcel-bundler": "^1.12.4",
     "prettier": "1.19.1"
   },
