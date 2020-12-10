@@ -4,6 +4,7 @@ import { burgerMenu } from "../burgerMenu";
 // import { searchBar } from "../searchbarDropdown";
 import { relatedResultModal } from "./relatedResultModal";
 
+
 searchResults()
 filterResult()
 burgerMenu()

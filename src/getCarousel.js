@@ -1,4 +1,3 @@
-
 import { carousel } from "./displayCarousel";
 import instantsearch from "instantsearch.js";
 import algoliasearch from "algoliasearch";

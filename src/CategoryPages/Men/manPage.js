@@ -1,4 +1,3 @@
-
 import { carousel, renderCarouselAllProduct } from "./displayCarouselManPage";
 import { burgerMenu } from "../../burgerMenu";
 import instantsearch from "instantsearch.js";

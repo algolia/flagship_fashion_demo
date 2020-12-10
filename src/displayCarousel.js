@@ -1,3 +1,5 @@
+
+
 import { connectHits } from 'instantsearch.js/es/connectors';
 
 // import { configure, hits, EXPERIMENTAL_configureRelatedItems } from 'instantsearch.js/es/widgets';

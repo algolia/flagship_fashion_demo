@@ -1,4 +1,5 @@
 import algoliasearch from 'algoliasearch';
+import instantsearch from 'instantsearch.js';
 import { configure, hits, EXPERIMENTAL_configureRelatedItems } from 'instantsearch.js/es/widgets';
 
 

@@ -1,4 +1,7 @@
-/* global instantsearch algoliasearch */
+import instantsearch from 'instantsearch.js';
+import algoliasearch from 'algoliasearch';
+import { searchBox, clearRefinements, refinementList, stats, hits, pagination } from 'instantsearch.js/es/widgets'
+
 export function searchResults() {
     const search = instantsearch({
         indexName: 'gstar_demo_test',
@@ -6,29 +9,29 @@ export function searchResults() {
     });
 
     search.addWidgets([
-        instantsearch.widgets.searchBox({
+        searchBox({
             container: '#searchbox',
             placeholder: 'Clothes, Sneakers...',
         }),
-        instantsearch.widgets.clearRefinements({
+        clearRefinements({
             container: '#clear-refinements',
         }),
-        instantsearch.widgets.refinementList({
+        refinementList({
             container: '#brand-list',
             attribute: 'category',
         }),
-        instantsearch.widgets.refinementList({
+        refinementList({
             container: '#gender-list',
             attribute: 'genderFilter',
         }),
-        instantsearch.widgets.refinementList({
+        refinementList({
             container: '#color-list',
             attribute: 'colourFilter',
         }),
-        instantsearch.widgets.stats({
+        stats({
             container: '#stats-searchResult',
         }),
-        instantsearch.widgets.hits({
+        hits({
             container: '#hits',
             templates: {
                 item: `
@@ -50,7 +53,7 @@ export function searchResults() {
         `,
             },
         }),
-        instantsearch.widgets.pagination({
+        pagination({
             container: '#pagination',
         }),
     ]);

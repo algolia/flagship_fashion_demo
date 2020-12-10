@@ -1,8 +1,7 @@
 import { connectHits } from 'instantsearch.js/es/connectors';
-
 // import { configure, hits, EXPERIMENTAL_configureRelatedItems } from 'instantsearch.js/es/widgets';
-// import instantsearch from 'instantsearch.js';
-// import algoliasearch from 'algoliasearch';
+import instantsearch from 'instantsearch.js';
+import algoliasearch from 'algoliasearch';
 
 export const carousel = connectHits(function renderCarousel(
   { widgetParams: { container, title }, hits },
