@@ -117,10035 +117,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"node_modules/instantsearch.js/es/lib/utils/capitalize.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function capitalize(text) {
-  return text.toString().charAt(0).toUpperCase() + text.toString().slice(1);
-}
-
-var _default = capitalize;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/defer.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-var nextMicroTask = Promise.resolve();
-
-var defer = function defer(callback) {
-  var progress = null;
-  var cancelled = false;
-
-  var fn = function fn() {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    if (progress !== null) {
-      return;
-    }
-
-    progress = nextMicroTask.then(function () {
-      progress = null;
-
-      if (cancelled) {
-        cancelled = false;
-        return;
-      }
-
-      callback.apply(void 0, args);
-    });
-  };
-
-  fn.wait = function () {
-    if (progress === null) {
-      throw new Error('The deferred function should be called before calling `wait()`');
-    }
-
-    return progress;
-  };
-
-  fn.cancel = function () {
-    if (progress === null) {
-      return;
-    }
-
-    cancelled = true;
-  };
-
-  return fn;
-};
-
-var _default = defer;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/isDomElement.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function isDomElement(object) {
-  return object instanceof HTMLElement || Boolean(object) && object.nodeType > 0;
-}
-
-var _default = isDomElement;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/getContainerNode.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _isDomElement = _interopRequireDefault(require("./isDomElement"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Return the container. If it's a string, it is considered a
- * css selector and retrieves the first matching element. Otherwise
- * test if it validates that it's a correct DOMElement.
- *
- * @param {string|HTMLElement} selectorOrHTMLElement CSS Selector or container node.
- * @return {HTMLElement} Container node
- * @throws Error when the type is not correct
- */
-function getContainerNode(selectorOrHTMLElement) {
-  var isSelectorString = typeof selectorOrHTMLElement === 'string';
-  var domElement = isSelectorString ? document.querySelector(selectorOrHTMLElement) : selectorOrHTMLElement;
-
-  if (!(0, _isDomElement.default)(domElement)) {
-    var errorMessage = 'Container must be `string` or `HTMLElement`.';
-
-    if (isSelectorString) {
-      errorMessage += " Unable to find ".concat(selectorOrHTMLElement);
-    }
-
-    throw new Error(errorMessage);
-  }
-
-  return domElement;
-}
-
-var _default = getContainerNode;
-exports.default = _default;
-},{"./isDomElement":"node_modules/instantsearch.js/es/lib/utils/isDomElement.js"}],"node_modules/instantsearch.js/es/lib/utils/isSpecialClick.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function isSpecialClick(event) {
-  var isMiddleClick = event.button === 1;
-  return isMiddleClick || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
-}
-
-var _default = isSpecialClick;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/uniq.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function uniq(array) {
-  return array.filter(function (value, index, self) {
-    return self.indexOf(value) === index;
-  });
-}
-
-var _default = uniq;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/prepareTemplateProps.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _uniq = _interopRequireDefault(require("./uniq"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-function prepareTemplates() {
-  var defaultTemplates = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var templates = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var allKeys = (0, _uniq.default)([].concat(_toConsumableArray(Object.keys(defaultTemplates)), _toConsumableArray(Object.keys(templates))));
-  return allKeys.reduce(function (config, key) {
-    var defaultTemplate = defaultTemplates[key];
-    var customTemplate = templates[key];
-    var isCustomTemplate = customTemplate !== undefined && customTemplate !== defaultTemplate;
-    config.templates[key] = isCustomTemplate ? customTemplate : defaultTemplate;
-    config.useCustomCompileOptions[key] = isCustomTemplate;
-    return config;
-  }, {
-    templates: {},
-    useCustomCompileOptions: {}
-  });
-}
-/**
- * Prepares an object to be passed to the Template widget
- */
-
-
-function prepareTemplateProps(_ref) {
-  var defaultTemplates = _ref.defaultTemplates,
-      templates = _ref.templates,
-      templatesConfig = _ref.templatesConfig;
-  var preparedTemplates = prepareTemplates(defaultTemplates, templates);
-  return _objectSpread({
-    templatesConfig: templatesConfig
-  }, preparedTemplates);
-}
-
-var _default = prepareTemplateProps;
-exports.default = _default;
-},{"./uniq":"node_modules/instantsearch.js/es/lib/utils/uniq.js"}],"node_modules/hogan.js/lib/compiler.js":[function(require,module,exports) {
-/*
- *  Copyright 2011 Twitter, Inc.
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
-(function (Hogan) {
-  // Setup regex  assignments
-  // remove whitespace according to Mustache spec
-  var rIsWhitespace = /\S/,
-      rQuot = /\"/g,
-      rNewline =  /\n/g,
-      rCr = /\r/g,
-      rSlash = /\\/g,
-      rLineSep = /\u2028/,
-      rParagraphSep = /\u2029/;
-
-  Hogan.tags = {
-    '#': 1, '^': 2, '<': 3, '$': 4,
-    '/': 5, '!': 6, '>': 7, '=': 8, '_v': 9,
-    '{': 10, '&': 11, '_t': 12
-  };
-
-  Hogan.scan = function scan(text, delimiters) {
-    var len = text.length,
-        IN_TEXT = 0,
-        IN_TAG_TYPE = 1,
-        IN_TAG = 2,
-        state = IN_TEXT,
-        tagType = null,
-        tag = null,
-        buf = '',
-        tokens = [],
-        seenTag = false,
-        i = 0,
-        lineStart = 0,
-        otag = '{{',
-        ctag = '}}';
-
-    function addBuf() {
-      if (buf.length > 0) {
-        tokens.push({tag: '_t', text: new String(buf)});
-        buf = '';
-      }
-    }
-
-    function lineIsWhitespace() {
-      var isAllWhitespace = true;
-      for (var j = lineStart; j < tokens.length; j++) {
-        isAllWhitespace =
-          (Hogan.tags[tokens[j].tag] < Hogan.tags['_v']) ||
-          (tokens[j].tag == '_t' && tokens[j].text.match(rIsWhitespace) === null);
-        if (!isAllWhitespace) {
-          return false;
-        }
-      }
-
-      return isAllWhitespace;
-    }
-
-    function filterLine(haveSeenTag, noNewLine) {
-      addBuf();
-
-      if (haveSeenTag && lineIsWhitespace()) {
-        for (var j = lineStart, next; j < tokens.length; j++) {
-          if (tokens[j].text) {
-            if ((next = tokens[j+1]) && next.tag == '>') {
-              // set indent to token value
-              next.indent = tokens[j].text.toString()
-            }
-            tokens.splice(j, 1);
-          }
-        }
-      } else if (!noNewLine) {
-        tokens.push({tag:'\n'});
-      }
-
-      seenTag = false;
-      lineStart = tokens.length;
-    }
-
-    function changeDelimiters(text, index) {
-      var close = '=' + ctag,
-          closeIndex = text.indexOf(close, index),
-          delimiters = trim(
-            text.substring(text.indexOf('=', index) + 1, closeIndex)
-          ).split(' ');
-
-      otag = delimiters[0];
-      ctag = delimiters[delimiters.length - 1];
-
-      return closeIndex + close.length - 1;
-    }
-
-    if (delimiters) {
-      delimiters = delimiters.split(' ');
-      otag = delimiters[0];
-      ctag = delimiters[1];
-    }
-
-    for (i = 0; i < len; i++) {
-      if (state == IN_TEXT) {
-        if (tagChange(otag, text, i)) {
-          --i;
-          addBuf();
-          state = IN_TAG_TYPE;
-        } else {
-          if (text.charAt(i) == '\n') {
-            filterLine(seenTag);
-          } else {
-            buf += text.charAt(i);
-          }
-        }
-      } else if (state == IN_TAG_TYPE) {
-        i += otag.length - 1;
-        tag = Hogan.tags[text.charAt(i + 1)];
-        tagType = tag ? text.charAt(i + 1) : '_v';
-        if (tagType == '=') {
-          i = changeDelimiters(text, i);
-          state = IN_TEXT;
-        } else {
-          if (tag) {
-            i++;
-          }
-          state = IN_TAG;
-        }
-        seenTag = i;
-      } else {
-        if (tagChange(ctag, text, i)) {
-          tokens.push({tag: tagType, n: trim(buf), otag: otag, ctag: ctag,
-                       i: (tagType == '/') ? seenTag - otag.length : i + ctag.length});
-          buf = '';
-          i += ctag.length - 1;
-          state = IN_TEXT;
-          if (tagType == '{') {
-            if (ctag == '}}') {
-              i++;
-            } else {
-              cleanTripleStache(tokens[tokens.length - 1]);
-            }
-          }
-        } else {
-          buf += text.charAt(i);
-        }
-      }
-    }
-
-    filterLine(seenTag, true);
-
-    return tokens;
-  }
-
-  function cleanTripleStache(token) {
-    if (token.n.substr(token.n.length - 1) === '}') {
-      token.n = token.n.substring(0, token.n.length - 1);
-    }
-  }
-
-  function trim(s) {
-    if (s.trim) {
-      return s.trim();
-    }
-
-    return s.replace(/^\s*|\s*$/g, '');
-  }
-
-  function tagChange(tag, text, index) {
-    if (text.charAt(index) != tag.charAt(0)) {
-      return false;
-    }
-
-    for (var i = 1, l = tag.length; i < l; i++) {
-      if (text.charAt(index + i) != tag.charAt(i)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  // the tags allowed inside super templates
-  var allowedInSuper = {'_t': true, '\n': true, '$': true, '/': true};
-
-  function buildTree(tokens, kind, stack, customTags) {
-    var instructions = [],
-        opener = null,
-        tail = null,
-        token = null;
-
-    tail = stack[stack.length - 1];
-
-    while (tokens.length > 0) {
-      token = tokens.shift();
-
-      if (tail && tail.tag == '<' && !(token.tag in allowedInSuper)) {
-        throw new Error('Illegal content in < super tag.');
-      }
-
-      if (Hogan.tags[token.tag] <= Hogan.tags['$'] || isOpener(token, customTags)) {
-        stack.push(token);
-        token.nodes = buildTree(tokens, token.tag, stack, customTags);
-      } else if (token.tag == '/') {
-        if (stack.length === 0) {
-          throw new Error('Closing tag without opener: /' + token.n);
-        }
-        opener = stack.pop();
-        if (token.n != opener.n && !isCloser(token.n, opener.n, customTags)) {
-          throw new Error('Nesting error: ' + opener.n + ' vs. ' + token.n);
-        }
-        opener.end = token.i;
-        return instructions;
-      } else if (token.tag == '\n') {
-        token.last = (tokens.length == 0) || (tokens[0].tag == '\n');
-      }
-
-      instructions.push(token);
-    }
-
-    if (stack.length > 0) {
-      throw new Error('missing closing tag: ' + stack.pop().n);
-    }
-
-    return instructions;
-  }
-
-  function isOpener(token, tags) {
-    for (var i = 0, l = tags.length; i < l; i++) {
-      if (tags[i].o == token.n) {
-        token.tag = '#';
-        return true;
-      }
-    }
-  }
-
-  function isCloser(close, open, tags) {
-    for (var i = 0, l = tags.length; i < l; i++) {
-      if (tags[i].c == close && tags[i].o == open) {
-        return true;
-      }
-    }
-  }
-
-  function stringifySubstitutions(obj) {
-    var items = [];
-    for (var key in obj) {
-      items.push('"' + esc(key) + '": function(c,p,t,i) {' + obj[key] + '}');
-    }
-    return "{ " + items.join(",") + " }";
-  }
-
-  function stringifyPartials(codeObj) {
-    var partials = [];
-    for (var key in codeObj.partials) {
-      partials.push('"' + esc(key) + '":{name:"' + esc(codeObj.partials[key].name) + '", ' + stringifyPartials(codeObj.partials[key]) + "}");
-    }
-    return "partials: {" + partials.join(",") + "}, subs: " + stringifySubstitutions(codeObj.subs);
-  }
-
-  Hogan.stringify = function(codeObj, text, options) {
-    return "{code: function (c,p,i) { " + Hogan.wrapMain(codeObj.code) + " }," + stringifyPartials(codeObj) +  "}";
-  }
-
-  var serialNo = 0;
-  Hogan.generate = function(tree, text, options) {
-    serialNo = 0;
-    var context = { code: '', subs: {}, partials: {} };
-    Hogan.walk(tree, context);
-
-    if (options.asString) {
-      return this.stringify(context, text, options);
-    }
-
-    return this.makeTemplate(context, text, options);
-  }
-
-  Hogan.wrapMain = function(code) {
-    return 'var t=this;t.b(i=i||"");' + code + 'return t.fl();';
-  }
-
-  Hogan.template = Hogan.Template;
-
-  Hogan.makeTemplate = function(codeObj, text, options) {
-    var template = this.makePartials(codeObj);
-    template.code = new Function('c', 'p', 'i', this.wrapMain(codeObj.code));
-    return new this.template(template, text, this, options);
-  }
-
-  Hogan.makePartials = function(codeObj) {
-    var key, template = {subs: {}, partials: codeObj.partials, name: codeObj.name};
-    for (key in template.partials) {
-      template.partials[key] = this.makePartials(template.partials[key]);
-    }
-    for (key in codeObj.subs) {
-      template.subs[key] = new Function('c', 'p', 't', 'i', codeObj.subs[key]);
-    }
-    return template;
-  }
-
-  function esc(s) {
-    return s.replace(rSlash, '\\\\')
-            .replace(rQuot, '\\\"')
-            .replace(rNewline, '\\n')
-            .replace(rCr, '\\r')
-            .replace(rLineSep, '\\u2028')
-            .replace(rParagraphSep, '\\u2029');
-  }
-
-  function chooseMethod(s) {
-    return (~s.indexOf('.')) ? 'd' : 'f';
-  }
-
-  function createPartial(node, context) {
-    var prefix = "<" + (context.prefix || "");
-    var sym = prefix + node.n + serialNo++;
-    context.partials[sym] = {name: node.n, partials: {}};
-    context.code += 't.b(t.rp("' +  esc(sym) + '",c,p,"' + (node.indent || '') + '"));';
-    return sym;
-  }
-
-  Hogan.codegen = {
-    '#': function(node, context) {
-      context.code += 'if(t.s(t.' + chooseMethod(node.n) + '("' + esc(node.n) + '",c,p,1),' +
-                      'c,p,0,' + node.i + ',' + node.end + ',"' + node.otag + " " + node.ctag + '")){' +
-                      't.rs(c,p,' + 'function(c,p,t){';
-      Hogan.walk(node.nodes, context);
-      context.code += '});c.pop();}';
-    },
-
-    '^': function(node, context) {
-      context.code += 'if(!t.s(t.' + chooseMethod(node.n) + '("' + esc(node.n) + '",c,p,1),c,p,1,0,0,"")){';
-      Hogan.walk(node.nodes, context);
-      context.code += '};';
-    },
-
-    '>': createPartial,
-    '<': function(node, context) {
-      var ctx = {partials: {}, code: '', subs: {}, inPartial: true};
-      Hogan.walk(node.nodes, ctx);
-      var template = context.partials[createPartial(node, context)];
-      template.subs = ctx.subs;
-      template.partials = ctx.partials;
-    },
-
-    '$': function(node, context) {
-      var ctx = {subs: {}, code: '', partials: context.partials, prefix: node.n};
-      Hogan.walk(node.nodes, ctx);
-      context.subs[node.n] = ctx.code;
-      if (!context.inPartial) {
-        context.code += 't.sub("' + esc(node.n) + '",c,p,i);';
-      }
-    },
-
-    '\n': function(node, context) {
-      context.code += write('"\\n"' + (node.last ? '' : ' + i'));
-    },
-
-    '_v': function(node, context) {
-      context.code += 't.b(t.v(t.' + chooseMethod(node.n) + '("' + esc(node.n) + '",c,p,0)));';
-    },
-
-    '_t': function(node, context) {
-      context.code += write('"' + esc(node.text) + '"');
-    },
-
-    '{': tripleStache,
-
-    '&': tripleStache
-  }
-
-  function tripleStache(node, context) {
-    context.code += 't.b(t.t(t.' + chooseMethod(node.n) + '("' + esc(node.n) + '",c,p,0)));';
-  }
-
-  function write(s) {
-    return 't.b(' + s + ');';
-  }
-
-  Hogan.walk = function(nodelist, context) {
-    var func;
-    for (var i = 0, l = nodelist.length; i < l; i++) {
-      func = Hogan.codegen[nodelist[i].tag];
-      func && func(nodelist[i], context);
-    }
-    return context;
-  }
-
-  Hogan.parse = function(tokens, text, options) {
-    options = options || {};
-    return buildTree(tokens, '', [], options.sectionTags || []);
-  }
-
-  Hogan.cache = {};
-
-  Hogan.cacheKey = function(text, options) {
-    return [text, !!options.asString, !!options.disableLambda, options.delimiters, !!options.modelGet].join('||');
-  }
-
-  Hogan.compile = function(text, options) {
-    options = options || {};
-    var key = Hogan.cacheKey(text, options);
-    var template = this.cache[key];
-
-    if (template) {
-      var partials = template.partials;
-      for (var name in partials) {
-        delete partials[name].instance;
-      }
-      return template;
-    }
-
-    template = this.generate(this.parse(this.scan(text, options.delimiters), text, options), text, options);
-    return this.cache[key] = template;
-  }
-})(typeof exports !== 'undefined' ? exports : Hogan);
-
-},{}],"node_modules/hogan.js/lib/template.js":[function(require,module,exports) {
-/*
- *  Copyright 2011 Twitter, Inc.
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
-var Hogan = {};
-
-(function (Hogan) {
-  Hogan.Template = function (codeObj, text, compiler, options) {
-    codeObj = codeObj || {};
-    this.r = codeObj.code || this.r;
-    this.c = compiler;
-    this.options = options || {};
-    this.text = text || '';
-    this.partials = codeObj.partials || {};
-    this.subs = codeObj.subs || {};
-    this.buf = '';
-  }
-
-  Hogan.Template.prototype = {
-    // render: replaced by generated code.
-    r: function (context, partials, indent) { return ''; },
-
-    // variable escaping
-    v: hoganEscape,
-
-    // triple stache
-    t: coerceToString,
-
-    render: function render(context, partials, indent) {
-      return this.ri([context], partials || {}, indent);
-    },
-
-    // render internal -- a hook for overrides that catches partials too
-    ri: function (context, partials, indent) {
-      return this.r(context, partials, indent);
-    },
-
-    // ensurePartial
-    ep: function(symbol, partials) {
-      var partial = this.partials[symbol];
-
-      // check to see that if we've instantiated this partial before
-      var template = partials[partial.name];
-      if (partial.instance && partial.base == template) {
-        return partial.instance;
-      }
-
-      if (typeof template == 'string') {
-        if (!this.c) {
-          throw new Error("No compiler available.");
-        }
-        template = this.c.compile(template, this.options);
-      }
-
-      if (!template) {
-        return null;
-      }
-
-      // We use this to check whether the partials dictionary has changed
-      this.partials[symbol].base = template;
-
-      if (partial.subs) {
-        // Make sure we consider parent template now
-        if (!partials.stackText) partials.stackText = {};
-        for (key in partial.subs) {
-          if (!partials.stackText[key]) {
-            partials.stackText[key] = (this.activeSub !== undefined && partials.stackText[this.activeSub]) ? partials.stackText[this.activeSub] : this.text;
-          }
-        }
-        template = createSpecializedPartial(template, partial.subs, partial.partials,
-          this.stackSubs, this.stackPartials, partials.stackText);
-      }
-      this.partials[symbol].instance = template;
-
-      return template;
-    },
-
-    // tries to find a partial in the current scope and render it
-    rp: function(symbol, context, partials, indent) {
-      var partial = this.ep(symbol, partials);
-      if (!partial) {
-        return '';
-      }
-
-      return partial.ri(context, partials, indent);
-    },
-
-    // render a section
-    rs: function(context, partials, section) {
-      var tail = context[context.length - 1];
-
-      if (!isArray(tail)) {
-        section(context, partials, this);
-        return;
-      }
-
-      for (var i = 0; i < tail.length; i++) {
-        context.push(tail[i]);
-        section(context, partials, this);
-        context.pop();
-      }
-    },
-
-    // maybe start a section
-    s: function(val, ctx, partials, inverted, start, end, tags) {
-      var pass;
-
-      if (isArray(val) && val.length === 0) {
-        return false;
-      }
-
-      if (typeof val == 'function') {
-        val = this.ms(val, ctx, partials, inverted, start, end, tags);
-      }
-
-      pass = !!val;
-
-      if (!inverted && pass && ctx) {
-        ctx.push((typeof val == 'object') ? val : ctx[ctx.length - 1]);
-      }
-
-      return pass;
-    },
-
-    // find values with dotted names
-    d: function(key, ctx, partials, returnFound) {
-      var found,
-          names = key.split('.'),
-          val = this.f(names[0], ctx, partials, returnFound),
-          doModelGet = this.options.modelGet,
-          cx = null;
-
-      if (key === '.' && isArray(ctx[ctx.length - 2])) {
-        val = ctx[ctx.length - 1];
-      } else {
-        for (var i = 1; i < names.length; i++) {
-          found = findInScope(names[i], val, doModelGet);
-          if (found !== undefined) {
-            cx = val;
-            val = found;
-          } else {
-            val = '';
-          }
-        }
-      }
-
-      if (returnFound && !val) {
-        return false;
-      }
-
-      if (!returnFound && typeof val == 'function') {
-        ctx.push(cx);
-        val = this.mv(val, ctx, partials);
-        ctx.pop();
-      }
-
-      return val;
-    },
-
-    // find values with normal names
-    f: function(key, ctx, partials, returnFound) {
-      var val = false,
-          v = null,
-          found = false,
-          doModelGet = this.options.modelGet;
-
-      for (var i = ctx.length - 1; i >= 0; i--) {
-        v = ctx[i];
-        val = findInScope(key, v, doModelGet);
-        if (val !== undefined) {
-          found = true;
-          break;
-        }
-      }
-
-      if (!found) {
-        return (returnFound) ? false : "";
-      }
-
-      if (!returnFound && typeof val == 'function') {
-        val = this.mv(val, ctx, partials);
-      }
-
-      return val;
-    },
-
-    // higher order templates
-    ls: function(func, cx, partials, text, tags) {
-      var oldTags = this.options.delimiters;
-
-      this.options.delimiters = tags;
-      this.b(this.ct(coerceToString(func.call(cx, text)), cx, partials));
-      this.options.delimiters = oldTags;
-
-      return false;
-    },
-
-    // compile text
-    ct: function(text, cx, partials) {
-      if (this.options.disableLambda) {
-        throw new Error('Lambda features disabled.');
-      }
-      return this.c.compile(text, this.options).render(cx, partials);
-    },
-
-    // template result buffering
-    b: function(s) { this.buf += s; },
-
-    fl: function() { var r = this.buf; this.buf = ''; return r; },
-
-    // method replace section
-    ms: function(func, ctx, partials, inverted, start, end, tags) {
-      var textSource,
-          cx = ctx[ctx.length - 1],
-          result = func.call(cx);
-
-      if (typeof result == 'function') {
-        if (inverted) {
-          return true;
-        } else {
-          textSource = (this.activeSub && this.subsText && this.subsText[this.activeSub]) ? this.subsText[this.activeSub] : this.text;
-          return this.ls(result, cx, partials, textSource.substring(start, end), tags);
-        }
-      }
-
-      return result;
-    },
-
-    // method replace variable
-    mv: function(func, ctx, partials) {
-      var cx = ctx[ctx.length - 1];
-      var result = func.call(cx);
-
-      if (typeof result == 'function') {
-        return this.ct(coerceToString(result.call(cx)), cx, partials);
-      }
-
-      return result;
-    },
-
-    sub: function(name, context, partials, indent) {
-      var f = this.subs[name];
-      if (f) {
-        this.activeSub = name;
-        f(context, partials, this, indent);
-        this.activeSub = false;
-      }
-    }
-
-  };
-
-  //Find a key in an object
-  function findInScope(key, scope, doModelGet) {
-    var val;
-
-    if (scope && typeof scope == 'object') {
-
-      if (scope[key] !== undefined) {
-        val = scope[key];
-
-      // try lookup with get for backbone or similar model data
-      } else if (doModelGet && scope.get && typeof scope.get == 'function') {
-        val = scope.get(key);
-      }
-    }
-
-    return val;
-  }
-
-  function createSpecializedPartial(instance, subs, partials, stackSubs, stackPartials, stackText) {
-    function PartialTemplate() {};
-    PartialTemplate.prototype = instance;
-    function Substitutions() {};
-    Substitutions.prototype = instance.subs;
-    var key;
-    var partial = new PartialTemplate();
-    partial.subs = new Substitutions();
-    partial.subsText = {};  //hehe. substext.
-    partial.buf = '';
-
-    stackSubs = stackSubs || {};
-    partial.stackSubs = stackSubs;
-    partial.subsText = stackText;
-    for (key in subs) {
-      if (!stackSubs[key]) stackSubs[key] = subs[key];
-    }
-    for (key in stackSubs) {
-      partial.subs[key] = stackSubs[key];
-    }
-
-    stackPartials = stackPartials || {};
-    partial.stackPartials = stackPartials;
-    for (key in partials) {
-      if (!stackPartials[key]) stackPartials[key] = partials[key];
-    }
-    for (key in stackPartials) {
-      partial.partials[key] = stackPartials[key];
-    }
-
-    return partial;
-  }
-
-  var rAmp = /&/g,
-      rLt = /</g,
-      rGt = />/g,
-      rApos = /\'/g,
-      rQuot = /\"/g,
-      hChars = /[&<>\"\']/;
-
-  function coerceToString(val) {
-    return String((val === null || val === undefined) ? '' : val);
-  }
-
-  function hoganEscape(str) {
-    str = coerceToString(str);
-    return hChars.test(str) ?
-      str
-        .replace(rAmp, '&amp;')
-        .replace(rLt, '&lt;')
-        .replace(rGt, '&gt;')
-        .replace(rApos, '&#39;')
-        .replace(rQuot, '&quot;') :
-      str;
-  }
-
-  var isArray = Array.isArray || function(a) {
-    return Object.prototype.toString.call(a) === '[object Array]';
-  };
-
-})(typeof exports !== 'undefined' ? exports : Hogan);
-
-},{}],"node_modules/hogan.js/lib/hogan.js":[function(require,module,exports) {
-/*
- *  Copyright 2011 Twitter, Inc.
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
-// This file is for use with Node.js. See dist/ for browser files.
-
-var Hogan = require('./compiler');
-Hogan.Template = require('./template').Template;
-Hogan.template = Hogan.Template;
-module.exports = Hogan;
-
-},{"./compiler":"node_modules/hogan.js/lib/compiler.js","./template":"node_modules/hogan.js/lib/template.js"}],"node_modules/instantsearch.js/es/lib/utils/renderTemplate.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _hogan = _interopRequireDefault(require("hogan.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-// We add all our template helper methods to the template as lambdas. Note
-// that lambdas in Mustache are supposed to accept a second argument of
-// `render` to get the rendered value, not the literal `{{value}}`. But
-// this is currently broken (see https://github.com/twitter/hogan.js/issues/222).
-function transformHelpersToHogan() {
-  var helpers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var compileOptions = arguments.length > 1 ? arguments[1] : undefined;
-  var data = arguments.length > 2 ? arguments[2] : undefined;
-  return Object.keys(helpers).reduce(function (acc, helperKey) {
-    return _objectSpread({}, acc, _defineProperty({}, helperKey, function () {
-      var _this = this;
-
-      return function (text) {
-        var render = function render(value) {
-          return _hogan.default.compile(value, compileOptions).render(_this);
-        };
-
-        return helpers[helperKey].call(data, text, render);
-      };
-    }));
-  }, {});
-}
-
-function renderTemplate(_ref) {
-  var templates = _ref.templates,
-      templateKey = _ref.templateKey,
-      compileOptions = _ref.compileOptions,
-      helpers = _ref.helpers,
-      data = _ref.data,
-      bindEvent = _ref.bindEvent;
-  var template = templates[templateKey];
-
-  var templateType = _typeof(template);
-
-  var isTemplateString = templateType === 'string';
-  var isTemplateFunction = templateType === 'function';
-
-  if (!isTemplateString && !isTemplateFunction) {
-    throw new Error("Template must be 'string' or 'function', was '".concat(templateType, "' (key: ").concat(templateKey, ")"));
-  }
-
-  if (isTemplateFunction) {
-    return template(data, bindEvent);
-  }
-
-  var transformedHelpers = transformHelpersToHogan(helpers, compileOptions, data);
-  return _hogan.default.compile(template, compileOptions).render(_objectSpread({}, data, {
-    helpers: transformedHelpers
-  })).replace(/[ \n\r\t\f\xA0]+/g, function (spaces) {
-    return spaces.replace(/(^|\xA0+)[^\xA0]+/g, '$1 ');
-  }).trim();
-}
-
-var _default = renderTemplate;
-exports.default = _default;
-},{"hogan.js":"node_modules/hogan.js/lib/hogan.js"}],"node_modules/instantsearch.js/es/lib/utils/find.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-// We aren't using the native `Array.prototype.find` because the refactor away from Lodash is not
-// published as a major version.
-// Relying on the `find` polyfill on user-land, which before was only required for niche use-cases,
-// was decided as too risky.
-// @MAJOR Replace with the native `Array.prototype.find` method
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
-function find(items, predicate) {
-  var value;
-
-  for (var i = 0; i < items.length; i++) {
-    value = items[i]; // inlined for performance: if (Call(predicate, thisArg, [value, i, list])) {
-
-    if (predicate(value, i, items)) {
-      return value;
-    }
-  }
-
-  return undefined;
-}
-
-var _default = find;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/unescapeRefinement.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function unescapeRefinement(value) {
-  return String(value).replace(/^\\-/, '-');
-}
-
-var _default = unescapeRefinement;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/getRefinements.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _find = _interopRequireDefault(require("./find"));
-
-var _unescapeRefinement = _interopRequireDefault(require("./unescapeRefinement"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function getRefinement(state, type, attribute, name) {
-  var resultsFacets = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
-  var res = {
-    type: type,
-    attribute: attribute,
-    name: name
-  };
-  var facet = (0, _find.default)(resultsFacets, function (resultsFacet) {
-    return resultsFacet.name === attribute;
-  });
-  var count;
-
-  if (type === 'hierarchical') {
-    (function () {
-      var facetDeclaration = state.getHierarchicalFacetByName(attribute);
-      var nameParts = name.split(facetDeclaration.separator);
-
-      var getFacetRefinement = function getFacetRefinement(facetData) {
-        return function (refinementKey) {
-          return facetData[refinementKey];
-        };
-      };
-
-      var _loop = function _loop(i) {
-        facet = facet && facet.data && (0, _find.default)(Object.keys(facet.data).map(getFacetRefinement(facet.data)), function (refinement) {
-          return refinement.name === nameParts[i];
-        });
-      };
-
-      for (var i = 0; facet !== undefined && i < nameParts.length; ++i) {
-        _loop(i);
-      }
-
-      count = facet && facet.count;
-    })();
-  } else {
-    count = facet && facet.data && facet.data[res.name];
-  }
-
-  var exhaustive = facet && facet.exhaustive;
-
-  if (count !== undefined) {
-    res.count = count;
-  }
-
-  if (exhaustive !== undefined) {
-    res.exhaustive = exhaustive;
-  }
-
-  return res;
-}
-
-function getRefinements(results, state) {
-  var clearsQuery = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-  var refinements = [];
-  var _state$facetsRefineme = state.facetsRefinements,
-      facetsRefinements = _state$facetsRefineme === void 0 ? {} : _state$facetsRefineme,
-      _state$facetsExcludes = state.facetsExcludes,
-      facetsExcludes = _state$facetsExcludes === void 0 ? {} : _state$facetsExcludes,
-      _state$disjunctiveFac = state.disjunctiveFacetsRefinements,
-      disjunctiveFacetsRefinements = _state$disjunctiveFac === void 0 ? {} : _state$disjunctiveFac,
-      _state$hierarchicalFa = state.hierarchicalFacetsRefinements,
-      hierarchicalFacetsRefinements = _state$hierarchicalFa === void 0 ? {} : _state$hierarchicalFa,
-      _state$numericRefinem = state.numericRefinements,
-      numericRefinements = _state$numericRefinem === void 0 ? {} : _state$numericRefinem,
-      _state$tagRefinements = state.tagRefinements,
-      tagRefinements = _state$tagRefinements === void 0 ? [] : _state$tagRefinements;
-  Object.keys(facetsRefinements).forEach(function (attribute) {
-    var refinementNames = facetsRefinements[attribute];
-    refinementNames.forEach(function (refinementName) {
-      refinements.push(getRefinement(state, 'facet', attribute, refinementName, results.facets));
-    });
-  });
-  Object.keys(facetsExcludes).forEach(function (attribute) {
-    var refinementNames = facetsExcludes[attribute];
-    refinementNames.forEach(function (refinementName) {
-      refinements.push({
-        type: 'exclude',
-        attribute: attribute,
-        name: refinementName,
-        exclude: true
-      });
-    });
-  });
-  Object.keys(disjunctiveFacetsRefinements).forEach(function (attribute) {
-    var refinementNames = disjunctiveFacetsRefinements[attribute];
-    refinementNames.forEach(function (refinementName) {
-      refinements.push(getRefinement(state, 'disjunctive', attribute, // We unescape any disjunctive refined values with `unescapeRefinement` because
-      // they can be escaped on negative numeric values with `escapeRefinement`.
-      (0, _unescapeRefinement.default)(refinementName), results.disjunctiveFacets));
-    });
-  });
-  Object.keys(hierarchicalFacetsRefinements).forEach(function (attribute) {
-    var refinementNames = hierarchicalFacetsRefinements[attribute];
-    refinementNames.forEach(function (refinement) {
-      refinements.push(getRefinement(state, 'hierarchical', attribute, refinement, results.hierarchicalFacets));
-    });
-  });
-  Object.keys(numericRefinements).forEach(function (attribute) {
-    var operators = numericRefinements[attribute];
-    Object.keys(operators).forEach(function (operatorOriginal) {
-      var operator = operatorOriginal;
-      var valueOrValues = operators[operator];
-      var refinementNames = Array.isArray(valueOrValues) ? valueOrValues : [valueOrValues];
-      refinementNames.forEach(function (refinementName) {
-        refinements.push({
-          type: 'numeric',
-          attribute: attribute,
-          name: "".concat(refinementName),
-          numericValue: refinementName,
-          operator: operator
-        });
-      });
-    });
-  });
-  tagRefinements.forEach(function (refinementName) {
-    refinements.push({
-      type: 'tag',
-      attribute: '_tags',
-      name: refinementName
-    });
-  });
-
-  if (clearsQuery && state.query && state.query.trim()) {
-    refinements.push({
-      attribute: 'query',
-      type: 'query',
-      name: state.query,
-      query: state.query
-    });
-  }
-
-  return refinements;
-}
-
-var _default = getRefinements;
-exports.default = _default;
-},{"./find":"node_modules/instantsearch.js/es/lib/utils/find.js","./unescapeRefinement":"node_modules/instantsearch.js/es/lib/utils/unescapeRefinement.js"}],"node_modules/instantsearch.js/es/lib/utils/clearRefinements.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-/**
- * Clears the refinements of a SearchParameters object based on rules provided.
- * The included attributes list is applied before the excluded attributes list. If the list
- * is not provided, this list of all the currently refined attributes is used as included attributes.
- * @param {object} $0 parameters
- * @param {Helper} $0.helper instance of the Helper
- * @param {string[]} [$0.attributesToClear = []] list of parameters to clear
- * @returns {SearchParameters} search parameters with refinements cleared
- */
-function clearRefinements(_ref) {
-  var helper = _ref.helper,
-      _ref$attributesToClea = _ref.attributesToClear,
-      attributesToClear = _ref$attributesToClea === void 0 ? [] : _ref$attributesToClea;
-  var finalState = helper.state.setPage(0);
-  finalState = attributesToClear.reduce(function (state, attribute) {
-    if (finalState.isNumericRefined(attribute)) {
-      return state.removeNumericRefinement(attribute);
-    }
-
-    if (finalState.isHierarchicalFacet(attribute)) {
-      return state.removeHierarchicalFacetRefinement(attribute);
-    }
-
-    if (finalState.isDisjunctiveFacet(attribute)) {
-      return state.removeDisjunctiveFacetRefinement(attribute);
-    }
-
-    if (finalState.isConjunctiveFacet(attribute)) {
-      return state.removeFacetRefinement(attribute);
-    }
-
-    return state;
-  }, finalState);
-
-  if (attributesToClear.indexOf('query') !== -1) {
-    finalState = finalState.setQuery('');
-  }
-
-  return finalState;
-}
-
-var _default = clearRefinements;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/escapeRefinement.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function escapeRefinement(value) {
-  if (typeof value === 'number' && value < 0) {
-    value = String(value).replace(/^-/, '\\-');
-  }
-
-  return value;
-}
-
-var _default = escapeRefinement;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/getObjectType.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function getObjectType(object) {
-  return Object.prototype.toString.call(object).slice(8, -1);
-}
-
-var _default = getObjectType;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/checkRendering.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _getObjectType = _interopRequireDefault(require("./getObjectType"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function checkRendering(rendering, usage) {
-  if (rendering === undefined || typeof rendering !== 'function') {
-    throw new Error("The render function is not valid (received type ".concat((0, _getObjectType.default)(rendering), ").\n\n").concat(usage));
-  }
-}
-
-var _default = checkRendering;
-exports.default = _default;
-},{"./getObjectType":"node_modules/instantsearch.js/es/lib/utils/getObjectType.js"}],"node_modules/instantsearch.js/es/lib/utils/noop.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function noop() {}
-
-var _default = noop;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/logger.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.warning = exports.deprecate = exports.warn = void 0;
-
-var _noop = _interopRequireDefault(require("./noop"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Logs a warning when this function is called, in development environment only.
- */
-var deprecate = function deprecate(fn) {
-  return fn;
-};
-/**
- * Logs a warning
- * This is used to log issues in development environment only.
- */
-
-
-exports.deprecate = deprecate;
-var warn = _noop.default;
-/**
- * Logs a warning if the condition is not met.
- * This is used to log issues in development environment only.
- */
-
-exports.warn = warn;
-var _warning = _noop.default;
-exports.warning = _warning;
-
-if ("development" === 'development') {
-  exports.warn = warn = function warn(message) {
-    // eslint-disable-next-line no-console
-    console.warn("[InstantSearch.js]: ".concat(message.trim()));
-  };
-
-  exports.deprecate = deprecate = function deprecate(fn, message) {
-    var hasAlreadyPrinted = false;
-    return function () {
-      if (!hasAlreadyPrinted) {
-        hasAlreadyPrinted = true;
-        warn(message);
-      }
-
-      return fn.apply(void 0, arguments);
-    };
-  };
-
-  exports.warning = _warning = function warning(condition, message) {
-    if (condition) {
-      return;
-    }
-
-    var hasAlreadyPrinted = _warning.cache[message];
-
-    if (!hasAlreadyPrinted) {
-      _warning.cache[message] = true;
-      warn(message);
-    }
-  };
-
-  _warning.cache = {};
-}
-},{"./noop":"node_modules/instantsearch.js/es/lib/utils/noop.js"}],"node_modules/instantsearch.js/es/lib/utils/checkIndexUiState.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.checkIndexUiState = checkIndexUiState;
-
-var _capitalize = _interopRequireDefault(require("./capitalize"));
-
-var _logger = require("./logger");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
-}
-
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
-}
-
-function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-// Some connectors are responsible for multiple widgets so we need
-// to map them.
-function getWidgetNames(connectorName) {
-  switch (connectorName) {
-    case 'range':
-      return [];
-
-    case 'menu':
-      return ['menu', 'menuSelect'];
-
-    default:
-      return [connectorName];
-  }
-}
-
-var stateToWidgetsMap = {
-  query: {
-    connectors: ['connectSearchBox'],
-    widgets: ['ais.searchBox', 'ais.autocomplete', 'ais.voiceSearch']
-  },
-  refinementList: {
-    connectors: ['connectRefinementList'],
-    widgets: ['ais.refinementList']
-  },
-  menu: {
-    connectors: ['connectMenu'],
-    widgets: ['ais.menu']
-  },
-  hierarchicalMenu: {
-    connectors: ['connectHierarchicalMenu'],
-    widgets: ['ais.hierarchicalMenu']
-  },
-  numericMenu: {
-    connectors: ['connectNumericMenu'],
-    widgets: ['ais.numericMenu']
-  },
-  ratingMenu: {
-    connectors: ['connectRatingMenu'],
-    widgets: ['ais.ratingMenu']
-  },
-  range: {
-    connectors: ['connectRange'],
-    widgets: ['ais.rangeInput', 'ais.rangeSlider', 'ais.range']
-  },
-  toggle: {
-    connectors: ['connectToggleRefinement'],
-    widgets: ['ais.toggleRefinement']
-  },
-  geoSearch: {
-    connectors: ['connectGeoSearch'],
-    widgets: ['ais.geoSearch']
-  },
-  sortBy: {
-    connectors: ['connectSortBy'],
-    widgets: ['ais.sortBy']
-  },
-  page: {
-    connectors: ['connectPagination'],
-    widgets: ['ais.pagination', 'ais.infiniteHits']
-  },
-  hitsPerPage: {
-    connectors: ['connectHitsPerPage'],
-    widgets: ['ais.hitsPerPage']
-  },
-  configure: {
-    connectors: ['connectConfigure'],
-    widgets: ['ais.configure']
-  },
-  places: {
-    connectors: [],
-    widgets: ['ais.places']
-  }
-};
-
-function checkIndexUiState(_ref) {
-  var index = _ref.index,
-      indexUiState = _ref.indexUiState;
-  var mountedWidgets = index.getWidgets().map(function (widget) {
-    return widget.$$type;
-  }).filter(Boolean);
-  var missingWidgets = Object.keys(indexUiState).reduce(function (acc, parameter) {
-    var requiredWidgets = stateToWidgetsMap[parameter] && stateToWidgetsMap[parameter].widgets;
-
-    if (requiredWidgets && !requiredWidgets.some(function (requiredWidget) {
-      return mountedWidgets.includes(requiredWidget);
-    })) {
-      acc.push([parameter, {
-        connectors: stateToWidgetsMap[parameter].connectors,
-        widgets: stateToWidgetsMap[parameter].widgets.map(function (widgetIdentifier) {
-          return widgetIdentifier.split('ais.')[1];
-        })
-      }]);
-    }
-
-    return acc;
-  }, []);
-  "development" === 'development' ? (0, _logger.warning)(missingWidgets.length === 0, "The UI state for the index \"".concat(index.getIndexId(), "\" is not consistent with the widgets mounted.\n\nThis can happen when the UI state is specified via `initialUiState`, `routing` or `setUiState` but that the widgets responsible for this state were not added. This results in those query parameters not being sent to the API.\n\nTo fully reflect the state, some widgets need to be added to the index \"").concat(index.getIndexId(), "\":\n\n").concat(missingWidgets.map(function (_ref2) {
-    var _ref4;
-
-    var _ref3 = _slicedToArray(_ref2, 2),
-        stateParameter = _ref3[0],
-        widgets = _ref3[1].widgets;
-
-    return "- `".concat(stateParameter, "` needs one of these widgets: ").concat((_ref4 = []).concat.apply(_ref4, _toConsumableArray(widgets.map(function (name) {
-      return getWidgetNames(name);
-    }))).map(function (name) {
-      return "\"".concat(name, "\"");
-    }).join(', '));
-  }).join('\n'), "\n\nIf you do not wish to display widgets but still want to support their search parameters, you can mount \"virtual widgets\" that don't render anything:\n\n```\n").concat(missingWidgets.filter(function (_ref5) {
-    var _ref6 = _slicedToArray(_ref5, 2),
-        _stateParameter = _ref6[0],
-        connectors = _ref6[1].connectors;
-
-    return connectors.length > 0;
-  }).map(function (_ref7) {
-    var _ref8 = _slicedToArray(_ref7, 2),
-        _stateParameter = _ref8[0],
-        _ref8$ = _ref8[1],
-        connectors = _ref8$.connectors,
-        widgets = _ref8$.widgets;
-
-    var capitalizedWidget = (0, _capitalize.default)(widgets[0]);
-    var connectorName = connectors[0];
-    return "const virtual".concat(capitalizedWidget, " = ").concat(connectorName, "(() => null);");
-  }).join('\n'), "\n\nsearch.addWidgets([\n  ").concat(missingWidgets.filter(function (_ref9) {
-    var _ref10 = _slicedToArray(_ref9, 2),
-        _stateParameter = _ref10[0],
-        connectors = _ref10[1].connectors;
-
-    return connectors.length > 0;
-  }).map(function (_ref11) {
-    var _ref12 = _slicedToArray(_ref11, 2),
-        _stateParameter = _ref12[0],
-        widgets = _ref12[1].widgets;
-
-    var capitalizedWidget = (0, _capitalize.default)(widgets[0]);
-    return "virtual".concat(capitalizedWidget, "({ /* ... */ })");
-  }).join(',\n  '), "\n]);\n```\n\nIf you're using custom widgets that do set these query parameters, we recommend using connectors instead.\n\nSee https://www.algolia.com/doc/guides/building-search-ui/widgets/customize-an-existing-widget/js/#customize-the-complete-ui-of-the-widgets")) : void 0;
-}
-},{"./capitalize":"node_modules/instantsearch.js/es/lib/utils/capitalize.js","./logger":"node_modules/instantsearch.js/es/lib/utils/logger.js"}],"node_modules/instantsearch.js/es/lib/utils/getPropertyByPath.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function getPropertyByPath(object, path) {
-  var parts = Array.isArray(path) ? path : path.split('.');
-  return parts.reduce(function (current, key) {
-    return current && current[key];
-  }, object);
-}
-
-var _default = getPropertyByPath;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/isFiniteNumber.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-// This is the `Number.isFinite()` polyfill recommended by MDN.
-// We do not provide any tests for this function.
-// See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite#Polyfill
-function isFiniteNumber(value) {
-  return typeof value === 'number' && isFinite(value);
-}
-
-var _default = isFiniteNumber;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/isPlainObject.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-/**
- * This implementation is taken from Lodash implementation.
- * See: https://github.com/lodash/lodash/blob/master/isPlainObject.js
- */
-
-
-function getTag(value) {
-  if (value === null) {
-    return value === undefined ? '[object Undefined]' : '[object Null]';
-  }
-
-  return Object.prototype.toString.call(value);
-}
-
-function isObjectLike(value) {
-  return _typeof(value) === 'object' && value !== null;
-}
-/**
- * Checks if `value` is a plain object.
- *
- * A plain object is an object created by the `Object`
- * constructor or with a `[[Prototype]]` of `null`.
- */
-
-
-function isPlainObject(value) {
-  if (!isObjectLike(value) || getTag(value) !== '[object Object]') {
-    return false;
-  }
-
-  if (Object.getPrototypeOf(value) === null) {
-    return true;
-  }
-
-  var proto = value;
-
-  while (Object.getPrototypeOf(proto) !== null) {
-    proto = Object.getPrototypeOf(proto);
-  }
-
-  return Object.getPrototypeOf(value) === proto;
-}
-
-var _default = isPlainObject;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/range.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-function range(_ref) {
-  var _ref$start = _ref.start,
-      start = _ref$start === void 0 ? 0 : _ref$start,
-      end = _ref.end,
-      _ref$step = _ref.step,
-      step = _ref$step === void 0 ? 1 : _ref$step; // We can't divide by 0 so we re-assign the step to 1 if it happens.
-
-  var limitStep = step === 0 ? 1 : step; // In some cases the array to create has a decimal length.
-  // We therefore need to round the value.
-  // Example:
-  //   { start: 1, end: 5000, step: 500 }
-  //   => Array length = (5000 - 1) / 500 = 9.998
-
-  var arrayLength = Math.round((end - start) / limitStep);
-  return _toConsumableArray(Array(arrayLength)).map(function (_, current) {
-    return start + current * limitStep;
-  });
-}
-
-var _default = range;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/isEqual.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function isPrimitive(obj) {
-  return obj !== Object(obj);
-}
-
-function isEqual(first, second) {
-  if (first === second) {
-    return true;
-  }
-
-  if (isPrimitive(first) || isPrimitive(second) || typeof first === 'function' || typeof second === 'function') {
-    return first === second;
-  }
-
-  if (Object.keys(first).length !== Object.keys(second).length) {
-    return false;
-  }
-
-  for (var _i = 0, _Object$keys = Object.keys(first); _i < _Object$keys.length; _i++) {
-    var key = _Object$keys[_i];
-
-    if (!(key in second)) {
-      return false;
-    }
-
-    if (!isEqual(first[key], second[key])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-var _default = isEqual;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/escape.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-/**
- * This implementation is taken from Lodash implementation.
- * See: https://github.com/lodash/lodash/blob/4.17.11-npm/escape.js
- */
-// Used to map characters to HTML entities.
-var htmlEscapes = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#39;'
-}; // Used to match HTML entities and HTML characters.
-
-var regexUnescapedHtml = /[&<>"']/g;
-var regexHasUnescapedHtml = RegExp(regexUnescapedHtml.source);
-/**
- * Converts the characters "&", "<", ">", '"', and "'" in `string` to their
- * corresponding HTML entities.
- */
-
-function escape(value) {
-  return value && regexHasUnescapedHtml.test(value) ? value.replace(regexUnescapedHtml, function (character) {
-    return htmlEscapes[character];
-  }) : value;
-}
-
-var _default = escape;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/findIndex.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-// We aren't using the native `Array.prototype.findIndex` because the refactor away from Lodash is not
-// published as a major version.
-// Relying on the `findIndex` polyfill on user-land, which before was only required for niche use-cases,
-// was decided as too risky.
-// @MAJOR Replace with the native `Array.prototype.findIndex` method
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
-function findIndex(array, comparator) {
-  if (!Array.isArray(array)) {
-    return -1;
-  }
-
-  for (var i = 0; i < array.length; i++) {
-    if (comparator(array[i])) {
-      return i;
-    }
-  }
-
-  return -1;
-}
-
-var _default = findIndex;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/mergeSearchParameters.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _findIndex = _interopRequireDefault(require("./findIndex"));
-
-var _uniq = _interopRequireDefault(require("./uniq"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-var mergeWithRest = function mergeWithRest(left, right) {
-  var facets = right.facets,
-      disjunctiveFacets = right.disjunctiveFacets,
-      facetsRefinements = right.facetsRefinements,
-      facetsExcludes = right.facetsExcludes,
-      disjunctiveFacetsRefinements = right.disjunctiveFacetsRefinements,
-      numericRefinements = right.numericRefinements,
-      tagRefinements = right.tagRefinements,
-      hierarchicalFacets = right.hierarchicalFacets,
-      hierarchicalFacetsRefinements = right.hierarchicalFacetsRefinements,
-      ruleContexts = right.ruleContexts,
-      rest = _objectWithoutProperties(right, ["facets", "disjunctiveFacets", "facetsRefinements", "facetsExcludes", "disjunctiveFacetsRefinements", "numericRefinements", "tagRefinements", "hierarchicalFacets", "hierarchicalFacetsRefinements", "ruleContexts"]);
-
-  return left.setQueryParameters(rest);
-}; // Merge facets
-
-
-var mergeFacets = function mergeFacets(left, right) {
-  return right.facets.reduce(function (_, name) {
-    return _.addFacet(name);
-  }, left);
-};
-
-var mergeDisjunctiveFacets = function mergeDisjunctiveFacets(left, right) {
-  return right.disjunctiveFacets.reduce(function (_, name) {
-    return _.addDisjunctiveFacet(name);
-  }, left);
-};
-
-var mergeHierarchicalFacets = function mergeHierarchicalFacets(left, right) {
-  return left.setQueryParameters({
-    hierarchicalFacets: right.hierarchicalFacets.reduce(function (facets, facet) {
-      var index = (0, _findIndex.default)(facets, function (_) {
-        return _.name === facet.name;
-      });
-
-      if (index === -1) {
-        return facets.concat(facet);
-      }
-
-      var nextFacets = facets.slice();
-      nextFacets.splice(index, 1, facet);
-      return nextFacets;
-    }, left.hierarchicalFacets)
-  });
-}; // Merge facet refinements
-
-
-var mergeTagRefinements = function mergeTagRefinements(left, right) {
-  return right.tagRefinements.reduce(function (_, value) {
-    return _.addTagRefinement(value);
-  }, left);
-};
-
-var mergeFacetRefinements = function mergeFacetRefinements(left, right) {
-  return left.setQueryParameters({
-    facetsRefinements: _objectSpread({}, left.facetsRefinements, {}, right.facetsRefinements)
-  });
-};
-
-var mergeFacetsExcludes = function mergeFacetsExcludes(left, right) {
-  return left.setQueryParameters({
-    facetsExcludes: _objectSpread({}, left.facetsExcludes, {}, right.facetsExcludes)
-  });
-};
-
-var mergeDisjunctiveFacetsRefinements = function mergeDisjunctiveFacetsRefinements(left, right) {
-  return left.setQueryParameters({
-    disjunctiveFacetsRefinements: _objectSpread({}, left.disjunctiveFacetsRefinements, {}, right.disjunctiveFacetsRefinements)
-  });
-};
-
-var mergeNumericRefinements = function mergeNumericRefinements(left, right) {
-  return left.setQueryParameters({
-    numericRefinements: _objectSpread({}, left.numericRefinements, {}, right.numericRefinements)
-  });
-};
-
-var mergeHierarchicalFacetsRefinements = function mergeHierarchicalFacetsRefinements(left, right) {
-  return left.setQueryParameters({
-    hierarchicalFacetsRefinements: _objectSpread({}, left.hierarchicalFacetsRefinements, {}, right.hierarchicalFacetsRefinements)
-  });
-};
-
-var mergeRuleContexts = function mergeRuleContexts(left, right) {
-  var ruleContexts = (0, _uniq.default)([].concat(left.ruleContexts).concat(right.ruleContexts).filter(Boolean));
-
-  if (ruleContexts.length > 0) {
-    return left.setQueryParameters({
-      ruleContexts: ruleContexts
-    });
-  }
-
-  return left;
-};
-
-var merge = function merge() {
-  for (var _len = arguments.length, parameters = new Array(_len), _key = 0; _key < _len; _key++) {
-    parameters[_key] = arguments[_key];
-  }
-
-  return parameters.reduce(function (left, right) {
-    var hierarchicalFacetsRefinementsMerged = mergeHierarchicalFacetsRefinements(left, right);
-    var hierarchicalFacetsMerged = mergeHierarchicalFacets(hierarchicalFacetsRefinementsMerged, right);
-    var tagRefinementsMerged = mergeTagRefinements(hierarchicalFacetsMerged, right);
-    var numericRefinementsMerged = mergeNumericRefinements(tagRefinementsMerged, right);
-    var disjunctiveFacetsRefinementsMerged = mergeDisjunctiveFacetsRefinements(numericRefinementsMerged, right);
-    var facetsExcludesMerged = mergeFacetsExcludes(disjunctiveFacetsRefinementsMerged, right);
-    var facetRefinementsMerged = mergeFacetRefinements(facetsExcludesMerged, right);
-    var disjunctiveFacetsMerged = mergeDisjunctiveFacets(facetRefinementsMerged, right);
-    var ruleContextsMerged = mergeRuleContexts(disjunctiveFacetsMerged, right);
-    var facetsMerged = mergeFacets(ruleContextsMerged, right);
-    return mergeWithRest(facetsMerged, right);
-  });
-};
-
-var _default = merge;
-exports.default = _default;
-},{"./findIndex":"node_modules/instantsearch.js/es/lib/utils/findIndex.js","./uniq":"node_modules/instantsearch.js/es/lib/utils/uniq.js"}],"node_modules/instantsearch.js/es/lib/utils/resolveSearchParameters.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var resolveSearchParameters = function resolveSearchParameters(current) {
-  var parent = current.getParent();
-  var states = [current.getHelper().state];
-
-  while (parent !== null) {
-    states = [parent.getHelper().state].concat(states);
-    parent = parent.getParent();
-  }
-
-  return states;
-};
-
-var _default = resolveSearchParameters;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/toArray.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-function toArray(value) {
-  return Array.isArray(value) ? value : [value];
-}
-
-var _default = toArray;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/documentation.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createDocumentationMessageGenerator = exports.createDocumentationLink = void 0;
-
-var createDocumentationLink = function createDocumentationLink(_ref) {
-  var name = _ref.name,
-      _ref$connector = _ref.connector,
-      connector = _ref$connector === void 0 ? false : _ref$connector;
-  return ['https://www.algolia.com/doc/api-reference/widgets/', name, '/js/', connector ? '#connector' : ''].join('');
-};
-
-exports.createDocumentationLink = createDocumentationLink;
-
-var createDocumentationMessageGenerator = function createDocumentationMessageGenerator() {
-  for (var _len = arguments.length, widgets = new Array(_len), _key = 0; _key < _len; _key++) {
-    widgets[_key] = arguments[_key];
-  }
-
-  var links = widgets.map(function (widget) {
-    return createDocumentationLink(widget);
-  }).join(', ');
-  return function (message) {
-    return [message, "See documentation: ".concat(links)].filter(Boolean).join('\n\n');
-  };
-};
-
-exports.createDocumentationMessageGenerator = createDocumentationMessageGenerator;
-},{}],"node_modules/instantsearch.js/es/lib/utils/geo-search.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.aroundLatLngToPosition = aroundLatLngToPosition;
-exports.insideBoundingBoxArrayToBoundingBox = insideBoundingBoxArrayToBoundingBox;
-exports.insideBoundingBoxStringToBoundingBox = insideBoundingBoxStringToBoundingBox;
-exports.insideBoundingBoxToBoundingBox = insideBoundingBoxToBoundingBox;
-
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
-}
-
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
-}
-
-function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-var latLngRegExp = /^(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)$/;
-
-function aroundLatLngToPosition(value) {
-  var pattern = value.match(latLngRegExp); // Since the value provided is the one send with the request, the API should
-  // throw an error due to the wrong format. So throw an error should be safe.
-
-  if (!pattern) {
-    throw new Error("Invalid value for \"aroundLatLng\" parameter: \"".concat(value, "\""));
-  }
-
-  return {
-    lat: parseFloat(pattern[1]),
-    lng: parseFloat(pattern[2])
-  };
-}
-
-function insideBoundingBoxArrayToBoundingBox(value) {
-  var _value = _slicedToArray(value, 1),
-      _value$ = _value[0];
-
-  _value$ = _value$ === void 0 ? [undefined, undefined, undefined, undefined] : _value$;
-
-  var _value$2 = _slicedToArray(_value$, 4),
-      neLat = _value$2[0],
-      neLng = _value$2[1],
-      swLat = _value$2[2],
-      swLng = _value$2[3]; // Since the value provided is the one send with the request, the API should
-  // throw an error due to the wrong format. So throw an error should be safe.
-
-
-  if (!neLat || !neLng || !swLat || !swLng) {
-    throw new Error("Invalid value for \"insideBoundingBox\" parameter: [".concat(value, "]"));
-  }
-
-  return {
-    northEast: {
-      lat: neLat,
-      lng: neLng
-    },
-    southWest: {
-      lat: swLat,
-      lng: swLng
-    }
-  };
-}
-
-function insideBoundingBoxStringToBoundingBox(value) {
-  var _value$split$map = value.split(',').map(parseFloat),
-      _value$split$map2 = _slicedToArray(_value$split$map, 4),
-      neLat = _value$split$map2[0],
-      neLng = _value$split$map2[1],
-      swLat = _value$split$map2[2],
-      swLng = _value$split$map2[3]; // Since the value provided is the one send with the request, the API should
-  // throw an error due to the wrong format. So throw an error should be safe.
-
-
-  if (!neLat || !neLng || !swLat || !swLng) {
-    throw new Error("Invalid value for \"insideBoundingBox\" parameter: \"".concat(value, "\""));
-  }
-
-  return {
-    northEast: {
-      lat: neLat,
-      lng: neLng
-    },
-    southWest: {
-      lat: swLat,
-      lng: swLng
-    }
-  };
-}
-
-function insideBoundingBoxToBoundingBox(value) {
-  if (Array.isArray(value)) {
-    return insideBoundingBoxArrayToBoundingBox(value);
-  }
-
-  return insideBoundingBoxStringToBoundingBox(value);
-}
-},{}],"node_modules/instantsearch.js/es/lib/utils/hits-absolute-position.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.addAbsolutePosition = void 0;
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var addAbsolutePosition = function addAbsolutePosition(hits, page, hitsPerPage) {
-  return hits.map(function (hit, idx) {
-    return _objectSpread({}, hit, {
-      __position: hitsPerPage * page + idx + 1
-    });
-  });
-};
-
-exports.addAbsolutePosition = addAbsolutePosition;
-},{}],"node_modules/instantsearch.js/es/lib/utils/hits-query-id.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.addQueryID = void 0;
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var addQueryID = function addQueryID(hits, queryID) {
-  if (!queryID) {
-    return hits;
-  }
-
-  return hits.map(function (hit) {
-    return _objectSpread({}, hit, {
-      __queryID: queryID
-    });
-  });
-};
-
-exports.addQueryID = addQueryID;
-},{}],"node_modules/instantsearch.js/es/lib/utils/isFacetRefined.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = isFacetRefined;
-
-function isFacetRefined(helper, facet, value) {
-  if (helper.state.isHierarchicalFacet(facet)) {
-    return helper.state.isHierarchicalFacetRefined(facet, value);
-  } else if (helper.state.isConjunctiveFacet(facet)) {
-    return helper.state.isFacetRefined(facet, value);
-  } else {
-    return helper.state.isDisjunctiveFacetRefined(facet, value);
-  }
-}
-},{}],"node_modules/instantsearch.js/es/lib/utils/createSendEventForFacet.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createSendEventForFacet = createSendEventForFacet;
-
-var _isFacetRefined = _interopRequireDefault(require("./isFacetRefined"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-function createSendEventForFacet(_ref) {
-  var instantSearchInstance = _ref.instantSearchInstance,
-      helper = _ref.helper,
-      attribute = _ref.attribute,
-      widgetType = _ref.widgetType;
-
-  var sendEventForFacet = function sendEventForFacet() {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    var eventType = args[0],
-        facetValue = args[1],
-        _args$ = args[2],
-        eventName = _args$ === void 0 ? 'Filter Applied' : _args$;
-
-    if (args.length === 1 && _typeof(args[0]) === 'object') {
-      instantSearchInstance.sendEventToInsights(args[0]);
-    } else if (eventType === 'click' && (args.length === 2 || args.length === 3)) {
-      if (!(0, _isFacetRefined.default)(helper, attribute, facetValue)) {
-        // send event only when the facet is being checked "ON"
-        instantSearchInstance.sendEventToInsights({
-          insightsMethod: 'clickedFilters',
-          widgetType: widgetType,
-          eventType: eventType,
-          payload: {
-            eventName: eventName,
-            index: helper.getIndex(),
-            filters: ["".concat(attribute, ":").concat(JSON.stringify(facetValue))]
-          }
-        });
-      }
-    } else if ("development" === 'development') {
-      throw new Error("You need to pass two arguments like:\n  sendEvent('click', facetValue);\n\nIf you want to send a custom payload, you can pass one object: sendEvent(customPayload);\n");
-    }
-  };
-
-  return sendEventForFacet;
-}
-},{"./isFacetRefined":"node_modules/instantsearch.js/es/lib/utils/isFacetRefined.js"}],"node_modules/instantsearch.js/es/lib/utils/createSendEventForHits.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createSendEventForHits = createSendEventForHits;
-exports.createBindEventForHits = createBindEventForHits;
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-var buildPayload = function buildPayload(_ref) {
-  var index = _ref.index,
-      widgetType = _ref.widgetType,
-      methodName = _ref.methodName,
-      args = _ref.args;
-
-  if (args.length === 1 && _typeof(args[0]) === 'object') {
-    return args[0];
-  }
-
-  var eventType = args[0];
-  var hits = args[1];
-  var eventName = args[2];
-
-  if (!hits) {
-    if ("development" === 'development') {
-      throw new Error("You need to pass hit or hits as the second argument like:\n  ".concat(methodName, "(eventType, hit);\n  "));
-    } else {
-      return null;
-    }
-  }
-
-  if ((eventType === 'click' || eventType === 'conversion') && !eventName) {
-    if ("development" === 'development') {
-      throw new Error("You need to pass eventName as the third argument for 'click' or 'conversion' events like:\n  ".concat(methodName, "('click', hit, 'Product Purchased');\n\n  To learn more about event naming: https://www.algolia.com/doc/guides/getting-insights-and-analytics/search-analytics/click-through-and-conversions/in-depth/clicks-conversions-best-practices/\n  "));
-    } else {
-      return null;
-    }
-  }
-
-  var hitsArray = Array.isArray(hits) ? hits : [hits];
-
-  if (hitsArray.length === 0) {
-    return null;
-  }
-
-  var queryID = hitsArray[0].__queryID;
-  var objectIDs = hitsArray.map(function (hit) {
-    return hit.objectID;
-  });
-  var positions = hitsArray.map(function (hit) {
-    return hit.__position;
-  });
-
-  if (eventType === 'view') {
-    return {
-      insightsMethod: 'viewedObjectIDs',
-      widgetType: widgetType,
-      eventType: eventType,
-      payload: {
-        eventName: eventName || 'Hits Viewed',
-        index: index,
-        objectIDs: objectIDs
-      }
-    };
-  } else if (eventType === 'click') {
-    return {
-      insightsMethod: 'clickedObjectIDsAfterSearch',
-      widgetType: widgetType,
-      eventType: eventType,
-      payload: {
-        eventName: eventName,
-        index: index,
-        queryID: queryID,
-        objectIDs: objectIDs,
-        positions: positions
-      }
-    };
-  } else if (eventType === 'conversion') {
-    return {
-      insightsMethod: 'convertedObjectIDsAfterSearch',
-      widgetType: widgetType,
-      eventType: eventType,
-      payload: {
-        eventName: eventName,
-        index: index,
-        queryID: queryID,
-        objectIDs: objectIDs
-      }
-    };
-  } else if ("development" === 'development') {
-    throw new Error("eventType(\"".concat(eventType, "\") is not supported.\n    If you want to send a custom payload, you can pass one object: ").concat(methodName, "(customPayload);\n    "));
-  } else {
-    return null;
-  }
-};
-
-function createSendEventForHits(_ref2) {
-  var instantSearchInstance = _ref2.instantSearchInstance,
-      index = _ref2.index,
-      widgetType = _ref2.widgetType;
-
-  var sendEventForHits = function sendEventForHits() {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    var payload = buildPayload({
-      widgetType: widgetType,
-      index: index,
-      methodName: 'sendEvent',
-      args: args
-    });
-
-    if (payload) {
-      instantSearchInstance.sendEventToInsights(payload);
-    }
-  };
-
-  return sendEventForHits;
-}
-
-function createBindEventForHits(_ref3) {
-  var index = _ref3.index,
-      widgetType = _ref3.widgetType;
-
-  var bindEventForHits = function bindEventForHits() {
-    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
-    }
-
-    var payload = buildPayload({
-      widgetType: widgetType,
-      index: index,
-      methodName: 'bindEvent',
-      args: args
-    });
-    return payload ? "data-insights-event=".concat(btoa(JSON.stringify(payload))) : '';
-  };
-
-  return bindEventForHits;
-}
-},{}],"node_modules/instantsearch.js/es/lib/utils/getAppIdAndApiKey.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getAppIdAndApiKey = getAppIdAndApiKey;
-
-function getAppIdAndApiKey(searchClient) {
-  if (searchClient.transporter) {
-    // searchClient v4
-    var _searchClient$transpo = searchClient.transporter,
-        headers = _searchClient$transpo.headers,
-        queryParameters = _searchClient$transpo.queryParameters;
-    var APP_ID = 'x-algolia-application-id';
-    var API_KEY = 'x-algolia-api-key';
-    var appId = headers[APP_ID] || queryParameters[APP_ID];
-    var apiKey = headers[API_KEY] || queryParameters[API_KEY];
-    return [appId, apiKey];
-  } else {
-    // searchClient v3
-    return [searchClient.applicationID, searchClient.apiKey];
-  }
-}
-},{}],"node_modules/instantsearch.js/es/lib/utils/convertNumericRefinementsToFilters.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.convertNumericRefinementsToFilters = convertNumericRefinementsToFilters;
-
-function convertNumericRefinementsToFilters(state, attribute) {
-  if (!state) {
-    return null;
-  }
-
-  var filtersObj = state.numericRefinements[attribute];
-  /*
-    filtersObj === {
-      "<=": [10],
-      "=": [],
-      ">=": [5]
-    }
-  */
-
-  var filters = [];
-  Object.keys(filtersObj).filter(function (operator) {
-    return Array.isArray(filtersObj[operator]) && filtersObj[operator].length > 0;
-  }).forEach(function (operator) {
-    filtersObj[operator].forEach(function (value) {
-      filters.push("".concat(attribute).concat(operator).concat(value));
-    });
-  });
-  return filters;
-}
-},{}],"node_modules/instantsearch.js/es/lib/utils/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var _exportNames = {
-  capitalize: true,
-  defer: true,
-  isDomElement: true,
-  getContainerNode: true,
-  isSpecialClick: true,
-  prepareTemplateProps: true,
-  renderTemplate: true,
-  getRefinements: true,
-  clearRefinements: true,
-  escapeRefinement: true,
-  unescapeRefinement: true,
-  checkRendering: true,
-  checkIndexUiState: true,
-  getPropertyByPath: true,
-  getObjectType: true,
-  noop: true,
-  isFiniteNumber: true,
-  isPlainObject: true,
-  uniq: true,
-  range: true,
-  isEqual: true,
-  escape: true,
-  find: true,
-  findIndex: true,
-  mergeSearchParameters: true,
-  resolveSearchParameters: true,
-  toArray: true,
-  warning: true,
-  deprecate: true,
-  createDocumentationLink: true,
-  createDocumentationMessageGenerator: true,
-  aroundLatLngToPosition: true,
-  insideBoundingBoxToBoundingBox: true,
-  addAbsolutePosition: true,
-  addQueryID: true,
-  isFacetRefined: true,
-  getAppIdAndApiKey: true,
-  convertNumericRefinementsToFilters: true
-};
-Object.defineProperty(exports, "capitalize", {
-  enumerable: true,
-  get: function () {
-    return _capitalize.default;
-  }
-});
-Object.defineProperty(exports, "defer", {
-  enumerable: true,
-  get: function () {
-    return _defer.default;
-  }
-});
-Object.defineProperty(exports, "isDomElement", {
-  enumerable: true,
-  get: function () {
-    return _isDomElement.default;
-  }
-});
-Object.defineProperty(exports, "getContainerNode", {
-  enumerable: true,
-  get: function () {
-    return _getContainerNode.default;
-  }
-});
-Object.defineProperty(exports, "isSpecialClick", {
-  enumerable: true,
-  get: function () {
-    return _isSpecialClick.default;
-  }
-});
-Object.defineProperty(exports, "prepareTemplateProps", {
-  enumerable: true,
-  get: function () {
-    return _prepareTemplateProps.default;
-  }
-});
-Object.defineProperty(exports, "renderTemplate", {
-  enumerable: true,
-  get: function () {
-    return _renderTemplate.default;
-  }
-});
-Object.defineProperty(exports, "getRefinements", {
-  enumerable: true,
-  get: function () {
-    return _getRefinements.default;
-  }
-});
-Object.defineProperty(exports, "clearRefinements", {
-  enumerable: true,
-  get: function () {
-    return _clearRefinements.default;
-  }
-});
-Object.defineProperty(exports, "escapeRefinement", {
-  enumerable: true,
-  get: function () {
-    return _escapeRefinement.default;
-  }
-});
-Object.defineProperty(exports, "unescapeRefinement", {
-  enumerable: true,
-  get: function () {
-    return _unescapeRefinement.default;
-  }
-});
-Object.defineProperty(exports, "checkRendering", {
-  enumerable: true,
-  get: function () {
-    return _checkRendering.default;
-  }
-});
-Object.defineProperty(exports, "checkIndexUiState", {
-  enumerable: true,
-  get: function () {
-    return _checkIndexUiState.checkIndexUiState;
-  }
-});
-Object.defineProperty(exports, "getPropertyByPath", {
-  enumerable: true,
-  get: function () {
-    return _getPropertyByPath.default;
-  }
-});
-Object.defineProperty(exports, "getObjectType", {
-  enumerable: true,
-  get: function () {
-    return _getObjectType.default;
-  }
-});
-Object.defineProperty(exports, "noop", {
-  enumerable: true,
-  get: function () {
-    return _noop.default;
-  }
-});
-Object.defineProperty(exports, "isFiniteNumber", {
-  enumerable: true,
-  get: function () {
-    return _isFiniteNumber.default;
-  }
-});
-Object.defineProperty(exports, "isPlainObject", {
-  enumerable: true,
-  get: function () {
-    return _isPlainObject.default;
-  }
-});
-Object.defineProperty(exports, "uniq", {
-  enumerable: true,
-  get: function () {
-    return _uniq.default;
-  }
-});
-Object.defineProperty(exports, "range", {
-  enumerable: true,
-  get: function () {
-    return _range.default;
-  }
-});
-Object.defineProperty(exports, "isEqual", {
-  enumerable: true,
-  get: function () {
-    return _isEqual.default;
-  }
-});
-Object.defineProperty(exports, "escape", {
-  enumerable: true,
-  get: function () {
-    return _escape.default;
-  }
-});
-Object.defineProperty(exports, "find", {
-  enumerable: true,
-  get: function () {
-    return _find.default;
-  }
-});
-Object.defineProperty(exports, "findIndex", {
-  enumerable: true,
-  get: function () {
-    return _findIndex.default;
-  }
-});
-Object.defineProperty(exports, "mergeSearchParameters", {
-  enumerable: true,
-  get: function () {
-    return _mergeSearchParameters.default;
-  }
-});
-Object.defineProperty(exports, "resolveSearchParameters", {
-  enumerable: true,
-  get: function () {
-    return _resolveSearchParameters.default;
-  }
-});
-Object.defineProperty(exports, "toArray", {
-  enumerable: true,
-  get: function () {
-    return _toArray.default;
-  }
-});
-Object.defineProperty(exports, "warning", {
-  enumerable: true,
-  get: function () {
-    return _logger.warning;
-  }
-});
-Object.defineProperty(exports, "deprecate", {
-  enumerable: true,
-  get: function () {
-    return _logger.deprecate;
-  }
-});
-Object.defineProperty(exports, "createDocumentationLink", {
-  enumerable: true,
-  get: function () {
-    return _documentation.createDocumentationLink;
-  }
-});
-Object.defineProperty(exports, "createDocumentationMessageGenerator", {
-  enumerable: true,
-  get: function () {
-    return _documentation.createDocumentationMessageGenerator;
-  }
-});
-Object.defineProperty(exports, "aroundLatLngToPosition", {
-  enumerable: true,
-  get: function () {
-    return _geoSearch.aroundLatLngToPosition;
-  }
-});
-Object.defineProperty(exports, "insideBoundingBoxToBoundingBox", {
-  enumerable: true,
-  get: function () {
-    return _geoSearch.insideBoundingBoxToBoundingBox;
-  }
-});
-Object.defineProperty(exports, "addAbsolutePosition", {
-  enumerable: true,
-  get: function () {
-    return _hitsAbsolutePosition.addAbsolutePosition;
-  }
-});
-Object.defineProperty(exports, "addQueryID", {
-  enumerable: true,
-  get: function () {
-    return _hitsQueryId.addQueryID;
-  }
-});
-Object.defineProperty(exports, "isFacetRefined", {
-  enumerable: true,
-  get: function () {
-    return _isFacetRefined.default;
-  }
-});
-Object.defineProperty(exports, "getAppIdAndApiKey", {
-  enumerable: true,
-  get: function () {
-    return _getAppIdAndApiKey.getAppIdAndApiKey;
-  }
-});
-Object.defineProperty(exports, "convertNumericRefinementsToFilters", {
-  enumerable: true,
-  get: function () {
-    return _convertNumericRefinementsToFilters.convertNumericRefinementsToFilters;
-  }
-});
-
-var _capitalize = _interopRequireDefault(require("./capitalize"));
-
-var _defer = _interopRequireDefault(require("./defer"));
-
-var _isDomElement = _interopRequireDefault(require("./isDomElement"));
-
-var _getContainerNode = _interopRequireDefault(require("./getContainerNode"));
-
-var _isSpecialClick = _interopRequireDefault(require("./isSpecialClick"));
-
-var _prepareTemplateProps = _interopRequireDefault(require("./prepareTemplateProps"));
-
-var _renderTemplate = _interopRequireDefault(require("./renderTemplate"));
-
-var _getRefinements = _interopRequireDefault(require("./getRefinements"));
-
-var _clearRefinements = _interopRequireDefault(require("./clearRefinements"));
-
-var _escapeRefinement = _interopRequireDefault(require("./escapeRefinement"));
-
-var _unescapeRefinement = _interopRequireDefault(require("./unescapeRefinement"));
-
-var _checkRendering = _interopRequireDefault(require("./checkRendering"));
-
-var _checkIndexUiState = require("./checkIndexUiState");
-
-var _getPropertyByPath = _interopRequireDefault(require("./getPropertyByPath"));
-
-var _getObjectType = _interopRequireDefault(require("./getObjectType"));
-
-var _noop = _interopRequireDefault(require("./noop"));
-
-var _isFiniteNumber = _interopRequireDefault(require("./isFiniteNumber"));
-
-var _isPlainObject = _interopRequireDefault(require("./isPlainObject"));
-
-var _uniq = _interopRequireDefault(require("./uniq"));
-
-var _range = _interopRequireDefault(require("./range"));
-
-var _isEqual = _interopRequireDefault(require("./isEqual"));
-
-var _escape = _interopRequireDefault(require("./escape"));
-
-var _find = _interopRequireDefault(require("./find"));
-
-var _findIndex = _interopRequireDefault(require("./findIndex"));
-
-var _mergeSearchParameters = _interopRequireDefault(require("./mergeSearchParameters"));
-
-var _resolveSearchParameters = _interopRequireDefault(require("./resolveSearchParameters"));
-
-var _toArray = _interopRequireDefault(require("./toArray"));
-
-var _logger = require("./logger");
-
-var _documentation = require("./documentation");
-
-var _geoSearch = require("./geo-search");
-
-var _hitsAbsolutePosition = require("./hits-absolute-position");
-
-var _hitsQueryId = require("./hits-query-id");
-
-var _isFacetRefined = _interopRequireDefault(require("./isFacetRefined"));
-
-var _createSendEventForFacet = require("./createSendEventForFacet");
-
-Object.keys(_createSendEventForFacet).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _createSendEventForFacet[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _createSendEventForFacet[key];
-    }
-  });
-});
-
-var _createSendEventForHits = require("./createSendEventForHits");
-
-Object.keys(_createSendEventForHits).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _createSendEventForHits[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _createSendEventForHits[key];
-    }
-  });
-});
-
-var _getAppIdAndApiKey = require("./getAppIdAndApiKey");
-
-var _convertNumericRefinementsToFilters = require("./convertNumericRefinementsToFilters");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./capitalize":"node_modules/instantsearch.js/es/lib/utils/capitalize.js","./defer":"node_modules/instantsearch.js/es/lib/utils/defer.js","./isDomElement":"node_modules/instantsearch.js/es/lib/utils/isDomElement.js","./getContainerNode":"node_modules/instantsearch.js/es/lib/utils/getContainerNode.js","./isSpecialClick":"node_modules/instantsearch.js/es/lib/utils/isSpecialClick.js","./prepareTemplateProps":"node_modules/instantsearch.js/es/lib/utils/prepareTemplateProps.js","./renderTemplate":"node_modules/instantsearch.js/es/lib/utils/renderTemplate.js","./getRefinements":"node_modules/instantsearch.js/es/lib/utils/getRefinements.js","./clearRefinements":"node_modules/instantsearch.js/es/lib/utils/clearRefinements.js","./escapeRefinement":"node_modules/instantsearch.js/es/lib/utils/escapeRefinement.js","./unescapeRefinement":"node_modules/instantsearch.js/es/lib/utils/unescapeRefinement.js","./checkRendering":"node_modules/instantsearch.js/es/lib/utils/checkRendering.js","./checkIndexUiState":"node_modules/instantsearch.js/es/lib/utils/checkIndexUiState.js","./getPropertyByPath":"node_modules/instantsearch.js/es/lib/utils/getPropertyByPath.js","./getObjectType":"node_modules/instantsearch.js/es/lib/utils/getObjectType.js","./noop":"node_modules/instantsearch.js/es/lib/utils/noop.js","./isFiniteNumber":"node_modules/instantsearch.js/es/lib/utils/isFiniteNumber.js","./isPlainObject":"node_modules/instantsearch.js/es/lib/utils/isPlainObject.js","./uniq":"node_modules/instantsearch.js/es/lib/utils/uniq.js","./range":"node_modules/instantsearch.js/es/lib/utils/range.js","./isEqual":"node_modules/instantsearch.js/es/lib/utils/isEqual.js","./escape":"node_modules/instantsearch.js/es/lib/utils/escape.js","./find":"node_modules/instantsearch.js/es/lib/utils/find.js","./findIndex":"node_modules/instantsearch.js/es/lib/utils/findIndex.js","./mergeSearchParameters":"node_modules/instantsearch.js/es/lib/utils/mergeSearchParameters.js","./resolveSearchParameters":"node_modules/instantsearch.js/es/lib/utils/resolveSearchParameters.js","./toArray":"node_modules/instantsearch.js/es/lib/utils/toArray.js","./logger":"node_modules/instantsearch.js/es/lib/utils/logger.js","./documentation":"node_modules/instantsearch.js/es/lib/utils/documentation.js","./geo-search":"node_modules/instantsearch.js/es/lib/utils/geo-search.js","./hits-absolute-position":"node_modules/instantsearch.js/es/lib/utils/hits-absolute-position.js","./hits-query-id":"node_modules/instantsearch.js/es/lib/utils/hits-query-id.js","./isFacetRefined":"node_modules/instantsearch.js/es/lib/utils/isFacetRefined.js","./createSendEventForFacet":"node_modules/instantsearch.js/es/lib/utils/createSendEventForFacet.js","./createSendEventForHits":"node_modules/instantsearch.js/es/lib/utils/createSendEventForHits.js","./getAppIdAndApiKey":"node_modules/instantsearch.js/es/lib/utils/getAppIdAndApiKey.js","./convertNumericRefinementsToFilters":"node_modules/instantsearch.js/es/lib/utils/convertNumericRefinementsToFilters.js"}],"node_modules/instantsearch.js/es/connectors/clear-refinements/connectClearRefinements.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _utils = require("../../lib/utils");
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'clear-refinements',
-  connector: true
-});
-
-var connectClearRefinements = function connectClearRefinements(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function (widgetParams) {
-    var _ref = widgetParams || {},
-        _ref$includedAttribut = _ref.includedAttributes,
-        includedAttributes = _ref$includedAttribut === void 0 ? [] : _ref$includedAttribut,
-        _ref$excludedAttribut = _ref.excludedAttributes,
-        excludedAttributes = _ref$excludedAttribut === void 0 ? ['query'] : _ref$excludedAttribut,
-        _ref$transformItems = _ref.transformItems,
-        transformItems = _ref$transformItems === void 0 ? function (items) {
-      return items;
-    } : _ref$transformItems;
-
-    if (widgetParams.includedAttributes && widgetParams.excludedAttributes) {
-      throw new Error(withUsage('The options `includedAttributes` and `excludedAttributes` cannot be used together.'));
-    }
-
-    var connectorState = {
-      refine: _utils.noop,
-      createURL: function createURL() {
-        return '';
-      },
-      attributesToClear: []
-    };
-
-    var cachedRefine = function cachedRefine() {
-      return connectorState.refine();
-    };
-
-    var cachedCreateURL = function cachedCreateURL() {
-      return connectorState.createURL();
-    };
-
-    return {
-      $$type: 'ais.clearRefinements',
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      dispose: function dispose() {
-        unmountFn();
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          clearRefinements: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref2) {
-        var createURL = _ref2.createURL,
-            scopedResults = _ref2.scopedResults;
-        connectorState.attributesToClear = scopedResults.reduce(function (results, scopedResult) {
-          return results.concat(getAttributesToClear({
-            scopedResult: scopedResult,
-            includedAttributes: includedAttributes,
-            excludedAttributes: excludedAttributes,
-            transformItems: transformItems
-          }));
-        }, []);
-
-        connectorState.refine = function () {
-          connectorState.attributesToClear.forEach(function (_ref3) {
-            var indexHelper = _ref3.helper,
-                items = _ref3.items;
-            indexHelper.setState((0, _utils.clearRefinements)({
-              helper: indexHelper,
-              attributesToClear: items
-            })).search();
-          });
-        };
-
-        connectorState.createURL = function () {
-          return createURL(_utils.mergeSearchParameters.apply(void 0, _toConsumableArray(connectorState.attributesToClear.map(function (_ref4) {
-            var indexHelper = _ref4.helper,
-                items = _ref4.items;
-            return (0, _utils.clearRefinements)({
-              helper: indexHelper,
-              attributesToClear: items
-            });
-          }))));
-        };
-
-        return {
-          hasRefinements: connectorState.attributesToClear.some(function (attributeToClear) {
-            return attributeToClear.items.length > 0;
-          }),
-          refine: cachedRefine,
-          createURL: cachedCreateURL,
-          widgetParams: widgetParams
-        };
-      }
-    };
-  };
-};
-
-function getAttributesToClear(_ref5) {
-  var scopedResult = _ref5.scopedResult,
-      includedAttributes = _ref5.includedAttributes,
-      excludedAttributes = _ref5.excludedAttributes,
-      transformItems = _ref5.transformItems;
-  var clearsQuery = includedAttributes.indexOf('query') !== -1 || excludedAttributes.indexOf('query') === -1;
-  return {
-    helper: scopedResult.helper,
-    items: transformItems((0, _utils.uniq)((0, _utils.getRefinements)(scopedResult.results, scopedResult.helper.state, clearsQuery).map(function (refinement) {
-      return refinement.attribute;
-    }).filter(function (attribute) {
-      return (// If the array is empty (default case), we keep all the attributes
-        includedAttributes.length === 0 || // Otherwise, only add the specified attributes
-        includedAttributes.indexOf(attribute) !== -1
-      );
-    }).filter(function (attribute) {
-      return (// If the query is included, we ignore the default `excludedAttributes = ['query']`
-        attribute === 'query' && clearsQuery || // Otherwise, ignore the excluded attributes
-        excludedAttributes.indexOf(attribute) === -1
-      );
-    })))
-  };
-}
-
-var _default = connectClearRefinements;
-exports.default = _default;
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/current-refinements/connectCurrentRefinements.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _utils = require("../../lib/utils");
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'current-refinements',
-  connector: true
-});
-
-var connectCurrentRefinements = function connectCurrentRefinements(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function (widgetParams) {
-    if ((widgetParams || {}).includedAttributes && (widgetParams || {}).excludedAttributes) {
-      throw new Error(withUsage('The options `includedAttributes` and `excludedAttributes` cannot be used together.'));
-    }
-
-    var _ref = widgetParams || {},
-        includedAttributes = _ref.includedAttributes,
-        _ref$excludedAttribut = _ref.excludedAttributes,
-        excludedAttributes = _ref$excludedAttribut === void 0 ? ['query'] : _ref$excludedAttribut,
-        _ref$transformItems = _ref.transformItems,
-        transformItems = _ref$transformItems === void 0 ? function (items) {
-      return items;
-    } : _ref$transformItems;
-
-    return {
-      $$type: 'ais.currentRefinements',
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      dispose: function dispose() {
-        unmountFn();
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          currentRefinements: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref2) {
-        var results = _ref2.results,
-            scopedResults = _ref2.scopedResults,
-            _createURL = _ref2.createURL,
-            helper = _ref2.helper;
-
-        function getItems() {
-          if (!results) {
-            return transformItems(getRefinementsItems({
-              results: {},
-              helper: helper,
-              includedAttributes: includedAttributes,
-              excludedAttributes: excludedAttributes
-            }));
-          }
-
-          return scopedResults.reduce(function (accResults, scopedResult) {
-            return accResults.concat(transformItems(getRefinementsItems({
-              results: scopedResult.results,
-              helper: scopedResult.helper,
-              includedAttributes: includedAttributes,
-              excludedAttributes: excludedAttributes
-            })));
-          }, []);
-        }
-
-        return {
-          items: getItems(),
-          refine: function refine(refinement) {
-            return clearRefinement(helper, refinement);
-          },
-          createURL: function createURL(refinement) {
-            return _createURL(clearRefinementFromState(helper.state, refinement));
-          },
-          widgetParams: widgetParams
-        };
-      }
-    };
-  };
-};
-
-function getRefinementsItems(_ref3) {
-  var results = _ref3.results,
-      helper = _ref3.helper,
-      includedAttributes = _ref3.includedAttributes,
-      excludedAttributes = _ref3.excludedAttributes;
-  var clearsQuery = (includedAttributes || []).indexOf('query') !== -1 || (excludedAttributes || []).indexOf('query') === -1;
-  var filterFunction = includedAttributes ? function (item) {
-    return includedAttributes.indexOf(item.attribute) !== -1;
-  } : function (item) {
-    return excludedAttributes.indexOf(item.attribute) === -1;
-  };
-  var items = (0, _utils.getRefinements)(results, helper.state, clearsQuery).map(normalizeRefinement).filter(filterFunction);
-  return items.reduce(function (allItems, currentItem) {
-    return [].concat(_toConsumableArray(allItems.filter(function (item) {
-      return item.attribute !== currentItem.attribute;
-    })), [{
-      indexName: helper.state.index,
-      attribute: currentItem.attribute,
-      label: currentItem.attribute,
-      refinements: items.filter(function (result) {
-        return result.attribute === currentItem.attribute;
-      }) // We want to keep the order of refinements except the numeric ones.
-      .sort(function (a, b) {
-        return a.type === 'numeric' ? a.value - b.value : 0;
-      }),
-      refine: function refine(refinement) {
-        return clearRefinement(helper, refinement);
-      }
-    }]);
-  }, []);
-}
-
-function clearRefinementFromState(state, refinement) {
-  switch (refinement.type) {
-    case 'facet':
-      return state.removeFacetRefinement(refinement.attribute, String(refinement.value));
-
-    case 'disjunctive':
-      return state.removeDisjunctiveFacetRefinement(refinement.attribute, String(refinement.value));
-
-    case 'hierarchical':
-      return state.removeHierarchicalFacetRefinement(refinement.attribute);
-
-    case 'exclude':
-      return state.removeExcludeRefinement(refinement.attribute, String(refinement.value));
-
-    case 'numeric':
-      return state.removeNumericRefinement(refinement.attribute, refinement.operator, String(refinement.value));
-
-    case 'tag':
-      return state.removeTagRefinement(String(refinement.value));
-
-    case 'query':
-      return state.setQueryParameter('query', '');
-
-    default:
-      "development" === 'development' ? (0, _utils.warning)(false, "The refinement type \"".concat(refinement.type, "\" does not exist and cannot be cleared from the current refinements.")) : void 0;
-      return state;
-  }
-}
-
-function clearRefinement(helper, refinement) {
-  helper.setState(clearRefinementFromState(helper.state, refinement)).search();
-}
-
-function getOperatorSymbol(operator) {
-  switch (operator) {
-    case '>=':
-      return '≥';
-
-    case '<=':
-      return '≤';
-
-    default:
-      return operator;
-  }
-}
-
-function normalizeRefinement(refinement) {
-  var value = refinement.type === 'numeric' ? Number(refinement.name) : refinement.name;
-  var label = refinement.operator ? "".concat(getOperatorSymbol(refinement.operator), " ").concat(refinement.name) : refinement.name;
-  var normalizedRefinement = {
-    attribute: refinement.attribute,
-    type: refinement.type,
-    value: value,
-    label: label
-  };
-
-  if (refinement.operator !== undefined) {
-    normalizedRefinement.operator = refinement.operator;
-  }
-
-  if (refinement.count !== undefined) {
-    normalizedRefinement.count = refinement.count;
-  }
-
-  if (refinement.exhaustive !== undefined) {
-    normalizedRefinement.exhaustive = refinement.exhaustive;
-  }
-
-  return normalizedRefinement;
-}
-
-var _default = connectCurrentRefinements;
-exports.default = _default;
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/hierarchical-menu/connectHierarchicalMenu.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = connectHierarchicalMenu;
-
-var _utils = require("../../lib/utils");
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
-}
-
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
-}
-
-function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'hierarchical-menu',
-  connector: true
-});
-/**
- * @typedef {Object} HierarchicalMenuItem
- * @property {string} value Value of the menu item.
- * @property {string} label Human-readable value of the menu item.
- * @property {number} count Number of matched results after refinement is applied.
- * @property {isRefined} boolean Indicates if the refinement is applied.
- * @property {Object} [data = undefined] n+1 level of items, same structure HierarchicalMenuItem (default: `undefined`).
- */
-
-/**
- * @typedef {Object} CustomHierarchicalMenuWidgetOptions
- * @property {string[]} attributes Attributes to use to generate the hierarchy of the menu.
- * @property {string} [separator = '>'] Separator used in the attributes to separate level values.
- * @property {string} [rootPath = null] Prefix path to use if the first level is not the root level.
- * @property {boolean} [showParentLevel=false] Show the siblings of the selected parent levels of the current refined value. This
- * does not impact the root level.
- * @property {number} [limit = 10] Max number of values to display.
- * @property {boolean} [showMore = false] Whether to display the "show more" button.
- * @property {number} [showMoreLimit = 20] Max number of values to display when showing more.
- * @property  {string[]|function} [sortBy = ['name:asc']] How to sort refinements. Possible values: `count|isRefined|name:asc|name:desc`.
- *
- * You can also use a sort function that behaves like the standard Javascript [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Syntax).
- * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
- */
-
-/**
- * @typedef {Object} HierarchicalMenuRenderingOptions
- * @property {function(item.value): string} createURL Creates an url for the next state for a clicked item.
- * @property {HierarchicalMenuItem[]} items Values to be rendered.
- * @property {function(item.value)} refine Sets the path of the hierarchical filter and triggers a new search.
- * @property {Object} widgetParams All original `CustomHierarchicalMenuWidgetOptions` forwarded to the `renderFn`.
- */
-
-/**
- * **HierarchicalMenu** connector provides the logic to build a custom widget
- * that will give the user the ability to explore facets in a tree-like structure.
- *
- * This is commonly used for multi-level categorization of products on e-commerce
- * websites. From a UX point of view, we suggest not displaying more than two
- * levels deep.
- *
- * @type {Connector}
- * @param {function(HierarchicalMenuRenderingOptions, boolean)} renderFn Rendering function for the custom **HierarchicalMenu** widget.
- * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomHierarchicalMenuWidgetOptions)} Re-usable widget factory for a custom **HierarchicalMenu** widget.
- */
-
-function connectHierarchicalMenu(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function () {
-    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var attributes = widgetParams.attributes,
-        _widgetParams$separat = widgetParams.separator,
-        separator = _widgetParams$separat === void 0 ? ' > ' : _widgetParams$separat,
-        _widgetParams$rootPat = widgetParams.rootPath,
-        rootPath = _widgetParams$rootPat === void 0 ? null : _widgetParams$rootPat,
-        _widgetParams$showPar = widgetParams.showParentLevel,
-        showParentLevel = _widgetParams$showPar === void 0 ? true : _widgetParams$showPar,
-        _widgetParams$limit = widgetParams.limit,
-        limit = _widgetParams$limit === void 0 ? 10 : _widgetParams$limit,
-        _widgetParams$showMor = widgetParams.showMore,
-        showMore = _widgetParams$showMor === void 0 ? false : _widgetParams$showMor,
-        _widgetParams$showMor2 = widgetParams.showMoreLimit,
-        showMoreLimit = _widgetParams$showMor2 === void 0 ? 20 : _widgetParams$showMor2,
-        _widgetParams$sortBy = widgetParams.sortBy,
-        sortBy = _widgetParams$sortBy === void 0 ? ['name:asc'] : _widgetParams$sortBy,
-        _widgetParams$transfo = widgetParams.transformItems,
-        transformItems = _widgetParams$transfo === void 0 ? function (items) {
-      return items;
-    } : _widgetParams$transfo;
-
-    if (!attributes || !Array.isArray(attributes) || attributes.length === 0) {
-      throw new Error(withUsage('The `attributes` option expects an array of strings.'));
-    }
-
-    if (showMore === true && showMoreLimit <= limit) {
-      throw new Error(withUsage('The `showMoreLimit` option must be greater than `limit`.'));
-    } // we need to provide a hierarchicalFacet name for the search state
-    // so that we can always map $hierarchicalFacetName => real attributes
-    // we use the first attribute name
-
-
-    var _attributes = _slicedToArray(attributes, 1),
-        hierarchicalFacetName = _attributes[0];
-
-    var sendEvent; // Provide the same function to the `renderFn` so that way the user
-    // has to only bind it once when `isFirstRendering` for instance
-
-    var toggleShowMore = function toggleShowMore() {};
-
-    function cachedToggleShowMore() {
-      toggleShowMore();
-    }
-
-    return {
-      $$type: 'ais.hierarchicalMenu',
-      isShowingMore: false,
-      createToggleShowMore: function createToggleShowMore(renderOptions) {
-        var _this = this;
-
-        return function () {
-          _this.isShowingMore = !_this.isShowingMore;
-
-          _this.render(renderOptions);
-        };
-      },
-      getLimit: function getLimit() {
-        return this.isShowingMore ? showMoreLimit : limit;
-      },
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      _prepareFacetValues: function _prepareFacetValues(facetValues) {
-        var _this2 = this;
-
-        return facetValues.slice(0, this.getLimit()).map(function (_ref) {
-          var label = _ref.name,
-              value = _ref.path,
-              subValue = _objectWithoutProperties(_ref, ["name", "path"]);
-
-          if (Array.isArray(subValue.data)) {
-            subValue.data = _this2._prepareFacetValues(subValue.data);
-          }
-
-          return _objectSpread({}, subValue, {
-            label: label,
-            value: value
-          });
-        });
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        toggleShowMore = this.createToggleShowMore(renderOptions);
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-
-      /**
-       * @param {Object} param0 cleanup arguments
-       * @param {any} param0.state current search parameters
-       * @returns {any} next search parameters
-       */
-      dispose: function dispose(_ref2) {
-        var state = _ref2.state;
-        unmountFn();
-        return state.removeHierarchicalFacet(hierarchicalFacetName).setQueryParameter('maxValuesPerFacet', undefined);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          hierarchicalMenu: _objectSpread({}, renderState.hierarchicalMenu, _defineProperty({}, hierarchicalFacetName, this.getWidgetRenderState(renderOptions)))
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref3) {
-        var _this3 = this;
-
-        var results = _ref3.results,
-            state = _ref3.state,
-            createURL = _ref3.createURL,
-            instantSearchInstance = _ref3.instantSearchInstance,
-            helper = _ref3.helper; // Bind createURL to this specific attribute
-
-        function _createURL(facetValue) {
-          return createURL(state.toggleRefinement(hierarchicalFacetName, facetValue));
-        }
-
-        if (!sendEvent) {
-          sendEvent = (0, _utils.createSendEventForFacet)({
-            instantSearchInstance: instantSearchInstance,
-            helper: helper,
-            attribute: hierarchicalFacetName,
-            widgetType: this.$$type
-          });
-        }
-
-        if (!this._refine) {
-          this._refine = function (facetValue) {
-            sendEvent('click', facetValue);
-            helper.toggleRefinement(hierarchicalFacetName, facetValue).search();
-          };
-        }
-
-        var facetValues = results ? results.getFacetValues(hierarchicalFacetName, {
-          sortBy: sortBy
-        }).data || [] : [];
-        var items = transformItems(results ? this._prepareFacetValues(facetValues) : []);
-
-        var getHasExhaustiveItems = function getHasExhaustiveItems() {
-          if (!results) {
-            return false;
-          }
-
-          var currentLimit = _this3.getLimit(); // If the limit is the max number of facet retrieved it is impossible to know
-          // if the facets are exhaustive. The only moment we are sure it is exhaustive
-          // is when it is strictly under the number requested unless we know that another
-          // widget has requested more values (maxValuesPerFacet > getLimit()).
-          // Because this is used for making the search of facets unable or not, it is important
-          // to be conservative here.
-
-
-          return state.maxValuesPerFacet > currentLimit ? facetValues.length <= currentLimit : facetValues.length < currentLimit;
-        };
-
-        return {
-          items: items,
-          refine: this._refine,
-          createURL: _createURL,
-          sendEvent: sendEvent,
-          widgetParams: widgetParams,
-          isShowingMore: this.isShowingMore,
-          toggleShowMore: cachedToggleShowMore,
-          canToggleShowMore: showMore && (this.isShowingMore || !getHasExhaustiveItems())
-        };
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref4) {
-        var searchParameters = _ref4.searchParameters;
-        var path = searchParameters.getHierarchicalFacetBreadcrumb(hierarchicalFacetName);
-
-        if (!path.length) {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          hierarchicalMenu: _objectSpread({}, uiState.hierarchicalMenu, _defineProperty({}, hierarchicalFacetName, path))
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref5) {
-        var uiState = _ref5.uiState;
-        var values = uiState.hierarchicalMenu && uiState.hierarchicalMenu[hierarchicalFacetName];
-
-        if (searchParameters.isHierarchicalFacet(hierarchicalFacetName)) {
-          var facet = searchParameters.getHierarchicalFacetByName(hierarchicalFacetName);
-          "development" === 'development' ? (0, _utils.warning)((0, _utils.isEqual)(facet.attributes, attributes) && facet.separator === separator && facet.rootPath === rootPath, 'Using Breadcrumb and HierarchicalMenu on the same facet with different options overrides the configuration of the HierarchicalMenu.') : void 0;
-        }
-
-        var withFacetConfiguration = searchParameters.removeHierarchicalFacet(hierarchicalFacetName).addHierarchicalFacet({
-          name: hierarchicalFacetName,
-          attributes: attributes,
-          separator: separator,
-          rootPath: rootPath,
-          showParentLevel: showParentLevel
-        });
-        var currentMaxValuesPerFacet = withFacetConfiguration.maxValuesPerFacet || 0;
-        var nextMaxValuesPerFacet = Math.max(currentMaxValuesPerFacet, showMore ? showMoreLimit : limit);
-        var withMaxValuesPerFacet = withFacetConfiguration.setQueryParameter('maxValuesPerFacet', nextMaxValuesPerFacet);
-
-        if (!values) {
-          return withMaxValuesPerFacet.setQueryParameters({
-            hierarchicalFacetsRefinements: _objectSpread({}, withMaxValuesPerFacet.hierarchicalFacetsRefinements, _defineProperty({}, hierarchicalFacetName, []))
-          });
-        }
-
-        return withMaxValuesPerFacet.addHierarchicalFacetRefinement(hierarchicalFacetName, values.join(separator));
-      }
-    };
-  };
-}
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/lib/escape-highlight.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = escapeHits;
-exports.escapeFacets = escapeFacets;
-exports.TAG_REPLACEMENT = exports.TAG_PLACEHOLDER = void 0;
-
-var _utils = require("../lib/utils");
-
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var TAG_PLACEHOLDER = {
-  highlightPreTag: '__ais-highlight__',
-  highlightPostTag: '__/ais-highlight__'
-};
-exports.TAG_PLACEHOLDER = TAG_PLACEHOLDER;
-var TAG_REPLACEMENT = {
-  highlightPreTag: '<mark>',
-  highlightPostTag: '</mark>'
-};
-exports.TAG_REPLACEMENT = TAG_REPLACEMENT;
-
-function replaceTagsAndEscape(value) {
-  return (0, _utils.escape)(value).replace(new RegExp(TAG_PLACEHOLDER.highlightPreTag, 'g'), TAG_REPLACEMENT.highlightPreTag).replace(new RegExp(TAG_PLACEHOLDER.highlightPostTag, 'g'), TAG_REPLACEMENT.highlightPostTag);
-}
-
-function recursiveEscape(input) {
-  if ((0, _utils.isPlainObject)(input) && typeof input.value !== 'string') {
-    return Object.keys(input).reduce(function (acc, key) {
-      return _objectSpread({}, acc, _defineProperty({}, key, recursiveEscape(input[key])));
-    }, {});
-  }
-
-  if (Array.isArray(input)) {
-    return input.map(recursiveEscape);
-  }
-
-  return _objectSpread({}, input, {
-    value: replaceTagsAndEscape(input.value)
-  });
-}
-
-function escapeHits(hits) {
-  if (hits.__escaped === undefined) {
-    // We don't override the value on hit because it will mutate the raw results
-    // instead we make a shallow copy and we assign the escaped values on it.
-    hits = hits.map(function (_ref) {
-      var hit = _extends({}, _ref);
-
-      if (hit._highlightResult) {
-        hit._highlightResult = recursiveEscape(hit._highlightResult);
-      }
-
-      if (hit._snippetResult) {
-        hit._snippetResult = recursiveEscape(hit._snippetResult);
-      }
-
-      return hit;
-    });
-    hits.__escaped = true;
-  }
-
-  return hits;
-}
-
-function escapeFacets(facetHits) {
-  return facetHits.map(function (h) {
-    return _objectSpread({}, h, {
-      highlighted: replaceTagsAndEscape(h.highlighted)
-    });
-  });
-}
-},{"../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/hits/connectHits.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _escapeHighlight = _interopRequireWildcard(require("../../lib/escape-highlight"));
-
-var _utils = require("../../lib/utils");
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'hits',
-  connector: true
-});
-
-var connectHits = function connectHits(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function (widgetParams) {
-    var _ref = widgetParams || {},
-        _ref$escapeHTML = _ref.escapeHTML,
-        escapeHTML = _ref$escapeHTML === void 0 ? true : _ref$escapeHTML,
-        _ref$transformItems = _ref.transformItems,
-        transformItems = _ref$transformItems === void 0 ? function (items) {
-      return items;
-    } : _ref$transformItems;
-
-    var sendEvent;
-    var bindEvent;
-    return {
-      $$type: 'ais.hits',
-      init: function init(initOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: initOptions.instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var renderState = this.getWidgetRenderState(renderOptions);
-        renderState.sendEvent('view', renderState.hits);
-        renderFn(_objectSpread({}, renderState, {
-          instantSearchInstance: renderOptions.instantSearchInstance
-        }), false);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          hits: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref2) {
-        var results = _ref2.results,
-            helper = _ref2.helper,
-            instantSearchInstance = _ref2.instantSearchInstance;
-
-        if (!sendEvent) {
-          sendEvent = (0, _utils.createSendEventForHits)({
-            instantSearchInstance: instantSearchInstance,
-            index: helper.getIndex(),
-            widgetType: this.$$type
-          });
-        }
-
-        if (!bindEvent) {
-          bindEvent = (0, _utils.createBindEventForHits)({
-            index: helper.getIndex(),
-            widgetType: this.$$type
-          });
-        }
-
-        if (!results) {
-          return {
-            hits: [],
-            results: undefined,
-            sendEvent: sendEvent,
-            bindEvent: bindEvent,
-            widgetParams: widgetParams
-          };
-        }
-
-        if (escapeHTML && results.hits.length > 0) {
-          results.hits = (0, _escapeHighlight.default)(results.hits);
-        }
-
-        var initialEscaped = results.hits.__escaped;
-        results.hits = (0, _utils.addAbsolutePosition)(results.hits, results.page, results.hitsPerPage);
-        results.hits = (0, _utils.addQueryID)(results.hits, results.queryID);
-        results.hits = transformItems(results.hits); // Make sure the escaped tag stays, even after mapping over the hits.
-        // This prevents the hits from being double-escaped if there are multiple
-        // hits widgets mounted on the page.
-
-        results.hits.__escaped = initialEscaped;
-        return {
-          hits: results.hits,
-          results: results,
-          sendEvent: sendEvent,
-          bindEvent: bindEvent,
-          widgetParams: widgetParams
-        };
-      },
-      dispose: function dispose(_ref3) {
-        var state = _ref3.state;
-        unmountFn();
-
-        if (!escapeHTML) {
-          return state;
-        }
-
-        return state.setQueryParameters(Object.keys(_escapeHighlight.TAG_PLACEHOLDER).reduce(function (acc, key) {
-          return _objectSpread({}, acc, _defineProperty({}, key, undefined));
-        }, {}));
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(state) {
-        if (!escapeHTML) {
-          return state;
-        }
-
-        return state.setQueryParameters(_escapeHighlight.TAG_PLACEHOLDER);
-      }
-    };
-  };
-};
-
-var _default = connectHits;
-exports.default = _default;
-},{"../../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/lib/insights/client.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = withInsights;
-exports.inferPayload = void 0;
-
-var _utils = require("../utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var getSelectedHits = function getSelectedHits(hits, selectedObjectIDs) {
-  return selectedObjectIDs.map(function (objectID) {
-    var hit = (0, _utils.find)(hits, function (h) {
-      return h.objectID === objectID;
-    });
-
-    if (typeof hit === 'undefined') {
-      throw new Error("Could not find objectID \"".concat(objectID, "\" passed to `clickedObjectIDsAfterSearch` in the returned hits. This is necessary to infer the absolute position and the query ID."));
-    }
-
-    return hit;
-  });
-};
-
-var getQueryID = function getQueryID(selectedHits) {
-  var queryIDs = (0, _utils.uniq)(selectedHits.map(function (hit) {
-    return hit.__queryID;
-  }));
-
-  if (queryIDs.length > 1) {
-    throw new Error('Insights currently allows a single `queryID`. The `objectIDs` provided map to multiple `queryID`s.');
-  }
-
-  var queryID = queryIDs[0];
-
-  if (typeof queryID !== 'string') {
-    throw new Error("Could not infer `queryID`. Ensure InstantSearch `clickAnalytics: true` was added with the Configure widget.\n\nSee: https://alg.li/lNiZZ7");
-  }
-
-  return queryID;
-};
-
-var getPositions = function getPositions(selectedHits) {
-  return selectedHits.map(function (hit) {
-    return hit.__position;
-  });
-};
-
-var inferPayload = function inferPayload(_ref) {
-  var method = _ref.method,
-      results = _ref.results,
-      hits = _ref.hits,
-      objectIDs = _ref.objectIDs;
-  var index = results.index;
-  var selectedHits = getSelectedHits(hits, objectIDs);
-  var queryID = getQueryID(selectedHits);
-
-  switch (method) {
-    case 'clickedObjectIDsAfterSearch':
-      {
-        var positions = getPositions(selectedHits);
-        return {
-          index: index,
-          queryID: queryID,
-          objectIDs: objectIDs,
-          positions: positions
-        };
-      }
-
-    case 'convertedObjectIDsAfterSearch':
-      return {
-        index: index,
-        queryID: queryID,
-        objectIDs: objectIDs
-      };
-
-    default:
-      throw new Error("Unsupported method passed to insights: \"".concat(method, "\"."));
-  }
-};
-
-exports.inferPayload = inferPayload;
-
-var wrapInsightsClient = function wrapInsightsClient(aa, results, hits) {
-  return function (method, payload) {
-    "development" === 'development' ? (0, _utils.warning)(false, "`insights` function has been deprecated. It is still supported in 4.x releases, but not further. It is replaced by the `insights` middleware.\n\nFor more information, visit https://www.algolia.com/doc/guides/getting-insights-and-analytics/search-analytics/click-through-and-conversions/how-to/send-click-and-conversion-events-with-instantsearch/js/") : void 0;
-
-    if (!aa) {
-      var withInstantSearchUsage = (0, _utils.createDocumentationMessageGenerator)({
-        name: 'instantsearch'
-      });
-      throw new Error(withInstantSearchUsage('The `insightsClient` option has not been provided to `instantsearch`.'));
-    }
-
-    if (!Array.isArray(payload.objectIDs)) {
-      throw new TypeError('Expected `objectIDs` to be an array.');
-    }
-
-    var inferredPayload = inferPayload({
-      method: method,
-      results: results,
-      hits: hits,
-      objectIDs: payload.objectIDs
-    });
-    aa(method, _objectSpread({}, inferredPayload, {}, payload));
-  };
-};
-/**
- * @deprecated This function will be still supported in 4.x releases, but not further. It is replaced by the `insights` middleware. For more information, visit https://www.algolia.com/doc/guides/getting-insights-and-analytics/search-analytics/click-through-and-conversions/how-to/send-click-and-conversion-events-with-instantsearch/js/
- * It passes `insights` to `HitsWithInsightsListener` and `InfiniteHitsWithInsightsListener`.
- */
-
-
-function withInsights(connector) {
-  var wrapRenderFn = function wrapRenderFn(renderFn) {
-    return function (renderOptions, isFirstRender) {
-      var results = renderOptions.results,
-          hits = renderOptions.hits,
-          instantSearchInstance = renderOptions.instantSearchInstance;
-
-      if (results && hits && instantSearchInstance) {
-        var insights = wrapInsightsClient(instantSearchInstance.insightsClient, results, hits);
-        return renderFn(_objectSpread({}, renderOptions, {
-          insights: insights
-        }), isFirstRender);
-      }
-
-      return renderFn(renderOptions, isFirstRender);
-    };
-  };
-
-  return function (renderFn, unmountFn) {
-    return connector(wrapRenderFn(renderFn), unmountFn);
-  };
-}
-},{"../utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/preact/dist/preact.module.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.render = O;
-exports.hydrate = S;
-exports.h = exports.createElement = v;
-exports.Fragment = p;
-exports.createRef = y;
-exports.Component = d;
-exports.cloneElement = q;
-exports.createContext = B;
-exports.toChildArray = b;
-exports.__u = L;
-exports.options = exports.isValidElement = void 0;
-var n,
-    l,
-    u,
-    i,
-    t,
-    o,
-    r,
-    f = {},
-    e = [],
-    c = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;
-exports.isValidElement = l;
-exports.options = n;
-
-function s(n, l) {
-  for (var u in l) n[u] = l[u];
-
-  return n;
-}
-
-function a(n) {
-  var l = n.parentNode;
-  l && l.removeChild(n);
-}
-
-function v(n, l, u) {
-  var i,
-      t,
-      o,
-      r = arguments,
-      f = {};
-
-  for (o in l) "key" == o ? i = l[o] : "ref" == o ? t = l[o] : f[o] = l[o];
-
-  if (arguments.length > 3) for (u = [u], o = 3; o < arguments.length; o++) u.push(r[o]);
-  if (null != u && (f.children = u), "function" == typeof n && null != n.defaultProps) for (o in n.defaultProps) void 0 === f[o] && (f[o] = n.defaultProps[o]);
-  return h(n, f, i, t, null);
-}
-
-function h(l, u, i, t, o) {
-  var r = {
-    type: l,
-    props: u,
-    key: i,
-    ref: t,
-    __k: null,
-    __: null,
-    __b: 0,
-    __e: null,
-    __d: void 0,
-    __c: null,
-    __h: null,
-    constructor: void 0,
-    __v: null == o ? ++n.__v : o
-  };
-  return null != n.vnode && n.vnode(r), r;
-}
-
-function y() {
-  return {
-    current: null
-  };
-}
-
-function p(n) {
-  return n.children;
-}
-
-function d(n, l) {
-  this.props = n, this.context = l;
-}
-
-function _(n, l) {
-  if (null == l) return n.__ ? _(n.__, n.__.__k.indexOf(n) + 1) : null;
-
-  for (var u; l < n.__k.length; l++) if (null != (u = n.__k[l]) && null != u.__e) return u.__e;
-
-  return "function" == typeof n.type ? _(n) : null;
-}
-
-function w(n) {
-  var l, u;
-
-  if (null != (n = n.__) && null != n.__c) {
-    for (n.__e = n.__c.base = null, l = 0; l < n.__k.length; l++) if (null != (u = n.__k[l]) && null != u.__e) {
-      n.__e = n.__c.base = u.__e;
-      break;
-    }
-
-    return w(n);
-  }
-}
-
-function k(l) {
-  (!l.__d && (l.__d = !0) && u.push(l) && !g.__r++ || t !== n.debounceRendering) && ((t = n.debounceRendering) || i)(g);
-}
-
-function g() {
-  for (var n; g.__r = u.length;) n = u.sort(function (n, l) {
-    return n.__v.__b - l.__v.__b;
-  }), u = [], n.some(function (n) {
-    var l, u, i, t, o, r, f;
-    n.__d && (r = (o = (l = n).__v).__e, (f = l.__P) && (u = [], (i = s({}, o)).__v = o.__v + 1, t = $(f, o, i, l.__n, void 0 !== f.ownerSVGElement, null != o.__h ? [r] : null, u, null == r ? _(o) : r, o.__h), j(u, o), t != r && w(o)));
-  });
-}
-
-function m(n, l, u, i, t, o, r, c, s, v) {
-  var y,
-      d,
-      w,
-      k,
-      g,
-      m,
-      b,
-      A = i && i.__k || e,
-      P = A.length;
-
-  for (s == f && (s = null != r ? r[0] : P ? _(i, 0) : null), u.__k = [], y = 0; y < l.length; y++) if (null != (k = u.__k[y] = null == (k = l[y]) || "boolean" == typeof k ? null : "string" == typeof k || "number" == typeof k ? h(null, k, null, null, k) : Array.isArray(k) ? h(p, {
-    children: k
-  }, null, null, null) : null != k.__e || null != k.__c ? h(k.type, k.props, k.key, null, k.__v) : k)) {
-    if (k.__ = u, k.__b = u.__b + 1, null === (w = A[y]) || w && k.key == w.key && k.type === w.type) A[y] = void 0;else for (d = 0; d < P; d++) {
-      if ((w = A[d]) && k.key == w.key && k.type === w.type) {
-        A[d] = void 0;
-        break;
-      }
-
-      w = null;
-    }
-    g = $(n, k, w = w || f, t, o, r, c, s, v), (d = k.ref) && w.ref != d && (b || (b = []), w.ref && b.push(w.ref, null, k), b.push(d, k.__c || g, k)), null != g ? (null == m && (m = g), s = x(n, k, w, A, r, g, s), v || "option" != u.type ? "function" == typeof u.type && (u.__d = s) : n.value = "") : s && w.__e == s && s.parentNode != n && (s = _(w));
-  }
-
-  if (u.__e = m, null != r && "function" != typeof u.type) for (y = r.length; y--;) null != r[y] && a(r[y]);
-
-  for (y = P; y--;) null != A[y] && L(A[y], A[y]);
-
-  if (b) for (y = 0; y < b.length; y++) I(b[y], b[++y], b[++y]);
-}
-
-function b(n, l) {
-  return l = l || [], null == n || "boolean" == typeof n || (Array.isArray(n) ? n.some(function (n) {
-    b(n, l);
-  }) : l.push(n)), l;
-}
-
-function x(n, l, u, i, t, o, r) {
-  var f, e, c;
-  if (void 0 !== l.__d) f = l.__d, l.__d = void 0;else if (t == u || o != r || null == o.parentNode) n: if (null == r || r.parentNode !== n) n.appendChild(o), f = null;else {
-    for (e = r, c = 0; (e = e.nextSibling) && c < i.length; c += 2) if (e == o) break n;
-
-    n.insertBefore(o, r), f = r;
-  }
-  return void 0 !== f ? f : o.nextSibling;
-}
-
-function A(n, l, u, i, t) {
-  var o;
-
-  for (o in u) "children" === o || "key" === o || o in l || C(n, o, null, u[o], i);
-
-  for (o in l) t && "function" != typeof l[o] || "children" === o || "key" === o || "value" === o || "checked" === o || u[o] === l[o] || C(n, o, l[o], u[o], i);
-}
-
-function P(n, l, u) {
-  "-" === l[0] ? n.setProperty(l, u) : n[l] = null == u ? "" : "number" != typeof u || c.test(l) ? u : u + "px";
-}
-
-function C(n, l, u, i, t) {
-  var o, r, f;
-  if (t && "className" == l && (l = "class"), "style" === l) {
-    if ("string" == typeof u) n.style.cssText = u;else {
-      if ("string" == typeof i && (n.style.cssText = i = ""), i) for (l in i) u && l in u || P(n.style, l, "");
-      if (u) for (l in u) i && u[l] === i[l] || P(n.style, l, u[l]);
-    }
-  } else "o" === l[0] && "n" === l[1] ? (o = l !== (l = l.replace(/Capture$/, "")), (r = l.toLowerCase()) in n && (l = r), l = l.slice(2), n.l || (n.l = {}), n.l[l + o] = u, f = o ? N : z, u ? i || n.addEventListener(l, f, o) : n.removeEventListener(l, f, o)) : "list" !== l && "tagName" !== l && "form" !== l && "type" !== l && "size" !== l && "download" !== l && "href" !== l && !t && l in n ? n[l] = null == u ? "" : u : "function" != typeof u && "dangerouslySetInnerHTML" !== l && (l !== (l = l.replace(/xlink:?/, "")) ? null == u || !1 === u ? n.removeAttributeNS("http://www.w3.org/1999/xlink", l.toLowerCase()) : n.setAttributeNS("http://www.w3.org/1999/xlink", l.toLowerCase(), u) : null == u || !1 === u && !/^ar/.test(l) ? n.removeAttribute(l) : n.setAttribute(l, u));
-}
-
-function z(l) {
-  this.l[l.type + !1](n.event ? n.event(l) : l);
-}
-
-function N(l) {
-  this.l[l.type + !0](n.event ? n.event(l) : l);
-}
-
-function T(n, l, u) {
-  var i, t;
-
-  for (i = 0; i < n.__k.length; i++) (t = n.__k[i]) && (t.__ = n, t.__e && ("function" == typeof t.type && t.__k.length > 1 && T(t, l, u), l = x(u, t, t, n.__k, null, t.__e, l), "function" == typeof n.type && (n.__d = l)));
-}
-
-function $(l, u, i, t, o, r, f, e, c) {
-  var a,
-      v,
-      h,
-      y,
-      _,
-      w,
-      k,
-      g,
-      b,
-      x,
-      A,
-      P = u.type;
-
-  if (void 0 !== u.constructor) return null;
-  null != i.__h && (c = i.__h, e = u.__e = i.__e, u.__h = null, r = [e]), (a = n.__b) && a(u);
-
-  try {
-    n: if ("function" == typeof P) {
-      if (g = u.props, b = (a = P.contextType) && t[a.__c], x = a ? b ? b.props.value : a.__ : t, i.__c ? k = (v = u.__c = i.__c).__ = v.__E : ("prototype" in P && P.prototype.render ? u.__c = v = new P(g, x) : (u.__c = v = new d(g, x), v.constructor = P, v.render = M), b && b.sub(v), v.props = g, v.state || (v.state = {}), v.context = x, v.__n = t, h = v.__d = !0, v.__h = []), null == v.__s && (v.__s = v.state), null != P.getDerivedStateFromProps && (v.__s == v.state && (v.__s = s({}, v.__s)), s(v.__s, P.getDerivedStateFromProps(g, v.__s))), y = v.props, _ = v.state, h) null == P.getDerivedStateFromProps && null != v.componentWillMount && v.componentWillMount(), null != v.componentDidMount && v.__h.push(v.componentDidMount);else {
-        if (null == P.getDerivedStateFromProps && g !== y && null != v.componentWillReceiveProps && v.componentWillReceiveProps(g, x), !v.__e && null != v.shouldComponentUpdate && !1 === v.shouldComponentUpdate(g, v.__s, x) || u.__v === i.__v) {
-          v.props = g, v.state = v.__s, u.__v !== i.__v && (v.__d = !1), v.__v = u, u.__e = i.__e, u.__k = i.__k, v.__h.length && f.push(v), T(u, e, l);
-          break n;
-        }
-
-        null != v.componentWillUpdate && v.componentWillUpdate(g, v.__s, x), null != v.componentDidUpdate && v.__h.push(function () {
-          v.componentDidUpdate(y, _, w);
-        });
-      }
-      v.context = x, v.props = g, v.state = v.__s, (a = n.__r) && a(u), v.__d = !1, v.__v = u, v.__P = l, a = v.render(v.props, v.state, v.context), v.state = v.__s, null != v.getChildContext && (t = s(s({}, t), v.getChildContext())), h || null == v.getSnapshotBeforeUpdate || (w = v.getSnapshotBeforeUpdate(y, _)), A = null != a && a.type == p && null == a.key ? a.props.children : a, m(l, Array.isArray(A) ? A : [A], u, i, t, o, r, f, e, c), v.base = u.__e, u.__h = null, v.__h.length && f.push(v), k && (v.__E = v.__ = null), v.__e = !1;
-    } else null == r && u.__v === i.__v ? (u.__k = i.__k, u.__e = i.__e) : u.__e = H(i.__e, u, i, t, o, r, f, c);
-
-    (a = n.diffed) && a(u);
-  } catch (l) {
-    u.__v = null, (c || null != r) && (u.__e = e, u.__h = !!c, r[r.indexOf(e)] = null), n.__e(l, u, i);
-  }
-
-  return u.__e;
-}
-
-function j(l, u) {
-  n.__c && n.__c(u, l), l.some(function (u) {
-    try {
-      l = u.__h, u.__h = [], l.some(function (n) {
-        n.call(u);
-      });
-    } catch (l) {
-      n.__e(l, u.__v);
-    }
-  });
-}
-
-function H(n, l, u, i, t, o, r, c) {
-  var s,
-      a,
-      v,
-      h,
-      y,
-      p = u.props,
-      d = l.props;
-  if (t = "svg" === l.type || t, null != o) for (s = 0; s < o.length; s++) if (null != (a = o[s]) && ((null === l.type ? 3 === a.nodeType : a.localName === l.type) || n == a)) {
-    n = a, o[s] = null;
-    break;
-  }
-
-  if (null == n) {
-    if (null === l.type) return document.createTextNode(d);
-    n = t ? document.createElementNS("http://www.w3.org/2000/svg", l.type) : document.createElement(l.type, d.is && {
-      is: d.is
-    }), o = null, c = !1;
-  }
-
-  if (null === l.type) p === d || c && n.data === d || (n.data = d);else {
-    if (null != o && (o = e.slice.call(n.childNodes)), v = (p = u.props || f).dangerouslySetInnerHTML, h = d.dangerouslySetInnerHTML, !c) {
-      if (null != o) for (p = {}, y = 0; y < n.attributes.length; y++) p[n.attributes[y].name] = n.attributes[y].value;
-      (h || v) && (h && (v && h.__html == v.__html || h.__html === n.innerHTML) || (n.innerHTML = h && h.__html || ""));
-    }
-
-    A(n, d, p, t, c), h ? l.__k = [] : (s = l.props.children, m(n, Array.isArray(s) ? s : [s], l, u, i, "foreignObject" !== l.type && t, o, r, f, c)), c || ("value" in d && void 0 !== (s = d.value) && (s !== n.value || "progress" === l.type && !s) && C(n, "value", s, p.value, !1), "checked" in d && void 0 !== (s = d.checked) && s !== n.checked && C(n, "checked", s, p.checked, !1));
-  }
-  return n;
-}
-
-function I(l, u, i) {
-  try {
-    "function" == typeof l ? l(u) : l.current = u;
-  } catch (l) {
-    n.__e(l, i);
-  }
-}
-
-function L(l, u, i) {
-  var t, o, r;
-
-  if (n.unmount && n.unmount(l), (t = l.ref) && (t.current && t.current !== l.__e || I(t, null, u)), i || "function" == typeof l.type || (i = null != (o = l.__e)), l.__e = l.__d = void 0, null != (t = l.__c)) {
-    if (t.componentWillUnmount) try {
-      t.componentWillUnmount();
-    } catch (l) {
-      n.__e(l, u);
-    }
-    t.base = t.__P = null;
-  }
-
-  if (t = l.__k) for (r = 0; r < t.length; r++) t[r] && L(t[r], u, i);
-  null != o && a(o);
-}
-
-function M(n, l, u) {
-  return this.constructor(n, u);
-}
-
-function O(l, u, i) {
-  var t, r, c;
-  n.__ && n.__(l, u), r = (t = i === o) ? null : i && i.__k || u.__k, l = v(p, null, [l]), c = [], $(u, (t ? u : i || u).__k = l, r || f, f, void 0 !== u.ownerSVGElement, i && !t ? [i] : r ? null : u.childNodes.length ? e.slice.call(u.childNodes) : null, c, i || f, t), j(c, l);
-}
-
-function S(n, l) {
-  O(n, l, o);
-}
-
-function q(n, l, u) {
-  var i,
-      t,
-      o,
-      r = arguments,
-      f = s({}, n.props);
-
-  for (o in l) "key" == o ? i = l[o] : "ref" == o ? t = l[o] : f[o] = l[o];
-
-  if (arguments.length > 3) for (u = [u], o = 3; o < arguments.length; o++) u.push(r[o]);
-  return null != u && (f.children = u), h(n.type, f, i || n.key, t || n.ref, null);
-}
-
-function B(n, l) {
-  var u = {
-    __c: l = "__cC" + r++,
-    __: n,
-    Consumer: function (n, l) {
-      return n.children(l);
-    },
-    Provider: function (n, u, i) {
-      return this.getChildContext || (u = [], (i = {})[l] = this, this.getChildContext = function () {
-        return i;
-      }, this.shouldComponentUpdate = function (n) {
-        this.props.value !== n.value && u.some(k);
-      }, this.sub = function (n) {
-        u.push(n);
-        var l = n.componentWillUnmount;
-
-        n.componentWillUnmount = function () {
-          u.splice(u.indexOf(n), 1), l && l.call(n);
-        };
-      }), n.children;
-    }
-  };
-  return u.Provider.__ = u.Consumer.contextType = u;
-}
-
-exports.options = n = {
-  __e: function (n, l) {
-    for (var u, i, t, o = l.__h; l = l.__;) if ((u = l.__c) && !u.__) try {
-      if ((i = u.constructor) && null != i.getDerivedStateFromError && (u.setState(i.getDerivedStateFromError(n)), t = u.__d), null != u.componentDidCatch && (u.componentDidCatch(n), t = u.__d), t) return l.__h = o, u.__E = u;
-    } catch (l) {
-      n = l;
-    }
-
-    throw n;
-  },
-  __v: 0
-}, exports.isValidElement = l = function (n) {
-  return null != n && void 0 === n.constructor;
-}, d.prototype.setState = function (n, l) {
-  var u;
-  u = null != this.__s && this.__s !== this.state ? this.__s : this.__s = s({}, this.state), "function" == typeof n && (n = n(s({}, u), this.props)), n && s(u, n), null != n && this.__v && (l && this.__h.push(l), k(this));
-}, d.prototype.forceUpdate = function (n) {
-  this.__v && (this.__e = !0, n && this.__h.push(n), k(this));
-}, d.prototype.render = p, u = [], i = "function" == typeof Promise ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout, g.__r = 0, o = f, r = 0;
-},{}],"node_modules/instantsearch.js/es/helpers/insights.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.readDataAttributes = readDataAttributes;
-exports.hasDataAttributes = hasDataAttributes;
-exports.writeDataAttributes = writeDataAttributes;
-exports.default = insights;
-
-var _utils = require("../lib/utils");
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-function readDataAttributes(domElement) {
-  var method = domElement.getAttribute('data-insights-method');
-  var serializedPayload = domElement.getAttribute('data-insights-payload');
-
-  if (typeof serializedPayload !== 'string') {
-    throw new Error('The insights helper expects `data-insights-payload` to be a base64-encoded JSON string.');
-  }
-
-  try {
-    var payload = JSON.parse(atob(serializedPayload));
-    return {
-      method: method,
-      payload: payload
-    };
-  } catch (error) {
-    throw new Error('The insights helper was unable to parse `data-insights-payload`.');
-  }
-}
-
-function hasDataAttributes(domElement) {
-  return domElement.hasAttribute('data-insights-method');
-}
-
-function writeDataAttributes(_ref) {
-  var method = _ref.method,
-      payload = _ref.payload;
-
-  if (_typeof(payload) !== 'object') {
-    throw new Error("The insights helper expects the payload to be an object.");
-  }
-
-  var serializedPayload;
-
-  try {
-    serializedPayload = btoa(JSON.stringify(payload));
-  } catch (error) {
-    throw new Error("Could not JSON serialize the payload object.");
-  }
-
-  return "data-insights-method=\"".concat(method, "\" data-insights-payload=\"").concat(serializedPayload, "\"");
-}
-/**
- * @deprecated This function will be still supported in 4.x releases, but not further. It is replaced by the `insights` middleware. For more information, visit https://www.algolia.com/doc/guides/getting-insights-and-analytics/search-analytics/click-through-and-conversions/how-to/send-click-and-conversion-events-with-instantsearch/js/
- */
-
-
-function insights(method, payload) {
-  "development" === 'development' ? (0, _utils.warning)(false, "`insights` function has been deprecated. It is still supported in 4.x releases, but not further. It is replaced by the `insights` middleware.\n\nFor more information, visit https://www.algolia.com/doc/guides/getting-insights-and-analytics/search-analytics/click-through-and-conversions/how-to/send-click-and-conversion-events-with-instantsearch/js/") : void 0;
-  return writeDataAttributes({
-    method: method,
-    payload: payload
-  });
-}
-},{"../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/lib/insights/listener.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _preact = require("preact");
-
-var _insights = require("../../helpers/insights");
-
-/** @jsx h */
-var findInsightsTarget = function findInsightsTarget(startElement, endElement, validator) {
-  var element = startElement;
-
-  while (element && !validator(element)) {
-    if (element === endElement) {
-      return null;
-    }
-
-    element = element.parentElement;
-  }
-
-  return element;
-};
-
-var parseInsightsEvent = function parseInsightsEvent(element) {
-  var serializedPayload = element.getAttribute('data-insights-event');
-
-  if (typeof serializedPayload !== 'string') {
-    throw new Error('The insights middleware expects `data-insights-event` to be a base64-encoded JSON string.');
-  }
-
-  try {
-    return JSON.parse(atob(serializedPayload));
-  } catch (error) {
-    throw new Error('The insights middleware was unable to parse `data-insights-event`.');
-  }
-};
-
-var insightsListener = function insightsListener(BaseComponent) {
-  function WithInsightsListener(props) {
-    var handleClick = function handleClick(event) {
-      if (props.sendEvent) {
-        // new way with insights middleware
-        var targetWithEvent = findInsightsTarget(event.target, event.currentTarget, function (element) {
-          return element.hasAttribute('data-insights-event');
-        });
-
-        if (targetWithEvent) {
-          var payload = parseInsightsEvent(targetWithEvent);
-          props.sendEvent(payload);
-        }
-      } // old way, e.g. instantsearch.insights("clickedObjectIDsAfterSearch", { .. })
-
-
-      var insightsTarget = findInsightsTarget(event.target, event.currentTarget, function (element) {
-        return (0, _insights.hasDataAttributes)(element);
-      });
-
-      if (insightsTarget) {
-        var _readDataAttributes = (0, _insights.readDataAttributes)(insightsTarget),
-            method = _readDataAttributes.method,
-            _payload = _readDataAttributes.payload;
-
-        props.insights(method, _payload);
-      }
-    };
-
-    return (0, _preact.h)("div", {
-      onClick: handleClick
-    }, (0, _preact.h)(BaseComponent, props));
-  }
-
-  return WithInsightsListener;
-};
-
-var _default = insightsListener;
-exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","../../helpers/insights":"node_modules/instantsearch.js/es/helpers/insights.js"}],"node_modules/instantsearch.js/es/lib/insights/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "withInsights", {
-  enumerable: true,
-  get: function () {
-    return _client.default;
-  }
-});
-Object.defineProperty(exports, "inferInsightsPayload", {
-  enumerable: true,
-  get: function () {
-    return _client.inferPayload;
-  }
-});
-Object.defineProperty(exports, "withInsightsListener", {
-  enumerable: true,
-  get: function () {
-    return _listener.default;
-  }
-});
-
-var _client = _interopRequireWildcard(require("./client"));
-
-var _listener = _interopRequireDefault(require("./listener"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-},{"./client":"node_modules/instantsearch.js/es/lib/insights/client.js","./listener":"node_modules/instantsearch.js/es/lib/insights/listener.js"}],"node_modules/instantsearch.js/es/connectors/hits/connectHitsWithInsights.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _insights = require("../../lib/insights");
-
-var _connectHits = _interopRequireDefault(require("./connectHits"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var connectHitsWithInsights = (0, _insights.withInsights)(_connectHits.default);
-var _default = connectHitsWithInsights;
-exports.default = _default;
-},{"../../lib/insights":"node_modules/instantsearch.js/es/lib/insights/index.js","./connectHits":"node_modules/instantsearch.js/es/connectors/hits/connectHits.js"}],"node_modules/instantsearch.js/es/connectors/hits-per-page/connectHitsPerPage.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _utils = require("../../lib/utils");
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'hits-per-page',
-  connector: true
-});
-
-var connectHitsPerPage = function connectHitsPerPage(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function (widgetParams) {
-    var _ref = widgetParams || {},
-        userItems = _ref.items,
-        _ref$transformItems = _ref.transformItems,
-        transformItems = _ref$transformItems === void 0 ? function (items) {
-      return items;
-    } : _ref$transformItems;
-
-    var items = userItems;
-
-    if (!Array.isArray(items)) {
-      throw new Error(withUsage('The `items` option expects an array of objects.'));
-    }
-
-    var defaultItems = items.filter(function (item) {
-      return item.default === true;
-    });
-
-    if (defaultItems.length === 0) {
-      throw new Error(withUsage("A default value must be specified in `items`."));
-    }
-
-    if (defaultItems.length > 1) {
-      throw new Error(withUsage('More than one default value is specified in `items`.'));
-    }
-
-    var defaultItem = defaultItems[0];
-
-    var normalizeItems = function normalizeItems(_ref2) {
-      var hitsPerPage = _ref2.hitsPerPage;
-      return items.map(function (item) {
-        return _objectSpread({}, item, {
-          isRefined: Number(item.value) === Number(hitsPerPage)
-        });
-      });
-    };
-
-    var connectorState = {
-      getRefine: function getRefine(helper) {
-        return function (value) {
-          return !value && value !== 0 ? helper.setQueryParameter('hitsPerPage', undefined).search() : helper.setQueryParameter('hitsPerPage', value).search();
-        };
-      },
-      createURLFactory: function createURLFactory(_ref3) {
-        var state = _ref3.state,
-            createURL = _ref3.createURL;
-        return function (value) {
-          return createURL(state.setQueryParameter('hitsPerPage', !value && value !== 0 ? undefined : value));
-        };
-      }
-    };
-    return {
-      $$type: 'ais.hitsPerPage',
-      init: function init(initOptions) {
-        var state = initOptions.state,
-            instantSearchInstance = initOptions.instantSearchInstance;
-        var isCurrentInOptions = items.some(function (item) {
-          return Number(state.hitsPerPage) === Number(item.value);
-        });
-
-        if (!isCurrentInOptions) {
-          "development" === 'development' ? (0, _utils.warning)(state.hitsPerPage !== undefined, "\n`hitsPerPage` is not defined.\nThe option `hitsPerPage` needs to be set using the `configure` widget.\n\nLearn more: https://www.algolia.com/doc/api-reference/widgets/hits-per-page/js/\n            ") : void 0;
-          "development" === 'development' ? (0, _utils.warning)(false, "\nThe `items` option of `hitsPerPage` does not contain the \"hits per page\" value coming from the state: ".concat(state.hitsPerPage, ".\n\nYou may want to add another entry to the `items` option with this value.")) : void 0;
-          items = [// The helper will convert the empty string to `undefined`.
-          {
-            value: '',
-            label: ''
-          }].concat(_toConsumableArray(items));
-        }
-
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      dispose: function dispose(_ref4) {
-        var state = _ref4.state;
-        unmountFn();
-        return state.setQueryParameter('hitsPerPage', undefined);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          hitsPerPage: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref5) {
-        var state = _ref5.state,
-            results = _ref5.results,
-            createURL = _ref5.createURL,
-            helper = _ref5.helper;
-        return {
-          items: transformItems(normalizeItems(state)),
-          refine: connectorState.getRefine(helper),
-          createURL: connectorState.createURLFactory({
-            state: state,
-            createURL: createURL
-          }),
-          hasNoResults: results ? results.nbHits === 0 : true,
-          widgetParams: widgetParams
-        };
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref6) {
-        var searchParameters = _ref6.searchParameters;
-        var hitsPerPage = searchParameters.hitsPerPage;
-
-        if (hitsPerPage === undefined || hitsPerPage === defaultItem.value) {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          hitsPerPage: hitsPerPage
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref7) {
-        var uiState = _ref7.uiState;
-        return searchParameters.setQueryParameters({
-          hitsPerPage: uiState.hitsPerPage || defaultItem.value
-        });
-      }
-    };
-  };
-};
-
-var _default = connectHitsPerPage;
-exports.default = _default;
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHits.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _escapeHighlight = _interopRequireWildcard(require("../../lib/escape-highlight"));
-
-var _utils = require("../../lib/utils");
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'infinite-hits',
-  connector: true
-});
-
-function getStateWithoutPage(state) {
-  var _ref = state || {},
-      page = _ref.page,
-      rest = _objectWithoutProperties(_ref, ["page"]);
-
-  return rest;
-}
-
-function getInMemoryCache() {
-  var cachedHits = null;
-  var cachedState = undefined;
-  return {
-    read: function read(_ref2) {
-      var state = _ref2.state;
-      return (0, _utils.isEqual)(cachedState, getStateWithoutPage(state)) ? cachedHits : null;
-    },
-    write: function write(_ref3) {
-      var state = _ref3.state,
-          hits = _ref3.hits;
-      cachedState = getStateWithoutPage(state);
-      cachedHits = hits;
-    }
-  };
-}
-
-function extractHitsFromCachedHits(cachedHits) {
-  return Object.keys(cachedHits).map(Number).sort(function (a, b) {
-    return a - b;
-  }).reduce(function (acc, page) {
-    return acc.concat(cachedHits[page]);
-  }, []);
-}
-
-var connectInfiniteHits = function connectInfiniteHits(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function (widgetParams) {
-    var _ref4 = widgetParams || {},
-        _ref4$escapeHTML = _ref4.escapeHTML,
-        escapeHTML = _ref4$escapeHTML === void 0 ? true : _ref4$escapeHTML,
-        _ref4$transformItems = _ref4.transformItems,
-        transformItems = _ref4$transformItems === void 0 ? function (items) {
-      return items;
-    } : _ref4$transformItems,
-        _ref4$cache = _ref4.cache,
-        cache = _ref4$cache === void 0 ? getInMemoryCache() : _ref4$cache;
-
-    var showPrevious;
-    var showMore;
-    var sendEvent;
-    var bindEvent;
-
-    var getFirstReceivedPage = function getFirstReceivedPage(state, cachedHits) {
-      var _state$page = state.page,
-          page = _state$page === void 0 ? 0 : _state$page;
-      var pages = Object.keys(cachedHits).map(Number);
-
-      if (pages.length === 0) {
-        return page;
-      } else {
-        return Math.min.apply(Math, [page].concat(_toConsumableArray(pages)));
-      }
-    };
-
-    var getLastReceivedPage = function getLastReceivedPage(state, cachedHits) {
-      var _state$page2 = state.page,
-          page = _state$page2 === void 0 ? 0 : _state$page2;
-      var pages = Object.keys(cachedHits).map(Number);
-
-      if (pages.length === 0) {
-        return page;
-      } else {
-        return Math.max.apply(Math, [page].concat(_toConsumableArray(pages)));
-      }
-    };
-
-    var getShowPrevious = function getShowPrevious(helper, cachedHits) {
-      return function () {
-        // Using the helper's `overrideStateWithoutTriggeringChangeEvent` method
-        // avoid updating the browser URL when the user displays the previous page.
-        helper.overrideStateWithoutTriggeringChangeEvent(_objectSpread({}, helper.state, {
-          page: getFirstReceivedPage(helper.state, cachedHits) - 1
-        })).searchWithoutTriggeringOnStateChange();
-      };
-    };
-
-    var getShowMore = function getShowMore(helper, cachedHits) {
-      return function () {
-        helper.setPage(getLastReceivedPage(helper.state, cachedHits) + 1).search();
-      };
-    };
-
-    return {
-      $$type: 'ais.infiniteHits',
-      init: function init(initOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: initOptions.instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        var widgetRenderState = this.getWidgetRenderState(renderOptions);
-        sendEvent('view', widgetRenderState.currentPageHits);
-        renderFn(_objectSpread({}, widgetRenderState, {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          infiniteHits: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref5) {
-        var results = _ref5.results,
-            helper = _ref5.helper,
-            state = _ref5.state,
-            instantSearchInstance = _ref5.instantSearchInstance;
-        var isFirstPage;
-        var currentPageHits = [];
-        var cachedHits = cache.read({
-          state: state
-        }) || {};
-
-        if (!results) {
-          showPrevious = getShowPrevious(helper, cachedHits);
-          showMore = getShowMore(helper, cachedHits);
-          sendEvent = (0, _utils.createSendEventForHits)({
-            instantSearchInstance: instantSearchInstance,
-            index: helper.getIndex(),
-            widgetType: this.$$type
-          });
-          bindEvent = (0, _utils.createBindEventForHits)({
-            index: helper.getIndex(),
-            widgetType: this.$$type
-          });
-          isFirstPage = helper.state.page === undefined || getFirstReceivedPage(helper.state, cachedHits) === 0;
-        } else {
-          var _state$page3 = state.page,
-              _page = _state$page3 === void 0 ? 0 : _state$page3;
-
-          if (escapeHTML && results.hits.length > 0) {
-            results.hits = (0, _escapeHighlight.default)(results.hits);
-          }
-
-          var initialEscaped = results.hits.__escaped;
-          results.hits = (0, _utils.addAbsolutePosition)(results.hits, results.page, results.hitsPerPage);
-          results.hits = (0, _utils.addQueryID)(results.hits, results.queryID);
-          results.hits = transformItems(results.hits); // Make sure the escaped tag stays after mapping over the hits.
-          // This prevents the hits from being double-escaped if there are multiple
-          // hits widgets mounted on the page.
-
-          results.hits.__escaped = initialEscaped;
-
-          if (cachedHits[_page] === undefined) {
-            cachedHits[_page] = results.hits;
-            cache.write({
-              state: state,
-              hits: cachedHits
-            });
-          }
-
-          currentPageHits = results.hits;
-          isFirstPage = getFirstReceivedPage(state, cachedHits) === 0;
-        }
-
-        var hits = extractHitsFromCachedHits(cachedHits);
-        var isLastPage = results ? results.nbPages <= getLastReceivedPage(state, cachedHits) + 1 : true;
-        return {
-          hits: hits,
-          currentPageHits: currentPageHits,
-          sendEvent: sendEvent,
-          bindEvent: bindEvent,
-          results: results,
-          showPrevious: showPrevious,
-          showMore: showMore,
-          isFirstPage: isFirstPage,
-          isLastPage: isLastPage,
-          widgetParams: widgetParams
-        };
-      },
-      dispose: function dispose(_ref6) {
-        var state = _ref6.state;
-        unmountFn();
-        var stateWithoutPage = state.setQueryParameter('page', undefined);
-
-        if (!escapeHTML) {
-          return stateWithoutPage;
-        }
-
-        return stateWithoutPage.setQueryParameters(Object.keys(_escapeHighlight.TAG_PLACEHOLDER).reduce(function (acc, key) {
-          return _objectSpread({}, acc, _defineProperty({}, key, undefined));
-        }, {}));
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref7) {
-        var searchParameters = _ref7.searchParameters;
-        var page = searchParameters.page || 0;
-
-        if (!page) {
-          // return without adding `page` to uiState
-          // because we don't want `page=1` in the URL
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          // The page in the UI state is incremented by one
-          // to expose the user value (not `0`).
-          page: page + 1
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref8) {
-        var uiState = _ref8.uiState;
-        var widgetSearchParameters = searchParameters;
-
-        if (escapeHTML) {
-          widgetSearchParameters = searchParameters.setQueryParameters(_escapeHighlight.TAG_PLACEHOLDER);
-        } // The page in the search parameters is decremented by one
-        // to get to the actual parameter value from the UI state.
-
-
-        var page = uiState.page ? uiState.page - 1 : 0;
-        return widgetSearchParameters.setQueryParameter('page', page);
-      }
-    };
-  };
-};
-
-var _default = connectInfiniteHits;
-exports.default = _default;
-},{"../../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHitsWithInsights.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _insights = require("../../lib/insights");
-
-var _connectInfiniteHits = _interopRequireDefault(require("./connectInfiniteHits"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var connectInfiniteHitsWithInsights = (0, _insights.withInsights)(_connectInfiniteHits.default);
-var _default = connectInfiniteHitsWithInsights;
-exports.default = _default;
-},{"../../lib/insights":"node_modules/instantsearch.js/es/lib/insights/index.js","./connectInfiniteHits":"node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHits.js"}],"node_modules/instantsearch.js/es/connectors/menu/connectMenu.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = connectMenu;
-
-var _utils = require("../../lib/utils");
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
-}
-
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
-}
-
-function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'menu',
-  connector: true
-});
-/**
- * @typedef {Object} MenuItem
- * @property {string} value The value of the menu item.
- * @property {string} label Human-readable value of the menu item.
- * @property {number} count Number of results matched after refinement is applied.
- * @property {boolean} isRefined Indicates if the refinement is applied.
- */
-
-/**
- * @typedef {Object} CustomMenuWidgetOptions
- * @property {string} attribute Name of the attribute for faceting (eg. "free_shipping").
- * @property {number} [limit = 10] How many facets values to retrieve.
- * @property {boolean} [showMore = false] Whether to display a button that expands the number of items.
- * @property {number} [showMoreLimit = 20] How many facets values to retrieve when `toggleShowMore` is called, this value is meant to be greater than `limit` option.
- * @property {string[]|function} [sortBy = ['isRefined', 'name:asc']] How to sort refinements. Possible values: `count|isRefined|name:asc|name:desc`.
- *
- * You can also use a sort function that behaves like the standard Javascript [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Syntax).
- * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
- */
-
-/**
- * @typedef {Object} MenuRenderingOptions
- * @property {MenuItem[]} items The elements that can be refined for the current search results.
- * @property {function(item.value): string} createURL Creates the URL for a single item name in the list.
- * @property {function(item.value)} refine Filter the search to item value.
- * @property {boolean} canRefine True if refinement can be applied.
- * @property {Object} widgetParams All original `CustomMenuWidgetOptions` forwarded to the `renderFn`.
- * @property {boolean} isShowingMore True if the menu is displaying all the menu items.
- * @property {function} toggleShowMore Toggles the number of values displayed between `limit` and `showMore.limit`.
- * @property {boolean} canToggleShowMore `true` if the toggleShowMore button can be activated (enough items to display more or
- * already displaying more than `limit` items)
- */
-
-/**
- * **Menu** connector provides the logic to build a widget that will give the user the ability to choose a single value for a specific facet. The typical usage of menu is for navigation in categories.
- *
- * This connector provides a `toggleShowMore()` function to display more or less items and a `refine()`
- * function to select an item. While selecting a new element, the `refine` will also unselect the
- * one that is currently selected.
- *
- * **Requirement:** the attribute passed as `attribute` must be present in "attributes for faceting" on the Algolia dashboard or configured as attributesForFaceting via a set settings call to the Algolia API.
- * @type {Connector}
- * @param {function(MenuRenderingOptions, boolean)} renderFn Rendering function for the custom **Menu** widget. widget.
- * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomMenuWidgetOptions)} Re-usable widget factory for a custom **Menu** widget.
- * @example
- * // custom `renderFn` to render the custom Menu widget
- * function renderFn(MenuRenderingOptions, isFirstRendering) {
- *   if (isFirstRendering) {
- *     MenuRenderingOptions.widgetParams.containerNode
- *       .html('<select></select');
- *
- *     MenuRenderingOptions.widgetParams.containerNode
- *       .find('select')
- *       .on('change', function(event) {
- *         MenuRenderingOptions.refine(event.target.value);
- *       });
- *   }
- *
- *   var options = MenuRenderingOptions.items.map(function(item) {
- *     return item.isRefined
- *       ? '<option value="' + item.value + '" selected>' + item.label + '</option>'
- *       : '<option value="' + item.value + '">' + item.label + '</option>';
- *   });
- *
- *   MenuRenderingOptions.widgetParams.containerNode
- *     .find('select')
- *     .html(options);
- * }
- *
- * // connect `renderFn` to Menu logic
- * var customMenu = instantsearch.connectors.connectMenu(renderFn);
- *
- * // mount widget on the page
- * search.addWidgets([
- *   customMenu({
- *     containerNode: $('#custom-menu-container'),
- *     attribute: 'categories',
- *     limit: 10,
- *   })
- * ]);
- */
-
-function connectMenu(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function () {
-    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var attribute = widgetParams.attribute,
-        _widgetParams$limit = widgetParams.limit,
-        limit = _widgetParams$limit === void 0 ? 10 : _widgetParams$limit,
-        _widgetParams$showMor = widgetParams.showMore,
-        showMore = _widgetParams$showMor === void 0 ? false : _widgetParams$showMor,
-        _widgetParams$showMor2 = widgetParams.showMoreLimit,
-        showMoreLimit = _widgetParams$showMor2 === void 0 ? 20 : _widgetParams$showMor2,
-        _widgetParams$sortBy = widgetParams.sortBy,
-        sortBy = _widgetParams$sortBy === void 0 ? ['isRefined', 'name:asc'] : _widgetParams$sortBy,
-        _widgetParams$transfo = widgetParams.transformItems,
-        transformItems = _widgetParams$transfo === void 0 ? function (items) {
-      return items;
-    } : _widgetParams$transfo;
-
-    if (!attribute) {
-      throw new Error(withUsage('The `attribute` option is required.'));
-    }
-
-    if (showMore === true && showMoreLimit <= limit) {
-      throw new Error(withUsage('The `showMoreLimit` option must be greater than `limit`.'));
-    }
-
-    var sendEvent; // Provide the same function to the `renderFn` so that way the user
-    // has to only bind it once when `isFirstRendering` for instance
-
-    var toggleShowMore = function toggleShowMore() {};
-
-    function cachedToggleShowMore() {
-      toggleShowMore();
-    }
-
-    return {
-      $$type: 'ais.menu',
-      isShowingMore: false,
-      createToggleShowMore: function createToggleShowMore(_ref) {
-        var _this = this;
-
-        var results = _ref.results,
-            instantSearchInstance = _ref.instantSearchInstance;
-        return function () {
-          _this.isShowingMore = !_this.isShowingMore;
-
-          _this.render({
-            results: results,
-            instantSearchInstance: instantSearchInstance
-          });
-        };
-      },
-      getLimit: function getLimit() {
-        return this.isShowingMore ? showMoreLimit : limit;
-      },
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      dispose: function dispose(_ref2) {
-        var state = _ref2.state;
-        unmountFn();
-        return state.removeHierarchicalFacet(attribute).setQueryParameter('maxValuesPerFacet', undefined);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          menu: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref3) {
-        var results = _ref3.results,
-            createURL = _ref3.createURL,
-            instantSearchInstance = _ref3.instantSearchInstance,
-            helper = _ref3.helper;
-        var items = [];
-        var canToggleShowMore = false;
-
-        if (!sendEvent) {
-          sendEvent = (0, _utils.createSendEventForFacet)({
-            instantSearchInstance: instantSearchInstance,
-            helper: helper,
-            attribute: attribute,
-            widgetType: this.$$type
-          });
-        }
-
-        if (!this._createURL) {
-          this._createURL = function (facetValue) {
-            return createURL(helper.state.toggleRefinement(attribute, facetValue));
-          };
-        }
-
-        if (!this._refine) {
-          this._refine = function (facetValue) {
-            var _helper$getHierarchic = helper.getHierarchicalFacetBreadcrumb(attribute),
-                _helper$getHierarchic2 = _slicedToArray(_helper$getHierarchic, 1),
-                refinedItem = _helper$getHierarchic2[0];
-
-            sendEvent('click', facetValue ? facetValue : refinedItem);
-            helper.toggleRefinement(attribute, facetValue ? facetValue : refinedItem).search();
-          };
-        }
-
-        toggleShowMore = this.createToggleShowMore({
-          results: results,
-          instantSearchInstance: instantSearchInstance
-        });
-
-        if (results) {
-          var facetValues = results.getFacetValues(attribute, {
-            sortBy: sortBy
-          });
-          var facetItems = facetValues && facetValues.data ? facetValues.data : [];
-          canToggleShowMore = showMore && (this.isShowingMore || facetItems.length > this.getLimit());
-          items = transformItems(facetItems.slice(0, this.getLimit()).map(function (_ref4) {
-            var label = _ref4.name,
-                value = _ref4.path,
-                item = _objectWithoutProperties(_ref4, ["name", "path"]);
-
-            return _objectSpread({}, item, {
-              label: label,
-              value: value
-            });
-          }));
-        }
-
-        return {
-          items: items,
-          createURL: this._createURL,
-          refine: this._refine,
-          sendEvent: sendEvent,
-          canRefine: items.length > 0,
-          widgetParams: widgetParams,
-          isShowingMore: this.isShowingMore,
-          toggleShowMore: cachedToggleShowMore,
-          canToggleShowMore: canToggleShowMore
-        };
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref5) {
-        var searchParameters = _ref5.searchParameters;
-
-        var _searchParameters$get = searchParameters.getHierarchicalFacetBreadcrumb(attribute),
-            _searchParameters$get2 = _slicedToArray(_searchParameters$get, 1),
-            value = _searchParameters$get2[0];
-
-        if (!value) {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          menu: _objectSpread({}, uiState.menu, _defineProperty({}, attribute, value))
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
-        var uiState = _ref6.uiState;
-        var value = uiState.menu && uiState.menu[attribute];
-        var withFacetConfiguration = searchParameters.removeHierarchicalFacet(attribute).addHierarchicalFacet({
-          name: attribute,
-          attributes: [attribute]
-        });
-        var currentMaxValuesPerFacet = withFacetConfiguration.maxValuesPerFacet || 0;
-        var nextMaxValuesPerFacet = Math.max(currentMaxValuesPerFacet, showMore ? showMoreLimit : limit);
-        var withMaxValuesPerFacet = withFacetConfiguration.setQueryParameter('maxValuesPerFacet', nextMaxValuesPerFacet);
-
-        if (!value) {
-          return withMaxValuesPerFacet.setQueryParameters({
-            hierarchicalFacetsRefinements: _objectSpread({}, withMaxValuesPerFacet.hierarchicalFacetsRefinements, _defineProperty({}, attribute, []))
-          });
-        }
-
-        return withMaxValuesPerFacet.addHierarchicalFacetRefinement(attribute, value);
-      }
-    };
-  };
-}
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/numeric-menu/connectNumericMenu.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _utils = require("../../lib/utils");
-
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
-}
-
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
-}
-
-function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'numeric-menu',
-  connector: true
-});
-var $$type = 'ais.numericMenu';
-
-var createSendEvent = function createSendEvent(_ref) {
-  var instantSearchInstance = _ref.instantSearchInstance,
-      helper = _ref.helper,
-      attribute = _ref.attribute;
-  return function () {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    if (args.length === 1) {
-      instantSearchInstance.sendEventToInsights(args[0]);
-      return;
-    }
-
-    var eventType = args[0],
-        facetValue = args[1],
-        _args$ = args[2],
-        eventName = _args$ === void 0 ? 'Filter Applied' : _args$;
-
-    if (eventType !== 'click') {
-      return;
-    } // facetValue === "%7B%22start%22:5,%22end%22:10%7D"
-
-
-    var filters = (0, _utils.convertNumericRefinementsToFilters)(getRefinedState(helper.state, attribute, facetValue), attribute);
-
-    if (filters && filters.length > 0) {
-      /*
-          filters === ["price<=10", "price>=5"]
-        */
-      instantSearchInstance.sendEventToInsights({
-        insightsMethod: 'clickedFilters',
-        widgetType: $$type,
-        eventType: eventType,
-        payload: {
-          eventName: eventName,
-          index: helper.getIndex(),
-          filters: filters
-        }
-      });
-    }
-  };
-};
-
-var connectNumericMenu = function connectNumericMenu(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function (widgetParams) {
-    var _ref2 = widgetParams || {},
-        _ref2$attribute = _ref2.attribute,
-        attribute = _ref2$attribute === void 0 ? '' : _ref2$attribute,
-        _ref2$items = _ref2.items,
-        items = _ref2$items === void 0 ? [] : _ref2$items,
-        _ref2$transformItems = _ref2.transformItems,
-        transformItems = _ref2$transformItems === void 0 ? function (x) {
-      return x;
-    } : _ref2$transformItems;
-
-    if (attribute === '') {
-      throw new Error(withUsage('The `attribute` option is required.'));
-    }
-
-    if (!items || items.length === 0) {
-      throw new Error(withUsage('The `items` option expects an array of objects.'));
-    }
-
-    var prepareItems = function prepareItems(state) {
-      return items.map(function (_ref3) {
-        var start = _ref3.start,
-            end = _ref3.end,
-            label = _ref3.label;
-        return {
-          label: label,
-          value: window.encodeURI(JSON.stringify({
-            start: start,
-            end: end
-          })),
-          isRefined: isRefined(state, attribute, {
-            start: start,
-            end: end,
-            label: label
-          })
-        };
-      });
-    };
-
-    var connectorState = {};
-    return {
-      $$type: $$type,
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      dispose: function dispose(_ref4) {
-        var state = _ref4.state;
-        unmountFn();
-        return state.clearRefinements(attribute);
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref5) {
-        var searchParameters = _ref5.searchParameters;
-        var values = searchParameters.getNumericRefinements(attribute);
-        var equal = values['='] && values['='][0];
-
-        if (equal || equal === 0) {
-          return _objectSpread({}, uiState, {
-            numericMenu: _objectSpread({}, uiState.numericMenu, _defineProperty({}, attribute, "".concat(values['='])))
-          });
-        }
-
-        var min = values['>='] && values['>='][0] || '';
-        var max = values['<='] && values['<='][0] || '';
-
-        if (min === '' && max === '') {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          numericMenu: _objectSpread({}, uiState.numericMenu, _defineProperty({}, attribute, "".concat(min, ":").concat(max)))
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
-        var uiState = _ref6.uiState;
-        var value = uiState.numericMenu && uiState.numericMenu[attribute];
-        var withoutRefinements = searchParameters.clearRefinements(attribute);
-
-        if (!value) {
-          return withoutRefinements.setQueryParameters({
-            numericRefinements: _objectSpread({}, withoutRefinements.numericRefinements, _defineProperty({}, attribute, {}))
-          });
-        }
-
-        var isExact = value.indexOf(':') === -1;
-
-        if (isExact) {
-          return withoutRefinements.addNumericRefinement(attribute, '=', Number(value));
-        }
-
-        var _value$split$map = value.split(':').map(parseFloat),
-            _value$split$map2 = _slicedToArray(_value$split$map, 2),
-            min = _value$split$map2[0],
-            max = _value$split$map2[1];
-
-        var withMinRefinement = (0, _utils.isFiniteNumber)(min) ? withoutRefinements.addNumericRefinement(attribute, '>=', min) : withoutRefinements;
-        var withMaxRefinement = (0, _utils.isFiniteNumber)(max) ? withMinRefinement.addNumericRefinement(attribute, '<=', max) : withMinRefinement;
-        return withMaxRefinement;
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          numericMenu: _objectSpread({}, renderState.numericMenu, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref7) {
-        var results = _ref7.results,
-            state = _ref7.state,
-            instantSearchInstance = _ref7.instantSearchInstance,
-            helper = _ref7.helper,
-            createURL = _ref7.createURL;
-
-        if (!connectorState.refine) {
-          connectorState.refine = function (facetValue) {
-            var refinedState = getRefinedState(helper.state, attribute, facetValue);
-            connectorState.sendEvent('click', facetValue);
-            helper.setState(refinedState).search();
-          };
-        }
-
-        if (!connectorState.createURL) {
-          connectorState.createURL = function (newState) {
-            return function (facetValue) {
-              return createURL(getRefinedState(newState, attribute, facetValue));
-            };
-          };
-        }
-
-        if (!connectorState.sendEvent) {
-          connectorState.sendEvent = createSendEvent({
-            instantSearchInstance: instantSearchInstance,
-            helper: helper,
-            attribute: attribute
-          });
-        }
-
-        return {
-          createURL: connectorState.createURL(state),
-          items: transformItems(prepareItems(state)),
-          hasNoResults: results ? results.nbHits === 0 : true,
-          refine: connectorState.refine,
-          sendEvent: connectorState.sendEvent,
-          widgetParams: widgetParams
-        };
-      }
-    };
-  };
-};
-
-function isRefined(state, attribute, option) {
-  // @TODO: same as another spot, why is this mixing arrays & elements?
-  var currentRefinements = state.getNumericRefinements(attribute);
-
-  if (option.start !== undefined && option.end !== undefined) {
-    if (option.start === option.end) {
-      return hasNumericRefinement(currentRefinements, '=', option.start);
-    }
-  }
-
-  if (option.start !== undefined) {
-    return hasNumericRefinement(currentRefinements, '>=', option.start);
-  }
-
-  if (option.end !== undefined) {
-    return hasNumericRefinement(currentRefinements, '<=', option.end);
-  }
-
-  if (option.start === undefined && option.end === undefined) {
-    return Object.keys(currentRefinements).every(function (operator) {
-      return (currentRefinements[operator] || []).length === 0;
-    });
-  }
-
-  return false;
-}
-
-function getRefinedState(state, attribute, facetValue) {
-  var resolvedState = state;
-  var refinedOption = JSON.parse(window.decodeURI(facetValue)); // @TODO: why is array / element mixed here & hasRefinements; seems wrong?
-
-  var currentRefinements = resolvedState.getNumericRefinements(attribute);
-
-  if (refinedOption.start === undefined && refinedOption.end === undefined) {
-    return resolvedState.removeNumericRefinement(attribute);
-  }
-
-  if (!isRefined(resolvedState, attribute, refinedOption)) {
-    resolvedState = resolvedState.removeNumericRefinement(attribute);
-  }
-
-  if (refinedOption.start !== undefined && refinedOption.end !== undefined) {
-    if (refinedOption.start > refinedOption.end) {
-      throw new Error('option.start should be > to option.end');
-    }
-
-    if (refinedOption.start === refinedOption.end) {
-      if (hasNumericRefinement(currentRefinements, '=', refinedOption.start)) {
-        resolvedState = resolvedState.removeNumericRefinement(attribute, '=', refinedOption.start);
-      } else {
-        resolvedState = resolvedState.addNumericRefinement(attribute, '=', refinedOption.start);
-      }
-
-      return resolvedState;
-    }
-  }
-
-  if (refinedOption.start !== undefined) {
-    if (hasNumericRefinement(currentRefinements, '>=', refinedOption.start)) {
-      resolvedState = resolvedState.removeNumericRefinement(attribute, '>=', refinedOption.start);
-    } else {
-      resolvedState = resolvedState.addNumericRefinement(attribute, '>=', refinedOption.start);
-    }
-  }
-
-  if (refinedOption.end !== undefined) {
-    if (hasNumericRefinement(currentRefinements, '<=', refinedOption.end)) {
-      resolvedState = resolvedState.removeNumericRefinement(attribute, '<=', refinedOption.end);
-    } else {
-      resolvedState = resolvedState.addNumericRefinement(attribute, '<=', refinedOption.end);
-    }
-  }
-
-  if (typeof resolvedState.page === 'number') {
-    resolvedState.page = 0;
-  }
-
-  return resolvedState;
-}
-
-function hasNumericRefinement(currentRefinements, operator, value) {
-  return currentRefinements[operator] !== undefined && currentRefinements[operator].includes(value);
-}
-
-var _default = connectNumericMenu;
-exports.default = _default;
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/pagination/Paginator.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _utils = require("../../lib/utils");
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var Paginator = /*#__PURE__*/function () {
-  function Paginator(params) {
-    _classCallCheck(this, Paginator);
-
-    _defineProperty(this, "currentPage", void 0);
-
-    _defineProperty(this, "total", void 0);
-
-    _defineProperty(this, "padding", void 0);
-
-    this.currentPage = params.currentPage;
-    this.total = params.total;
-    this.padding = params.padding;
-  }
-
-  _createClass(Paginator, [{
-    key: "pages",
-    value: function pages() {
-      var total = this.total,
-          currentPage = this.currentPage,
-          padding = this.padding;
-      if (total === 0) return [0];
-      var totalDisplayedPages = this.nbPagesDisplayed(padding, total);
-
-      if (totalDisplayedPages === total) {
-        return (0, _utils.range)({
-          end: total
-        });
-      }
-
-      var paddingLeft = this.calculatePaddingLeft(currentPage, padding, total, totalDisplayedPages);
-      var paddingRight = totalDisplayedPages - paddingLeft;
-      var first = currentPage - paddingLeft;
-      var last = currentPage + paddingRight;
-      return (0, _utils.range)({
-        start: first,
-        end: last
-      });
-    }
-  }, {
-    key: "nbPagesDisplayed",
-    value: function nbPagesDisplayed(padding, total) {
-      return Math.min(2 * padding + 1, total);
-    }
-  }, {
-    key: "calculatePaddingLeft",
-    value: function calculatePaddingLeft(current, padding, total, totalDisplayedPages) {
-      if (current <= padding) {
-        return current;
-      }
-
-      if (current >= total - padding) {
-        return totalDisplayedPages - (total - current);
-      }
-
-      return padding;
-    }
-  }, {
-    key: "isLastPage",
-    value: function isLastPage() {
-      return this.currentPage === this.total - 1 || this.total === 0;
-    }
-  }, {
-    key: "isFirstPage",
-    value: function isFirstPage() {
-      return this.currentPage === 0;
-    }
-  }]);
-
-  return Paginator;
-}();
-
-var _default = Paginator;
-exports.default = _default;
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/pagination/connectPagination.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _utils = require("../../lib/utils");
-
-var _Paginator = _interopRequireDefault(require("./Paginator"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'pagination',
-  connector: true
-});
-/**
- * **Pagination** connector provides the logic to build a widget that will let the user
- * choose the current page of the results.
- *
- * When using the pagination with Algolia, you should be aware that the engine won't provide you pages
- * beyond the 1000th hits by default. You can find more information on the [Algolia documentation](https://www.algolia.com/doc/guides/searching/pagination/#pagination-limitations).
- */
-
-var connectPagination = function connectPagination(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function (widgetParams) {
-    var _ref = widgetParams || {},
-        totalPages = _ref.totalPages,
-        _ref$padding = _ref.padding,
-        padding = _ref$padding === void 0 ? 3 : _ref$padding;
-
-    var pager = new _Paginator.default({
-      currentPage: 0,
-      total: 0,
-      padding: padding
-    });
-    var connectorState = {};
-
-    function getMaxPage(_ref2) {
-      var nbPages = _ref2.nbPages;
-      return totalPages !== undefined ? Math.min(totalPages, nbPages) : nbPages;
-    }
-
-    return {
-      $$type: 'ais.pagination',
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      dispose: function dispose(_ref3) {
-        var state = _ref3.state;
-        unmountFn();
-        return state.setQueryParameter('page', undefined);
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref4) {
-        var searchParameters = _ref4.searchParameters;
-        var page = searchParameters.page || 0;
-
-        if (!page) {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          page: page + 1
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref5) {
-        var uiState = _ref5.uiState;
-        var page = uiState.page ? uiState.page - 1 : 0;
-        return searchParameters.setQueryParameter('page', page);
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref6) {
-        var results = _ref6.results,
-            helper = _ref6.helper,
-            createURL = _ref6.createURL;
-
-        if (!connectorState.refine) {
-          connectorState.refine = function (page) {
-            helper.setPage(page);
-            helper.search();
-          };
-        }
-
-        if (!connectorState.createURL) {
-          connectorState.createURL = function (state) {
-            return function (page) {
-              return createURL(state.setPage(page));
-            };
-          };
-        }
-
-        var state = helper.state;
-        var page = state.page || 0;
-        var nbPages = getMaxPage(results || {
-          nbPages: 0
-        });
-        pager.currentPage = page;
-        pager.total = nbPages;
-        return {
-          createURL: connectorState.createURL(state),
-          refine: connectorState.refine,
-          currentRefinement: page,
-          nbHits: (results === null || results === void 0 ? void 0 : results.nbHits) || 0,
-          nbPages: nbPages,
-          pages: results ? pager.pages() : [],
-          isFirstPage: pager.isFirstPage(),
-          isLastPage: pager.isLastPage(),
-          widgetParams: widgetParams
-        };
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          pagination: this.getWidgetRenderState(renderOptions)
-        });
-      }
-    };
-  };
-};
-
-var _default = connectPagination;
-exports.default = _default;
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","./Paginator":"node_modules/instantsearch.js/es/connectors/pagination/Paginator.js"}],"node_modules/instantsearch.js/es/connectors/range/connectRange.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _utils = require("../../lib/utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
-}
-
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
-}
-
-function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'range-input',
-  connector: true
-}, {
-  name: 'range-slider',
-  connector: true
-});
-var $$type = 'ais.range';
-
-function toPrecision(_ref) {
-  var min = _ref.min,
-      max = _ref.max,
-      precision = _ref.precision;
-  var pow = Math.pow(10, precision);
-  return {
-    min: min ? Math.floor(min * pow) / pow : min,
-    max: max ? Math.ceil(max * pow) / pow : max
-  };
-}
-/**
- * **Range** connector provides the logic to create custom widget that will let
- * the user refine results using a numeric range.
- *
- * This connectors provides a `refine()` function that accepts bounds. It will also provide
- * information about the min and max bounds for the current result set.
- */
-
-
-var connectRange = function connectRange(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function (widgetParams) {
-    var _ref2 = widgetParams || {},
-        attribute = _ref2.attribute,
-        minBound = _ref2.min,
-        maxBound = _ref2.max,
-        _ref2$precision = _ref2.precision,
-        precision = _ref2$precision === void 0 ? 0 : _ref2$precision;
-
-    if (!attribute) {
-      throw new Error(withUsage('The `attribute` option is required.'));
-    }
-
-    if ((0, _utils.isFiniteNumber)(minBound) && (0, _utils.isFiniteNumber)(maxBound) && minBound > maxBound) {
-      throw new Error(withUsage("The `max` option can't be lower than `min`."));
-    }
-
-    var formatToNumber = function formatToNumber(v) {
-      return Number(Number(v).toFixed(precision));
-    };
-
-    var rangeFormatter = {
-      from: function from(v) {
-        return v.toLocaleString();
-      },
-      to: function to(v) {
-        return formatToNumber(v).toLocaleString();
-      }
-    }; // eslint-disable-next-line complexity
-
-    var getRefinedState = function getRefinedState(helper, currentRange, nextMin, nextMax) {
-      var resolvedState = helper.state;
-      var currentRangeMin = currentRange.min,
-          currentRangeMax = currentRange.max;
-
-      var _ref3 = resolvedState.getNumericRefinement(attribute, '>=') || [],
-          _ref4 = _slicedToArray(_ref3, 1),
-          min = _ref4[0];
-
-      var _ref5 = resolvedState.getNumericRefinement(attribute, '<=') || [],
-          _ref6 = _slicedToArray(_ref5, 1),
-          max = _ref6[0];
-
-      var isResetMin = nextMin === undefined || nextMin === '';
-      var isResetMax = nextMax === undefined || nextMax === '';
-
-      var _toPrecision = toPrecision({
-        min: !isResetMin ? parseFloat(nextMin) : undefined,
-        max: !isResetMax ? parseFloat(nextMax) : undefined,
-        precision: precision
-      }),
-          nextMinAsNumber = _toPrecision.min,
-          nextMaxAsNumber = _toPrecision.max;
-
-      var newNextMin;
-
-      if (!(0, _utils.isFiniteNumber)(minBound) && currentRangeMin === nextMinAsNumber) {
-        newNextMin = undefined;
-      } else if ((0, _utils.isFiniteNumber)(minBound) && isResetMin) {
-        newNextMin = minBound;
-      } else {
-        newNextMin = nextMinAsNumber;
-      }
-
-      var newNextMax;
-
-      if (!(0, _utils.isFiniteNumber)(maxBound) && currentRangeMax === nextMaxAsNumber) {
-        newNextMax = undefined;
-      } else if ((0, _utils.isFiniteNumber)(maxBound) && isResetMax) {
-        newNextMax = maxBound;
-      } else {
-        newNextMax = nextMaxAsNumber;
-      }
-
-      var isResetNewNextMin = newNextMin === undefined;
-      var isGreaterThanCurrentRange = (0, _utils.isFiniteNumber)(currentRangeMin) && currentRangeMin <= newNextMin;
-      var isMinValid = isResetNewNextMin || (0, _utils.isFiniteNumber)(newNextMin) && (!(0, _utils.isFiniteNumber)(currentRangeMin) || isGreaterThanCurrentRange);
-      var isResetNewNextMax = newNextMax === undefined;
-      var isLowerThanRange = (0, _utils.isFiniteNumber)(newNextMax) && currentRangeMax >= newNextMax;
-      var isMaxValid = isResetNewNextMax || (0, _utils.isFiniteNumber)(newNextMax) && (!(0, _utils.isFiniteNumber)(currentRangeMax) || isLowerThanRange);
-      var hasMinChange = min !== newNextMin;
-      var hasMaxChange = max !== newNextMax;
-
-      if ((hasMinChange || hasMaxChange) && isMinValid && isMaxValid) {
-        resolvedState = resolvedState.removeNumericRefinement(attribute);
-
-        if ((0, _utils.isFiniteNumber)(newNextMin)) {
-          resolvedState = resolvedState.addNumericRefinement(attribute, '>=', newNextMin);
-        }
-
-        if ((0, _utils.isFiniteNumber)(newNextMax)) {
-          resolvedState = resolvedState.addNumericRefinement(attribute, '<=', newNextMax);
-        }
-
-        return resolvedState;
-      }
-
-      return null;
-    };
-
-    var sendEventWithRefinedState = function sendEventWithRefinedState(refinedState, instantSearchInstance, helper) {
-      var eventName = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'Filter Applied';
-      var filters = (0, _utils.convertNumericRefinementsToFilters)(refinedState, attribute);
-
-      if (filters && filters.length > 0) {
-        instantSearchInstance.sendEventToInsights({
-          insightsMethod: 'clickedFilters',
-          widgetType: $$type,
-          eventType: 'click',
-          payload: {
-            eventName: eventName,
-            index: helper.getIndex(),
-            filters: filters
-          }
-        });
-      }
-    };
-
-    var createSendEvent = function createSendEvent(instantSearchInstance, helper, currentRange) {
-      return function () {
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
-        }
-
-        if (args.length === 1) {
-          instantSearchInstance.sendEventToInsights(args[0]);
-          return;
-        }
-
-        var eventType = args[0],
-            facetValue = args[1],
-            eventName = args[2];
-
-        if (eventType !== 'click') {
-          return;
-        }
-
-        var _facetValue = _slicedToArray(facetValue, 2),
-            nextMin = _facetValue[0],
-            nextMax = _facetValue[1];
-
-        var refinedState = getRefinedState(helper, currentRange, nextMin, nextMax);
-        sendEventWithRefinedState(refinedState, instantSearchInstance, helper, eventName);
-      };
-    };
-
-    function _getCurrentRange(stats) {
-      var min;
-
-      if ((0, _utils.isFiniteNumber)(minBound)) {
-        min = minBound;
-      } else if ((0, _utils.isFiniteNumber)(stats.min)) {
-        min = stats.min;
-      } else {
-        min = 0;
-      }
-
-      var max;
-
-      if ((0, _utils.isFiniteNumber)(maxBound)) {
-        max = maxBound;
-      } else if ((0, _utils.isFiniteNumber)(stats.max)) {
-        max = stats.max;
-      } else {
-        max = 0;
-      }
-
-      return toPrecision({
-        min: min,
-        max: max,
-        precision: precision
-      });
-    }
-
-    function _getCurrentRefinement(helper) {
-      var _ref7 = helper.getNumericRefinement(attribute, '>=') || [],
-          _ref8 = _slicedToArray(_ref7, 1),
-          minValue = _ref8[0];
-
-      var _ref9 = helper.getNumericRefinement(attribute, '<=') || [],
-          _ref10 = _slicedToArray(_ref9, 1),
-          maxValue = _ref10[0];
-
-      var min = (0, _utils.isFiniteNumber)(minValue) ? minValue : -Infinity;
-      var max = (0, _utils.isFiniteNumber)(maxValue) ? maxValue : Infinity;
-      return [min, max];
-    }
-
-    function _refine(instantSearchInstance, helper, currentRange) {
-      return function () {
-        var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [undefined, undefined],
-            _ref12 = _slicedToArray(_ref11, 2),
-            nextMin = _ref12[0],
-            nextMax = _ref12[1];
-
-        var refinedState = getRefinedState(helper, currentRange, nextMin, nextMax);
-
-        if (refinedState) {
-          sendEventWithRefinedState(refinedState, instantSearchInstance, helper);
-          helper.setState(refinedState).search();
-        }
-      };
-    }
-
-    return {
-      $$type: $$type,
-      init: function init(initOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: initOptions.instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: renderOptions.instantSearchInstance
-        }), false);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          range: _objectSpread({}, renderState.range, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref13) {
-        var results = _ref13.results,
-            helper = _ref13.helper,
-            instantSearchInstance = _ref13.instantSearchInstance;
-        var facetsFromResults = results && results.disjunctiveFacets || [];
-        var facet = (0, _utils.find)(facetsFromResults, function (facetResult) {
-          return facetResult.name === attribute;
-        });
-        var stats = facet && facet.stats || {
-          min: undefined,
-          max: undefined
-        };
-
-        var currentRange = _getCurrentRange(stats);
-
-        var start = _getCurrentRefinement(helper);
-
-        var refine;
-
-        if (!results) {
-          // On first render pass an empty range
-          // to be able to bypass the validation
-          // related to it
-          refine = _refine(instantSearchInstance, helper, {
-            min: undefined,
-            max: undefined
-          });
-        } else {
-          refine = _refine(instantSearchInstance, helper, currentRange);
-        }
-
-        return {
-          refine: refine,
-          format: rangeFormatter,
-          range: currentRange,
-          sendEvent: createSendEvent(instantSearchInstance, helper, currentRange),
-          widgetParams: _objectSpread({}, widgetParams, {
-            precision: precision
-          }),
-          start: start
-        };
-      },
-      dispose: function dispose(_ref14) {
-        var state = _ref14.state;
-        unmountFn();
-        return state.removeDisjunctiveFacet(attribute).removeNumericRefinement(attribute);
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref15) {
-        var searchParameters = _ref15.searchParameters;
-
-        var _searchParameters$get = searchParameters.getNumericRefinements(attribute),
-            _searchParameters$get2 = _searchParameters$get['>='],
-            min = _searchParameters$get2 === void 0 ? [] : _searchParameters$get2,
-            _searchParameters$get3 = _searchParameters$get['<='],
-            max = _searchParameters$get3 === void 0 ? [] : _searchParameters$get3;
-
-        if (min.length === 0 && max.length === 0) {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          range: _objectSpread({}, uiState.range, _defineProperty({}, attribute, "".concat(min, ":").concat(max)))
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref16) {
-        var uiState = _ref16.uiState;
-        var widgetSearchParameters = searchParameters.addDisjunctiveFacet(attribute).setQueryParameters({
-          numericRefinements: _objectSpread({}, searchParameters.numericRefinements, _defineProperty({}, attribute, {}))
-        });
-
-        if ((0, _utils.isFiniteNumber)(minBound)) {
-          widgetSearchParameters = widgetSearchParameters.addNumericRefinement(attribute, '>=', minBound);
-        }
-
-        if ((0, _utils.isFiniteNumber)(maxBound)) {
-          widgetSearchParameters = widgetSearchParameters.addNumericRefinement(attribute, '<=', maxBound);
-        }
-
-        var value = uiState.range && uiState.range[attribute];
-
-        if (!value || value.indexOf(':') === -1) {
-          return widgetSearchParameters;
-        }
-
-        var _value$split$map = value.split(':').map(parseFloat),
-            _value$split$map2 = _slicedToArray(_value$split$map, 2),
-            lowerBound = _value$split$map2[0],
-            upperBound = _value$split$map2[1];
-
-        if ((0, _utils.isFiniteNumber)(lowerBound)) {
-          widgetSearchParameters = widgetSearchParameters.addNumericRefinement(attribute, '>=', lowerBound);
-        }
-
-        if ((0, _utils.isFiniteNumber)(upperBound)) {
-          widgetSearchParameters = widgetSearchParameters.addNumericRefinement(attribute, '<=', upperBound);
-        }
-
-        return widgetSearchParameters;
-      }
-    };
-  };
-};
-
-var _default = connectRange;
-exports.default = _default;
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/refinement-list/connectRefinementList.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = connectRefinementList;
-
-var _utils = require("../../lib/utils");
-
-var _escapeHighlight = require("../../lib/escape-highlight");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'refinement-list',
-  connector: true
-});
-/**
- * @typedef {Object} RefinementListItem
- * @property {string} value The value of the refinement list item.
- * @property {string} label Human-readable value of the refinement list item.
- * @property {number} count Number of matched results after refinement is applied.
- * @property {boolean} isRefined Indicates if the list item is refined.
- */
-
-/**
- * @typedef {Object} CustomRefinementListWidgetOptions
- * @property {string} attribute The name of the attribute in the records.
- * @property {"and"|"or"} [operator = 'or'] How the filters are combined together.
- * @property {number} [limit = 10] The max number of items to display when
- * `showMoreLimit` is not set or if the widget is showing less value.
- * @property {boolean} [showMore = false] Whether to display a button that expands the number of items.
- * @property {number} [showMoreLimit = 20] The max number of items to display if the widget
- * is showing more items.
- * @property {string[]|function} [sortBy = ['isRefined', 'count:desc', 'name:asc']] How to sort refinements. Possible values: `count|isRefined|name:asc|name:desc`.
- * @property {boolean} [escapeFacetValues = true] Escapes the content of the facet values.
- * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
- */
-
-/**
- * @typedef {Object} RefinementListRenderingOptions
- * @property {RefinementListItem[]} items The list of filtering values returned from Algolia API.
- * @property {function(item.value): string} createURL Creates the next state url for a selected refinement.
- * @property {function(item.value)} refine Action to apply selected refinements.
- * @property {function} searchForItems Searches for values inside the list.
- * @property {boolean} isFromSearch `true` if the values are from an index search.
- * @property {boolean} canRefine `true` if a refinement can be applied.
- * @property {boolean} canToggleShowMore `true` if the toggleShowMore button can be activated (enough items to display more or
- * already displaying more than `limit` items)
- * @property {Object} widgetParams All original `CustomRefinementListWidgetOptions` forwarded to the `renderFn`.
- * @property {boolean} isShowingMore True if the menu is displaying all the menu items.
- * @property {function} toggleShowMore Toggles the number of values displayed between `limit` and `showMoreLimit`.
- */
-
-/**
- * **RefinementList** connector provides the logic to build a custom widget that will let the
- * user filter the results based on the values of a specific facet.
- *
- * This connector provides a `toggleShowMore()` function to display more or less items and a `refine()`
- * function to select an item.
- * @type {Connector}
- * @param {function(RefinementListRenderingOptions, boolean)} renderFn Rendering function for the custom **RefinementList** widget.
- * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomRefinementListWidgetOptions)} Re-usable widget factory for a custom **RefinementList** widget.
- * @example
- * // custom `renderFn` to render the custom RefinementList widget
- * function renderFn(RefinementListRenderingOptions, isFirstRendering) {
- *   if (isFirstRendering) {
- *     RefinementListRenderingOptions.widgetParams.containerNode
- *       .html('<ul></ul>')
- *   }
- *
- *     RefinementListRenderingOptions.widgetParams.containerNode
- *       .find('li[data-refine-value]')
- *       .each(function() { $(this).off('click'); });
- *
- *   if (RefinementListRenderingOptions.canRefine) {
- *     var list = RefinementListRenderingOptions.items.map(function(item) {
- *       return `
- *         <li data-refine-value="${item.value}">
- *           <input type="checkbox" value="${item.value}" ${item.isRefined ? 'checked' : ''} />
- *           <a href="${RefinementListRenderingOptions.createURL(item.value)}">
- *             ${item.label} (${item.count})
- *           </a>
- *         </li>
- *       `;
- *     });
- *
- *     RefinementListRenderingOptions.widgetParams.containerNode.find('ul').html(list);
- *     RefinementListRenderingOptions.widgetParams.containerNode
- *       .find('li[data-refine-value]')
- *       .each(function() {
- *         $(this).on('click', function(event) {
- *           event.stopPropagation();
- *           event.preventDefault();
- *
- *           RefinementListRenderingOptions.refine($(this).data('refine-value'));
- *         });
- *       });
- *   } else {
- *     RefinementListRenderingOptions.widgetParams.containerNode.find('ul').html('');
- *   }
- * }
- *
- * // connect `renderFn` to RefinementList logic
- * var customRefinementList = instantsearch.connectors.connectRefinementList(renderFn);
- *
- * // mount widget on the page
- * search.addWidgets([
- *   customRefinementList({
- *     containerNode: $('#custom-refinement-list-container'),
- *     attribute: 'categories',
- *     limit: 10,
- *   })
- * ]);
- */
-
-function connectRefinementList(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function () {
-    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var attribute = widgetParams.attribute,
-        _widgetParams$operato = widgetParams.operator,
-        operator = _widgetParams$operato === void 0 ? 'or' : _widgetParams$operato,
-        _widgetParams$limit = widgetParams.limit,
-        limit = _widgetParams$limit === void 0 ? 10 : _widgetParams$limit,
-        _widgetParams$showMor = widgetParams.showMore,
-        showMore = _widgetParams$showMor === void 0 ? false : _widgetParams$showMor,
-        _widgetParams$showMor2 = widgetParams.showMoreLimit,
-        showMoreLimit = _widgetParams$showMor2 === void 0 ? 20 : _widgetParams$showMor2,
-        _widgetParams$sortBy = widgetParams.sortBy,
-        sortBy = _widgetParams$sortBy === void 0 ? ['isRefined', 'count:desc', 'name:asc'] : _widgetParams$sortBy,
-        _widgetParams$escapeF = widgetParams.escapeFacetValues,
-        escapeFacetValues = _widgetParams$escapeF === void 0 ? true : _widgetParams$escapeF,
-        _widgetParams$transfo = widgetParams.transformItems,
-        transformItems = _widgetParams$transfo === void 0 ? function (items) {
-      return items;
-    } : _widgetParams$transfo;
-
-    if (!attribute) {
-      throw new Error(withUsage('The `attribute` option is required.'));
-    }
-
-    if (!/^(and|or)$/.test(operator)) {
-      throw new Error(withUsage("The `operator` must one of: `\"and\"`, `\"or\"` (got \"".concat(operator, "\").")));
-    }
-
-    if (showMore === true && showMoreLimit <= limit) {
-      throw new Error(withUsage('`showMoreLimit` should be greater than `limit`.'));
-    }
-
-    var formatItems = function formatItems(_ref) {
-      var label = _ref.name,
-          item = _objectWithoutProperties(_ref, ["name"]);
-
-      return _objectSpread({}, item, {
-        label: label,
-        value: label,
-        highlighted: label
-      });
-    };
-
-    var _getLimit = function getLimit(isShowingMore) {
-      return isShowingMore ? showMoreLimit : limit;
-    };
-
-    var lastResultsFromMainSearch;
-    var lastItemsFromMainSearch = [];
-    var hasExhaustiveItems = true;
-    var searchForFacetValues;
-    var triggerRefine;
-    var sendEvent;
-    var toggleShowMore;
-    /* eslint-disable max-params */
-
-    var createSearchForFacetValues = function createSearchForFacetValues(helper) {
-      var _this = this;
-
-      return function (renderOptions) {
-        return function (query) {
-          var instantSearchInstance = renderOptions.instantSearchInstance;
-
-          if (query === '' && lastItemsFromMainSearch) {
-            // render with previous data from the helper.
-            renderFn(_objectSpread({}, _this.getWidgetRenderState(_objectSpread({}, renderOptions, {
-              results: lastResultsFromMainSearch
-            })), {
-              instantSearchInstance: instantSearchInstance
-            }));
-          } else {
-            var tags = {
-              highlightPreTag: escapeFacetValues ? _escapeHighlight.TAG_PLACEHOLDER.highlightPreTag : _escapeHighlight.TAG_REPLACEMENT.highlightPreTag,
-              highlightPostTag: escapeFacetValues ? _escapeHighlight.TAG_PLACEHOLDER.highlightPostTag : _escapeHighlight.TAG_REPLACEMENT.highlightPostTag
-            };
-            helper.searchForFacetValues(attribute, query, // We cap the `maxFacetHits` value to 100 because the Algolia API
-            // doesn't support a greater number.
-            // See https://www.algolia.com/doc/api-reference/api-parameters/maxFacetHits/
-            Math.min(_getLimit(_this.isShowingMore), 100), tags).then(function (results) {
-              var facetValues = escapeFacetValues ? (0, _escapeHighlight.escapeFacets)(results.facetHits) : results.facetHits;
-              var normalizedFacetValues = transformItems(facetValues.map(function (_ref2) {
-                var value = _ref2.value,
-                    item = _objectWithoutProperties(_ref2, ["value"]);
-
-                return _objectSpread({}, item, {
-                  value: value,
-                  label: value
-                });
-              }));
-              var canToggleShowMore = _this.isShowingMore && lastItemsFromMainSearch.length > limit;
-              renderFn(_objectSpread({}, _this.getWidgetRenderState(_objectSpread({}, renderOptions, {
-                results: lastResultsFromMainSearch
-              })), {
-                items: normalizedFacetValues,
-                canToggleShowMore: canToggleShowMore,
-                canRefine: true,
-                instantSearchInstance: instantSearchInstance,
-                isFromSearch: true
-              }));
-            });
-          }
-        };
-      };
-    };
-    /* eslint-enable max-params */
-
-
-    return {
-      $$type: 'ais.refinementList',
-      isShowingMore: false,
-      // Provide the same function to the `renderFn` so that way the user
-      // has to only bind it once when `isFirstRendering` for instance
-      toggleShowMore: function toggleShowMore() {},
-      cachedToggleShowMore: function cachedToggleShowMore() {
-        toggleShowMore();
-      },
-      createToggleShowMore: function createToggleShowMore(renderOptions) {
-        var _this2 = this;
-
-        return function () {
-          _this2.isShowingMore = !_this2.isShowingMore;
-
-          _this2.render(renderOptions);
-        };
-      },
-      getLimit: function getLimit() {
-        return _getLimit(this.isShowingMore);
-      },
-      init: function init(initOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: initOptions.instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: renderOptions.instantSearchInstance
-        }), false);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          refinementList: _objectSpread({}, renderState.refinementList, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(renderOptions) {
-        var results = renderOptions.results,
-            state = renderOptions.state,
-            createURL = renderOptions.createURL,
-            instantSearchInstance = renderOptions.instantSearchInstance,
-            _renderOptions$isFrom = renderOptions.isFromSearch,
-            isFromSearch = _renderOptions$isFrom === void 0 ? false : _renderOptions$isFrom,
-            helper = renderOptions.helper;
-        var items = [];
-        var facetValues;
-
-        if (!sendEvent || !triggerRefine || !searchForFacetValues) {
-          sendEvent = (0, _utils.createSendEventForFacet)({
-            instantSearchInstance: instantSearchInstance,
-            helper: helper,
-            attribute: attribute,
-            widgetType: this.$$type
-          });
-
-          triggerRefine = function triggerRefine(facetValue) {
-            sendEvent('click', facetValue);
-            helper.toggleRefinement(attribute, facetValue).search();
-          };
-
-          searchForFacetValues = createSearchForFacetValues.call(this, helper);
-        }
-
-        if (results) {
-          if (!isFromSearch) {
-            facetValues = results.getFacetValues(attribute, {
-              sortBy: sortBy
-            }) || [];
-            items = transformItems(facetValues.slice(0, this.getLimit()).map(formatItems));
-          } else {
-            facetValues = escapeFacetValues ? (0, _escapeHighlight.escapeFacets)(results.facetHits) : results.facetHits;
-            items = transformItems(facetValues.map(function (_ref3) {
-              var value = _ref3.value,
-                  item = _objectWithoutProperties(_ref3, ["value"]);
-
-              return _objectSpread({}, item, {
-                value: value,
-                label: value
-              });
-            }));
-          }
-
-          var maxValuesPerFacetConfig = state.maxValuesPerFacet;
-          var currentLimit = this.getLimit(); // If the limit is the max number of facet retrieved it is impossible to know
-          // if the facets are exhaustive. The only moment we are sure it is exhaustive
-          // is when it is strictly under the number requested unless we know that another
-          // widget has requested more values (maxValuesPerFacet > getLimit()).
-          // Because this is used for making the search of facets unable or not, it is important
-          // to be conservative here.
-
-          hasExhaustiveItems = maxValuesPerFacetConfig > currentLimit ? facetValues.length <= currentLimit : facetValues.length < currentLimit;
-          lastResultsFromMainSearch = results;
-          lastItemsFromMainSearch = items;
-          toggleShowMore = this.createToggleShowMore(renderOptions);
-        } // Compute a specific createURL method able to link to any facet value state change
-
-
-        var _createURL = function _createURL(facetValue) {
-          return createURL(state.toggleRefinement(attribute, facetValue));
-        }; // Do not mistake searchForFacetValues and searchFacetValues which is the actual search
-        // function
-
-
-        var searchFacetValues = searchForFacetValues && searchForFacetValues(renderOptions);
-        var canShowLess = this.isShowingMore && lastItemsFromMainSearch.length > limit;
-        var canShowMore = showMore && !isFromSearch && !hasExhaustiveItems;
-        var canToggleShowMore = canShowLess || canShowMore;
-        return {
-          createURL: _createURL,
-          items: items,
-          refine: triggerRefine,
-          searchForItems: searchFacetValues,
-          isFromSearch: isFromSearch,
-          canRefine: isFromSearch || items.length > 0,
-          widgetParams: widgetParams,
-          isShowingMore: this.isShowingMore,
-          canToggleShowMore: canToggleShowMore,
-          toggleShowMore: this.cachedToggleShowMore,
-          sendEvent: sendEvent,
-          hasExhaustiveItems: hasExhaustiveItems
-        };
-      },
-      dispose: function dispose(_ref4) {
-        var state = _ref4.state;
-        unmountFn();
-        var withoutMaxValuesPerFacet = state.setQueryParameter('maxValuesPerFacet', undefined);
-
-        if (operator === 'and') {
-          return withoutMaxValuesPerFacet.removeFacet(attribute);
-        }
-
-        return withoutMaxValuesPerFacet.removeDisjunctiveFacet(attribute);
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref5) {
-        var searchParameters = _ref5.searchParameters;
-        var values = operator === 'or' ? searchParameters.getDisjunctiveRefinements(attribute) : searchParameters.getConjunctiveRefinements(attribute);
-
-        if (!values.length) {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          refinementList: _objectSpread({}, uiState.refinementList, _defineProperty({}, attribute, values))
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
-        var uiState = _ref6.uiState;
-        var isDisjunctive = operator === 'or';
-        var values = uiState.refinementList && uiState.refinementList[attribute];
-        var withoutRefinements = searchParameters.clearRefinements(attribute);
-        var withFacetConfiguration = isDisjunctive ? withoutRefinements.addDisjunctiveFacet(attribute) : withoutRefinements.addFacet(attribute);
-        var currentMaxValuesPerFacet = withFacetConfiguration.maxValuesPerFacet || 0;
-        var nextMaxValuesPerFacet = Math.max(currentMaxValuesPerFacet, showMore ? showMoreLimit : limit);
-        var withMaxValuesPerFacet = withFacetConfiguration.setQueryParameter('maxValuesPerFacet', nextMaxValuesPerFacet);
-
-        if (!values) {
-          var key = isDisjunctive ? 'disjunctiveFacetsRefinements' : 'facetsRefinements';
-          return withMaxValuesPerFacet.setQueryParameters(_defineProperty({}, key, _objectSpread({}, withMaxValuesPerFacet[key], _defineProperty({}, attribute, []))));
-        }
-
-        return values.reduce(function (parameters, value) {
-          return isDisjunctive ? parameters.addDisjunctiveFacetRefinement(attribute, value) : parameters.addFacetRefinement(attribute, value);
-        }, withMaxValuesPerFacet);
-      }
-    };
-  };
-}
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js"}],"node_modules/instantsearch.js/es/connectors/search-box/connectSearchBox.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = connectSearchBox;
-
-var _utils = require("../../lib/utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'search-box',
-  connector: true
-});
-/**
- * @typedef {Object} CustomSearchBoxWidgetOptions
- * @property {function(string, function(string))} [queryHook = undefined] A function that will be called every time
- * a new value for the query is set. The first parameter is the query and the second is a
- * function to actually trigger the search. The function takes the query as the parameter.
- *
- * This queryHook can be used to debounce the number of searches done from the searchBox.
- */
-
-/**
- * @typedef {Object} SearchBoxRenderingOptions
- * @property {string} query The query from the last search.
- * @property {function(string)} refine Sets a new query and searches.
- * @property {function()} clear Remove the query and perform search.
- * @property {Object} widgetParams All original `CustomSearchBoxWidgetOptions` forwarded to the `renderFn`.
- * @property {boolean} isSearchStalled `true` if the search results takes more than a certain time to come back
- * from Algolia servers. This can be configured on the InstantSearch constructor with the attribute
- * `stalledSearchDelay` which is 200ms, by default.
- */
-
-/**
- * **SearchBox** connector provides the logic to build a widget that will let the user search for a query.
- *
- * The connector provides to the rendering: `refine()` to set the query. The behaviour of this function
- * may be impacted by the `queryHook` widget parameter.
- * @type {Connector}
- * @param {function(SearchBoxRenderingOptions, boolean)} renderFn Rendering function for the custom **SearchBox** widget.
- * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomSearchBoxWidgetOptions)} Re-usable widget factory for a custom **SearchBox** widget.
- * @example
- * // custom `renderFn` to render the custom SearchBox widget
- * function renderFn(SearchBoxRenderingOptions, isFirstRendering) {
- *   if (isFirstRendering) {
- *     SearchBoxRenderingOptions.widgetParams.containerNode.html('<input type="text" />');
- *     SearchBoxRenderingOptions.widgetParams.containerNode
- *       .find('input')
- *       .on('keyup', function() {
- *         SearchBoxRenderingOptions.refine($(this).val());
- *       });
- *     SearchBoxRenderingOptions.widgetParams.containerNode
- *       .find('input')
- *       .val(SearchBoxRenderingOptions.query);
- *   }
- * }
- *
- * // connect `renderFn` to SearchBox logic
- * var customSearchBox = instantsearch.connectors.connectSearchBox(renderFn);
- *
- * // mount widget on the page
- * search.addWidgets([
- *   customSearchBox({
- *     containerNode: $('#custom-searchbox'),
- *   })
- * ]);
- */
-
-function connectSearchBox(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function () {
-    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var queryHook = widgetParams.queryHook;
-
-    function clear(helper) {
-      return function () {
-        helper.setQuery('').search();
-      };
-    }
-
-    var _clear = function _clear() {};
-
-    function _cachedClear() {
-      _clear();
-    }
-
-    return {
-      $$type: 'ais.searchBox',
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      dispose: function dispose(_ref) {
-        var state = _ref.state;
-        unmountFn();
-        return state.setQueryParameter('query', undefined);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          searchBox: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref2) {
-        var helper = _ref2.helper,
-            searchMetadata = _ref2.searchMetadata;
-
-        if (!this._refine) {
-          var setQueryAndSearch = function setQueryAndSearch(query) {
-            if (query !== helper.state.query) {
-              helper.setQuery(query).search();
-            }
-          };
-
-          this._refine = function (query) {
-            if (queryHook) {
-              queryHook(query, setQueryAndSearch);
-              return;
-            }
-
-            setQueryAndSearch(query);
-          };
-        }
-
-        _clear = clear(helper);
-        return {
-          query: helper.state.query || '',
-          refine: this._refine,
-          clear: _cachedClear,
-          widgetParams: widgetParams,
-          isSearchStalled: searchMetadata.isSearchStalled
-        };
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref3) {
-        var searchParameters = _ref3.searchParameters;
-        var query = searchParameters.query || '';
-
-        if (query === '' || uiState && uiState.query === query) {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          query: query
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref4) {
-        var uiState = _ref4.uiState;
-        return searchParameters.setQueryParameter('query', uiState.query || '');
-      }
-    };
-  };
-}
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/sort-by/connectSortBy.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = connectSortBy;
-
-var _utils = require("../../lib/utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'sort-by',
-  connector: true
-});
-/**
- * @typedef {Object} SortByItem
- * @property {string} value The name of the index to target.
- * @property {string} label The label of the index to display.
- */
-
-/**
- * @typedef {Object} CustomSortByWidgetOptions
- * @property {SortByItem[]} items Array of objects defining the different indices to choose from.
- * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
- */
-
-/**
- * @typedef {Object} SortByRenderingOptions
- * @property {string} currentRefinement The currently selected index.
- * @property {SortByItem[]} options All the available indices
- * @property {function(string)} refine Switches indices and triggers a new search.
- * @property {boolean} hasNoResults `true` if the last search contains no result.
- * @property {Object} widgetParams All original `CustomSortByWidgetOptions` forwarded to the `renderFn`.
- */
-
-/**
- * The **SortBy** connector provides the logic to build a custom widget that will display a
- * list of indices. With Algolia, this is most commonly used for changing ranking strategy. This allows
- * a user to change how the hits are being sorted.
- *
- * This connector provides the `refine` function that allows to switch indices.
- * The connector provides to the rendering: `refine()` to switch the current index and
- * `options` that are the values that can be selected. `refine` should be used
- * with `options.value`.
- * @type {Connector}
- * @param {function(SortByRenderingOptions, boolean)} renderFn Rendering function for the custom **SortBy** widget.
- * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomSortByWidgetOptions)} Re-usable widget factory for a custom **SortBy** widget.
- * @example
- * // custom `renderFn` to render the custom SortBy widget
- * function renderFn(SortByRenderingOptions, isFirstRendering) {
- *   if (isFirstRendering) {
- *     SortByRenderingOptions.widgetParams.containerNode.html('<select></select>');
- *     SortByRenderingOptions.widgetParams.containerNode
- *       .find('select')
- *       .on('change', function(event) {
- *         SortByRenderingOptions.refine(event.target.value);
- *       });
- *   }
- *
- *   var optionsHTML = SortByRenderingOptions.options.map(function(option) {
- *     return `
- *       <option
- *         value="${option.value}"
- *         ${SortByRenderingOptions.currentRefinement === option.value ? 'selected' : ''}
- *       >
- *         ${option.label}
- *       </option>
- *     `;
- *   });
- *
- *   SortByRenderingOptions.widgetParams.containerNode
- *     .find('select')
- *     .html(optionsHTML);
- * }
- *
- * // connect `renderFn` to SortBy logic
- * var customSortBy = instantsearch.connectors.connectSortBy(renderFn);
- *
- * // mount widget on the page
- * search.addWidgets([
- *   customSortBy({
- *     containerNode: $('#custom-sort-by-container'),
- *     items: [
- *       { value: 'instant_search', label: 'Most relevant' },
- *       { value: 'instant_search_price_asc', label: 'Lowest price' },
- *       { value: 'instant_search_price_desc', label: 'Highest price' },
- *     ],
- *   })
- * ]);
- */
-
-function connectSortBy(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function () {
-    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var items = widgetParams.items,
-        _widgetParams$transfo = widgetParams.transformItems,
-        transformItems = _widgetParams$transfo === void 0 ? function (x) {
-      return x;
-    } : _widgetParams$transfo;
-
-    if (!Array.isArray(items)) {
-      throw new Error(withUsage('The `items` option expects an array of objects.'));
-    }
-
-    return {
-      $$type: 'ais.sortBy',
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        var widgetRenderState = this.getWidgetRenderState(initOptions);
-        var currentIndex = widgetRenderState.currentRefinement;
-        var isCurrentIndexInItems = (0, _utils.find)(items, function (item) {
-          return item.value === currentIndex;
-        });
-        "development" === 'development' ? (0, _utils.warning)(isCurrentIndexInItems, "The index named \"".concat(currentIndex, "\" is not listed in the `items` of `sortBy`.")) : void 0;
-        renderFn(_objectSpread({}, widgetRenderState, {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      dispose: function dispose(_ref) {
-        var state = _ref.state;
-        unmountFn();
-        return state.setIndex(this.initialIndex);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          sortBy: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref2) {
-        var results = _ref2.results,
-            helper = _ref2.helper,
-            parent = _ref2.parent;
-
-        if (!this.initialIndex) {
-          this.initialIndex = parent.getIndexName();
-        }
-
-        if (!this.setIndex) {
-          this.setIndex = function (indexName) {
-            helper.setIndex(indexName).search();
-          };
-        }
-
-        return {
-          currentRefinement: helper.state.index,
-          options: transformItems(items),
-          refine: this.setIndex,
-          hasNoResults: results ? results.nbHits === 0 : true,
-          widgetParams: widgetParams
-        };
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref3) {
-        var searchParameters = _ref3.searchParameters;
-        var currentIndex = searchParameters.index;
-        var isInitialIndex = currentIndex === this.initialIndex;
-
-        if (isInitialIndex) {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          sortBy: currentIndex
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref4) {
-        var uiState = _ref4.uiState;
-        return searchParameters.setQueryParameter('index', uiState.sortBy || this.initialIndex || searchParameters.index);
-      }
-    };
-  };
-}
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/rating-menu/connectRatingMenu.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = connectRatingMenu;
-
-var _utils = require("../../lib/utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'rating-menu',
-  connector: true
-});
-var $$type = 'ais.ratingMenu';
-
-var createSendEvent = function createSendEvent(_ref) {
-  var instantSearchInstance = _ref.instantSearchInstance,
-      helper = _ref.helper,
-      getRefinedStar = _ref.getRefinedStar,
-      attribute = _ref.attribute;
-  return function () {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    if (args.length === 1) {
-      instantSearchInstance.sendEventToInsights(args[0]);
-      return;
-    }
-
-    var eventType = args[0],
-        facetValue = args[1],
-        _args$ = args[2],
-        eventName = _args$ === void 0 ? 'Filter Applied' : _args$;
-
-    if (eventType !== 'click') {
-      return;
-    }
-
-    var isRefined = getRefinedStar() === Number(facetValue);
-
-    if (!isRefined) {
-      instantSearchInstance.sendEventToInsights({
-        insightsMethod: 'clickedFilters',
-        widgetType: $$type,
-        eventType: eventType,
-        payload: {
-          eventName: eventName,
-          index: helper.getIndex(),
-          filters: ["".concat(attribute, ">=").concat(facetValue)]
-        }
-      });
-    }
-  };
-};
-/**
- * @typedef {Object} StarRatingItems
- * @property {string} name Name corresponding to the number of stars.
- * @property {string} value Number of stars as string.
- * @property {number} count Count of matched results corresponding to the number of stars.
- * @property {boolean[]} stars Array of length of maximum rating value with stars to display or not.
- * @property {boolean} isRefined Indicates if star rating refinement is applied.
- */
-
-/**
- * @typedef {Object} CustomStarRatingWidgetOptions
- * @property {string} attribute Name of the attribute for faceting (eg. "free_shipping").
- * @property {number} [max = 5] The maximum rating value.
- */
-
-/**
- * @typedef {Object} StarRatingRenderingOptions
- * @property {StarRatingItems[]} items Possible star ratings the user can apply.
- * @property {function(string): string} createURL Creates an URL for the next
- * state (takes the item value as parameter). Takes the value of an item as parameter.
- * @property {function(string)} refine Selects a rating to filter the results
- * (takes the filter value as parameter). Takes the value of an item as parameter.
- * @property {boolean} hasNoResults `true` if the last search contains no result.
- * @property {Object} widgetParams All original `CustomStarRatingWidgetOptions` forwarded to the `renderFn`.
- */
-
-/**
- * **StarRating** connector provides the logic to build a custom widget that will let
- * the user refine search results based on ratings.
- *
- * The connector provides to the rendering: `refine()` to select a value and
- * `items` that are the values that can be selected. `refine` should be used
- * with `items.value`.
- * @type {Connector}
- * @param {function(StarRatingRenderingOptions, boolean)} renderFn Rendering function for the custom **StarRating** widget.
- * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomStarRatingWidgetOptions)} Re-usable widget factory for a custom **StarRating** widget.
- * @example
- * // custom `renderFn` to render the custom StarRating widget
- * function renderFn(StarRatingRenderingOptions, isFirstRendering) {
- *   if (isFirstRendering) {
- *     StarRatingRenderingOptions.widgetParams.containerNode.html('<ul></ul>');
- *   }
- *
- *   StarRatingRenderingOptions.widgetParams.containerNode
- *     .find('li[data-refine-value]')
- *     .each(function() { $(this).off('click'); });
- *
- *   var listHTML = StarRatingRenderingOptions.items.map(function(item) {
- *     return '<li data-refine-value="' + item.value + '">' +
- *       '<a href="' + StarRatingRenderingOptions.createURL(item.value) + '">' +
- *       item.stars.map(function(star) { return star === false ? '☆' : '★'; }).join(' ') +
- *       '& up (' + item.count + ')' +
- *       '</a></li>';
- *   });
- *
- *   StarRatingRenderingOptions.widgetParams.containerNode
- *     .find('ul')
- *     .html(listHTML);
- *
- *   StarRatingRenderingOptions.widgetParams.containerNode
- *     .find('li[data-refine-value]')
- *     .each(function() {
- *       $(this).on('click', function(event) {
- *         event.preventDefault();
- *         event.stopPropagation();
- *
- *         StarRatingRenderingOptions.refine($(this).data('refine-value'));
- *       });
- *     });
- * }
- *
- * // connect `renderFn` to StarRating logic
- * var customStarRating = instantsearch.connectors.connectRatingMenu(renderFn);
- *
- * // mount widget on the page
- * search.addWidgets([
- *   customStarRating({
- *     containerNode: $('#custom-rating-menu-container'),
- *     attribute: 'rating',
- *     max: 5,
- *   })
- * ]);
- */
-
-
-function connectRatingMenu(renderFn) {
-  var _this = this;
-
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function () {
-    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var attribute = widgetParams.attribute,
-        _widgetParams$max = widgetParams.max,
-        max = _widgetParams$max === void 0 ? 5 : _widgetParams$max;
-    var sendEvent;
-
-    if (!attribute) {
-      throw new Error(withUsage('The `attribute` option is required.'));
-    }
-
-    var _getRefinedStar = function getRefinedStar(state) {
-      var refinements = state.getDisjunctiveRefinements(attribute);
-
-      if (!refinements.length) {
-        return undefined;
-      }
-
-      return Math.min.apply(Math, _toConsumableArray(refinements.map(Number)));
-    };
-
-    var toggleRefinement = function toggleRefinement(helper, facetValue) {
-      sendEvent('click', facetValue);
-      var isRefined = _getRefinedStar(helper.state) === Number(facetValue);
-      helper.removeDisjunctiveFacetRefinement(attribute);
-
-      if (!isRefined) {
-        for (var val = Number(facetValue); val <= max; ++val) {
-          helper.addDisjunctiveFacetRefinement(attribute, val);
-        }
-      }
-
-      helper.search();
-    };
-
-    var connectorState = {
-      toggleRefinementFactory: function toggleRefinementFactory(helper) {
-        return toggleRefinement.bind(_this, helper);
-      },
-      createURLFactory: function createURLFactory(_ref2) {
-        var state = _ref2.state,
-            createURL = _ref2.createURL;
-        return function (value) {
-          return createURL(state.toggleRefinement(attribute, value));
-        };
-      }
-    };
-    return {
-      $$type: $$type,
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          ratingMenu: _objectSpread({}, renderState.ratingMenu, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref3) {
-        var helper = _ref3.helper,
-            results = _ref3.results,
-            state = _ref3.state,
-            instantSearchInstance = _ref3.instantSearchInstance,
-            createURL = _ref3.createURL;
-        var facetValues = [];
-
-        if (!sendEvent) {
-          sendEvent = createSendEvent({
-            instantSearchInstance: instantSearchInstance,
-            helper: helper,
-            getRefinedStar: function getRefinedStar() {
-              return _getRefinedStar(helper.state);
-            },
-            attribute: attribute
-          });
-        }
-
-        if (results) {
-          var allValues = {};
-
-          for (var v = max; v >= 0; --v) {
-            allValues[v] = 0;
-          }
-
-          (results.getFacetValues(attribute) || []).forEach(function (facet) {
-            var val = Math.round(facet.name);
-
-            if (!val || val > max) {
-              return;
-            }
-
-            for (var _v = val; _v >= 1; --_v) {
-              allValues[_v] += facet.count;
-            }
-          });
-
-          var refinedStar = _getRefinedStar(state);
-
-          for (var star = max - 1; star >= 1; --star) {
-            var count = allValues[star];
-
-            if (refinedStar && star !== refinedStar && count === 0) {
-              // skip count==0 when at least 1 refinement is enabled
-              // eslint-disable-next-line no-continue
-              continue;
-            }
-
-            var stars = [];
-
-            for (var i = 1; i <= max; ++i) {
-              stars.push(i <= star);
-            }
-
-            facetValues.push({
-              stars: stars,
-              name: String(star),
-              value: String(star),
-              count: count,
-              isRefined: refinedStar === star
-            });
-          }
-        }
-
-        return {
-          items: facetValues,
-          hasNoResults: results ? results.nbHits === 0 : true,
-          refine: connectorState.toggleRefinementFactory(helper),
-          sendEvent: sendEvent,
-          createURL: connectorState.createURLFactory({
-            state: state,
-            createURL: createURL
-          }),
-          widgetParams: widgetParams
-        };
-      },
-      dispose: function dispose(_ref4) {
-        var state = _ref4.state;
-        unmountFn();
-        return state.removeDisjunctiveFacet(attribute);
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref5) {
-        var searchParameters = _ref5.searchParameters;
-
-        var value = _getRefinedStar(searchParameters);
-
-        if (typeof value !== 'number') {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          ratingMenu: _objectSpread({}, uiState.ratingMenu, _defineProperty({}, attribute, value))
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
-        var uiState = _ref6.uiState;
-        var value = uiState.ratingMenu && uiState.ratingMenu[attribute];
-        var withoutRefinements = searchParameters.clearRefinements(attribute);
-        var withDisjunctiveFacet = withoutRefinements.addDisjunctiveFacet(attribute);
-
-        if (!value) {
-          return withDisjunctiveFacet.setQueryParameters({
-            disjunctiveFacetsRefinements: _objectSpread({}, withDisjunctiveFacet.disjunctiveFacetsRefinements, _defineProperty({}, attribute, []))
-          });
-        }
-
-        return (0, _utils.range)({
-          start: Number(value),
-          end: max + 1
-        }).reduce(function (parameters, number) {
-          return parameters.addDisjunctiveFacetRefinement(attribute, number);
-        }, withDisjunctiveFacet);
-      }
-    };
-  };
-}
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/stats/connectStats.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = connectStats;
-
-var _utils = require("../../lib/utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'stats',
-  connector: true
-});
-/**
- * @typedef {Object} StatsRenderingOptions
- * @property {number} hitsPerPage The maximum number of hits per page returned by Algolia.
- * @property {number} nbHits The number of hits in the result set.
- * @property {number} nbPages The number of pages computed for the result set.
- * @property {number} page The current page.
- * @property {number} processingTimeMS The time taken to compute the results inside the Algolia engine.
- * @property {string} query The query used for the current search.
- * @property {object} widgetParams All original `CustomStatsWidgetOptions` forwarded to the `renderFn`.
- */
-
-/**
- * @typedef {Object} CustomStatsWidgetOptions
- */
-
-/**
- * **Stats** connector provides the logic to build a custom widget that will displays
- * search statistics (hits number and processing time).
- *
- * @type {Connector}
- * @param {function(StatsRenderingOptions, boolean)} renderFn Rendering function for the custom **Stats** widget.
- * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomStatsWidgetOptions)} Re-usable widget factory for a custom **Stats** widget.
- * @example
- * // custom `renderFn` to render the custom Stats widget
- * function renderFn(StatsRenderingOptions, isFirstRendering) {
- *   if (isFirstRendering) return;
- *
- *   StatsRenderingOptions.widgetParams.containerNode
- *     .html(StatsRenderingOptions.nbHits + ' results found in ' + StatsRenderingOptions.processingTimeMS);
- * }
- *
- * // connect `renderFn` to Stats logic
- * var customStatsWidget = instantsearch.connectors.connectStats(renderFn);
- *
- * // mount widget on the page
- * search.addWidgets([
- *   customStatsWidget({
- *     containerNode: $('#custom-stats-container'),
- *   })
- * ]);
- */
-
-function connectStats(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function () {
-    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    return {
-      $$type: 'ais.stats',
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      dispose: function dispose() {
-        unmountFn();
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          stats: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref) {
-        var results = _ref.results,
-            helper = _ref.helper;
-
-        if (!results) {
-          return {
-            hitsPerPage: helper.state.hitsPerPage,
-            nbHits: 0,
-            nbPages: 0,
-            page: helper.state.page || 0,
-            processingTimeMS: -1,
-            query: helper.state.query || '',
-            widgetParams: widgetParams
-          };
-        }
-
-        return {
-          hitsPerPage: results.hitsPerPage,
-          nbHits: results.nbHits,
-          nbPages: results.nbPages,
-          page: results.page,
-          processingTimeMS: results.processingTimeMS,
-          query: results.query,
-          widgetParams: widgetParams
-        };
-      }
-    };
-  };
-}
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/toggle-refinement/connectToggleRefinement.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = connectToggleRefinement;
-
-var _utils = require("../../lib/utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'toggle-refinement',
-  connector: true
-});
-var $$type = 'ais.toggleRefinement';
-
-var createSendEvent = function createSendEvent(_ref) {
-  var instantSearchInstance = _ref.instantSearchInstance,
-      attribute = _ref.attribute,
-      on = _ref.on,
-      helper = _ref.helper;
-  return function () {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    if (args.length === 1) {
-      instantSearchInstance.sendEventToInsights(args[0]);
-      return;
-    }
-
-    var eventType = args[0],
-        isRefined = args[1],
-        _args$ = args[2],
-        eventName = _args$ === void 0 ? 'Filter Applied' : _args$;
-
-    if (eventType !== 'click' || on === undefined) {
-      return;
-    } // Checking
-
-
-    if (!isRefined) {
-      instantSearchInstance.sendEventToInsights({
-        insightsMethod: 'clickedFilters',
-        widgetType: $$type,
-        eventType: eventType,
-        payload: {
-          eventName: eventName,
-          index: helper.getIndex(),
-          filters: on.map(function (value) {
-            return "".concat(attribute, ":").concat(JSON.stringify(value));
-          })
-        }
-      });
-    }
-  };
-};
-/**
- * @typedef {Object} ToggleValue
- * @property {boolean} isRefined `true` if the toggle is on.
- * @property {number} count Number of results matched after applying the toggle refinement.
- * @property {Object} onFacetValue Value of the toggle when it's on.
- * @property {Object} offFacetValue Value of the toggle when it's off.
- */
-
-/**
- * @typedef {Object} CustomToggleWidgetOptions
- * @property {string} attribute Name of the attribute for faceting (eg. "free_shipping").
- * @property {Object} [on = true] Value to filter on when toggled.
- * @property {Object} [off] Value to filter on when not toggled.
- */
-
-/**
- * @typedef {Object} ToggleRenderingOptions
- * @property {ToggleValue} value The current toggle value.
- * @property {function():string} createURL Creates an URL for the next state.
- * @property {function(value)} refine Updates to the next state by applying the toggle refinement.
- * @property {Object} widgetParams All original `CustomToggleWidgetOptions` forwarded to the `renderFn`.
- */
-
-/**
- * **Toggle** connector provides the logic to build a custom widget that will provide
- * an on/off filtering feature based on an attribute value or values.
- *
- * Two modes are implemented in the custom widget:
- *  - with or without the value filtered
- *  - switch between two values.
- *
- * @type {Connector}
- * @param {function(ToggleRenderingOptions, boolean)} renderFn Rendering function for the custom **Toggle** widget.
- * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomToggleWidgetOptions)} Re-usable widget factory for a custom **Toggle** widget.
- * @example
- * // custom `renderFn` to render the custom ClearAll widget
- * function renderFn(ToggleRenderingOptions, isFirstRendering) {
- *   ToggleRenderingOptions.widgetParams.containerNode
- *     .find('a')
- *     .off('click');
- *
- *   var buttonHTML = `
- *     <a href="${ToggleRenderingOptions.createURL()}">
- *       <input
- *         type="checkbox"
- *         value="${ToggleRenderingOptions.value.name}"
- *         ${ToggleRenderingOptions.value.isRefined ? 'checked' : ''}
- *       />
- *       ${ToggleRenderingOptions.value.name} (${ToggleRenderingOptions.value.count})
- *     </a>
- *   `;
- *
- *   ToggleRenderingOptions.widgetParams.containerNode.html(buttonHTML);
- *   ToggleRenderingOptions.widgetParams.containerNode
- *     .find('a')
- *     .on('click', function(event) {
- *       event.preventDefault();
- *       event.stopPropagation();
- *
- *       ToggleRenderingOptions.refine(ToggleRenderingOptions.value);
- *     });
- * }
- *
- * // connect `renderFn` to Toggle logic
- * var customToggle = instantsearch.connectors.connectToggleRefinement(renderFn);
- *
- * // mount widget on the page
- * search.addWidgets([
- *   customToggle({
- *     containerNode: $('#custom-toggle-container'),
- *     attribute: 'free_shipping',
- *   })
- * ]);
- */
-
-
-function connectToggleRefinement(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function () {
-    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var attribute = widgetParams.attribute,
-        _widgetParams$on = widgetParams.on,
-        userOn = _widgetParams$on === void 0 ? true : _widgetParams$on,
-        userOff = widgetParams.off;
-
-    if (!attribute) {
-      throw new Error(withUsage('The `attribute` option is required.'));
-    }
-
-    var hasAnOffValue = userOff !== undefined;
-    var hasAnOnValue = userOn !== undefined;
-    var on = hasAnOnValue ? (0, _utils.toArray)(userOn).map(_utils.escapeRefinement) : undefined;
-    var off = hasAnOffValue ? (0, _utils.toArray)(userOff).map(_utils.escapeRefinement) : undefined;
-    var sendEvent;
-
-    var toggleRefinementFactory = function toggleRefinementFactory(helper) {
-      return function () {
-        var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-            isRefined = _ref2.isRefined; // Checking
-
-
-        if (!isRefined) {
-          sendEvent('click', isRefined);
-
-          if (hasAnOffValue) {
-            off.forEach(function (v) {
-              return helper.removeDisjunctiveFacetRefinement(attribute, v);
-            });
-          }
-
-          on.forEach(function (v) {
-            return helper.addDisjunctiveFacetRefinement(attribute, v);
-          });
-        } else {
-          // Unchecking
-          on.forEach(function (v) {
-            return helper.removeDisjunctiveFacetRefinement(attribute, v);
-          });
-
-          if (hasAnOffValue) {
-            off.forEach(function (v) {
-              return helper.addDisjunctiveFacetRefinement(attribute, v);
-            });
-          }
-        }
-
-        helper.search();
-      };
-    };
-
-    var connectorState = {
-      createURLFactory: function createURLFactory(isRefined, _ref3) {
-        var state = _ref3.state,
-            createURL = _ref3.createURL;
-        return function () {
-          var valuesToRemove = isRefined ? on : off;
-
-          if (valuesToRemove) {
-            valuesToRemove.forEach(function (v) {
-              state.removeDisjunctiveFacetRefinement(attribute, v);
-            });
-          }
-
-          var valuesToAdd = isRefined ? off : on;
-
-          if (valuesToAdd) {
-            valuesToAdd.forEach(function (v) {
-              state.addDisjunctiveFacetRefinement(attribute, v);
-            });
-          }
-
-          return createURL(state);
-        };
-      }
-    };
-    return {
-      $$type: $$type,
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      dispose: function dispose(_ref4) {
-        var state = _ref4.state;
-        unmountFn();
-        return state.removeDisjunctiveFacet(attribute);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          toggleRefinement: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref5) {
-        var state = _ref5.state,
-            helper = _ref5.helper,
-            results = _ref5.results,
-            createURL = _ref5.createURL,
-            instantSearchInstance = _ref5.instantSearchInstance;
-        var isRefined = results ? on === null || on === void 0 ? void 0 : on.every(function (v) {
-          return helper.state.isDisjunctiveFacetRefined(attribute, v);
-        }) : on === null || on === void 0 ? void 0 : on.every(function (v) {
-          return state.isDisjunctiveFacetRefined(attribute, v);
-        });
-        var onFacetValue = {
-          isRefined: isRefined,
-          count: 0
-        };
-        var offFacetValue = {
-          isRefined: hasAnOffValue && !isRefined,
-          count: 0
-        };
-
-        if (results) {
-          var offValue = (0, _utils.toArray)(off || false);
-          var allFacetValues = results.getFacetValues(attribute) || [];
-          var onData = on === null || on === void 0 ? void 0 : on.map(function (v) {
-            return (0, _utils.find)(allFacetValues, function (_ref6) {
-              var name = _ref6.name;
-              return name === (0, _utils.unescapeRefinement)(v);
-            });
-          }).filter(function (v) {
-            return v !== undefined;
-          });
-          var offData = hasAnOffValue ? offValue.map(function (v) {
-            return (0, _utils.find)(allFacetValues, function (_ref7) {
-              var name = _ref7.name;
-              return name === (0, _utils.unescapeRefinement)(v);
-            });
-          }).filter(function (v) {
-            return v !== undefined;
-          }) : [];
-          onFacetValue = {
-            isRefined: onData.length ? onData.every(function (v) {
-              return v.isRefined;
-            }) : false,
-            count: onData.reduce(function (acc, v) {
-              return acc + v.count;
-            }, 0) || null
-          };
-          offFacetValue = {
-            isRefined: offData.length ? offData.every(function (v) {
-              return v.isRefined;
-            }) : false,
-            count: offData.reduce(function (acc, v) {
-              return acc + v.count;
-            }, 0) || allFacetValues.reduce(function (total, _ref8) {
-              var count = _ref8.count;
-              return total + count;
-            }, 0)
-          };
-        } else if (hasAnOffValue && !isRefined) {
-          if (off) {
-            off.forEach(function (v) {
-              return helper.addDisjunctiveFacetRefinement(attribute, v);
-            });
-          }
-
-          helper.setPage(helper.state.page);
-        }
-
-        if (!sendEvent) {
-          sendEvent = createSendEvent({
-            instantSearchInstance: instantSearchInstance,
-            attribute: attribute,
-            on: on,
-            helper: helper
-          });
-        }
-
-        var nextRefinement = isRefined ? offFacetValue : onFacetValue;
-        return {
-          value: {
-            name: attribute,
-            isRefined: isRefined,
-            count: results ? nextRefinement.count : null,
-            onFacetValue: onFacetValue,
-            offFacetValue: offFacetValue
-          },
-          state: state,
-          createURL: connectorState.createURLFactory(isRefined, {
-            state: state,
-            createURL: createURL
-          }),
-          sendEvent: sendEvent,
-          refine: toggleRefinementFactory(helper),
-          widgetParams: widgetParams
-        };
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref9) {
-        var searchParameters = _ref9.searchParameters;
-        var isRefined = on && on.every(function (v) {
-          return searchParameters.isDisjunctiveFacetRefined(attribute, v);
-        });
-
-        if (!isRefined) {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          toggle: _objectSpread({}, uiState.toggle, _defineProperty({}, attribute, isRefined))
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref10) {
-        var uiState = _ref10.uiState;
-        var withFacetConfiguration = searchParameters.clearRefinements(attribute).addDisjunctiveFacet(attribute);
-        var isRefined = Boolean(uiState.toggle && uiState.toggle[attribute]);
-
-        if (isRefined) {
-          if (on) {
-            on.forEach(function (v) {
-              withFacetConfiguration = withFacetConfiguration.addDisjunctiveFacetRefinement(attribute, v);
-            });
-          }
-
-          return withFacetConfiguration;
-        } // It's not refined with an `off` value
-
-
-        if (hasAnOffValue) {
-          if (off) {
-            off.forEach(function (v) {
-              withFacetConfiguration = withFacetConfiguration.addDisjunctiveFacetRefinement(attribute, v);
-            });
-          }
-
-          return withFacetConfiguration;
-        } // It's not refined without an `off` value
-
-
-        return withFacetConfiguration.setQueryParameters({
-          disjunctiveFacetsRefinements: _objectSpread({}, searchParameters.disjunctiveFacetsRefinements, _defineProperty({}, attribute, []))
-        });
-      }
-    };
-  };
-}
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/breadcrumb/connectBreadcrumb.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _utils = require("../../lib/utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
-}
-
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
-}
-
-function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'breadcrumb',
-  connector: true
-});
-
-var connectBreadcrumb = function connectBreadcrumb(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  var connectorState = {};
-  return function (widgetParams) {
-    var _ref = widgetParams || {},
-        attributes = _ref.attributes,
-        _ref$separator = _ref.separator,
-        separator = _ref$separator === void 0 ? ' > ' : _ref$separator,
-        _ref$rootPath = _ref.rootPath,
-        rootPath = _ref$rootPath === void 0 ? null : _ref$rootPath,
-        _ref$transformItems = _ref.transformItems,
-        transformItems = _ref$transformItems === void 0 ? function (items) {
-      return items;
-    } : _ref$transformItems;
-
-    if (!attributes || !Array.isArray(attributes) || attributes.length === 0) {
-      throw new Error(withUsage('The `attributes` option expects an array of strings.'));
-    }
-
-    var _attributes = _slicedToArray(attributes, 1),
-        hierarchicalFacetName = _attributes[0];
-
-    return {
-      $$type: 'ais.breadcrumb',
-      init: function init(initOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: initOptions.instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: renderOptions.instantSearchInstance
-        }), false);
-      },
-      dispose: function dispose() {
-        unmountFn();
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          breadcrumb: _objectSpread({}, renderState.breadcrumb, _defineProperty({}, hierarchicalFacetName, this.getWidgetRenderState(renderOptions)))
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref2) {
-        var helper = _ref2.helper,
-            createURL = _ref2.createURL,
-            results = _ref2.results,
-            state = _ref2.state;
-
-        function getItems() {
-          if (!results) {
-            return [];
-          }
-
-          var _state$hierarchicalFa = _slicedToArray(state.hierarchicalFacets, 1),
-              facetName = _state$hierarchicalFa[0].name;
-
-          var facetValues = results.getFacetValues(facetName, {});
-          var data = Array.isArray(facetValues.data) ? facetValues.data : [];
-          var items = transformItems(shiftItemsValues(prepareItems(data)));
-          return items;
-        }
-
-        var items = getItems();
-
-        if (!connectorState.createURL) {
-          connectorState.createURL = function (facetValue) {
-            if (!facetValue) {
-              var breadcrumb = helper.getHierarchicalFacetBreadcrumb(hierarchicalFacetName);
-
-              if (breadcrumb.length > 0) {
-                return createURL(helper.state.toggleFacetRefinement(hierarchicalFacetName, breadcrumb[0]));
-              }
-            }
-
-            return createURL(helper.state.toggleFacetRefinement(hierarchicalFacetName, facetValue));
-          };
-        }
-
-        if (!connectorState.refine) {
-          connectorState.refine = function (facetValue) {
-            if (!facetValue) {
-              var breadcrumb = helper.getHierarchicalFacetBreadcrumb(hierarchicalFacetName);
-
-              if (breadcrumb.length > 0) {
-                helper.toggleRefinement(hierarchicalFacetName, breadcrumb[0]).search();
-              }
-            } else {
-              helper.toggleRefinement(hierarchicalFacetName, facetValue).search();
-            }
-          };
-        }
-
-        return {
-          canRefine: items.length > 0,
-          createURL: connectorState.createURL,
-          items: items,
-          refine: connectorState.refine,
-          widgetParams: widgetParams
-        };
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters) {
-        if (searchParameters.isHierarchicalFacet(hierarchicalFacetName)) {
-          var facet = searchParameters.getHierarchicalFacetByName(hierarchicalFacetName);
-          "development" === 'development' ? (0, _utils.warning)((0, _utils.isEqual)(facet.attributes, attributes) && facet.separator === separator && facet.rootPath === rootPath, 'Using Breadcrumb and HierarchicalMenu on the same facet with different options overrides the configuration of the HierarchicalMenu.') : void 0;
-          return searchParameters;
-        }
-
-        return searchParameters.addHierarchicalFacet({
-          name: hierarchicalFacetName,
-          attributes: attributes,
-          separator: separator,
-          rootPath: rootPath
-        });
-      }
-    };
-  };
-};
-
-function prepareItems(data) {
-  return data.reduce(function (result, currentItem) {
-    if (currentItem.isRefined) {
-      result.push({
-        label: currentItem.name,
-        value: currentItem.path
-      });
-
-      if (Array.isArray(currentItem.data)) {
-        result = result.concat(prepareItems(currentItem.data));
-      }
-    }
-
-    return result;
-  }, []);
-}
-
-function shiftItemsValues(array) {
-  return array.map(function (x, idx) {
-    return {
-      label: x.label,
-      value: idx + 1 === array.length ? null : array[idx + 1].value
-    };
-  });
-}
-
-var _default = connectBreadcrumb;
-exports.default = _default;
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/geo-search/connectGeoSearch.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _utils = require("../../lib/utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'geo-search',
-  connector: true
-});
-var $$type = 'ais.geoSearch';
-/**
- * @typedef {Object} LatLng
- * @property {number} lat The latitude in degrees.
- * @property {number} lng The longitude in degrees.
- */
-
-/**
- * @typedef {Object} Bounds
- * @property {LatLng} northEast The top right corner of the map view.
- * @property {LatLng} southWest The bottom left corner of the map view.
- */
-
-/**
- * @typedef {Object} CustomGeoSearchWidgetOptions
- * @property {boolean} [enableRefineOnMapMove=true] If true, refine will be triggered as you move the map.
- * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
- */
-
-/**
- * @typedef {Object} GeoSearchRenderingOptions
- * @property {Object[]} items The matched hits from Algolia API.
- * @property {LatLng} position The current position of the search.
- * @property {Bounds} currentRefinement The current bounding box of the search.
- * @property {function(Bounds)} refine Sets a bounding box to filter the results from the given map bounds.
- * @property {function()} clearMapRefinement Reset the current bounding box refinement.
- * @property {function(): boolean} isRefinedWithMap Return true if the current refinement is set with the map bounds.
- * @property {function()} toggleRefineOnMapMove Toggle the fact that the user is able to refine on map move.
- * @property {function(): boolean} isRefineOnMapMove Return true if the user is able to refine on map move.
- * @property {function()} setMapMoveSinceLastRefine Set the fact that the map has moved since the last refinement, should be call on each map move. The call to the function triggers a new rendering only when the value change.
- * @property {function(): boolean} hasMapMoveSinceLastRefine Return true if the map has move since the last refinement.
- * @property {Object} widgetParams All original `CustomGeoSearchWidgetOptions` forwarded to the `renderFn`.
- * @property {LatLng} [position] The current position of the search.
- */
-
-/**
- * The **GeoSearch** connector provides the logic to build a widget that will display the results on a map. It also provides a way to search for results based on their position. The connector provides functions to manage the search experience (search on map interaction or control the interaction for example).
- *
- * @requirements
- *
- * Note that the GeoSearch connector uses the [geosearch](https://www.algolia.com/doc/guides/searching/geo-search) capabilities of Algolia. Your hits **must** have a `_geoloc` attribute in order to be passed to the rendering function.
- *
- * Currently, the feature is not compatible with multiple values in the _geoloc attribute.
- *
- * @param {function(GeoSearchRenderingOptions, boolean)} renderFn Rendering function for the custom **GeoSearch** widget.
- * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomGeoSearchWidgetOptions)} Re-usable widget factory for a custom **GeoSearch** widget.
- * @staticExample
- * // This example use Leaflet for the rendering, be sure to have the library correctly setup
- * // before trying the demo. You can find more details in their documentation (link below).
- * // We choose Leaflet for the example but you can use any libraries that you want.
- * // See: http://leafletjs.com/examples/quick-start
- *
- * let map = null;
- * let markers = [];
- *
- * // custom `renderFn` to render the custom GeoSearch widget
- * function renderFn(GeoSearchRenderingOptions, isFirstRendering) {
- *   const { items, widgetParams } = GeoSearchRenderingOptions;
- *
- *   if (isFirstRendering) {
- *     map = L.map(widgetParams.container);
- *
- *     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
- *       attribution:
- *         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
- *     }).addTo(map);
- *   }
- *
- *   markers.forEach(marker => marker.remove());
- *
- *   markers = items.map(({ _geoloc }) =>
- *     L.marker([_geoloc.lat, _geoloc.lng]).addTo(map)
- *   );
- *
- *   if (markers.length) {
- *     map.fitBounds(L.featureGroup(markers).getBounds());
- *   }
- * }
- *
- * // connect `renderFn` to GeoSearch logic
- * const customGeoSearch = instantsearch.connectors.connectGeoSearch(renderFn);
- *
- * // mount widget on the page
- * search.addWidgets([
- *   customGeoSearch({
- *     container: document.getElementById('custom-geo-search'),
- *   })
- * ]);
- */
-
-var connectGeoSearch = function connectGeoSearch(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function () {
-    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var _widgetParams$enableR = widgetParams.enableRefineOnMapMove,
-        enableRefineOnMapMove = _widgetParams$enableR === void 0 ? true : _widgetParams$enableR,
-        _widgetParams$transfo = widgetParams.transformItems,
-        transformItems = _widgetParams$transfo === void 0 ? function (items) {
-      return items;
-    } : _widgetParams$transfo;
-    var widgetState = {
-      isRefineOnMapMove: enableRefineOnMapMove,
-      // @MAJOR hasMapMoveSinceLastRefine -> hasMapMovedSinceLastRefine
-      hasMapMoveSinceLastRefine: false,
-      lastRefinePosition: '',
-      lastRefineBoundingBox: '',
-      internalToggleRefineOnMapMove: _utils.noop,
-      internalSetMapMoveSinceLastRefine: _utils.noop
-    };
-
-    var getPositionFromState = function getPositionFromState(state) {
-      return state.aroundLatLng && (0, _utils.aroundLatLngToPosition)(state.aroundLatLng);
-    };
-
-    var getCurrentRefinementFromState = function getCurrentRefinementFromState(state) {
-      return state.insideBoundingBox && (0, _utils.insideBoundingBoxToBoundingBox)(state.insideBoundingBox);
-    };
-
-    var refine = function refine(helper) {
-      return function (_ref) {
-        var ne = _ref.northEast,
-            sw = _ref.southWest;
-        var boundingBox = [ne.lat, ne.lng, sw.lat, sw.lng].join();
-        helper.setQueryParameter('insideBoundingBox', boundingBox).search();
-        widgetState.hasMapMoveSinceLastRefine = false;
-        widgetState.lastRefineBoundingBox = boundingBox;
-      };
-    };
-
-    var clearMapRefinement = function clearMapRefinement(helper) {
-      return function () {
-        helper.setQueryParameter('insideBoundingBox', undefined).search();
-      };
-    };
-
-    var isRefinedWithMap = function isRefinedWithMap(state) {
-      return function () {
-        return Boolean(state.insideBoundingBox);
-      };
-    };
-
-    var toggleRefineOnMapMove = function toggleRefineOnMapMove() {
-      return widgetState.internalToggleRefineOnMapMove();
-    };
-
-    var createInternalToggleRefinementOnMapMove = function createInternalToggleRefinementOnMapMove(render, args) {
-      return function () {
-        widgetState.isRefineOnMapMove = !widgetState.isRefineOnMapMove;
-        render(args);
-      };
-    };
-
-    var isRefineOnMapMove = function isRefineOnMapMove() {
-      return widgetState.isRefineOnMapMove;
-    };
-
-    var setMapMoveSinceLastRefine = function setMapMoveSinceLastRefine() {
-      return widgetState.internalSetMapMoveSinceLastRefine();
-    };
-
-    var createInternalSetMapMoveSinceLastRefine = function createInternalSetMapMoveSinceLastRefine(render, args) {
-      return function () {
-        var shouldTriggerRender = widgetState.hasMapMoveSinceLastRefine !== true;
-        widgetState.hasMapMoveSinceLastRefine = true;
-
-        if (shouldTriggerRender) {
-          render(args);
-        }
-      };
-    };
-
-    var hasMapMoveSinceLastRefine = function hasMapMoveSinceLastRefine() {
-      return widgetState.hasMapMoveSinceLastRefine;
-    };
-
-    var sendEvent;
-    return {
-      $$type: $$type,
-      init: function init(initArgs) {
-        var instantSearchInstance = initArgs.instantSearchInstance;
-        var isFirstRendering = true;
-        widgetState.internalToggleRefineOnMapMove = createInternalToggleRefinementOnMapMove(_utils.noop, initArgs);
-        widgetState.internalSetMapMoveSinceLastRefine = createInternalSetMapMoveSinceLastRefine(_utils.noop, initArgs);
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initArgs), {
-          instantSearchInstance: instantSearchInstance
-        }), isFirstRendering);
-      },
-      render: function render(renderArgs) {
-        var helper = renderArgs.helper,
-            instantSearchInstance = renderArgs.instantSearchInstance;
-        var isFirstRendering = false; // We don't use the state provided by the render function because we need
-        // to be sure that the state is the latest one for the following condition
-
-        var state = helper.state;
-        var positionChangedSinceLastRefine = Boolean(state.aroundLatLng) && Boolean(widgetState.lastRefinePosition) && state.aroundLatLng !== widgetState.lastRefinePosition;
-        var boundingBoxChangedSinceLastRefine = !state.insideBoundingBox && Boolean(widgetState.lastRefineBoundingBox) && state.insideBoundingBox !== widgetState.lastRefineBoundingBox;
-
-        if (positionChangedSinceLastRefine || boundingBoxChangedSinceLastRefine) {
-          widgetState.hasMapMoveSinceLastRefine = false;
-        }
-
-        widgetState.lastRefinePosition = state.aroundLatLng || '';
-        widgetState.lastRefineBoundingBox = state.insideBoundingBox || '';
-        widgetState.internalToggleRefineOnMapMove = createInternalToggleRefinementOnMapMove(this.render.bind(this), renderArgs);
-        widgetState.internalSetMapMoveSinceLastRefine = createInternalSetMapMoveSinceLastRefine(this.render.bind(this), renderArgs);
-        var widgetRenderState = this.getWidgetRenderState(renderArgs);
-        sendEvent('view', widgetRenderState.items);
-        renderFn(_objectSpread({}, widgetRenderState, {
-          instantSearchInstance: instantSearchInstance
-        }), isFirstRendering);
-      },
-      getWidgetRenderState: function getWidgetRenderState(renderOptions) {
-        var helper = renderOptions.helper,
-            results = renderOptions.results,
-            instantSearchInstance = renderOptions.instantSearchInstance;
-        var state = helper.state;
-        var items = results ? transformItems(results.hits.filter(function (hit) {
-          return hit._geoloc;
-        })) : [];
-
-        if (!sendEvent) {
-          sendEvent = (0, _utils.createSendEventForHits)({
-            instantSearchInstance: instantSearchInstance,
-            index: helper.getIndex(),
-            widgetType: $$type
-          });
-        }
-
-        return {
-          items: items,
-          position: getPositionFromState(state),
-          currentRefinement: getCurrentRefinementFromState(state),
-          refine: refine(helper),
-          sendEvent: sendEvent,
-          clearMapRefinement: clearMapRefinement(helper),
-          isRefinedWithMap: isRefinedWithMap(state),
-          toggleRefineOnMapMove: toggleRefineOnMapMove,
-          isRefineOnMapMove: isRefineOnMapMove,
-          setMapMoveSinceLastRefine: setMapMoveSinceLastRefine,
-          hasMapMoveSinceLastRefine: hasMapMoveSinceLastRefine,
-          widgetParams: widgetParams
-        };
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          geoSearch: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      dispose: function dispose(_ref2) {
-        var state = _ref2.state;
-        unmountFn();
-        return state.setQueryParameter('insideBoundingBox', undefined);
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref3) {
-        var searchParameters = _ref3.searchParameters;
-        var boundingBox = searchParameters.insideBoundingBox;
-
-        if (!boundingBox || uiState && uiState.geoSearch && uiState.geoSearch.boundingBox === boundingBox) {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          geoSearch: {
-            boundingBox: boundingBox
-          }
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref4) {
-        var uiState = _ref4.uiState;
-
-        if (!uiState || !uiState.geoSearch) {
-          return searchParameters.setQueryParameter('insideBoundingBox', undefined);
-        }
-
-        return searchParameters.setQueryParameter('insideBoundingBox', uiState.geoSearch.boundingBox);
-      }
-    };
-  };
-};
-
-var _default = connectGeoSearch;
-exports.default = _default;
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/powered-by/connectPoweredBy.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _utils = require("../../lib/utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'powered-by',
-  connector: true
-});
-/**
- * **PoweredBy** connector provides the logic to build a custom widget that will displays
- * the logo to redirect to Algolia.
- */
-
-var connectPoweredBy = function connectPoweredBy(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  var defaultUrl = 'https://www.algolia.com/?' + 'utm_source=instantsearch.js&' + 'utm_medium=website&' + "utm_content=".concat(typeof window !== 'undefined' && window.location ? window.location.hostname : '', "&") + 'utm_campaign=poweredby';
-  return function (widgetParams) {
-    var _ref = widgetParams || {},
-        _ref$url = _ref.url,
-        url = _ref$url === void 0 ? defaultUrl : _ref$url;
-
-    return {
-      $$type: 'ais.poweredBy',
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          poweredBy: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState() {
-        return {
-          url: url,
-          widgetParams: widgetParams
-        };
-      },
-      dispose: function dispose() {
-        unmountFn();
-      }
-    };
-  };
-};
-
-var _default = connectPoweredBy;
-exports.default = _default;
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/algoliasearch-helper/src/functions/merge.js":[function(require,module,exports) {
+})({"node_modules/algoliasearch-helper/src/functions/merge.js":[function(require,module,exports) {
 'use strict';
 
 function clone(value) {
@@ -15580,7 +5552,7 @@ algoliasearchHelper.SearchResults = SearchResults;
 
 module.exports = algoliasearchHelper;
 
-},{"./src/algoliasearch.helper":"node_modules/algoliasearch-helper/src/algoliasearch.helper.js","./src/SearchParameters":"node_modules/algoliasearch-helper/src/SearchParameters/index.js","./src/SearchResults":"node_modules/algoliasearch-helper/src/SearchResults/index.js","./src/version.js":"node_modules/algoliasearch-helper/src/version.js"}],"node_modules/instantsearch.js/es/connectors/configure/connectConfigure.js":[function(require,module,exports) {
+},{"./src/algoliasearch.helper":"node_modules/algoliasearch-helper/src/algoliasearch.helper.js","./src/SearchParameters":"node_modules/algoliasearch-helper/src/SearchParameters/index.js","./src/SearchResults":"node_modules/algoliasearch-helper/src/SearchResults/index.js","./src/version.js":"node_modules/algoliasearch-helper/src/version.js"}],"node_modules/instantsearch.js/es/lib/utils/capitalize.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15588,159 +5560,122 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _algoliasearchHelper = _interopRequireDefault(require("algoliasearch-helper"));
+function capitalize(text) {
+  return text.toString().charAt(0).toUpperCase() + text.toString().slice(1);
+}
 
-var _utils = require("../../lib/utils");
+var _default = capitalize;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/defer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var nextMicroTask = Promise.resolve();
+
+var defer = function defer(callback) {
+  var progress = null;
+  var cancelled = false;
+
+  var fn = function fn() {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    if (progress !== null) {
+      return;
+    }
+
+    progress = nextMicroTask.then(function () {
+      progress = null;
+
+      if (cancelled) {
+        cancelled = false;
+        return;
+      }
+
+      callback.apply(void 0, args);
+    });
+  };
+
+  fn.wait = function () {
+    if (progress === null) {
+      throw new Error('The deferred function should be called before calling `wait()`');
+    }
+
+    return progress;
+  };
+
+  fn.cancel = function () {
+    if (progress === null) {
+      return;
+    }
+
+    cancelled = true;
+  };
+
+  return fn;
+};
+
+var _default = defer;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/isDomElement.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function isDomElement(object) {
+  return object instanceof HTMLElement || Boolean(object) && object.nodeType > 0;
+}
+
+var _default = isDomElement;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/getContainerNode.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _isDomElement = _interopRequireDefault(require("./isDomElement"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
 
 /**
- * Refine the given search parameters.
+ * Return the container. If it's a string, it is considered a
+ * css selector and retrieves the first matching element. Otherwise
+ * test if it validates that it's a correct DOMElement.
+ *
+ * @param {string|HTMLElement} selectorOrHTMLElement CSS Selector or container node.
+ * @return {HTMLElement} Container node
+ * @throws Error when the type is not correct
  */
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'configure',
-  connector: true
-});
+function getContainerNode(selectorOrHTMLElement) {
+  var isSelectorString = typeof selectorOrHTMLElement === 'string';
+  var domElement = isSelectorString ? document.querySelector(selectorOrHTMLElement) : selectorOrHTMLElement;
 
-function getInitialSearchParameters(state, widgetParams) {
-  // We leverage the helper internals to remove the `widgetParams` from
-  // the state. The function `setQueryParameters` omits the values that
-  // are `undefined` on the next state.
-  return state.setQueryParameters(Object.keys(widgetParams.searchParameters).reduce(function (acc, key) {
-    return _objectSpread({}, acc, _defineProperty({}, key, undefined));
-  }, {}));
+  if (!(0, _isDomElement.default)(domElement)) {
+    var errorMessage = 'Container must be `string` or `HTMLElement`.';
+
+    if (isSelectorString) {
+      errorMessage += " Unable to find ".concat(selectorOrHTMLElement);
+    }
+
+    throw new Error(errorMessage);
+  }
+
+  return domElement;
 }
 
-var connectConfigure = function connectConfigure() {
-  var renderFn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _utils.noop;
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  return function (widgetParams) {
-    if (!widgetParams || !(0, _utils.isPlainObject)(widgetParams.searchParameters)) {
-      throw new Error(withUsage('The `searchParameters` option expects an object.'));
-    }
-
-    var connectorState = {};
-
-    function refine(helper) {
-      return function (searchParameters) {
-        // Merge new `searchParameters` with the ones set from other widgets
-        var actualState = getInitialSearchParameters(helper.state, widgetParams);
-        var nextSearchParameters = (0, _utils.mergeSearchParameters)(actualState, new _algoliasearchHelper.default.SearchParameters(searchParameters)); // Update original `widgetParams.searchParameters` to the new refined one
-
-        widgetParams.searchParameters = searchParameters; // Trigger a search with the resolved search parameters
-
-        helper.setState(nextSearchParameters).search();
-      };
-    }
-
-    return {
-      $$type: 'ais.configure',
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      dispose: function dispose(_ref) {
-        var state = _ref.state;
-        unmountFn();
-        return getInitialSearchParameters(state, widgetParams);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        var _renderState$configur;
-
-        var widgetRenderState = this.getWidgetRenderState(renderOptions);
-        return _objectSpread({}, renderState, {
-          configure: _objectSpread({}, widgetRenderState, {
-            widgetParams: _objectSpread({}, widgetRenderState.widgetParams, {
-              searchParameters: (0, _utils.mergeSearchParameters)(new _algoliasearchHelper.default.SearchParameters((_renderState$configur = renderState.configure) === null || _renderState$configur === void 0 ? void 0 : _renderState$configur.widgetParams.searchParameters), new _algoliasearchHelper.default.SearchParameters(widgetRenderState.widgetParams.searchParameters)).getQueryParams()
-            })
-          })
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref2) {
-        var helper = _ref2.helper;
-
-        if (!connectorState.refine) {
-          connectorState.refine = refine(helper);
-        }
-
-        return {
-          refine: connectorState.refine,
-          widgetParams: widgetParams
-        };
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(state, _ref3) {
-        var uiState = _ref3.uiState;
-        return (0, _utils.mergeSearchParameters)(state, new _algoliasearchHelper.default.SearchParameters(_objectSpread({}, uiState.configure, {}, widgetParams.searchParameters)));
-      },
-      getWidgetUiState: function getWidgetUiState(uiState) {
-        return _objectSpread({}, uiState, {
-          configure: _objectSpread({}, uiState.configure, {}, widgetParams.searchParameters)
-        });
-      }
-    };
-  };
-};
-
-var _default = connectConfigure;
+var _default = getContainerNode;
 exports.default = _default;
-},{"algoliasearch-helper":"node_modules/algoliasearch-helper/index.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/configure-related-items/connectConfigureRelatedItems.js":[function(require,module,exports) {
+},{"./isDomElement":"node_modules/instantsearch.js/es/lib/utils/isDomElement.js"}],"node_modules/instantsearch.js/es/lib/utils/isSpecialClick.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15748,11 +5683,38 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _algoliasearchHelper = _interopRequireDefault(require("algoliasearch-helper"));
+function isSpecialClick(event) {
+  var isMiddleClick = event.button === 1;
+  return isMiddleClick || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
+}
 
-var _utils = require("../../lib/utils");
+var _default = isSpecialClick;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/uniq.js":[function(require,module,exports) {
+"use strict";
 
-var _connectConfigure = _interopRequireDefault(require("../configure/connectConfigure"));
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function uniq(array) {
+  return array.filter(function (value, index, self) {
+    return self.indexOf(value) === index;
+  });
+}
+
+var _default = uniq;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/prepareTemplateProps.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _uniq = _interopRequireDefault(require("./uniq"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15827,81 +5789,831 @@ function _arrayWithoutHoles(arr) {
   }
 }
 
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'configure-related-items',
-  connector: true
-});
+function prepareTemplates() {
+  var defaultTemplates = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var templates = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var allKeys = (0, _uniq.default)([].concat(_toConsumableArray(Object.keys(defaultTemplates)), _toConsumableArray(Object.keys(templates))));
+  return allKeys.reduce(function (config, key) {
+    var defaultTemplate = defaultTemplates[key];
+    var customTemplate = templates[key];
+    var isCustomTemplate = customTemplate !== undefined && customTemplate !== defaultTemplate;
+    config.templates[key] = isCustomTemplate ? customTemplate : defaultTemplate;
+    config.useCustomCompileOptions[key] = isCustomTemplate;
+    return config;
+  }, {
+    templates: {},
+    useCustomCompileOptions: {}
+  });
+}
+/**
+ * Prepares an object to be passed to the Template widget
+ */
 
-function createOptionalFilter(_ref) {
-  var attributeName = _ref.attributeName,
-      attributeValue = _ref.attributeValue,
-      attributeScore = _ref.attributeScore;
-  return "".concat(attributeName, ":").concat(attributeValue, "<score=").concat(attributeScore || 1, ">");
+
+function prepareTemplateProps(_ref) {
+  var defaultTemplates = _ref.defaultTemplates,
+      templates = _ref.templates,
+      templatesConfig = _ref.templatesConfig;
+  var preparedTemplates = prepareTemplates(defaultTemplates, templates);
+  return _objectSpread({
+    templatesConfig: templatesConfig
+  }, preparedTemplates);
 }
 
-var connectConfigureRelatedItems = function connectConfigureRelatedItems(renderFn, unmountFn) {
-  return function (widgetParams) {
-    var _ref2 = widgetParams || {},
-        hit = _ref2.hit,
-        matchingPatterns = _ref2.matchingPatterns,
-        _ref2$transformSearch = _ref2.transformSearchParameters,
-        transformSearchParameters = _ref2$transformSearch === void 0 ? function (x) {
-      return x;
-    } : _ref2$transformSearch;
-
-    if (!hit) {
-      throw new Error(withUsage('The `hit` option is required.'));
-    }
-
-    if (!matchingPatterns) {
-      throw new Error(withUsage('The `matchingPatterns` option is required.'));
-    }
-
-    var optionalFilters = Object.keys(matchingPatterns).reduce(function (acc, attributeName) {
-      var attribute = matchingPatterns[attributeName];
-      var attributeValue = (0, _utils.getPropertyByPath)(hit, attributeName);
-      var attributeScore = attribute.score;
-
-      if (Array.isArray(attributeValue)) {
-        return [].concat(_toConsumableArray(acc), [attributeValue.map(function (attributeSubValue) {
-          return createOptionalFilter({
-            attributeName: attributeName,
-            attributeValue: attributeSubValue,
-            attributeScore: attributeScore
-          });
-        })]);
-      }
-
-      if (typeof attributeValue === 'string') {
-        return [].concat(_toConsumableArray(acc), [createOptionalFilter({
-          attributeName: attributeName,
-          attributeValue: attributeValue,
-          attributeScore: attributeScore
-        })]);
-      }
-
-      "development" === 'development' ? (0, _utils.warning)(false, "\nThe `matchingPatterns` option returned a value of type ".concat((0, _utils.getObjectType)(attributeValue), " for the \"").concat(attributeName, "\" key. This value was not sent to Algolia because `optionalFilters` only supports strings and array of strings.\n\nYou can remove the \"").concat(attributeName, "\" key from the `matchingPatterns` option.\n\nSee https://www.algolia.com/doc/api-reference/api-parameters/optionalFilters/\n            ")) : void 0;
-      return acc;
-    }, []);
-
-    var searchParameters = _objectSpread({}, transformSearchParameters(new _algoliasearchHelper.default.SearchParameters({
-      sumOrFiltersScores: true,
-      facetFilters: ["objectID:-".concat(hit.objectID)],
-      optionalFilters: optionalFilters
-    })));
-
-    var makeConfigure = (0, _connectConfigure.default)(renderFn, unmountFn);
-    return _objectSpread({}, makeConfigure({
-      searchParameters: searchParameters
-    }), {
-      $$type: 'ais.configureRelatedItems'
-    });
-  };
-};
-
-var _default = connectConfigureRelatedItems;
+var _default = prepareTemplateProps;
 exports.default = _default;
-},{"algoliasearch-helper":"node_modules/algoliasearch-helper/index.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../configure/connectConfigure":"node_modules/instantsearch.js/es/connectors/configure/connectConfigure.js"}],"node_modules/instantsearch.js/es/connectors/autocomplete/connectAutocomplete.js":[function(require,module,exports) {
+},{"./uniq":"node_modules/instantsearch.js/es/lib/utils/uniq.js"}],"node_modules/hogan.js/lib/compiler.js":[function(require,module,exports) {
+/*
+ *  Copyright 2011 Twitter, Inc.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+(function (Hogan) {
+  // Setup regex  assignments
+  // remove whitespace according to Mustache spec
+  var rIsWhitespace = /\S/,
+      rQuot = /\"/g,
+      rNewline =  /\n/g,
+      rCr = /\r/g,
+      rSlash = /\\/g,
+      rLineSep = /\u2028/,
+      rParagraphSep = /\u2029/;
+
+  Hogan.tags = {
+    '#': 1, '^': 2, '<': 3, '$': 4,
+    '/': 5, '!': 6, '>': 7, '=': 8, '_v': 9,
+    '{': 10, '&': 11, '_t': 12
+  };
+
+  Hogan.scan = function scan(text, delimiters) {
+    var len = text.length,
+        IN_TEXT = 0,
+        IN_TAG_TYPE = 1,
+        IN_TAG = 2,
+        state = IN_TEXT,
+        tagType = null,
+        tag = null,
+        buf = '',
+        tokens = [],
+        seenTag = false,
+        i = 0,
+        lineStart = 0,
+        otag = '{{',
+        ctag = '}}';
+
+    function addBuf() {
+      if (buf.length > 0) {
+        tokens.push({tag: '_t', text: new String(buf)});
+        buf = '';
+      }
+    }
+
+    function lineIsWhitespace() {
+      var isAllWhitespace = true;
+      for (var j = lineStart; j < tokens.length; j++) {
+        isAllWhitespace =
+          (Hogan.tags[tokens[j].tag] < Hogan.tags['_v']) ||
+          (tokens[j].tag == '_t' && tokens[j].text.match(rIsWhitespace) === null);
+        if (!isAllWhitespace) {
+          return false;
+        }
+      }
+
+      return isAllWhitespace;
+    }
+
+    function filterLine(haveSeenTag, noNewLine) {
+      addBuf();
+
+      if (haveSeenTag && lineIsWhitespace()) {
+        for (var j = lineStart, next; j < tokens.length; j++) {
+          if (tokens[j].text) {
+            if ((next = tokens[j+1]) && next.tag == '>') {
+              // set indent to token value
+              next.indent = tokens[j].text.toString()
+            }
+            tokens.splice(j, 1);
+          }
+        }
+      } else if (!noNewLine) {
+        tokens.push({tag:'\n'});
+      }
+
+      seenTag = false;
+      lineStart = tokens.length;
+    }
+
+    function changeDelimiters(text, index) {
+      var close = '=' + ctag,
+          closeIndex = text.indexOf(close, index),
+          delimiters = trim(
+            text.substring(text.indexOf('=', index) + 1, closeIndex)
+          ).split(' ');
+
+      otag = delimiters[0];
+      ctag = delimiters[delimiters.length - 1];
+
+      return closeIndex + close.length - 1;
+    }
+
+    if (delimiters) {
+      delimiters = delimiters.split(' ');
+      otag = delimiters[0];
+      ctag = delimiters[1];
+    }
+
+    for (i = 0; i < len; i++) {
+      if (state == IN_TEXT) {
+        if (tagChange(otag, text, i)) {
+          --i;
+          addBuf();
+          state = IN_TAG_TYPE;
+        } else {
+          if (text.charAt(i) == '\n') {
+            filterLine(seenTag);
+          } else {
+            buf += text.charAt(i);
+          }
+        }
+      } else if (state == IN_TAG_TYPE) {
+        i += otag.length - 1;
+        tag = Hogan.tags[text.charAt(i + 1)];
+        tagType = tag ? text.charAt(i + 1) : '_v';
+        if (tagType == '=') {
+          i = changeDelimiters(text, i);
+          state = IN_TEXT;
+        } else {
+          if (tag) {
+            i++;
+          }
+          state = IN_TAG;
+        }
+        seenTag = i;
+      } else {
+        if (tagChange(ctag, text, i)) {
+          tokens.push({tag: tagType, n: trim(buf), otag: otag, ctag: ctag,
+                       i: (tagType == '/') ? seenTag - otag.length : i + ctag.length});
+          buf = '';
+          i += ctag.length - 1;
+          state = IN_TEXT;
+          if (tagType == '{') {
+            if (ctag == '}}') {
+              i++;
+            } else {
+              cleanTripleStache(tokens[tokens.length - 1]);
+            }
+          }
+        } else {
+          buf += text.charAt(i);
+        }
+      }
+    }
+
+    filterLine(seenTag, true);
+
+    return tokens;
+  }
+
+  function cleanTripleStache(token) {
+    if (token.n.substr(token.n.length - 1) === '}') {
+      token.n = token.n.substring(0, token.n.length - 1);
+    }
+  }
+
+  function trim(s) {
+    if (s.trim) {
+      return s.trim();
+    }
+
+    return s.replace(/^\s*|\s*$/g, '');
+  }
+
+  function tagChange(tag, text, index) {
+    if (text.charAt(index) != tag.charAt(0)) {
+      return false;
+    }
+
+    for (var i = 1, l = tag.length; i < l; i++) {
+      if (text.charAt(index + i) != tag.charAt(i)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  // the tags allowed inside super templates
+  var allowedInSuper = {'_t': true, '\n': true, '$': true, '/': true};
+
+  function buildTree(tokens, kind, stack, customTags) {
+    var instructions = [],
+        opener = null,
+        tail = null,
+        token = null;
+
+    tail = stack[stack.length - 1];
+
+    while (tokens.length > 0) {
+      token = tokens.shift();
+
+      if (tail && tail.tag == '<' && !(token.tag in allowedInSuper)) {
+        throw new Error('Illegal content in < super tag.');
+      }
+
+      if (Hogan.tags[token.tag] <= Hogan.tags['$'] || isOpener(token, customTags)) {
+        stack.push(token);
+        token.nodes = buildTree(tokens, token.tag, stack, customTags);
+      } else if (token.tag == '/') {
+        if (stack.length === 0) {
+          throw new Error('Closing tag without opener: /' + token.n);
+        }
+        opener = stack.pop();
+        if (token.n != opener.n && !isCloser(token.n, opener.n, customTags)) {
+          throw new Error('Nesting error: ' + opener.n + ' vs. ' + token.n);
+        }
+        opener.end = token.i;
+        return instructions;
+      } else if (token.tag == '\n') {
+        token.last = (tokens.length == 0) || (tokens[0].tag == '\n');
+      }
+
+      instructions.push(token);
+    }
+
+    if (stack.length > 0) {
+      throw new Error('missing closing tag: ' + stack.pop().n);
+    }
+
+    return instructions;
+  }
+
+  function isOpener(token, tags) {
+    for (var i = 0, l = tags.length; i < l; i++) {
+      if (tags[i].o == token.n) {
+        token.tag = '#';
+        return true;
+      }
+    }
+  }
+
+  function isCloser(close, open, tags) {
+    for (var i = 0, l = tags.length; i < l; i++) {
+      if (tags[i].c == close && tags[i].o == open) {
+        return true;
+      }
+    }
+  }
+
+  function stringifySubstitutions(obj) {
+    var items = [];
+    for (var key in obj) {
+      items.push('"' + esc(key) + '": function(c,p,t,i) {' + obj[key] + '}');
+    }
+    return "{ " + items.join(",") + " }";
+  }
+
+  function stringifyPartials(codeObj) {
+    var partials = [];
+    for (var key in codeObj.partials) {
+      partials.push('"' + esc(key) + '":{name:"' + esc(codeObj.partials[key].name) + '", ' + stringifyPartials(codeObj.partials[key]) + "}");
+    }
+    return "partials: {" + partials.join(",") + "}, subs: " + stringifySubstitutions(codeObj.subs);
+  }
+
+  Hogan.stringify = function(codeObj, text, options) {
+    return "{code: function (c,p,i) { " + Hogan.wrapMain(codeObj.code) + " }," + stringifyPartials(codeObj) +  "}";
+  }
+
+  var serialNo = 0;
+  Hogan.generate = function(tree, text, options) {
+    serialNo = 0;
+    var context = { code: '', subs: {}, partials: {} };
+    Hogan.walk(tree, context);
+
+    if (options.asString) {
+      return this.stringify(context, text, options);
+    }
+
+    return this.makeTemplate(context, text, options);
+  }
+
+  Hogan.wrapMain = function(code) {
+    return 'var t=this;t.b(i=i||"");' + code + 'return t.fl();';
+  }
+
+  Hogan.template = Hogan.Template;
+
+  Hogan.makeTemplate = function(codeObj, text, options) {
+    var template = this.makePartials(codeObj);
+    template.code = new Function('c', 'p', 'i', this.wrapMain(codeObj.code));
+    return new this.template(template, text, this, options);
+  }
+
+  Hogan.makePartials = function(codeObj) {
+    var key, template = {subs: {}, partials: codeObj.partials, name: codeObj.name};
+    for (key in template.partials) {
+      template.partials[key] = this.makePartials(template.partials[key]);
+    }
+    for (key in codeObj.subs) {
+      template.subs[key] = new Function('c', 'p', 't', 'i', codeObj.subs[key]);
+    }
+    return template;
+  }
+
+  function esc(s) {
+    return s.replace(rSlash, '\\\\')
+            .replace(rQuot, '\\\"')
+            .replace(rNewline, '\\n')
+            .replace(rCr, '\\r')
+            .replace(rLineSep, '\\u2028')
+            .replace(rParagraphSep, '\\u2029');
+  }
+
+  function chooseMethod(s) {
+    return (~s.indexOf('.')) ? 'd' : 'f';
+  }
+
+  function createPartial(node, context) {
+    var prefix = "<" + (context.prefix || "");
+    var sym = prefix + node.n + serialNo++;
+    context.partials[sym] = {name: node.n, partials: {}};
+    context.code += 't.b(t.rp("' +  esc(sym) + '",c,p,"' + (node.indent || '') + '"));';
+    return sym;
+  }
+
+  Hogan.codegen = {
+    '#': function(node, context) {
+      context.code += 'if(t.s(t.' + chooseMethod(node.n) + '("' + esc(node.n) + '",c,p,1),' +
+                      'c,p,0,' + node.i + ',' + node.end + ',"' + node.otag + " " + node.ctag + '")){' +
+                      't.rs(c,p,' + 'function(c,p,t){';
+      Hogan.walk(node.nodes, context);
+      context.code += '});c.pop();}';
+    },
+
+    '^': function(node, context) {
+      context.code += 'if(!t.s(t.' + chooseMethod(node.n) + '("' + esc(node.n) + '",c,p,1),c,p,1,0,0,"")){';
+      Hogan.walk(node.nodes, context);
+      context.code += '};';
+    },
+
+    '>': createPartial,
+    '<': function(node, context) {
+      var ctx = {partials: {}, code: '', subs: {}, inPartial: true};
+      Hogan.walk(node.nodes, ctx);
+      var template = context.partials[createPartial(node, context)];
+      template.subs = ctx.subs;
+      template.partials = ctx.partials;
+    },
+
+    '$': function(node, context) {
+      var ctx = {subs: {}, code: '', partials: context.partials, prefix: node.n};
+      Hogan.walk(node.nodes, ctx);
+      context.subs[node.n] = ctx.code;
+      if (!context.inPartial) {
+        context.code += 't.sub("' + esc(node.n) + '",c,p,i);';
+      }
+    },
+
+    '\n': function(node, context) {
+      context.code += write('"\\n"' + (node.last ? '' : ' + i'));
+    },
+
+    '_v': function(node, context) {
+      context.code += 't.b(t.v(t.' + chooseMethod(node.n) + '("' + esc(node.n) + '",c,p,0)));';
+    },
+
+    '_t': function(node, context) {
+      context.code += write('"' + esc(node.text) + '"');
+    },
+
+    '{': tripleStache,
+
+    '&': tripleStache
+  }
+
+  function tripleStache(node, context) {
+    context.code += 't.b(t.t(t.' + chooseMethod(node.n) + '("' + esc(node.n) + '",c,p,0)));';
+  }
+
+  function write(s) {
+    return 't.b(' + s + ');';
+  }
+
+  Hogan.walk = function(nodelist, context) {
+    var func;
+    for (var i = 0, l = nodelist.length; i < l; i++) {
+      func = Hogan.codegen[nodelist[i].tag];
+      func && func(nodelist[i], context);
+    }
+    return context;
+  }
+
+  Hogan.parse = function(tokens, text, options) {
+    options = options || {};
+    return buildTree(tokens, '', [], options.sectionTags || []);
+  }
+
+  Hogan.cache = {};
+
+  Hogan.cacheKey = function(text, options) {
+    return [text, !!options.asString, !!options.disableLambda, options.delimiters, !!options.modelGet].join('||');
+  }
+
+  Hogan.compile = function(text, options) {
+    options = options || {};
+    var key = Hogan.cacheKey(text, options);
+    var template = this.cache[key];
+
+    if (template) {
+      var partials = template.partials;
+      for (var name in partials) {
+        delete partials[name].instance;
+      }
+      return template;
+    }
+
+    template = this.generate(this.parse(this.scan(text, options.delimiters), text, options), text, options);
+    return this.cache[key] = template;
+  }
+})(typeof exports !== 'undefined' ? exports : Hogan);
+
+},{}],"node_modules/hogan.js/lib/template.js":[function(require,module,exports) {
+/*
+ *  Copyright 2011 Twitter, Inc.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+var Hogan = {};
+
+(function (Hogan) {
+  Hogan.Template = function (codeObj, text, compiler, options) {
+    codeObj = codeObj || {};
+    this.r = codeObj.code || this.r;
+    this.c = compiler;
+    this.options = options || {};
+    this.text = text || '';
+    this.partials = codeObj.partials || {};
+    this.subs = codeObj.subs || {};
+    this.buf = '';
+  }
+
+  Hogan.Template.prototype = {
+    // render: replaced by generated code.
+    r: function (context, partials, indent) { return ''; },
+
+    // variable escaping
+    v: hoganEscape,
+
+    // triple stache
+    t: coerceToString,
+
+    render: function render(context, partials, indent) {
+      return this.ri([context], partials || {}, indent);
+    },
+
+    // render internal -- a hook for overrides that catches partials too
+    ri: function (context, partials, indent) {
+      return this.r(context, partials, indent);
+    },
+
+    // ensurePartial
+    ep: function(symbol, partials) {
+      var partial = this.partials[symbol];
+
+      // check to see that if we've instantiated this partial before
+      var template = partials[partial.name];
+      if (partial.instance && partial.base == template) {
+        return partial.instance;
+      }
+
+      if (typeof template == 'string') {
+        if (!this.c) {
+          throw new Error("No compiler available.");
+        }
+        template = this.c.compile(template, this.options);
+      }
+
+      if (!template) {
+        return null;
+      }
+
+      // We use this to check whether the partials dictionary has changed
+      this.partials[symbol].base = template;
+
+      if (partial.subs) {
+        // Make sure we consider parent template now
+        if (!partials.stackText) partials.stackText = {};
+        for (key in partial.subs) {
+          if (!partials.stackText[key]) {
+            partials.stackText[key] = (this.activeSub !== undefined && partials.stackText[this.activeSub]) ? partials.stackText[this.activeSub] : this.text;
+          }
+        }
+        template = createSpecializedPartial(template, partial.subs, partial.partials,
+          this.stackSubs, this.stackPartials, partials.stackText);
+      }
+      this.partials[symbol].instance = template;
+
+      return template;
+    },
+
+    // tries to find a partial in the current scope and render it
+    rp: function(symbol, context, partials, indent) {
+      var partial = this.ep(symbol, partials);
+      if (!partial) {
+        return '';
+      }
+
+      return partial.ri(context, partials, indent);
+    },
+
+    // render a section
+    rs: function(context, partials, section) {
+      var tail = context[context.length - 1];
+
+      if (!isArray(tail)) {
+        section(context, partials, this);
+        return;
+      }
+
+      for (var i = 0; i < tail.length; i++) {
+        context.push(tail[i]);
+        section(context, partials, this);
+        context.pop();
+      }
+    },
+
+    // maybe start a section
+    s: function(val, ctx, partials, inverted, start, end, tags) {
+      var pass;
+
+      if (isArray(val) && val.length === 0) {
+        return false;
+      }
+
+      if (typeof val == 'function') {
+        val = this.ms(val, ctx, partials, inverted, start, end, tags);
+      }
+
+      pass = !!val;
+
+      if (!inverted && pass && ctx) {
+        ctx.push((typeof val == 'object') ? val : ctx[ctx.length - 1]);
+      }
+
+      return pass;
+    },
+
+    // find values with dotted names
+    d: function(key, ctx, partials, returnFound) {
+      var found,
+          names = key.split('.'),
+          val = this.f(names[0], ctx, partials, returnFound),
+          doModelGet = this.options.modelGet,
+          cx = null;
+
+      if (key === '.' && isArray(ctx[ctx.length - 2])) {
+        val = ctx[ctx.length - 1];
+      } else {
+        for (var i = 1; i < names.length; i++) {
+          found = findInScope(names[i], val, doModelGet);
+          if (found !== undefined) {
+            cx = val;
+            val = found;
+          } else {
+            val = '';
+          }
+        }
+      }
+
+      if (returnFound && !val) {
+        return false;
+      }
+
+      if (!returnFound && typeof val == 'function') {
+        ctx.push(cx);
+        val = this.mv(val, ctx, partials);
+        ctx.pop();
+      }
+
+      return val;
+    },
+
+    // find values with normal names
+    f: function(key, ctx, partials, returnFound) {
+      var val = false,
+          v = null,
+          found = false,
+          doModelGet = this.options.modelGet;
+
+      for (var i = ctx.length - 1; i >= 0; i--) {
+        v = ctx[i];
+        val = findInScope(key, v, doModelGet);
+        if (val !== undefined) {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        return (returnFound) ? false : "";
+      }
+
+      if (!returnFound && typeof val == 'function') {
+        val = this.mv(val, ctx, partials);
+      }
+
+      return val;
+    },
+
+    // higher order templates
+    ls: function(func, cx, partials, text, tags) {
+      var oldTags = this.options.delimiters;
+
+      this.options.delimiters = tags;
+      this.b(this.ct(coerceToString(func.call(cx, text)), cx, partials));
+      this.options.delimiters = oldTags;
+
+      return false;
+    },
+
+    // compile text
+    ct: function(text, cx, partials) {
+      if (this.options.disableLambda) {
+        throw new Error('Lambda features disabled.');
+      }
+      return this.c.compile(text, this.options).render(cx, partials);
+    },
+
+    // template result buffering
+    b: function(s) { this.buf += s; },
+
+    fl: function() { var r = this.buf; this.buf = ''; return r; },
+
+    // method replace section
+    ms: function(func, ctx, partials, inverted, start, end, tags) {
+      var textSource,
+          cx = ctx[ctx.length - 1],
+          result = func.call(cx);
+
+      if (typeof result == 'function') {
+        if (inverted) {
+          return true;
+        } else {
+          textSource = (this.activeSub && this.subsText && this.subsText[this.activeSub]) ? this.subsText[this.activeSub] : this.text;
+          return this.ls(result, cx, partials, textSource.substring(start, end), tags);
+        }
+      }
+
+      return result;
+    },
+
+    // method replace variable
+    mv: function(func, ctx, partials) {
+      var cx = ctx[ctx.length - 1];
+      var result = func.call(cx);
+
+      if (typeof result == 'function') {
+        return this.ct(coerceToString(result.call(cx)), cx, partials);
+      }
+
+      return result;
+    },
+
+    sub: function(name, context, partials, indent) {
+      var f = this.subs[name];
+      if (f) {
+        this.activeSub = name;
+        f(context, partials, this, indent);
+        this.activeSub = false;
+      }
+    }
+
+  };
+
+  //Find a key in an object
+  function findInScope(key, scope, doModelGet) {
+    var val;
+
+    if (scope && typeof scope == 'object') {
+
+      if (scope[key] !== undefined) {
+        val = scope[key];
+
+      // try lookup with get for backbone or similar model data
+      } else if (doModelGet && scope.get && typeof scope.get == 'function') {
+        val = scope.get(key);
+      }
+    }
+
+    return val;
+  }
+
+  function createSpecializedPartial(instance, subs, partials, stackSubs, stackPartials, stackText) {
+    function PartialTemplate() {};
+    PartialTemplate.prototype = instance;
+    function Substitutions() {};
+    Substitutions.prototype = instance.subs;
+    var key;
+    var partial = new PartialTemplate();
+    partial.subs = new Substitutions();
+    partial.subsText = {};  //hehe. substext.
+    partial.buf = '';
+
+    stackSubs = stackSubs || {};
+    partial.stackSubs = stackSubs;
+    partial.subsText = stackText;
+    for (key in subs) {
+      if (!stackSubs[key]) stackSubs[key] = subs[key];
+    }
+    for (key in stackSubs) {
+      partial.subs[key] = stackSubs[key];
+    }
+
+    stackPartials = stackPartials || {};
+    partial.stackPartials = stackPartials;
+    for (key in partials) {
+      if (!stackPartials[key]) stackPartials[key] = partials[key];
+    }
+    for (key in stackPartials) {
+      partial.partials[key] = stackPartials[key];
+    }
+
+    return partial;
+  }
+
+  var rAmp = /&/g,
+      rLt = /</g,
+      rGt = />/g,
+      rApos = /\'/g,
+      rQuot = /\"/g,
+      hChars = /[&<>\"\']/;
+
+  function coerceToString(val) {
+    return String((val === null || val === undefined) ? '' : val);
+  }
+
+  function hoganEscape(str) {
+    str = coerceToString(str);
+    return hChars.test(str) ?
+      str
+        .replace(rAmp, '&amp;')
+        .replace(rLt, '&lt;')
+        .replace(rGt, '&gt;')
+        .replace(rApos, '&#39;')
+        .replace(rQuot, '&quot;') :
+      str;
+  }
+
+  var isArray = Array.isArray || function(a) {
+    return Object.prototype.toString.call(a) === '[object Array]';
+  };
+
+})(typeof exports !== 'undefined' ? exports : Hogan);
+
+},{}],"node_modules/hogan.js/lib/hogan.js":[function(require,module,exports) {
+/*
+ *  Copyright 2011 Twitter, Inc.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+// This file is for use with Node.js. See dist/ for browser files.
+
+var Hogan = require('./compiler');
+Hogan.Template = require('./template').Template;
+Hogan.template = Hogan.Template;
+module.exports = Hogan;
+
+},{"./compiler":"node_modules/hogan.js/lib/compiler.js","./template":"node_modules/hogan.js/lib/template.js"}],"node_modules/instantsearch.js/es/lib/utils/renderTemplate.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15909,13 +6621,23 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _escapeHighlight = _interopRequireWildcard(require("../../lib/escape-highlight"));
+var _hogan = _interopRequireDefault(require("hogan.js"));
 
-var _utils = require("../../lib/utils");
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+function _typeof(obj) {
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+  return _typeof(obj);
+}
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -15966,187 +6688,452 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'autocomplete',
-  connector: true
+// We add all our template helper methods to the template as lambdas. Note
+// that lambdas in Mustache are supposed to accept a second argument of
+// `render` to get the rendered value, not the literal `{{value}}`. But
+// this is currently broken (see https://github.com/twitter/hogan.js/issues/222).
+function transformHelpersToHogan() {
+  var helpers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var compileOptions = arguments.length > 1 ? arguments[1] : undefined;
+  var data = arguments.length > 2 ? arguments[2] : undefined;
+  return Object.keys(helpers).reduce(function (acc, helperKey) {
+    return _objectSpread({}, acc, _defineProperty({}, helperKey, function () {
+      var _this = this;
+
+      return function (text) {
+        var render = function render(value) {
+          return _hogan.default.compile(value, compileOptions).render(_this);
+        };
+
+        return helpers[helperKey].call(data, text, render);
+      };
+    }));
+  }, {});
+}
+
+function renderTemplate(_ref) {
+  var templates = _ref.templates,
+      templateKey = _ref.templateKey,
+      compileOptions = _ref.compileOptions,
+      helpers = _ref.helpers,
+      data = _ref.data,
+      bindEvent = _ref.bindEvent;
+  var template = templates[templateKey];
+
+  var templateType = _typeof(template);
+
+  var isTemplateString = templateType === 'string';
+  var isTemplateFunction = templateType === 'function';
+
+  if (!isTemplateString && !isTemplateFunction) {
+    throw new Error("Template must be 'string' or 'function', was '".concat(templateType, "' (key: ").concat(templateKey, ")"));
+  }
+
+  if (isTemplateFunction) {
+    return template(data, bindEvent);
+  }
+
+  var transformedHelpers = transformHelpersToHogan(helpers, compileOptions, data);
+  return _hogan.default.compile(template, compileOptions).render(_objectSpread({}, data, {
+    helpers: transformedHelpers
+  })).replace(/[ \n\r\t\f\xA0]+/g, function (spaces) {
+    return spaces.replace(/(^|\xA0+)[^\xA0]+/g, '$1 ');
+  }).trim();
+}
+
+var _default = renderTemplate;
+exports.default = _default;
+},{"hogan.js":"node_modules/hogan.js/lib/hogan.js"}],"node_modules/instantsearch.js/es/lib/utils/find.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
+exports.default = void 0;
 
-var connectAutocomplete = function connectAutocomplete(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function (widgetParams) {
-    var _ref = widgetParams || {},
-        _ref$escapeHTML = _ref.escapeHTML,
-        escapeHTML = _ref$escapeHTML === void 0 ? true : _ref$escapeHTML;
+// We aren't using the native `Array.prototype.find` because the refactor away from Lodash is not
+// published as a major version.
+// Relying on the `find` polyfill on user-land, which before was only required for niche use-cases,
+// was decided as too risky.
+// @MAJOR Replace with the native `Array.prototype.find` method
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+function find(items, predicate) {
+  var value;
 
-    "development" === 'development' ? (0, _utils.warning)(!widgetParams.indices, "\nThe option `indices` has been removed from the Autocomplete connector.\n\nThe indices to target are now inferred from the widgets tree.\n".concat(Array.isArray(widgetParams.indices) ? "\nAn alternative would be:\n\nconst autocomplete = connectAutocomplete(renderer);\n\nsearch.addWidgets([\n  ".concat(widgetParams.indices.map(function (_ref2) {
-      var value = _ref2.value;
-      return "index({ indexName: '".concat(value, "' }),");
-    }).join('\n  '), "\n  autocomplete()\n]);\n") : '', "\n      ")) : void 0;
-    var connectorState = {};
-    return {
-      $$type: 'ais.autocomplete',
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        var renderState = this.getWidgetRenderState(renderOptions);
-        renderState.indices.forEach(function (_ref3) {
-          var sendEvent = _ref3.sendEvent,
-              hits = _ref3.hits;
-          sendEvent('view', hits);
-        });
-        renderFn(_objectSpread({}, renderState, {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          autocomplete: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref4) {
-        var _this = this;
+  for (var i = 0; i < items.length; i++) {
+    value = items[i]; // inlined for performance: if (Call(predicate, thisArg, [value, i, list])) {
 
-        var helper = _ref4.helper,
-            scopedResults = _ref4.scopedResults,
-            instantSearchInstance = _ref4.instantSearchInstance;
+    if (predicate(value, i, items)) {
+      return value;
+    }
+  }
 
-        if (!connectorState.refine) {
-          connectorState.refine = function (query) {
-            helper.setQuery(query).search();
-          };
-        }
+  return undefined;
+}
 
-        var indices = scopedResults.map(function (scopedResult) {
-          // We need to escape the hits because highlighting
-          // exposes HTML tags to the end-user.
-          scopedResult.results.hits = escapeHTML ? (0, _escapeHighlight.default)(scopedResult.results.hits) : scopedResult.results.hits;
-          var sendEvent = (0, _utils.createSendEventForHits)({
-            instantSearchInstance: instantSearchInstance,
-            index: scopedResult.results.index,
-            widgetType: _this.$$type
-          });
-          return {
-            indexId: scopedResult.indexId,
-            indexName: scopedResult.results.index,
-            hits: scopedResult.results.hits,
-            results: scopedResult.results,
-            sendEvent: sendEvent
-          };
-        });
-        return {
-          currentRefinement: helper.state.query || '',
-          indices: indices,
-          refine: connectorState.refine,
-          widgetParams: widgetParams
+var _default = find;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/unescapeRefinement.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function unescapeRefinement(value) {
+  return String(value).replace(/^\\-/, '-');
+}
+
+var _default = unescapeRefinement;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/getRefinements.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _find = _interopRequireDefault(require("./find"));
+
+var _unescapeRefinement = _interopRequireDefault(require("./unescapeRefinement"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function getRefinement(state, type, attribute, name) {
+  var resultsFacets = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
+  var res = {
+    type: type,
+    attribute: attribute,
+    name: name
+  };
+  var facet = (0, _find.default)(resultsFacets, function (resultsFacet) {
+    return resultsFacet.name === attribute;
+  });
+  var count;
+
+  if (type === 'hierarchical') {
+    (function () {
+      var facetDeclaration = state.getHierarchicalFacetByName(attribute);
+      var nameParts = name.split(facetDeclaration.separator);
+
+      var getFacetRefinement = function getFacetRefinement(facetData) {
+        return function (refinementKey) {
+          return facetData[refinementKey];
         };
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref5) {
-        var searchParameters = _ref5.searchParameters;
-        var query = searchParameters.query || '';
+      };
 
-        if (query === '' || uiState && uiState.query === query) {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          query: query
+      var _loop = function _loop(i) {
+        facet = facet && facet.data && (0, _find.default)(Object.keys(facet.data).map(getFacetRefinement(facet.data)), function (refinement) {
+          return refinement.name === nameParts[i];
         });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
-        var uiState = _ref6.uiState;
-        var parameters = {
-          query: uiState.query || ''
-        };
+      };
 
-        if (!escapeHTML) {
-          return searchParameters.setQueryParameters(parameters);
-        }
-
-        return searchParameters.setQueryParameters(_objectSpread({}, parameters, {}, _escapeHighlight.TAG_PLACEHOLDER));
-      },
-      dispose: function dispose(_ref7) {
-        var state = _ref7.state;
-        unmountFn();
-        var stateWithoutQuery = state.setQueryParameter('query', undefined);
-
-        if (!escapeHTML) {
-          return stateWithoutQuery;
-        }
-
-        return stateWithoutQuery.setQueryParameters(Object.keys(_escapeHighlight.TAG_PLACEHOLDER).reduce(function (acc, key) {
-          return _objectSpread({}, acc, _defineProperty({}, key, undefined));
-        }, {}));
+      for (var i = 0; facet !== undefined && i < nameParts.length; ++i) {
+        _loop(i);
       }
+
+      count = facet && facet.count;
+    })();
+  } else {
+    count = facet && facet.data && facet.data[res.name];
+  }
+
+  var exhaustive = facet && facet.exhaustive;
+
+  if (count !== undefined) {
+    res.count = count;
+  }
+
+  if (exhaustive !== undefined) {
+    res.exhaustive = exhaustive;
+  }
+
+  return res;
+}
+
+function getRefinements(results, state) {
+  var clearsQuery = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var refinements = [];
+  var _state$facetsRefineme = state.facetsRefinements,
+      facetsRefinements = _state$facetsRefineme === void 0 ? {} : _state$facetsRefineme,
+      _state$facetsExcludes = state.facetsExcludes,
+      facetsExcludes = _state$facetsExcludes === void 0 ? {} : _state$facetsExcludes,
+      _state$disjunctiveFac = state.disjunctiveFacetsRefinements,
+      disjunctiveFacetsRefinements = _state$disjunctiveFac === void 0 ? {} : _state$disjunctiveFac,
+      _state$hierarchicalFa = state.hierarchicalFacetsRefinements,
+      hierarchicalFacetsRefinements = _state$hierarchicalFa === void 0 ? {} : _state$hierarchicalFa,
+      _state$numericRefinem = state.numericRefinements,
+      numericRefinements = _state$numericRefinem === void 0 ? {} : _state$numericRefinem,
+      _state$tagRefinements = state.tagRefinements,
+      tagRefinements = _state$tagRefinements === void 0 ? [] : _state$tagRefinements;
+  Object.keys(facetsRefinements).forEach(function (attribute) {
+    var refinementNames = facetsRefinements[attribute];
+    refinementNames.forEach(function (refinementName) {
+      refinements.push(getRefinement(state, 'facet', attribute, refinementName, results.facets));
+    });
+  });
+  Object.keys(facetsExcludes).forEach(function (attribute) {
+    var refinementNames = facetsExcludes[attribute];
+    refinementNames.forEach(function (refinementName) {
+      refinements.push({
+        type: 'exclude',
+        attribute: attribute,
+        name: refinementName,
+        exclude: true
+      });
+    });
+  });
+  Object.keys(disjunctiveFacetsRefinements).forEach(function (attribute) {
+    var refinementNames = disjunctiveFacetsRefinements[attribute];
+    refinementNames.forEach(function (refinementName) {
+      refinements.push(getRefinement(state, 'disjunctive', attribute, // We unescape any disjunctive refined values with `unescapeRefinement` because
+      // they can be escaped on negative numeric values with `escapeRefinement`.
+      (0, _unescapeRefinement.default)(refinementName), results.disjunctiveFacets));
+    });
+  });
+  Object.keys(hierarchicalFacetsRefinements).forEach(function (attribute) {
+    var refinementNames = hierarchicalFacetsRefinements[attribute];
+    refinementNames.forEach(function (refinement) {
+      refinements.push(getRefinement(state, 'hierarchical', attribute, refinement, results.hierarchicalFacets));
+    });
+  });
+  Object.keys(numericRefinements).forEach(function (attribute) {
+    var operators = numericRefinements[attribute];
+    Object.keys(operators).forEach(function (operatorOriginal) {
+      var operator = operatorOriginal;
+      var valueOrValues = operators[operator];
+      var refinementNames = Array.isArray(valueOrValues) ? valueOrValues : [valueOrValues];
+      refinementNames.forEach(function (refinementName) {
+        refinements.push({
+          type: 'numeric',
+          attribute: attribute,
+          name: "".concat(refinementName),
+          numericValue: refinementName,
+          operator: operator
+        });
+      });
+    });
+  });
+  tagRefinements.forEach(function (refinementName) {
+    refinements.push({
+      type: 'tag',
+      attribute: '_tags',
+      name: refinementName
+    });
+  });
+
+  if (clearsQuery && state.query && state.query.trim()) {
+    refinements.push({
+      attribute: 'query',
+      type: 'query',
+      name: state.query,
+      query: state.query
+    });
+  }
+
+  return refinements;
+}
+
+var _default = getRefinements;
+exports.default = _default;
+},{"./find":"node_modules/instantsearch.js/es/lib/utils/find.js","./unescapeRefinement":"node_modules/instantsearch.js/es/lib/utils/unescapeRefinement.js"}],"node_modules/instantsearch.js/es/lib/utils/clearRefinements.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * Clears the refinements of a SearchParameters object based on rules provided.
+ * The included attributes list is applied before the excluded attributes list. If the list
+ * is not provided, this list of all the currently refined attributes is used as included attributes.
+ * @param {object} $0 parameters
+ * @param {Helper} $0.helper instance of the Helper
+ * @param {string[]} [$0.attributesToClear = []] list of parameters to clear
+ * @returns {SearchParameters} search parameters with refinements cleared
+ */
+function clearRefinements(_ref) {
+  var helper = _ref.helper,
+      _ref$attributesToClea = _ref.attributesToClear,
+      attributesToClear = _ref$attributesToClea === void 0 ? [] : _ref$attributesToClea;
+  var finalState = helper.state.setPage(0);
+  finalState = attributesToClear.reduce(function (state, attribute) {
+    if (finalState.isNumericRefined(attribute)) {
+      return state.removeNumericRefinement(attribute);
+    }
+
+    if (finalState.isHierarchicalFacet(attribute)) {
+      return state.removeHierarchicalFacetRefinement(attribute);
+    }
+
+    if (finalState.isDisjunctiveFacet(attribute)) {
+      return state.removeDisjunctiveFacetRefinement(attribute);
+    }
+
+    if (finalState.isConjunctiveFacet(attribute)) {
+      return state.removeFacetRefinement(attribute);
+    }
+
+    return state;
+  }, finalState);
+
+  if (attributesToClear.indexOf('query') !== -1) {
+    finalState = finalState.setQuery('');
+  }
+
+  return finalState;
+}
+
+var _default = clearRefinements;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/escapeRefinement.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function escapeRefinement(value) {
+  if (typeof value === 'number' && value < 0) {
+    value = String(value).replace(/^-/, '\\-');
+  }
+
+  return value;
+}
+
+var _default = escapeRefinement;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/getObjectType.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function getObjectType(object) {
+  return Object.prototype.toString.call(object).slice(8, -1);
+}
+
+var _default = getObjectType;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/checkRendering.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _getObjectType = _interopRequireDefault(require("./getObjectType"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function checkRendering(rendering, usage) {
+  if (rendering === undefined || typeof rendering !== 'function') {
+    throw new Error("The render function is not valid (received type ".concat((0, _getObjectType.default)(rendering), ").\n\n").concat(usage));
+  }
+}
+
+var _default = checkRendering;
+exports.default = _default;
+},{"./getObjectType":"node_modules/instantsearch.js/es/lib/utils/getObjectType.js"}],"node_modules/instantsearch.js/es/lib/utils/noop.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function noop() {}
+
+var _default = noop;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/logger.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.warning = exports.deprecate = exports.warn = void 0;
+
+var _noop = _interopRequireDefault(require("./noop"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Logs a warning when this function is called, in development environment only.
+ */
+var deprecate = function deprecate(fn) {
+  return fn;
+};
+/**
+ * Logs a warning
+ * This is used to log issues in development environment only.
+ */
+
+
+exports.deprecate = deprecate;
+var warn = _noop.default;
+/**
+ * Logs a warning if the condition is not met.
+ * This is used to log issues in development environment only.
+ */
+
+exports.warn = warn;
+var _warning = _noop.default;
+exports.warning = _warning;
+
+if ("development" === 'development') {
+  exports.warn = warn = function warn(message) {
+    // eslint-disable-next-line no-console
+    console.warn("[InstantSearch.js]: ".concat(message.trim()));
+  };
+
+  exports.deprecate = deprecate = function deprecate(fn, message) {
+    var hasAlreadyPrinted = false;
+    return function () {
+      if (!hasAlreadyPrinted) {
+        hasAlreadyPrinted = true;
+        warn(message);
+      }
+
+      return fn.apply(void 0, arguments);
     };
   };
-};
 
-var _default = connectAutocomplete;
-exports.default = _default;
-},{"../../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/query-rules/connectQueryRules.js":[function(require,module,exports) {
+  exports.warning = _warning = function warning(condition, message) {
+    if (condition) {
+      return;
+    }
+
+    var hasAlreadyPrinted = _warning.cache[message];
+
+    if (!hasAlreadyPrinted) {
+      _warning.cache[message] = true;
+      warn(message);
+    }
+  };
+
+  _warning.cache = {};
+}
+},{"./noop":"node_modules/instantsearch.js/es/lib/utils/noop.js"}],"node_modules/instantsearch.js/es/lib/utils/checkIndexUiState.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports.checkIndexUiState = checkIndexUiState;
 
-var _utils = require("../../lib/utils");
+var _capitalize = _interopRequireDefault(require("./capitalize"));
 
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
+var _logger = require("./logger");
 
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) {
   return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
@@ -16170,179 +7157,459 @@ function _arrayWithoutHoles(arr) {
   }
 }
 
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'query-rules',
-  connector: true
-});
-
-function hasStateRefinements(state) {
-  return [state.disjunctiveFacetsRefinements, state.facetsRefinements, state.hierarchicalFacetsRefinements, state.numericRefinements].some(function (refinement) {
-    return Boolean(refinement && Object.keys(refinement).length > 0);
-  });
-} // A context rule must consist only of alphanumeric characters, hyphens, and underscores.
-// See https://www.algolia.com/doc/guides/managing-results/refine-results/merchandising-and-promoting/in-depth/implementing-query-rules/#context
-
-
-function escapeRuleContext(ruleName) {
-  return ruleName.replace(/[^a-z0-9-_]+/gi, '_');
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
 }
 
-function getRuleContextsFromTrackedFilters(_ref) {
-  var helper = _ref.helper,
-      sharedHelperState = _ref.sharedHelperState,
-      trackedFilters = _ref.trackedFilters;
-  var ruleContexts = Object.keys(trackedFilters).reduce(function (facets, facetName) {
-    var facetRefinements = (0, _utils.getRefinements)( // An empty object is technically not a `SearchResults` but `getRefinements`
-    // only accesses properties, meaning it will not throw with an empty object.
-    helper.lastResults || {}, sharedHelperState).filter(function (refinement) {
-      return refinement.attribute === facetName;
-    }).map(function (refinement) {
-      return refinement.numericValue || refinement.name;
-    });
-    var getTrackedFacetValues = trackedFilters[facetName];
-    var trackedFacetValues = getTrackedFacetValues(facetRefinements);
-    return [].concat(_toConsumableArray(facets), _toConsumableArray(facetRefinements.filter(function (facetRefinement) {
-      return trackedFacetValues.includes(facetRefinement);
-    }).map(function (facetValue) {
-      return escapeRuleContext("ais-".concat(facetName, "-").concat(facetValue));
-    })));
-  }, []);
-  return ruleContexts;
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance");
 }
 
-function applyRuleContexts(event) {
-  var helper = this.helper,
-      initialRuleContexts = this.initialRuleContexts,
-      trackedFilters = this.trackedFilters,
-      transformRuleContexts = this.transformRuleContexts;
-  var sharedHelperState = event.state;
-  var previousRuleContexts = sharedHelperState.ruleContexts || [];
-  var newRuleContexts = getRuleContextsFromTrackedFilters({
-    helper: helper,
-    sharedHelperState: sharedHelperState,
-    trackedFilters: trackedFilters
-  });
-  var nextRuleContexts = [].concat(_toConsumableArray(initialRuleContexts), _toConsumableArray(newRuleContexts));
-  "development" === 'development' ? (0, _utils.warning)(nextRuleContexts.length <= 10, "\nThe maximum number of `ruleContexts` is 10. They have been sliced to that limit.\nConsider using `transformRuleContexts` to minimize the number of rules sent to Algolia.\n") : void 0;
-  var ruleContexts = transformRuleContexts(nextRuleContexts).slice(0, 10);
+function _iterableToArrayLimit(arr, i) {
+  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
+    return;
+  }
 
-  if (!(0, _utils.isEqual)(previousRuleContexts, ruleContexts)) {
-    helper.overrideStateWithoutTriggeringChangeEvent(_objectSpread({}, sharedHelperState, {
-      ruleContexts: ruleContexts
-    }));
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
+// Some connectors are responsible for multiple widgets so we need
+// to map them.
+function getWidgetNames(connectorName) {
+  switch (connectorName) {
+    case 'range':
+      return [];
+
+    case 'menu':
+      return ['menu', 'menuSelect'];
+
+    default:
+      return [connectorName];
   }
 }
 
-var connectQueryRules = function connectQueryRules(_render) {
-  var unmount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(_render, withUsage());
-  return function (widgetParams) {
-    var _ref2 = widgetParams || {},
-        _ref2$trackedFilters = _ref2.trackedFilters,
-        trackedFilters = _ref2$trackedFilters === void 0 ? {} : _ref2$trackedFilters,
-        _ref2$transformRuleCo = _ref2.transformRuleContexts,
-        transformRuleContexts = _ref2$transformRuleCo === void 0 ? function (rules) {
-      return rules;
-    } : _ref2$transformRuleCo,
-        _ref2$transformItems = _ref2.transformItems,
-        transformItems = _ref2$transformItems === void 0 ? function (items) {
-      return items;
-    } : _ref2$transformItems;
-
-    Object.keys(trackedFilters).forEach(function (facetName) {
-      if (typeof trackedFilters[facetName] !== 'function') {
-        throw new Error(withUsage("'The \"".concat(facetName, "\" filter value in the `trackedFilters` option expects a function.")));
-      }
-    });
-    var hasTrackedFilters = Object.keys(trackedFilters).length > 0; // We store the initial rule contexts applied before creating the widget
-    // so that we do not override them with the rules created from `trackedFilters`.
-
-    var initialRuleContexts = [];
-    var onHelperChange;
-    return {
-      $$type: 'ais.queryRules',
-      init: function init(initOptions) {
-        var helper = initOptions.helper,
-            state = initOptions.state,
-            instantSearchInstance = initOptions.instantSearchInstance;
-        initialRuleContexts = state.ruleContexts || [];
-        onHelperChange = applyRuleContexts.bind({
-          helper: helper,
-          initialRuleContexts: initialRuleContexts,
-          trackedFilters: trackedFilters,
-          transformRuleContexts: transformRuleContexts
-        });
-
-        if (hasTrackedFilters) {
-          // We need to apply the `ruleContexts` based on the `trackedFilters`
-          // before the helper changes state in some cases:
-          //   - Some filters are applied on the first load (e.g. using `configure`)
-          //   - The `transformRuleContexts` option sets initial `ruleContexts`.
-          if (hasStateRefinements(state) || Boolean(widgetParams.transformRuleContexts)) {
-            onHelperChange({
-              state: state
-            });
-          } // We track every change in the helper to override its state and add
-          // any `ruleContexts` needed based on the `trackedFilters`.
-
-
-          helper.on('change', onHelperChange);
-        }
-
-        _render(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-
-        _render(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      getWidgetRenderState: function getWidgetRenderState(_ref3) {
-        var results = _ref3.results;
-
-        var _ref4 = results || {},
-            _ref4$userData = _ref4.userData,
-            userData = _ref4$userData === void 0 ? [] : _ref4$userData;
-
-        var items = transformItems(userData);
-        return {
-          items: items,
-          widgetParams: widgetParams
-        };
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          queryRules: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      dispose: function dispose(_ref5) {
-        var helper = _ref5.helper,
-            state = _ref5.state;
-        unmount();
-
-        if (hasTrackedFilters) {
-          helper.removeListener('change', onHelperChange);
-          return state.setQueryParameter('ruleContexts', initialRuleContexts);
-        }
-
-        return state;
-      }
-    };
-  };
+var stateToWidgetsMap = {
+  query: {
+    connectors: ['connectSearchBox'],
+    widgets: ['ais.searchBox', 'ais.autocomplete', 'ais.voiceSearch']
+  },
+  refinementList: {
+    connectors: ['connectRefinementList'],
+    widgets: ['ais.refinementList']
+  },
+  menu: {
+    connectors: ['connectMenu'],
+    widgets: ['ais.menu']
+  },
+  hierarchicalMenu: {
+    connectors: ['connectHierarchicalMenu'],
+    widgets: ['ais.hierarchicalMenu']
+  },
+  numericMenu: {
+    connectors: ['connectNumericMenu'],
+    widgets: ['ais.numericMenu']
+  },
+  ratingMenu: {
+    connectors: ['connectRatingMenu'],
+    widgets: ['ais.ratingMenu']
+  },
+  range: {
+    connectors: ['connectRange'],
+    widgets: ['ais.rangeInput', 'ais.rangeSlider', 'ais.range']
+  },
+  toggle: {
+    connectors: ['connectToggleRefinement'],
+    widgets: ['ais.toggleRefinement']
+  },
+  geoSearch: {
+    connectors: ['connectGeoSearch'],
+    widgets: ['ais.geoSearch']
+  },
+  sortBy: {
+    connectors: ['connectSortBy'],
+    widgets: ['ais.sortBy']
+  },
+  page: {
+    connectors: ['connectPagination'],
+    widgets: ['ais.pagination', 'ais.infiniteHits']
+  },
+  hitsPerPage: {
+    connectors: ['connectHitsPerPage'],
+    widgets: ['ais.hitsPerPage']
+  },
+  configure: {
+    connectors: ['connectConfigure'],
+    widgets: ['ais.configure']
+  },
+  places: {
+    connectors: [],
+    widgets: ['ais.places']
+  }
 };
 
-var _default = connectQueryRules;
-exports.default = _default;
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/lib/voiceSearchHelper/index.js":[function(require,module,exports) {
+function checkIndexUiState(_ref) {
+  var index = _ref.index,
+      indexUiState = _ref.indexUiState;
+  var mountedWidgets = index.getWidgets().map(function (widget) {
+    return widget.$$type;
+  }).filter(Boolean);
+  var missingWidgets = Object.keys(indexUiState).reduce(function (acc, parameter) {
+    var requiredWidgets = stateToWidgetsMap[parameter] && stateToWidgetsMap[parameter].widgets;
+
+    if (requiredWidgets && !requiredWidgets.some(function (requiredWidget) {
+      return mountedWidgets.includes(requiredWidget);
+    })) {
+      acc.push([parameter, {
+        connectors: stateToWidgetsMap[parameter].connectors,
+        widgets: stateToWidgetsMap[parameter].widgets.map(function (widgetIdentifier) {
+          return widgetIdentifier.split('ais.')[1];
+        })
+      }]);
+    }
+
+    return acc;
+  }, []);
+  "development" === 'development' ? (0, _logger.warning)(missingWidgets.length === 0, "The UI state for the index \"".concat(index.getIndexId(), "\" is not consistent with the widgets mounted.\n\nThis can happen when the UI state is specified via `initialUiState`, `routing` or `setUiState` but that the widgets responsible for this state were not added. This results in those query parameters not being sent to the API.\n\nTo fully reflect the state, some widgets need to be added to the index \"").concat(index.getIndexId(), "\":\n\n").concat(missingWidgets.map(function (_ref2) {
+    var _ref4;
+
+    var _ref3 = _slicedToArray(_ref2, 2),
+        stateParameter = _ref3[0],
+        widgets = _ref3[1].widgets;
+
+    return "- `".concat(stateParameter, "` needs one of these widgets: ").concat((_ref4 = []).concat.apply(_ref4, _toConsumableArray(widgets.map(function (name) {
+      return getWidgetNames(name);
+    }))).map(function (name) {
+      return "\"".concat(name, "\"");
+    }).join(', '));
+  }).join('\n'), "\n\nIf you do not wish to display widgets but still want to support their search parameters, you can mount \"virtual widgets\" that don't render anything:\n\n```\n").concat(missingWidgets.filter(function (_ref5) {
+    var _ref6 = _slicedToArray(_ref5, 2),
+        _stateParameter = _ref6[0],
+        connectors = _ref6[1].connectors;
+
+    return connectors.length > 0;
+  }).map(function (_ref7) {
+    var _ref8 = _slicedToArray(_ref7, 2),
+        _stateParameter = _ref8[0],
+        _ref8$ = _ref8[1],
+        connectors = _ref8$.connectors,
+        widgets = _ref8$.widgets;
+
+    var capitalizedWidget = (0, _capitalize.default)(widgets[0]);
+    var connectorName = connectors[0];
+    return "const virtual".concat(capitalizedWidget, " = ").concat(connectorName, "(() => null);");
+  }).join('\n'), "\n\nsearch.addWidgets([\n  ").concat(missingWidgets.filter(function (_ref9) {
+    var _ref10 = _slicedToArray(_ref9, 2),
+        _stateParameter = _ref10[0],
+        connectors = _ref10[1].connectors;
+
+    return connectors.length > 0;
+  }).map(function (_ref11) {
+    var _ref12 = _slicedToArray(_ref11, 2),
+        _stateParameter = _ref12[0],
+        widgets = _ref12[1].widgets;
+
+    var capitalizedWidget = (0, _capitalize.default)(widgets[0]);
+    return "virtual".concat(capitalizedWidget, "({ /* ... */ })");
+  }).join(',\n  '), "\n]);\n```\n\nIf you're using custom widgets that do set these query parameters, we recommend using connectors instead.\n\nSee https://www.algolia.com/doc/guides/building-search-ui/widgets/customize-an-existing-widget/js/#customize-the-complete-ui-of-the-widgets")) : void 0;
+}
+},{"./capitalize":"node_modules/instantsearch.js/es/lib/utils/capitalize.js","./logger":"node_modules/instantsearch.js/es/lib/utils/logger.js"}],"node_modules/instantsearch.js/es/lib/utils/getPropertyByPath.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+
+function getPropertyByPath(object, path) {
+  var parts = Array.isArray(path) ? path : path.split('.');
+  return parts.reduce(function (current, key) {
+    return current && current[key];
+  }, object);
+}
+
+var _default = getPropertyByPath;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/isFiniteNumber.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+// This is the `Number.isFinite()` polyfill recommended by MDN.
+// We do not provide any tests for this function.
+// See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite#Polyfill
+function isFiniteNumber(value) {
+  return typeof value === 'number' && isFinite(value);
+}
+
+var _default = isFiniteNumber;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/isPlainObject.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _typeof(obj) {
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+/**
+ * This implementation is taken from Lodash implementation.
+ * See: https://github.com/lodash/lodash/blob/master/isPlainObject.js
+ */
+
+
+function getTag(value) {
+  if (value === null) {
+    return value === undefined ? '[object Undefined]' : '[object Null]';
+  }
+
+  return Object.prototype.toString.call(value);
+}
+
+function isObjectLike(value) {
+  return _typeof(value) === 'object' && value !== null;
+}
+/**
+ * Checks if `value` is a plain object.
+ *
+ * A plain object is an object created by the `Object`
+ * constructor or with a `[[Prototype]]` of `null`.
+ */
+
+
+function isPlainObject(value) {
+  if (!isObjectLike(value) || getTag(value) !== '[object Object]') {
+    return false;
+  }
+
+  if (Object.getPrototypeOf(value) === null) {
+    return true;
+  }
+
+  var proto = value;
+
+  while (Object.getPrototypeOf(proto) !== null) {
+    proto = Object.getPrototypeOf(proto);
+  }
+
+  return Object.getPrototypeOf(value) === proto;
+}
+
+var _default = isPlainObject;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/range.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+function range(_ref) {
+  var _ref$start = _ref.start,
+      start = _ref$start === void 0 ? 0 : _ref$start,
+      end = _ref.end,
+      _ref$step = _ref.step,
+      step = _ref$step === void 0 ? 1 : _ref$step; // We can't divide by 0 so we re-assign the step to 1 if it happens.
+
+  var limitStep = step === 0 ? 1 : step; // In some cases the array to create has a decimal length.
+  // We therefore need to round the value.
+  // Example:
+  //   { start: 1, end: 5000, step: 500 }
+  //   => Array length = (5000 - 1) / 500 = 9.998
+
+  var arrayLength = Math.round((end - start) / limitStep);
+  return _toConsumableArray(Array(arrayLength)).map(function (_, current) {
+    return start + current * limitStep;
+  });
+}
+
+var _default = range;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/isEqual.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function isPrimitive(obj) {
+  return obj !== Object(obj);
+}
+
+function isEqual(first, second) {
+  if (first === second) {
+    return true;
+  }
+
+  if (isPrimitive(first) || isPrimitive(second) || typeof first === 'function' || typeof second === 'function') {
+    return first === second;
+  }
+
+  if (Object.keys(first).length !== Object.keys(second).length) {
+    return false;
+  }
+
+  for (var _i = 0, _Object$keys = Object.keys(first); _i < _Object$keys.length; _i++) {
+    var key = _Object$keys[_i];
+
+    if (!(key in second)) {
+      return false;
+    }
+
+    if (!isEqual(first[key], second[key])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+var _default = isEqual;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/escape.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+/**
+ * This implementation is taken from Lodash implementation.
+ * See: https://github.com/lodash/lodash/blob/4.17.11-npm/escape.js
+ */
+// Used to map characters to HTML entities.
+var htmlEscapes = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+}; // Used to match HTML entities and HTML characters.
+
+var regexUnescapedHtml = /[&<>"']/g;
+var regexHasUnescapedHtml = RegExp(regexUnescapedHtml.source);
+/**
+ * Converts the characters "&", "<", ">", '"', and "'" in `string` to their
+ * corresponding HTML entities.
+ */
+
+function escape(value) {
+  return value && regexHasUnescapedHtml.test(value) ? value.replace(regexUnescapedHtml, function (character) {
+    return htmlEscapes[character];
+  }) : value;
+}
+
+var _default = escape;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/findIndex.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+// We aren't using the native `Array.prototype.findIndex` because the refactor away from Lodash is not
+// published as a major version.
+// Relying on the `findIndex` polyfill on user-land, which before was only required for niche use-cases,
+// was decided as too risky.
+// @MAJOR Replace with the native `Array.prototype.findIndex` method
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
+function findIndex(array, comparator) {
+  if (!Array.isArray(array)) {
+    return -1;
+  }
+
+  for (var i = 0; i < array.length; i++) {
+    if (comparator(array[i])) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+var _default = findIndex;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/mergeSearchParameters.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _findIndex = _interopRequireDefault(require("./findIndex"));
+
+var _uniq = _interopRequireDefault(require("./uniq"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -16393,152 +7660,366 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-var createVoiceSearchHelper = function createVoiceSearchHelper(_ref) {
-  var searchAsYouSpeak = _ref.searchAsYouSpeak,
-      language = _ref.language,
-      onQueryChange = _ref.onQueryChange,
-      onStateChange = _ref.onStateChange;
-  var SpeechRecognitionAPI = window.webkitSpeechRecognition || window.SpeechRecognition;
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
 
-  var getDefaultState = function getDefaultState(status) {
-    return {
-      status: status,
-      transcript: '',
-      isSpeechFinal: false,
-      errorCode: undefined
-    };
-  };
+  var target = _objectWithoutPropertiesLoose(source, excluded);
 
-  var state = getDefaultState('initial');
-  var recognition;
+  var key, i;
 
-  var isBrowserSupported = function isBrowserSupported() {
-    return Boolean(SpeechRecognitionAPI);
-  };
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
 
-  var isListening = function isListening() {
-    return state.status === 'askingPermission' || state.status === 'waiting' || state.status === 'recognizing';
-  };
-
-  var setState = function setState() {
-    var newState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    state = _objectSpread({}, state, {}, newState);
-    onStateChange();
-  };
-
-  var getState = function getState() {
-    return state;
-  };
-
-  var resetState = function resetState() {
-    var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'initial';
-    setState(getDefaultState(status));
-  };
-
-  var onStart = function onStart() {
-    setState({
-      status: 'waiting'
-    });
-  };
-
-  var onError = function onError(event) {
-    setState({
-      status: 'error',
-      errorCode: event.error
-    });
-  };
-
-  var onResult = function onResult(event) {
-    setState({
-      status: 'recognizing',
-      transcript: event.results[0] && event.results[0][0] && event.results[0][0].transcript || '',
-      isSpeechFinal: event.results[0] && event.results[0].isFinal
-    });
-
-    if (searchAsYouSpeak && state.transcript) {
-      onQueryChange(state.transcript);
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
     }
-  };
+  }
 
-  var onEnd = function onEnd() {
-    if (!state.errorCode && state.transcript && !searchAsYouSpeak) {
-      onQueryChange(state.transcript);
-    }
+  return target;
+}
 
-    if (state.status !== 'error') {
-      setState({
-        status: 'finished'
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+var mergeWithRest = function mergeWithRest(left, right) {
+  var facets = right.facets,
+      disjunctiveFacets = right.disjunctiveFacets,
+      facetsRefinements = right.facetsRefinements,
+      facetsExcludes = right.facetsExcludes,
+      disjunctiveFacetsRefinements = right.disjunctiveFacetsRefinements,
+      numericRefinements = right.numericRefinements,
+      tagRefinements = right.tagRefinements,
+      hierarchicalFacets = right.hierarchicalFacets,
+      hierarchicalFacetsRefinements = right.hierarchicalFacetsRefinements,
+      ruleContexts = right.ruleContexts,
+      rest = _objectWithoutProperties(right, ["facets", "disjunctiveFacets", "facetsRefinements", "facetsExcludes", "disjunctiveFacetsRefinements", "numericRefinements", "tagRefinements", "hierarchicalFacets", "hierarchicalFacetsRefinements", "ruleContexts"]);
+
+  return left.setQueryParameters(rest);
+}; // Merge facets
+
+
+var mergeFacets = function mergeFacets(left, right) {
+  return right.facets.reduce(function (_, name) {
+    return _.addFacet(name);
+  }, left);
+};
+
+var mergeDisjunctiveFacets = function mergeDisjunctiveFacets(left, right) {
+  return right.disjunctiveFacets.reduce(function (_, name) {
+    return _.addDisjunctiveFacet(name);
+  }, left);
+};
+
+var mergeHierarchicalFacets = function mergeHierarchicalFacets(left, right) {
+  return left.setQueryParameters({
+    hierarchicalFacets: right.hierarchicalFacets.reduce(function (facets, facet) {
+      var index = (0, _findIndex.default)(facets, function (_) {
+        return _.name === facet.name;
       });
-    }
+
+      if (index === -1) {
+        return facets.concat(facet);
+      }
+
+      var nextFacets = facets.slice();
+      nextFacets.splice(index, 1, facet);
+      return nextFacets;
+    }, left.hierarchicalFacets)
+  });
+}; // Merge facet refinements
+
+
+var mergeTagRefinements = function mergeTagRefinements(left, right) {
+  return right.tagRefinements.reduce(function (_, value) {
+    return _.addTagRefinement(value);
+  }, left);
+};
+
+var mergeFacetRefinements = function mergeFacetRefinements(left, right) {
+  return left.setQueryParameters({
+    facetsRefinements: _objectSpread({}, left.facetsRefinements, {}, right.facetsRefinements)
+  });
+};
+
+var mergeFacetsExcludes = function mergeFacetsExcludes(left, right) {
+  return left.setQueryParameters({
+    facetsExcludes: _objectSpread({}, left.facetsExcludes, {}, right.facetsExcludes)
+  });
+};
+
+var mergeDisjunctiveFacetsRefinements = function mergeDisjunctiveFacetsRefinements(left, right) {
+  return left.setQueryParameters({
+    disjunctiveFacetsRefinements: _objectSpread({}, left.disjunctiveFacetsRefinements, {}, right.disjunctiveFacetsRefinements)
+  });
+};
+
+var mergeNumericRefinements = function mergeNumericRefinements(left, right) {
+  return left.setQueryParameters({
+    numericRefinements: _objectSpread({}, left.numericRefinements, {}, right.numericRefinements)
+  });
+};
+
+var mergeHierarchicalFacetsRefinements = function mergeHierarchicalFacetsRefinements(left, right) {
+  return left.setQueryParameters({
+    hierarchicalFacetsRefinements: _objectSpread({}, left.hierarchicalFacetsRefinements, {}, right.hierarchicalFacetsRefinements)
+  });
+};
+
+var mergeRuleContexts = function mergeRuleContexts(left, right) {
+  var ruleContexts = (0, _uniq.default)([].concat(left.ruleContexts).concat(right.ruleContexts).filter(Boolean));
+
+  if (ruleContexts.length > 0) {
+    return left.setQueryParameters({
+      ruleContexts: ruleContexts
+    });
+  }
+
+  return left;
+};
+
+var merge = function merge() {
+  for (var _len = arguments.length, parameters = new Array(_len), _key = 0; _key < _len; _key++) {
+    parameters[_key] = arguments[_key];
+  }
+
+  return parameters.reduce(function (left, right) {
+    var hierarchicalFacetsRefinementsMerged = mergeHierarchicalFacetsRefinements(left, right);
+    var hierarchicalFacetsMerged = mergeHierarchicalFacets(hierarchicalFacetsRefinementsMerged, right);
+    var tagRefinementsMerged = mergeTagRefinements(hierarchicalFacetsMerged, right);
+    var numericRefinementsMerged = mergeNumericRefinements(tagRefinementsMerged, right);
+    var disjunctiveFacetsRefinementsMerged = mergeDisjunctiveFacetsRefinements(numericRefinementsMerged, right);
+    var facetsExcludesMerged = mergeFacetsExcludes(disjunctiveFacetsRefinementsMerged, right);
+    var facetRefinementsMerged = mergeFacetRefinements(facetsExcludesMerged, right);
+    var disjunctiveFacetsMerged = mergeDisjunctiveFacets(facetRefinementsMerged, right);
+    var ruleContextsMerged = mergeRuleContexts(disjunctiveFacetsMerged, right);
+    var facetsMerged = mergeFacets(ruleContextsMerged, right);
+    return mergeWithRest(facetsMerged, right);
+  });
+};
+
+var _default = merge;
+exports.default = _default;
+},{"./findIndex":"node_modules/instantsearch.js/es/lib/utils/findIndex.js","./uniq":"node_modules/instantsearch.js/es/lib/utils/uniq.js"}],"node_modules/instantsearch.js/es/lib/utils/resolveSearchParameters.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var resolveSearchParameters = function resolveSearchParameters(current) {
+  var parent = current.getParent();
+  var states = [current.getHelper().state];
+
+  while (parent !== null) {
+    states = [parent.getHelper().state].concat(states);
+    parent = parent.getParent();
+  }
+
+  return states;
+};
+
+var _default = resolveSearchParameters;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/toArray.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function toArray(value) {
+  return Array.isArray(value) ? value : [value];
+}
+
+var _default = toArray;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/lib/utils/documentation.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createDocumentationMessageGenerator = exports.createDocumentationLink = void 0;
+
+var createDocumentationLink = function createDocumentationLink(_ref) {
+  var name = _ref.name,
+      _ref$connector = _ref.connector,
+      connector = _ref$connector === void 0 ? false : _ref$connector;
+  return ['https://www.algolia.com/doc/api-reference/widgets/', name, '/js/', connector ? '#connector' : ''].join('');
+};
+
+exports.createDocumentationLink = createDocumentationLink;
+
+var createDocumentationMessageGenerator = function createDocumentationMessageGenerator() {
+  for (var _len = arguments.length, widgets = new Array(_len), _key = 0; _key < _len; _key++) {
+    widgets[_key] = arguments[_key];
+  }
+
+  var links = widgets.map(function (widget) {
+    return createDocumentationLink(widget);
+  }).join(', ');
+  return function (message) {
+    return [message, "See documentation: ".concat(links)].filter(Boolean).join('\n\n');
   };
+};
 
-  var startListening = function startListening() {
-    recognition = new SpeechRecognitionAPI();
+exports.createDocumentationMessageGenerator = createDocumentationMessageGenerator;
+},{}],"node_modules/instantsearch.js/es/lib/utils/geo-search.js":[function(require,module,exports) {
+"use strict";
 
-    if (!recognition) {
-      return;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.aroundLatLngToPosition = aroundLatLngToPosition;
+exports.insideBoundingBoxArrayToBoundingBox = insideBoundingBoxArrayToBoundingBox;
+exports.insideBoundingBoxStringToBoundingBox = insideBoundingBoxStringToBoundingBox;
+exports.insideBoundingBoxToBoundingBox = insideBoundingBoxToBoundingBox;
+
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+}
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+}
+
+function _iterableToArrayLimit(arr, i) {
+  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
+    return;
+  }
+
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
     }
-
-    resetState('askingPermission');
-    recognition.interimResults = true;
-
-    if (language) {
-      recognition.lang = language;
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
     }
+  }
 
-    recognition.addEventListener('start', onStart);
-    recognition.addEventListener('error', onError);
-    recognition.addEventListener('result', onResult);
-    recognition.addEventListener('end', onEnd);
-    recognition.start();
-  };
+  return _arr;
+}
 
-  var dispose = function dispose() {
-    if (!recognition) {
-      return;
-    }
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
 
-    recognition.stop();
-    recognition.removeEventListener('start', onStart);
-    recognition.removeEventListener('error', onError);
-    recognition.removeEventListener('result', onResult);
-    recognition.removeEventListener('end', onEnd);
-    recognition = undefined;
-  };
+var latLngRegExp = /^(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)$/;
 
-  var stopListening = function stopListening() {
-    dispose(); // Because `dispose` removes event listeners, `end` listener is not called.
-    // So we're setting the `status` as `finished` here.
-    // If we don't do it, it will be still `waiting` or `recognizing`.
+function aroundLatLngToPosition(value) {
+  var pattern = value.match(latLngRegExp); // Since the value provided is the one send with the request, the API should
+  // throw an error due to the wrong format. So throw an error should be safe.
 
-    resetState('finished');
-  };
+  if (!pattern) {
+    throw new Error("Invalid value for \"aroundLatLng\" parameter: \"".concat(value, "\""));
+  }
 
   return {
-    getState: getState,
-    isBrowserSupported: isBrowserSupported,
-    isListening: isListening,
-    startListening: startListening,
-    stopListening: stopListening,
-    dispose: dispose
+    lat: parseFloat(pattern[1]),
+    lng: parseFloat(pattern[2])
   };
-};
+}
 
-var _default = createVoiceSearchHelper;
-exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/connectors/voice-search/connectVoiceSearch.js":[function(require,module,exports) {
+function insideBoundingBoxArrayToBoundingBox(value) {
+  var _value = _slicedToArray(value, 1),
+      _value$ = _value[0];
+
+  _value$ = _value$ === void 0 ? [undefined, undefined, undefined, undefined] : _value$;
+
+  var _value$2 = _slicedToArray(_value$, 4),
+      neLat = _value$2[0],
+      neLng = _value$2[1],
+      swLat = _value$2[2],
+      swLng = _value$2[3]; // Since the value provided is the one send with the request, the API should
+  // throw an error due to the wrong format. So throw an error should be safe.
+
+
+  if (!neLat || !neLng || !swLat || !swLng) {
+    throw new Error("Invalid value for \"insideBoundingBox\" parameter: [".concat(value, "]"));
+  }
+
+  return {
+    northEast: {
+      lat: neLat,
+      lng: neLng
+    },
+    southWest: {
+      lat: swLat,
+      lng: swLng
+    }
+  };
+}
+
+function insideBoundingBoxStringToBoundingBox(value) {
+  var _value$split$map = value.split(',').map(parseFloat),
+      _value$split$map2 = _slicedToArray(_value$split$map, 4),
+      neLat = _value$split$map2[0],
+      neLng = _value$split$map2[1],
+      swLat = _value$split$map2[2],
+      swLng = _value$split$map2[3]; // Since the value provided is the one send with the request, the API should
+  // throw an error due to the wrong format. So throw an error should be safe.
+
+
+  if (!neLat || !neLng || !swLat || !swLng) {
+    throw new Error("Invalid value for \"insideBoundingBox\" parameter: \"".concat(value, "\""));
+  }
+
+  return {
+    northEast: {
+      lat: neLat,
+      lng: neLng
+    },
+    southWest: {
+      lat: swLat,
+      lng: swLng
+    }
+  };
+}
+
+function insideBoundingBoxToBoundingBox(value) {
+  if (Array.isArray(value)) {
+    return insideBoundingBoxArrayToBoundingBox(value);
+  }
+
+  return insideBoundingBoxStringToBoundingBox(value);
+}
+},{}],"node_modules/instantsearch.js/es/lib/utils/hits-absolute-position.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
-
-var _utils = require("../../lib/utils");
-
-var _voiceSearchHelper2 = _interopRequireDefault(require("../../lib/voiceSearchHelper"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+exports.addAbsolutePosition = void 0;
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -16589,373 +8070,753 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-var withUsage = (0, _utils.createDocumentationMessageGenerator)({
-  name: 'voice-search',
-  connector: true
-});
-
-var connectVoiceSearch = function connectVoiceSearch(renderFn) {
-  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
-  (0, _utils.checkRendering)(renderFn, withUsage());
-  return function (widgetParams) {
-    var _widgetParams$searchA = widgetParams.searchAsYouSpeak,
-        searchAsYouSpeak = _widgetParams$searchA === void 0 ? false : _widgetParams$searchA,
-        language = widgetParams.language,
-        additionalQueryParameters = widgetParams.additionalQueryParameters,
-        _widgetParams$createV = widgetParams.createVoiceSearchHelper,
-        createVoiceSearchHelper = _widgetParams$createV === void 0 ? _voiceSearchHelper2.default : _widgetParams$createV;
-    return {
-      $$type: 'ais.voiceSearch',
-      init: function init(initOptions) {
-        var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), true);
-      },
-      render: function render(renderOptions) {
-        var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
-          instantSearchInstance: instantSearchInstance
-        }), false);
-      },
-      getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          voiceSearch: this.getWidgetRenderState(renderOptions)
-        });
-      },
-      getWidgetRenderState: function getWidgetRenderState(renderOptions) {
-        var _this = this;
-
-        var helper = renderOptions.helper,
-            instantSearchInstance = renderOptions.instantSearchInstance;
-
-        if (!this._refine) {
-          this._refine = function (query) {
-            if (query !== helper.state.query) {
-              var queryLanguages = language ? [language.split('-')[0]] : undefined;
-              helper.setQueryParameter('queryLanguages', queryLanguages);
-
-              if (typeof additionalQueryParameters === 'function') {
-                helper.setState(helper.state.setQueryParameters(_objectSpread({
-                  ignorePlurals: true,
-                  removeStopWords: true,
-                  // @ts-ignore (optionalWords only allows array, while string is also valid)
-                  optionalWords: query
-                }, additionalQueryParameters({
-                  query: query
-                }))));
-              }
-
-              helper.setQuery(query).search();
-            }
-          };
-        }
-
-        if (!this._voiceSearchHelper) {
-          this._voiceSearchHelper = createVoiceSearchHelper({
-            searchAsYouSpeak: searchAsYouSpeak,
-            language: language,
-            onQueryChange: function onQueryChange(query) {
-              return _this._refine(query);
-            },
-            onStateChange: function onStateChange() {
-              renderFn(_objectSpread({}, _this.getWidgetRenderState(renderOptions), {
-                instantSearchInstance: instantSearchInstance
-              }), false);
-            }
-          });
-        }
-
-        var _voiceSearchHelper = this._voiceSearchHelper,
-            isBrowserSupported = _voiceSearchHelper.isBrowserSupported,
-            isListening = _voiceSearchHelper.isListening,
-            startListening = _voiceSearchHelper.startListening,
-            stopListening = _voiceSearchHelper.stopListening,
-            getState = _voiceSearchHelper.getState;
-        return {
-          isBrowserSupported: isBrowserSupported(),
-          isListening: isListening(),
-          toggleListening: function toggleListening() {
-            if (!isBrowserSupported()) {
-              return;
-            }
-
-            if (isListening()) {
-              stopListening();
-            } else {
-              startListening();
-            }
-          },
-          voiceListeningState: getState(),
-          widgetParams: widgetParams
-        };
-      },
-      dispose: function dispose(_ref) {
-        var state = _ref.state;
-
-        this._voiceSearchHelper.dispose();
-
-        unmountFn();
-        var newState = state;
-
-        if (typeof additionalQueryParameters === 'function') {
-          var additional = additionalQueryParameters({
-            query: ''
-          });
-          var toReset = additional ? Object.keys(additional).reduce(function (acc, current) {
-            acc[current] = undefined;
-            return acc;
-          }, {}) : {};
-          newState = state.setQueryParameters(_objectSpread({
-            // @ts-ignore (queryLanguages is not yet added to algoliasearch)
-            queryLanguages: undefined,
-            ignorePlurals: undefined,
-            removeStopWords: undefined,
-            optionalWords: undefined
-          }, toReset));
-        }
-
-        return newState.setQueryParameter('query', undefined);
-      },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref2) {
-        var searchParameters = _ref2.searchParameters;
-        var query = searchParameters.query || '';
-
-        if (!query) {
-          return uiState;
-        }
-
-        return _objectSpread({}, uiState, {
-          query: query
-        });
-      },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref3) {
-        var uiState = _ref3.uiState;
-        return searchParameters.setQueryParameter('query', uiState.query || '');
-      }
-    };
-  };
+var addAbsolutePosition = function addAbsolutePosition(hits, page, hitsPerPage) {
+  return hits.map(function (hit, idx) {
+    return _objectSpread({}, hit, {
+      __position: hitsPerPage * page + idx + 1
+    });
+  });
 };
 
-var _default = connectVoiceSearch;
-exports.default = _default;
-},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/voiceSearchHelper":"node_modules/instantsearch.js/es/lib/voiceSearchHelper/index.js"}],"node_modules/instantsearch.js/es/connectors/index.js":[function(require,module,exports) {
+exports.addAbsolutePosition = addAbsolutePosition;
+},{}],"node_modules/instantsearch.js/es/lib/utils/hits-query-id.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "connectClearRefinements", {
-  enumerable: true,
-  get: function () {
-    return _connectClearRefinements.default;
-  }
-});
-Object.defineProperty(exports, "connectCurrentRefinements", {
-  enumerable: true,
-  get: function () {
-    return _connectCurrentRefinements.default;
-  }
-});
-Object.defineProperty(exports, "connectHierarchicalMenu", {
-  enumerable: true,
-  get: function () {
-    return _connectHierarchicalMenu.default;
-  }
-});
-Object.defineProperty(exports, "connectHits", {
-  enumerable: true,
-  get: function () {
-    return _connectHits.default;
-  }
-});
-Object.defineProperty(exports, "connectHitsWithInsights", {
-  enumerable: true,
-  get: function () {
-    return _connectHitsWithInsights.default;
-  }
-});
-Object.defineProperty(exports, "connectHitsPerPage", {
-  enumerable: true,
-  get: function () {
-    return _connectHitsPerPage.default;
-  }
-});
-Object.defineProperty(exports, "connectInfiniteHits", {
-  enumerable: true,
-  get: function () {
-    return _connectInfiniteHits.default;
-  }
-});
-Object.defineProperty(exports, "connectInfiniteHitsWithInsights", {
-  enumerable: true,
-  get: function () {
-    return _connectInfiniteHitsWithInsights.default;
-  }
-});
-Object.defineProperty(exports, "connectMenu", {
-  enumerable: true,
-  get: function () {
-    return _connectMenu.default;
-  }
-});
-Object.defineProperty(exports, "connectNumericMenu", {
-  enumerable: true,
-  get: function () {
-    return _connectNumericMenu.default;
-  }
-});
-Object.defineProperty(exports, "connectPagination", {
-  enumerable: true,
-  get: function () {
-    return _connectPagination.default;
-  }
-});
-Object.defineProperty(exports, "connectRange", {
-  enumerable: true,
-  get: function () {
-    return _connectRange.default;
-  }
-});
-Object.defineProperty(exports, "connectRefinementList", {
-  enumerable: true,
-  get: function () {
-    return _connectRefinementList.default;
-  }
-});
-Object.defineProperty(exports, "connectSearchBox", {
-  enumerable: true,
-  get: function () {
-    return _connectSearchBox.default;
-  }
-});
-Object.defineProperty(exports, "connectSortBy", {
-  enumerable: true,
-  get: function () {
-    return _connectSortBy.default;
-  }
-});
-Object.defineProperty(exports, "connectRatingMenu", {
-  enumerable: true,
-  get: function () {
-    return _connectRatingMenu.default;
-  }
-});
-Object.defineProperty(exports, "connectStats", {
-  enumerable: true,
-  get: function () {
-    return _connectStats.default;
-  }
-});
-Object.defineProperty(exports, "connectToggleRefinement", {
-  enumerable: true,
-  get: function () {
-    return _connectToggleRefinement.default;
-  }
-});
-Object.defineProperty(exports, "connectBreadcrumb", {
-  enumerable: true,
-  get: function () {
-    return _connectBreadcrumb.default;
-  }
-});
-Object.defineProperty(exports, "connectGeoSearch", {
-  enumerable: true,
-  get: function () {
-    return _connectGeoSearch.default;
-  }
-});
-Object.defineProperty(exports, "connectPoweredBy", {
-  enumerable: true,
-  get: function () {
-    return _connectPoweredBy.default;
-  }
-});
-Object.defineProperty(exports, "connectConfigure", {
-  enumerable: true,
-  get: function () {
-    return _connectConfigure.default;
-  }
-});
-Object.defineProperty(exports, "EXPERIMENTAL_connectConfigureRelatedItems", {
-  enumerable: true,
-  get: function () {
-    return _connectConfigureRelatedItems.default;
-  }
-});
-Object.defineProperty(exports, "connectAutocomplete", {
-  enumerable: true,
-  get: function () {
-    return _connectAutocomplete.default;
-  }
-});
-Object.defineProperty(exports, "connectQueryRules", {
-  enumerable: true,
-  get: function () {
-    return _connectQueryRules.default;
-  }
-});
-Object.defineProperty(exports, "connectVoiceSearch", {
-  enumerable: true,
-  get: function () {
-    return _connectVoiceSearch.default;
-  }
-});
+exports.addQueryID = void 0;
 
-var _connectClearRefinements = _interopRequireDefault(require("./clear-refinements/connectClearRefinements"));
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
 
-var _connectCurrentRefinements = _interopRequireDefault(require("./current-refinements/connectCurrentRefinements"));
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
 
-var _connectHierarchicalMenu = _interopRequireDefault(require("./hierarchical-menu/connectHierarchicalMenu"));
+  return keys;
+}
 
-var _connectHits = _interopRequireDefault(require("./hits/connectHits"));
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
 
-var _connectHitsWithInsights = _interopRequireDefault(require("./hits/connectHitsWithInsights"));
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
 
-var _connectHitsPerPage = _interopRequireDefault(require("./hits-per-page/connectHitsPerPage"));
+  return target;
+}
 
-var _connectInfiniteHits = _interopRequireDefault(require("./infinite-hits/connectInfiniteHits"));
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
 
-var _connectInfiniteHitsWithInsights = _interopRequireDefault(require("./infinite-hits/connectInfiniteHitsWithInsights"));
+  return obj;
+}
 
-var _connectMenu = _interopRequireDefault(require("./menu/connectMenu"));
+var addQueryID = function addQueryID(hits, queryID) {
+  if (!queryID) {
+    return hits;
+  }
 
-var _connectNumericMenu = _interopRequireDefault(require("./numeric-menu/connectNumericMenu"));
+  return hits.map(function (hit) {
+    return _objectSpread({}, hit, {
+      __queryID: queryID
+    });
+  });
+};
 
-var _connectPagination = _interopRequireDefault(require("./pagination/connectPagination"));
+exports.addQueryID = addQueryID;
+},{}],"node_modules/instantsearch.js/es/lib/utils/isFacetRefined.js":[function(require,module,exports) {
+"use strict";
 
-var _connectRange = _interopRequireDefault(require("./range/connectRange"));
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = isFacetRefined;
 
-var _connectRefinementList = _interopRequireDefault(require("./refinement-list/connectRefinementList"));
+function isFacetRefined(helper, facet, value) {
+  if (helper.state.isHierarchicalFacet(facet)) {
+    return helper.state.isHierarchicalFacetRefined(facet, value);
+  } else if (helper.state.isConjunctiveFacet(facet)) {
+    return helper.state.isFacetRefined(facet, value);
+  } else {
+    return helper.state.isDisjunctiveFacetRefined(facet, value);
+  }
+}
+},{}],"node_modules/instantsearch.js/es/lib/utils/createSendEventForFacet.js":[function(require,module,exports) {
+"use strict";
 
-var _connectSearchBox = _interopRequireDefault(require("./search-box/connectSearchBox"));
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createSendEventForFacet = createSendEventForFacet;
 
-var _connectSortBy = _interopRequireDefault(require("./sort-by/connectSortBy"));
-
-var _connectRatingMenu = _interopRequireDefault(require("./rating-menu/connectRatingMenu"));
-
-var _connectStats = _interopRequireDefault(require("./stats/connectStats"));
-
-var _connectToggleRefinement = _interopRequireDefault(require("./toggle-refinement/connectToggleRefinement"));
-
-var _connectBreadcrumb = _interopRequireDefault(require("./breadcrumb/connectBreadcrumb"));
-
-var _connectGeoSearch = _interopRequireDefault(require("./geo-search/connectGeoSearch"));
-
-var _connectPoweredBy = _interopRequireDefault(require("./powered-by/connectPoweredBy"));
-
-var _connectConfigure = _interopRequireDefault(require("./configure/connectConfigure"));
-
-var _connectConfigureRelatedItems = _interopRequireDefault(require("./configure-related-items/connectConfigureRelatedItems"));
-
-var _connectAutocomplete = _interopRequireDefault(require("./autocomplete/connectAutocomplete"));
-
-var _connectQueryRules = _interopRequireDefault(require("./query-rules/connectQueryRules"));
-
-var _connectVoiceSearch = _interopRequireDefault(require("./voice-search/connectVoiceSearch"));
+var _isFacetRefined = _interopRequireDefault(require("./isFacetRefined"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./clear-refinements/connectClearRefinements":"node_modules/instantsearch.js/es/connectors/clear-refinements/connectClearRefinements.js","./current-refinements/connectCurrentRefinements":"node_modules/instantsearch.js/es/connectors/current-refinements/connectCurrentRefinements.js","./hierarchical-menu/connectHierarchicalMenu":"node_modules/instantsearch.js/es/connectors/hierarchical-menu/connectHierarchicalMenu.js","./hits/connectHits":"node_modules/instantsearch.js/es/connectors/hits/connectHits.js","./hits/connectHitsWithInsights":"node_modules/instantsearch.js/es/connectors/hits/connectHitsWithInsights.js","./hits-per-page/connectHitsPerPage":"node_modules/instantsearch.js/es/connectors/hits-per-page/connectHitsPerPage.js","./infinite-hits/connectInfiniteHits":"node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHits.js","./infinite-hits/connectInfiniteHitsWithInsights":"node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHitsWithInsights.js","./menu/connectMenu":"node_modules/instantsearch.js/es/connectors/menu/connectMenu.js","./numeric-menu/connectNumericMenu":"node_modules/instantsearch.js/es/connectors/numeric-menu/connectNumericMenu.js","./pagination/connectPagination":"node_modules/instantsearch.js/es/connectors/pagination/connectPagination.js","./range/connectRange":"node_modules/instantsearch.js/es/connectors/range/connectRange.js","./refinement-list/connectRefinementList":"node_modules/instantsearch.js/es/connectors/refinement-list/connectRefinementList.js","./search-box/connectSearchBox":"node_modules/instantsearch.js/es/connectors/search-box/connectSearchBox.js","./sort-by/connectSortBy":"node_modules/instantsearch.js/es/connectors/sort-by/connectSortBy.js","./rating-menu/connectRatingMenu":"node_modules/instantsearch.js/es/connectors/rating-menu/connectRatingMenu.js","./stats/connectStats":"node_modules/instantsearch.js/es/connectors/stats/connectStats.js","./toggle-refinement/connectToggleRefinement":"node_modules/instantsearch.js/es/connectors/toggle-refinement/connectToggleRefinement.js","./breadcrumb/connectBreadcrumb":"node_modules/instantsearch.js/es/connectors/breadcrumb/connectBreadcrumb.js","./geo-search/connectGeoSearch":"node_modules/instantsearch.js/es/connectors/geo-search/connectGeoSearch.js","./powered-by/connectPoweredBy":"node_modules/instantsearch.js/es/connectors/powered-by/connectPoweredBy.js","./configure/connectConfigure":"node_modules/instantsearch.js/es/connectors/configure/connectConfigure.js","./configure-related-items/connectConfigureRelatedItems":"node_modules/instantsearch.js/es/connectors/configure-related-items/connectConfigureRelatedItems.js","./autocomplete/connectAutocomplete":"node_modules/instantsearch.js/es/connectors/autocomplete/connectAutocomplete.js","./query-rules/connectQueryRules":"node_modules/instantsearch.js/es/connectors/query-rules/connectQueryRules.js","./voice-search/connectVoiceSearch":"node_modules/instantsearch.js/es/connectors/voice-search/connectVoiceSearch.js"}],"node_modules/instantsearch.js/es/widgets/index/index.js":[function(require,module,exports) {
+
+function _typeof(obj) {
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
+function createSendEventForFacet(_ref) {
+  var instantSearchInstance = _ref.instantSearchInstance,
+      helper = _ref.helper,
+      attribute = _ref.attribute,
+      widgetType = _ref.widgetType;
+
+  var sendEventForFacet = function sendEventForFacet() {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    var eventType = args[0],
+        facetValue = args[1],
+        _args$ = args[2],
+        eventName = _args$ === void 0 ? 'Filter Applied' : _args$;
+
+    if (args.length === 1 && _typeof(args[0]) === 'object') {
+      instantSearchInstance.sendEventToInsights(args[0]);
+    } else if (eventType === 'click' && (args.length === 2 || args.length === 3)) {
+      if (!(0, _isFacetRefined.default)(helper, attribute, facetValue)) {
+        // send event only when the facet is being checked "ON"
+        instantSearchInstance.sendEventToInsights({
+          insightsMethod: 'clickedFilters',
+          widgetType: widgetType,
+          eventType: eventType,
+          payload: {
+            eventName: eventName,
+            index: helper.getIndex(),
+            filters: ["".concat(attribute, ":").concat(JSON.stringify(facetValue))]
+          }
+        });
+      }
+    } else if ("development" === 'development') {
+      throw new Error("You need to pass two arguments like:\n  sendEvent('click', facetValue);\n\nIf you want to send a custom payload, you can pass one object: sendEvent(customPayload);\n");
+    }
+  };
+
+  return sendEventForFacet;
+}
+},{"./isFacetRefined":"node_modules/instantsearch.js/es/lib/utils/isFacetRefined.js"}],"node_modules/instantsearch.js/es/lib/utils/createSendEventForHits.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createSendEventForHits = createSendEventForHits;
+exports.createBindEventForHits = createBindEventForHits;
+
+function _typeof(obj) {
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
+var buildPayload = function buildPayload(_ref) {
+  var index = _ref.index,
+      widgetType = _ref.widgetType,
+      methodName = _ref.methodName,
+      args = _ref.args;
+
+  if (args.length === 1 && _typeof(args[0]) === 'object') {
+    return args[0];
+  }
+
+  var eventType = args[0];
+  var hits = args[1];
+  var eventName = args[2];
+
+  if (!hits) {
+    if ("development" === 'development') {
+      throw new Error("You need to pass hit or hits as the second argument like:\n  ".concat(methodName, "(eventType, hit);\n  "));
+    } else {
+      return null;
+    }
+  }
+
+  if ((eventType === 'click' || eventType === 'conversion') && !eventName) {
+    if ("development" === 'development') {
+      throw new Error("You need to pass eventName as the third argument for 'click' or 'conversion' events like:\n  ".concat(methodName, "('click', hit, 'Product Purchased');\n\n  To learn more about event naming: https://www.algolia.com/doc/guides/getting-insights-and-analytics/search-analytics/click-through-and-conversions/in-depth/clicks-conversions-best-practices/\n  "));
+    } else {
+      return null;
+    }
+  }
+
+  var hitsArray = Array.isArray(hits) ? hits : [hits];
+
+  if (hitsArray.length === 0) {
+    return null;
+  }
+
+  var queryID = hitsArray[0].__queryID;
+  var objectIDs = hitsArray.map(function (hit) {
+    return hit.objectID;
+  });
+  var positions = hitsArray.map(function (hit) {
+    return hit.__position;
+  });
+
+  if (eventType === 'view') {
+    return {
+      insightsMethod: 'viewedObjectIDs',
+      widgetType: widgetType,
+      eventType: eventType,
+      payload: {
+        eventName: eventName || 'Hits Viewed',
+        index: index,
+        objectIDs: objectIDs
+      }
+    };
+  } else if (eventType === 'click') {
+    return {
+      insightsMethod: 'clickedObjectIDsAfterSearch',
+      widgetType: widgetType,
+      eventType: eventType,
+      payload: {
+        eventName: eventName,
+        index: index,
+        queryID: queryID,
+        objectIDs: objectIDs,
+        positions: positions
+      }
+    };
+  } else if (eventType === 'conversion') {
+    return {
+      insightsMethod: 'convertedObjectIDsAfterSearch',
+      widgetType: widgetType,
+      eventType: eventType,
+      payload: {
+        eventName: eventName,
+        index: index,
+        queryID: queryID,
+        objectIDs: objectIDs
+      }
+    };
+  } else if ("development" === 'development') {
+    throw new Error("eventType(\"".concat(eventType, "\") is not supported.\n    If you want to send a custom payload, you can pass one object: ").concat(methodName, "(customPayload);\n    "));
+  } else {
+    return null;
+  }
+};
+
+function createSendEventForHits(_ref2) {
+  var instantSearchInstance = _ref2.instantSearchInstance,
+      index = _ref2.index,
+      widgetType = _ref2.widgetType;
+
+  var sendEventForHits = function sendEventForHits() {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    var payload = buildPayload({
+      widgetType: widgetType,
+      index: index,
+      methodName: 'sendEvent',
+      args: args
+    });
+
+    if (payload) {
+      instantSearchInstance.sendEventToInsights(payload);
+    }
+  };
+
+  return sendEventForHits;
+}
+
+function createBindEventForHits(_ref3) {
+  var index = _ref3.index,
+      widgetType = _ref3.widgetType;
+
+  var bindEventForHits = function bindEventForHits() {
+    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    var payload = buildPayload({
+      widgetType: widgetType,
+      index: index,
+      methodName: 'bindEvent',
+      args: args
+    });
+    return payload ? "data-insights-event=".concat(btoa(JSON.stringify(payload))) : '';
+  };
+
+  return bindEventForHits;
+}
+},{}],"node_modules/instantsearch.js/es/lib/utils/getAppIdAndApiKey.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getAppIdAndApiKey = getAppIdAndApiKey;
+
+function getAppIdAndApiKey(searchClient) {
+  if (searchClient.transporter) {
+    // searchClient v4
+    var _searchClient$transpo = searchClient.transporter,
+        headers = _searchClient$transpo.headers,
+        queryParameters = _searchClient$transpo.queryParameters;
+    var APP_ID = 'x-algolia-application-id';
+    var API_KEY = 'x-algolia-api-key';
+    var appId = headers[APP_ID] || queryParameters[APP_ID];
+    var apiKey = headers[API_KEY] || queryParameters[API_KEY];
+    return [appId, apiKey];
+  } else {
+    // searchClient v3
+    return [searchClient.applicationID, searchClient.apiKey];
+  }
+}
+},{}],"node_modules/instantsearch.js/es/lib/utils/convertNumericRefinementsToFilters.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.convertNumericRefinementsToFilters = convertNumericRefinementsToFilters;
+
+function convertNumericRefinementsToFilters(state, attribute) {
+  if (!state) {
+    return null;
+  }
+
+  var filtersObj = state.numericRefinements[attribute];
+  /*
+    filtersObj === {
+      "<=": [10],
+      "=": [],
+      ">=": [5]
+    }
+  */
+
+  var filters = [];
+  Object.keys(filtersObj).filter(function (operator) {
+    return Array.isArray(filtersObj[operator]) && filtersObj[operator].length > 0;
+  }).forEach(function (operator) {
+    filtersObj[operator].forEach(function (value) {
+      filters.push("".concat(attribute).concat(operator).concat(value));
+    });
+  });
+  return filters;
+}
+},{}],"node_modules/instantsearch.js/es/lib/utils/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var _exportNames = {
+  capitalize: true,
+  defer: true,
+  isDomElement: true,
+  getContainerNode: true,
+  isSpecialClick: true,
+  prepareTemplateProps: true,
+  renderTemplate: true,
+  getRefinements: true,
+  clearRefinements: true,
+  escapeRefinement: true,
+  unescapeRefinement: true,
+  checkRendering: true,
+  checkIndexUiState: true,
+  getPropertyByPath: true,
+  getObjectType: true,
+  noop: true,
+  isFiniteNumber: true,
+  isPlainObject: true,
+  uniq: true,
+  range: true,
+  isEqual: true,
+  escape: true,
+  find: true,
+  findIndex: true,
+  mergeSearchParameters: true,
+  resolveSearchParameters: true,
+  toArray: true,
+  warning: true,
+  deprecate: true,
+  createDocumentationLink: true,
+  createDocumentationMessageGenerator: true,
+  aroundLatLngToPosition: true,
+  insideBoundingBoxToBoundingBox: true,
+  addAbsolutePosition: true,
+  addQueryID: true,
+  isFacetRefined: true,
+  getAppIdAndApiKey: true,
+  convertNumericRefinementsToFilters: true
+};
+Object.defineProperty(exports, "capitalize", {
+  enumerable: true,
+  get: function () {
+    return _capitalize.default;
+  }
+});
+Object.defineProperty(exports, "defer", {
+  enumerable: true,
+  get: function () {
+    return _defer.default;
+  }
+});
+Object.defineProperty(exports, "isDomElement", {
+  enumerable: true,
+  get: function () {
+    return _isDomElement.default;
+  }
+});
+Object.defineProperty(exports, "getContainerNode", {
+  enumerable: true,
+  get: function () {
+    return _getContainerNode.default;
+  }
+});
+Object.defineProperty(exports, "isSpecialClick", {
+  enumerable: true,
+  get: function () {
+    return _isSpecialClick.default;
+  }
+});
+Object.defineProperty(exports, "prepareTemplateProps", {
+  enumerable: true,
+  get: function () {
+    return _prepareTemplateProps.default;
+  }
+});
+Object.defineProperty(exports, "renderTemplate", {
+  enumerable: true,
+  get: function () {
+    return _renderTemplate.default;
+  }
+});
+Object.defineProperty(exports, "getRefinements", {
+  enumerable: true,
+  get: function () {
+    return _getRefinements.default;
+  }
+});
+Object.defineProperty(exports, "clearRefinements", {
+  enumerable: true,
+  get: function () {
+    return _clearRefinements.default;
+  }
+});
+Object.defineProperty(exports, "escapeRefinement", {
+  enumerable: true,
+  get: function () {
+    return _escapeRefinement.default;
+  }
+});
+Object.defineProperty(exports, "unescapeRefinement", {
+  enumerable: true,
+  get: function () {
+    return _unescapeRefinement.default;
+  }
+});
+Object.defineProperty(exports, "checkRendering", {
+  enumerable: true,
+  get: function () {
+    return _checkRendering.default;
+  }
+});
+Object.defineProperty(exports, "checkIndexUiState", {
+  enumerable: true,
+  get: function () {
+    return _checkIndexUiState.checkIndexUiState;
+  }
+});
+Object.defineProperty(exports, "getPropertyByPath", {
+  enumerable: true,
+  get: function () {
+    return _getPropertyByPath.default;
+  }
+});
+Object.defineProperty(exports, "getObjectType", {
+  enumerable: true,
+  get: function () {
+    return _getObjectType.default;
+  }
+});
+Object.defineProperty(exports, "noop", {
+  enumerable: true,
+  get: function () {
+    return _noop.default;
+  }
+});
+Object.defineProperty(exports, "isFiniteNumber", {
+  enumerable: true,
+  get: function () {
+    return _isFiniteNumber.default;
+  }
+});
+Object.defineProperty(exports, "isPlainObject", {
+  enumerable: true,
+  get: function () {
+    return _isPlainObject.default;
+  }
+});
+Object.defineProperty(exports, "uniq", {
+  enumerable: true,
+  get: function () {
+    return _uniq.default;
+  }
+});
+Object.defineProperty(exports, "range", {
+  enumerable: true,
+  get: function () {
+    return _range.default;
+  }
+});
+Object.defineProperty(exports, "isEqual", {
+  enumerable: true,
+  get: function () {
+    return _isEqual.default;
+  }
+});
+Object.defineProperty(exports, "escape", {
+  enumerable: true,
+  get: function () {
+    return _escape.default;
+  }
+});
+Object.defineProperty(exports, "find", {
+  enumerable: true,
+  get: function () {
+    return _find.default;
+  }
+});
+Object.defineProperty(exports, "findIndex", {
+  enumerable: true,
+  get: function () {
+    return _findIndex.default;
+  }
+});
+Object.defineProperty(exports, "mergeSearchParameters", {
+  enumerable: true,
+  get: function () {
+    return _mergeSearchParameters.default;
+  }
+});
+Object.defineProperty(exports, "resolveSearchParameters", {
+  enumerable: true,
+  get: function () {
+    return _resolveSearchParameters.default;
+  }
+});
+Object.defineProperty(exports, "toArray", {
+  enumerable: true,
+  get: function () {
+    return _toArray.default;
+  }
+});
+Object.defineProperty(exports, "warning", {
+  enumerable: true,
+  get: function () {
+    return _logger.warning;
+  }
+});
+Object.defineProperty(exports, "deprecate", {
+  enumerable: true,
+  get: function () {
+    return _logger.deprecate;
+  }
+});
+Object.defineProperty(exports, "createDocumentationLink", {
+  enumerable: true,
+  get: function () {
+    return _documentation.createDocumentationLink;
+  }
+});
+Object.defineProperty(exports, "createDocumentationMessageGenerator", {
+  enumerable: true,
+  get: function () {
+    return _documentation.createDocumentationMessageGenerator;
+  }
+});
+Object.defineProperty(exports, "aroundLatLngToPosition", {
+  enumerable: true,
+  get: function () {
+    return _geoSearch.aroundLatLngToPosition;
+  }
+});
+Object.defineProperty(exports, "insideBoundingBoxToBoundingBox", {
+  enumerable: true,
+  get: function () {
+    return _geoSearch.insideBoundingBoxToBoundingBox;
+  }
+});
+Object.defineProperty(exports, "addAbsolutePosition", {
+  enumerable: true,
+  get: function () {
+    return _hitsAbsolutePosition.addAbsolutePosition;
+  }
+});
+Object.defineProperty(exports, "addQueryID", {
+  enumerable: true,
+  get: function () {
+    return _hitsQueryId.addQueryID;
+  }
+});
+Object.defineProperty(exports, "isFacetRefined", {
+  enumerable: true,
+  get: function () {
+    return _isFacetRefined.default;
+  }
+});
+Object.defineProperty(exports, "getAppIdAndApiKey", {
+  enumerable: true,
+  get: function () {
+    return _getAppIdAndApiKey.getAppIdAndApiKey;
+  }
+});
+Object.defineProperty(exports, "convertNumericRefinementsToFilters", {
+  enumerable: true,
+  get: function () {
+    return _convertNumericRefinementsToFilters.convertNumericRefinementsToFilters;
+  }
+});
+
+var _capitalize = _interopRequireDefault(require("./capitalize"));
+
+var _defer = _interopRequireDefault(require("./defer"));
+
+var _isDomElement = _interopRequireDefault(require("./isDomElement"));
+
+var _getContainerNode = _interopRequireDefault(require("./getContainerNode"));
+
+var _isSpecialClick = _interopRequireDefault(require("./isSpecialClick"));
+
+var _prepareTemplateProps = _interopRequireDefault(require("./prepareTemplateProps"));
+
+var _renderTemplate = _interopRequireDefault(require("./renderTemplate"));
+
+var _getRefinements = _interopRequireDefault(require("./getRefinements"));
+
+var _clearRefinements = _interopRequireDefault(require("./clearRefinements"));
+
+var _escapeRefinement = _interopRequireDefault(require("./escapeRefinement"));
+
+var _unescapeRefinement = _interopRequireDefault(require("./unescapeRefinement"));
+
+var _checkRendering = _interopRequireDefault(require("./checkRendering"));
+
+var _checkIndexUiState = require("./checkIndexUiState");
+
+var _getPropertyByPath = _interopRequireDefault(require("./getPropertyByPath"));
+
+var _getObjectType = _interopRequireDefault(require("./getObjectType"));
+
+var _noop = _interopRequireDefault(require("./noop"));
+
+var _isFiniteNumber = _interopRequireDefault(require("./isFiniteNumber"));
+
+var _isPlainObject = _interopRequireDefault(require("./isPlainObject"));
+
+var _uniq = _interopRequireDefault(require("./uniq"));
+
+var _range = _interopRequireDefault(require("./range"));
+
+var _isEqual = _interopRequireDefault(require("./isEqual"));
+
+var _escape = _interopRequireDefault(require("./escape"));
+
+var _find = _interopRequireDefault(require("./find"));
+
+var _findIndex = _interopRequireDefault(require("./findIndex"));
+
+var _mergeSearchParameters = _interopRequireDefault(require("./mergeSearchParameters"));
+
+var _resolveSearchParameters = _interopRequireDefault(require("./resolveSearchParameters"));
+
+var _toArray = _interopRequireDefault(require("./toArray"));
+
+var _logger = require("./logger");
+
+var _documentation = require("./documentation");
+
+var _geoSearch = require("./geo-search");
+
+var _hitsAbsolutePosition = require("./hits-absolute-position");
+
+var _hitsQueryId = require("./hits-query-id");
+
+var _isFacetRefined = _interopRequireDefault(require("./isFacetRefined"));
+
+var _createSendEventForFacet = require("./createSendEventForFacet");
+
+Object.keys(_createSendEventForFacet).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _createSendEventForFacet[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _createSendEventForFacet[key];
+    }
+  });
+});
+
+var _createSendEventForHits = require("./createSendEventForHits");
+
+Object.keys(_createSendEventForHits).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _createSendEventForHits[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _createSendEventForHits[key];
+    }
+  });
+});
+
+var _getAppIdAndApiKey = require("./getAppIdAndApiKey");
+
+var _convertNumericRefinementsToFilters = require("./convertNumericRefinementsToFilters");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./capitalize":"node_modules/instantsearch.js/es/lib/utils/capitalize.js","./defer":"node_modules/instantsearch.js/es/lib/utils/defer.js","./isDomElement":"node_modules/instantsearch.js/es/lib/utils/isDomElement.js","./getContainerNode":"node_modules/instantsearch.js/es/lib/utils/getContainerNode.js","./isSpecialClick":"node_modules/instantsearch.js/es/lib/utils/isSpecialClick.js","./prepareTemplateProps":"node_modules/instantsearch.js/es/lib/utils/prepareTemplateProps.js","./renderTemplate":"node_modules/instantsearch.js/es/lib/utils/renderTemplate.js","./getRefinements":"node_modules/instantsearch.js/es/lib/utils/getRefinements.js","./clearRefinements":"node_modules/instantsearch.js/es/lib/utils/clearRefinements.js","./escapeRefinement":"node_modules/instantsearch.js/es/lib/utils/escapeRefinement.js","./unescapeRefinement":"node_modules/instantsearch.js/es/lib/utils/unescapeRefinement.js","./checkRendering":"node_modules/instantsearch.js/es/lib/utils/checkRendering.js","./checkIndexUiState":"node_modules/instantsearch.js/es/lib/utils/checkIndexUiState.js","./getPropertyByPath":"node_modules/instantsearch.js/es/lib/utils/getPropertyByPath.js","./getObjectType":"node_modules/instantsearch.js/es/lib/utils/getObjectType.js","./noop":"node_modules/instantsearch.js/es/lib/utils/noop.js","./isFiniteNumber":"node_modules/instantsearch.js/es/lib/utils/isFiniteNumber.js","./isPlainObject":"node_modules/instantsearch.js/es/lib/utils/isPlainObject.js","./uniq":"node_modules/instantsearch.js/es/lib/utils/uniq.js","./range":"node_modules/instantsearch.js/es/lib/utils/range.js","./isEqual":"node_modules/instantsearch.js/es/lib/utils/isEqual.js","./escape":"node_modules/instantsearch.js/es/lib/utils/escape.js","./find":"node_modules/instantsearch.js/es/lib/utils/find.js","./findIndex":"node_modules/instantsearch.js/es/lib/utils/findIndex.js","./mergeSearchParameters":"node_modules/instantsearch.js/es/lib/utils/mergeSearchParameters.js","./resolveSearchParameters":"node_modules/instantsearch.js/es/lib/utils/resolveSearchParameters.js","./toArray":"node_modules/instantsearch.js/es/lib/utils/toArray.js","./logger":"node_modules/instantsearch.js/es/lib/utils/logger.js","./documentation":"node_modules/instantsearch.js/es/lib/utils/documentation.js","./geo-search":"node_modules/instantsearch.js/es/lib/utils/geo-search.js","./hits-absolute-position":"node_modules/instantsearch.js/es/lib/utils/hits-absolute-position.js","./hits-query-id":"node_modules/instantsearch.js/es/lib/utils/hits-query-id.js","./isFacetRefined":"node_modules/instantsearch.js/es/lib/utils/isFacetRefined.js","./createSendEventForFacet":"node_modules/instantsearch.js/es/lib/utils/createSendEventForFacet.js","./createSendEventForHits":"node_modules/instantsearch.js/es/lib/utils/createSendEventForHits.js","./getAppIdAndApiKey":"node_modules/instantsearch.js/es/lib/utils/getAppIdAndApiKey.js","./convertNumericRefinementsToFilters":"node_modules/instantsearch.js/es/lib/utils/convertNumericRefinementsToFilters.js"}],"node_modules/instantsearch.js/es/widgets/index/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17608,7 +9469,147 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 var _default = '4.9.1';
 exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/suit.js":[function(require,module,exports) {
+},{}],"node_modules/instantsearch.js/es/lib/escape-highlight.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = escapeHits;
+exports.escapeFacets = escapeFacets;
+exports.TAG_REPLACEMENT = exports.TAG_PLACEHOLDER = void 0;
+
+var _utils = require("../lib/utils");
+
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var TAG_PLACEHOLDER = {
+  highlightPreTag: '__ais-highlight__',
+  highlightPostTag: '__/ais-highlight__'
+};
+exports.TAG_PLACEHOLDER = TAG_PLACEHOLDER;
+var TAG_REPLACEMENT = {
+  highlightPreTag: '<mark>',
+  highlightPostTag: '</mark>'
+};
+exports.TAG_REPLACEMENT = TAG_REPLACEMENT;
+
+function replaceTagsAndEscape(value) {
+  return (0, _utils.escape)(value).replace(new RegExp(TAG_PLACEHOLDER.highlightPreTag, 'g'), TAG_REPLACEMENT.highlightPreTag).replace(new RegExp(TAG_PLACEHOLDER.highlightPostTag, 'g'), TAG_REPLACEMENT.highlightPostTag);
+}
+
+function recursiveEscape(input) {
+  if ((0, _utils.isPlainObject)(input) && typeof input.value !== 'string') {
+    return Object.keys(input).reduce(function (acc, key) {
+      return _objectSpread({}, acc, _defineProperty({}, key, recursiveEscape(input[key])));
+    }, {});
+  }
+
+  if (Array.isArray(input)) {
+    return input.map(recursiveEscape);
+  }
+
+  return _objectSpread({}, input, {
+    value: replaceTagsAndEscape(input.value)
+  });
+}
+
+function escapeHits(hits) {
+  if (hits.__escaped === undefined) {
+    // We don't override the value on hit because it will mutate the raw results
+    // instead we make a shallow copy and we assign the escaped values on it.
+    hits = hits.map(function (_ref) {
+      var hit = _extends({}, _ref);
+
+      if (hit._highlightResult) {
+        hit._highlightResult = recursiveEscape(hit._highlightResult);
+      }
+
+      if (hit._snippetResult) {
+        hit._snippetResult = recursiveEscape(hit._snippetResult);
+      }
+
+      return hit;
+    });
+    hits.__escaped = true;
+  }
+
+  return hits;
+}
+
+function escapeFacets(facetHits) {
+  return facetHits.map(function (h) {
+    return _objectSpread({}, h, {
+      highlighted: replaceTagsAndEscape(h.highlighted)
+    });
+  });
+}
+},{"../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/lib/suit.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17698,7 +9699,87 @@ function snippet(_ref) {
   }) + (cssClasses.highlighted ? " ".concat(cssClasses.highlighted) : '');
   return attributeValue.replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
 }
-},{"../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js","../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/helpers/get-insights-anonymous-user-token.js":[function(require,module,exports) {
+},{"../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js","../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/helpers/insights.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.readDataAttributes = readDataAttributes;
+exports.hasDataAttributes = hasDataAttributes;
+exports.writeDataAttributes = writeDataAttributes;
+exports.default = insights;
+
+var _utils = require("../lib/utils");
+
+function _typeof(obj) {
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
+function readDataAttributes(domElement) {
+  var method = domElement.getAttribute('data-insights-method');
+  var serializedPayload = domElement.getAttribute('data-insights-payload');
+
+  if (typeof serializedPayload !== 'string') {
+    throw new Error('The insights helper expects `data-insights-payload` to be a base64-encoded JSON string.');
+  }
+
+  try {
+    var payload = JSON.parse(atob(serializedPayload));
+    return {
+      method: method,
+      payload: payload
+    };
+  } catch (error) {
+    throw new Error('The insights helper was unable to parse `data-insights-payload`.');
+  }
+}
+
+function hasDataAttributes(domElement) {
+  return domElement.hasAttribute('data-insights-method');
+}
+
+function writeDataAttributes(_ref) {
+  var method = _ref.method,
+      payload = _ref.payload;
+
+  if (_typeof(payload) !== 'object') {
+    throw new Error("The insights helper expects the payload to be an object.");
+  }
+
+  var serializedPayload;
+
+  try {
+    serializedPayload = btoa(JSON.stringify(payload));
+  } catch (error) {
+    throw new Error("Could not JSON serialize the payload object.");
+  }
+
+  return "data-insights-method=\"".concat(method, "\" data-insights-payload=\"").concat(serializedPayload, "\"");
+}
+/**
+ * @deprecated This function will be still supported in 4.x releases, but not further. It is replaced by the `insights` middleware. For more information, visit https://www.algolia.com/doc/guides/getting-insights-and-analytics/search-analytics/click-through-and-conversions/how-to/send-click-and-conversion-events-with-instantsearch/js/
+ */
+
+
+function insights(method, payload) {
+  "development" === 'development' ? (0, _utils.warning)(false, "`insights` function has been deprecated. It is still supported in 4.x releases, but not further. It is replaced by the `insights` middleware.\n\nFor more information, visit https://www.algolia.com/doc/guides/getting-insights-and-analytics/search-analytics/click-through-and-conversions/how-to/send-click-and-conversion-events-with-instantsearch/js/") : void 0;
+  return writeDataAttributes({
+    method: method,
+    payload: payload
+  });
+}
+},{"../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/helpers/get-insights-anonymous-user-token.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19932,125 +12013,389 @@ var define;
 /*! algoliasearch.umd.js | 4.8.3 | © Algolia, inc. | https://github.com/algolia/algoliasearch-client-javascript */
 !function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e=e||self).algoliasearch=t()}(this,(function(){"use strict";function e(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function t(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function r(r){for(var n=1;n<arguments.length;n++){var a=null!=arguments[n]?arguments[n]:{};n%2?t(Object(a),!0).forEach((function(t){e(r,t,a[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(r,Object.getOwnPropertyDescriptors(a)):t(Object(a)).forEach((function(e){Object.defineProperty(r,e,Object.getOwnPropertyDescriptor(a,e))}))}return r}function n(e,t){if(null==e)return{};var r,n,a=function(e,t){if(null==e)return{};var r,n,a={},o=Object.keys(e);for(n=0;n<o.length;n++)r=o[n],t.indexOf(r)>=0||(a[r]=e[r]);return a}(e,t);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(e);for(n=0;n<o.length;n++)r=o[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(a[r]=e[r])}return a}function a(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){if(!(Symbol.iterator in Object(e)||"[object Arguments]"===Object.prototype.toString.call(e)))return;var r=[],n=!0,a=!1,o=void 0;try{for(var u,i=e[Symbol.iterator]();!(n=(u=i.next()).done)&&(r.push(u.value),!t||r.length!==t);n=!0);}catch(e){a=!0,o=e}finally{try{n||null==i.return||i.return()}finally{if(a)throw o}}return r}(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}()}function o(e){return function(e){if(Array.isArray(e)){for(var t=0,r=new Array(e.length);t<e.length;t++)r[t]=e[t];return r}}(e)||function(e){if(Symbol.iterator in Object(e)||"[object Arguments]"===Object.prototype.toString.call(e))return Array.from(e)}(e)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance")}()}function u(e){var t,r="algoliasearch-client-js-".concat(e.key),n=function(){return void 0===t&&(t=e.localStorage||window.localStorage),t},o=function(){return JSON.parse(n().getItem(r)||"{}")};return{get:function(e,t){var r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{miss:function(){return Promise.resolve()}};return Promise.resolve().then((function(){var r=JSON.stringify(e),n=o()[r];return Promise.all([n||t(),void 0!==n])})).then((function(e){var t=a(e,2),n=t[0],o=t[1];return Promise.all([n,o||r.miss(n)])})).then((function(e){return a(e,1)[0]}))},set:function(e,t){return Promise.resolve().then((function(){var a=o();return a[JSON.stringify(e)]=t,n().setItem(r,JSON.stringify(a)),t}))},delete:function(e){return Promise.resolve().then((function(){var t=o();delete t[JSON.stringify(e)],n().setItem(r,JSON.stringify(t))}))},clear:function(){return Promise.resolve().then((function(){n().removeItem(r)}))}}}function i(e){var t=o(e.caches),r=t.shift();return void 0===r?{get:function(e,t){var r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{miss:function(){return Promise.resolve()}},n=t();return n.then((function(e){return Promise.all([e,r.miss(e)])})).then((function(e){return a(e,1)[0]}))},set:function(e,t){return Promise.resolve(t)},delete:function(e){return Promise.resolve()},clear:function(){return Promise.resolve()}}:{get:function(e,n){var a=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{miss:function(){return Promise.resolve()}};return r.get(e,n,a).catch((function(){return i({caches:t}).get(e,n,a)}))},set:function(e,n){return r.set(e,n).catch((function(){return i({caches:t}).set(e,n)}))},delete:function(e){return r.delete(e).catch((function(){return i({caches:t}).delete(e)}))},clear:function(){return r.clear().catch((function(){return i({caches:t}).clear()}))}}}function s(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{serializable:!0},t={};return{get:function(r,n){var a=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{miss:function(){return Promise.resolve()}},o=JSON.stringify(r);if(o in t)return Promise.resolve(e.serializable?JSON.parse(t[o]):t[o]);var u=n(),i=a&&a.miss||function(){return Promise.resolve()};return u.then((function(e){return i(e)})).then((function(){return u}))},set:function(r,n){return t[JSON.stringify(r)]=e.serializable?JSON.stringify(n):n,Promise.resolve(n)},delete:function(e){return delete t[JSON.stringify(e)],Promise.resolve()},clear:function(){return t={},Promise.resolve()}}}function c(e,t,r){var n={"x-algolia-api-key":r,"x-algolia-application-id":t};return{headers:function(){return e===m.WithinHeaders?n:{}},queryParameters:function(){return e===m.WithinQueryParameters?n:{}}}}function f(e){var t=0;return e((function r(){return t++,new Promise((function(n){setTimeout((function(){n(e(r))}),Math.min(100*t,1e3))}))}))}function d(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:function(e,t){return Promise.resolve()};return Object.assign(e,{wait:function(r){return d(e.then((function(e){return Promise.all([t(e,r),e])})).then((function(e){return e[1]})))}})}function l(e){for(var t=e.length-1;t>0;t--){var r=Math.floor(Math.random()*(t+1)),n=e[t];e[t]=e[r],e[r]=n}return e}function p(e,t){return t?(Object.keys(t).forEach((function(r){e[r]=t[r](e)})),e):e}function h(e){for(var t=arguments.length,r=new Array(t>1?t-1:0),n=1;n<t;n++)r[n-1]=arguments[n];var a=0;return e.replace(/%s/g,(function(){return encodeURIComponent(r[a++])}))}var m={WithinQueryParameters:0,WithinHeaders:1};function y(e,t){var r=e||{},n=r.data||{};return Object.keys(r).forEach((function(e){-1===["timeout","headers","queryParameters","data","cacheable"].indexOf(e)&&(n[e]=r[e])})),{data:Object.entries(n).length>0?n:void 0,timeout:r.timeout||t,headers:r.headers||{},queryParameters:r.queryParameters||{},cacheable:r.cacheable}}var g={Read:1,Write:2,Any:3},v=1,b=2,P=3;function O(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:v;return r(r({},e),{},{status:t,lastUpdate:Date.now()})}function w(e){return"string"==typeof e?{protocol:"https",url:e,accept:g.Any}:{protocol:e.protocol||"https",url:e.url,accept:e.accept||g.Any}}var j="DELETE",I="GET",x="POST",q="PUT";function D(e,t){return Promise.all(t.map((function(t){return e.get(t,(function(){return Promise.resolve(O(t))}))}))).then((function(e){var r=e.filter((function(e){return function(e){return e.status===v||Date.now()-e.lastUpdate>12e4}(e)})),n=e.filter((function(e){return function(e){return e.status===P&&Date.now()-e.lastUpdate<=12e4}(e)})),a=[].concat(o(r),o(n));return{getTimeout:function(e,t){return(0===n.length&&0===e?1:n.length+3+e)*t},statelessHosts:a.length>0?a.map((function(e){return w(e)})):t}}))}function S(e,t,n,a){var u=[],i=function(e,t){if(e.method===I||void 0===e.data&&void 0===t.data)return;var n=Array.isArray(e.data)?e.data:r(r({},e.data),t.data);return JSON.stringify(n)}(n,a),s=function(e,t){var n=r(r({},e.headers),t.headers),a={};return Object.keys(n).forEach((function(e){var t=n[e];a[e.toLowerCase()]=t})),a}(e,a),c=n.method,f=n.method!==I?{}:r(r({},n.data),a.data),d=r(r(r({"x-algolia-agent":e.userAgent.value},e.queryParameters),f),a.queryParameters),l=0,p=function t(r,o){var f=r.pop();if(void 0===f)throw{name:"RetryError",message:"Unreachable hosts - your application id may be incorrect. If the error persists, contact support@algolia.com.",transporterStackTrace:A(u)};var p={data:i,headers:s,method:c,url:N(f,n.path,d),connectTimeout:o(l,e.timeouts.connect),responseTimeout:o(l,a.timeout)},h=function(e){var t={request:p,response:e,host:f,triesLeft:r.length};return u.push(t),t},m={onSucess:function(e){return function(e){try{return JSON.parse(e.content)}catch(t){throw function(e,t){return{name:"DeserializationError",message:e,response:t}}(t.message,e)}}(e)},onRetry:function(n){var a=h(n);return n.isTimedOut&&l++,Promise.all([e.logger.info("Retryable failure",E(a)),e.hostsCache.set(f,O(f,n.isTimedOut?P:b))]).then((function(){return t(r,o)}))},onFail:function(e){throw h(e),function(e,t){var r=e.content,n=e.status,a=r;try{a=JSON.parse(r).message}catch(e){}return function(e,t,r){return{name:"ApiError",message:e,status:t,transporterStackTrace:r}}(a,n,t)}(e,A(u))}};return e.requester.send(p).then((function(e){return function(e,t){return function(e){var t=e.status;return e.isTimedOut||function(e){var t=e.isTimedOut,r=e.status;return!t&&0==~~r}(e)||2!=~~(t/100)&&4!=~~(t/100)}(e)?t.onRetry(e):2==~~(e.status/100)?t.onSucess(e):t.onFail(e)}(e,m)}))};return D(e.hostsCache,t).then((function(e){return p(o(e.statelessHosts).reverse(),e.getTimeout)}))}function k(e){var t=e.hostsCache,r=e.logger,n=e.requester,o=e.requestsCache,u=e.responsesCache,i=e.timeouts,s=e.userAgent,c=e.hosts,f=e.queryParameters,d={hostsCache:t,logger:r,requester:n,requestsCache:o,responsesCache:u,timeouts:i,userAgent:s,headers:e.headers,queryParameters:f,hosts:c.map((function(e){return w(e)})),read:function(e,t){var r=y(t,d.timeouts.read),n=function(){return S(d,d.hosts.filter((function(e){return 0!=(e.accept&g.Read)})),e,r)};if(!0!==(void 0!==r.cacheable?r.cacheable:e.cacheable))return n();var o={request:e,mappedRequestOptions:r,transporter:{queryParameters:d.queryParameters,headers:d.headers}};return d.responsesCache.get(o,(function(){return d.requestsCache.get(o,(function(){return d.requestsCache.set(o,n()).then((function(e){return Promise.all([d.requestsCache.delete(o),e])}),(function(e){return Promise.all([d.requestsCache.delete(o),Promise.reject(e)])})).then((function(e){var t=a(e,2);t[0];return t[1]}))}))}),{miss:function(e){return d.responsesCache.set(o,e)}})},write:function(e,t){return S(d,d.hosts.filter((function(e){return 0!=(e.accept&g.Write)})),e,y(t,d.timeouts.write))}};return d}function T(e){var t={value:"Algolia for JavaScript (".concat(e,")"),add:function(e){var r="; ".concat(e.segment).concat(void 0!==e.version?" (".concat(e.version,")"):"");return-1===t.value.indexOf(r)&&(t.value="".concat(t.value).concat(r)),t}};return t}function N(e,t,r){var n=R(r),a="".concat(e.protocol,"://").concat(e.url,"/").concat("/"===t.charAt(0)?t.substr(1):t);return n.length&&(a+="?".concat(n)),a}function R(e){return Object.keys(e).map((function(t){return h("%s=%s",t,(r=e[t],"[object Object]"===Object.prototype.toString.call(r)||"[object Array]"===Object.prototype.toString.call(r)?JSON.stringify(e[t]):e[t]));var r})).join("&")}function A(e){return e.map((function(e){return E(e)}))}function E(e){var t=e.request.headers["x-algolia-api-key"]?{"x-algolia-api-key":"*****"}:{};return r(r({},e),{},{request:r(r({},e.request),{},{headers:r(r({},e.request.headers),t)})})}var C=function(e){return function(t,r){return e.transporter.write({method:x,path:"2/abtests",data:t},r)}},U=function(e){return function(t,r){return e.transporter.write({method:j,path:h("2/abtests/%s",t)},r)}},J=function(e){return function(t,r){return e.transporter.read({method:I,path:h("2/abtests/%s",t)},r)}},z=function(e){return function(t){return e.transporter.read({method:I,path:"2/abtests"},t)}},F=function(e){return function(t,r){return e.transporter.write({method:x,path:h("2/abtests/%s/stop",t)},r)}},H=function(e){return function(t){return e.transporter.read({method:I,path:"1/strategies/personalization"},t)}},M=function(e){return function(t,r){return e.transporter.write({method:x,path:"1/strategies/personalization",data:t},r)}};function K(e){return function t(r){return e.request(r).then((function(n){if(void 0!==e.batch&&e.batch(n.hits),!e.shouldStop(n))return n.cursor?t({cursor:n.cursor}):t({page:(r.page||0)+1})}))}({})}var W=function(e){return function(t,a){var o=a||{},u=o.queryParameters,i=n(o,["queryParameters"]),s=r({acl:t},void 0!==u?{queryParameters:u}:{});return d(e.transporter.write({method:x,path:"1/keys",data:s},i),(function(t,r){return f((function(n){return Y(e)(t.key,r).catch((function(e){if(404!==e.status)throw e;return n()}))}))}))}},B=function(e){return function(t,r,n){var a=y(n);return a.queryParameters["X-Algolia-User-ID"]=t,e.transporter.write({method:x,path:"1/clusters/mapping",data:{cluster:r}},a)}},Q=function(e){return function(t,r,n){return e.transporter.write({method:x,path:"1/clusters/mapping/batch",data:{users:t,cluster:r}},n)}},G=function(e){return function(t,r,n){return d(e.transporter.write({method:x,path:h("1/indexes/%s/operation",t),data:{operation:"copy",destination:r}},n),(function(r,n){return re(e)(t,{methods:{waitTask:tt}}).waitTask(r.taskID,n)}))}},L=function(e){return function(t,n,a){return G(e)(t,n,r(r({},a),{},{scope:[nt.Rules]}))}},V=function(e){return function(t,n,a){return G(e)(t,n,r(r({},a),{},{scope:[nt.Settings]}))}},_=function(e){return function(t,n,a){return G(e)(t,n,r(r({},a),{},{scope:[nt.Synonyms]}))}},X=function(e){return function(t,r){return d(e.transporter.write({method:j,path:h("1/keys/%s",t)},r),(function(r,n){return f((function(r){return Y(e)(t,n).then(r).catch((function(e){if(404!==e.status)throw e}))}))}))}},Y=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/keys/%s",t)},r)}},Z=function(e){return function(t){return e.transporter.read({method:I,path:"1/logs"},t)}},$=function(e){return function(t){return e.transporter.read({method:I,path:"1/clusters/mapping/top"},t)}},ee=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/clusters/mapping/%s",t)},r)}},te=function(e){return function(t){var r=t||{},a=r.retrieveMappings,o=n(r,["retrieveMappings"]);return!0===a&&(o.getClusters=!0),e.transporter.read({method:I,path:"1/clusters/mapping/pending"},o)}},re=function(e){return function(t){var r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n={transporter:e.transporter,appId:e.appId,indexName:t};return p(n,r.methods)}},ne=function(e){return function(t){return e.transporter.read({method:I,path:"1/keys"},t)}},ae=function(e){return function(t){return e.transporter.read({method:I,path:"1/clusters"},t)}},oe=function(e){return function(t){return e.transporter.read({method:I,path:"1/indexes"},t)}},ue=function(e){return function(t){return e.transporter.read({method:I,path:"1/clusters/mapping"},t)}},ie=function(e){return function(t,r,n){return d(e.transporter.write({method:x,path:h("1/indexes/%s/operation",t),data:{operation:"move",destination:r}},n),(function(r,n){return re(e)(t,{methods:{waitTask:tt}}).waitTask(r.taskID,n)}))}},se=function(e){return function(t,r){return d(e.transporter.write({method:x,path:"1/indexes/*/batch",data:{requests:t}},r),(function(t,r){return Promise.all(Object.keys(t.taskID).map((function(n){return re(e)(n,{methods:{waitTask:tt}}).waitTask(t.taskID[n],r)})))}))}},ce=function(e){return function(t,r){return e.transporter.read({method:x,path:"1/indexes/*/objects",data:{requests:t}},r)}},fe=function(e){return function(t,n){var a=t.map((function(e){return r(r({},e),{},{params:R(e.params||{})})}));return e.transporter.read({method:x,path:"1/indexes/*/queries",data:{requests:a},cacheable:!0},n)}},de=function(e){return function(t,a){return Promise.all(t.map((function(t){var o=t.params,u=o.facetName,i=o.facetQuery,s=n(o,["facetName","facetQuery"]);return re(e)(t.indexName,{methods:{searchForFacetValues:Ye}}).searchForFacetValues(u,i,r(r({},a),s))})))}},le=function(e){return function(t,r){var n=y(r);return n.queryParameters["X-Algolia-User-ID"]=t,e.transporter.write({method:j,path:"1/clusters/mapping"},n)}},pe=function(e){return function(t,r){return d(e.transporter.write({method:x,path:h("1/keys/%s/restore",t)},r),(function(r,n){return f((function(r){return Y(e)(t,n).catch((function(e){if(404!==e.status)throw e;return r()}))}))}))}},he=function(e){return function(t,r){return e.transporter.read({method:x,path:"1/clusters/mapping/search",data:{query:t}},r)}},me=function(e){return function(t,r){var a=Object.assign({},r),o=r||{},u=o.queryParameters,i=n(o,["queryParameters"]),s=u?{queryParameters:u}:{},c=["acl","indexes","referers","restrictSources","queryParameters","description","maxQueriesPerIPPerHour","maxHitsPerQuery"];return d(e.transporter.write({method:q,path:h("1/keys/%s",t),data:s},i),(function(r,n){return f((function(r){return Y(e)(t,n).then((function(e){return function(e){return Object.keys(a).filter((function(e){return-1!==c.indexOf(e)})).every((function(t){return e[t]===a[t]}))}(e)?Promise.resolve():r()}))}))}))}},ye=function(e){return function(t,r){return d(e.transporter.write({method:x,path:h("1/indexes/%s/batch",e.indexName),data:{requests:t}},r),(function(t,r){return tt(e)(t.taskID,r)}))}},ge=function(e){return function(t){return K(r(r({shouldStop:function(e){return void 0===e.cursor}},t),{},{request:function(r){return e.transporter.read({method:x,path:h("1/indexes/%s/browse",e.indexName),data:r},t)}}))}},ve=function(e){return function(t){var n=r({hitsPerPage:1e3},t);return K(r(r({shouldStop:function(e){return e.hits.length<n.hitsPerPage}},n),{},{request:function(t){return Ze(e)("",r(r({},n),t)).then((function(e){return r(r({},e),{},{hits:e.hits.map((function(e){return delete e._highlightResult,e}))})}))}}))}},be=function(e){return function(t){var n=r({hitsPerPage:1e3},t);return K(r(r({shouldStop:function(e){return e.hits.length<n.hitsPerPage}},n),{},{request:function(t){return $e(e)("",r(r({},n),t)).then((function(e){return r(r({},e),{},{hits:e.hits.map((function(e){return delete e._highlightResult,e}))})}))}}))}},Pe=function(e){return function(t,r,a){var o=a||{},u=o.batchSize,i=n(o,["batchSize"]),s={taskIDs:[],objectIDs:[]};return d(function n(){var a,o=arguments.length>0&&void 0!==arguments[0]?arguments[0]:0,c=[];for(a=o;a<t.length&&(c.push(t[a]),c.length!==(u||1e3));a++);return 0===c.length?Promise.resolve(s):ye(e)(c.map((function(e){return{action:r,body:e}})),i).then((function(e){return s.objectIDs=s.objectIDs.concat(e.objectIDs),s.taskIDs.push(e.taskID),a++,n(a)}))}(),(function(t,r){return Promise.all(t.taskIDs.map((function(t){return tt(e)(t,r)})))}))}},Oe=function(e){return function(t){return d(e.transporter.write({method:x,path:h("1/indexes/%s/clear",e.indexName)},t),(function(t,r){return tt(e)(t.taskID,r)}))}},we=function(e){return function(t){var r=t||{},a=r.forwardToReplicas,o=y(n(r,["forwardToReplicas"]));return a&&(o.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:x,path:h("1/indexes/%s/rules/clear",e.indexName)},o),(function(t,r){return tt(e)(t.taskID,r)}))}},je=function(e){return function(t){var r=t||{},a=r.forwardToReplicas,o=y(n(r,["forwardToReplicas"]));return a&&(o.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:x,path:h("1/indexes/%s/synonyms/clear",e.indexName)},o),(function(t,r){return tt(e)(t.taskID,r)}))}},Ie=function(e){return function(t,r){return d(e.transporter.write({method:x,path:h("1/indexes/%s/deleteByQuery",e.indexName),data:t},r),(function(t,r){return tt(e)(t.taskID,r)}))}},xe=function(e){return function(t){return d(e.transporter.write({method:j,path:h("1/indexes/%s",e.indexName)},t),(function(t,r){return tt(e)(t.taskID,r)}))}},qe=function(e){return function(t,r){return d(De(e)([t],r).then((function(e){return{taskID:e.taskIDs[0]}})),(function(t,r){return tt(e)(t.taskID,r)}))}},De=function(e){return function(t,r){var n=t.map((function(e){return{objectID:e}}));return Pe(e)(n,rt.DeleteObject,r)}},Se=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=y(n(a,["forwardToReplicas"]));return o&&(u.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:j,path:h("1/indexes/%s/rules/%s",e.indexName,t)},u),(function(t,r){return tt(e)(t.taskID,r)}))}},ke=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=y(n(a,["forwardToReplicas"]));return o&&(u.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:j,path:h("1/indexes/%s/synonyms/%s",e.indexName,t)},u),(function(t,r){return tt(e)(t.taskID,r)}))}},Te=function(e){return function(t){return Je(e)(t).then((function(){return!0})).catch((function(e){if(404!==e.status)throw e;return!1}))}},Ne=function(e){return function(t,r,n){return e.transporter.read({method:x,path:h("1/answers/%s/prediction",e.indexName),data:{query:t,queryLanguages:r},cacheable:!0},n)}},Re=function(e){return function(t,o){var u=o||{},i=u.query,s=u.paginate,c=n(u,["query","paginate"]),f=0;return function n(){return Xe(e)(i||"",r(r({},c),{},{page:f})).then((function(e){for(var r=0,o=Object.entries(e.hits);r<o.length;r++){var u=a(o[r],2),i=u[0],c=u[1];if(t(c))return{object:c,position:parseInt(i,10),page:f}}if(f++,!1===s||f>=e.nbPages)throw{name:"ObjectNotFoundError",message:"Object not found."};return n()}))}()}},Ae=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/indexes/%s/%s",e.indexName,t)},r)}},Ee=function(){return function(e,t){for(var r=0,n=Object.entries(e.hits);r<n.length;r++){var o=a(n[r],2),u=o[0];if(o[1].objectID===t)return parseInt(u,10)}return-1}},Ce=function(e){return function(t,a){var o=a||{},u=o.attributesToRetrieve,i=n(o,["attributesToRetrieve"]),s=t.map((function(t){return r({indexName:e.indexName,objectID:t},u?{attributesToRetrieve:u}:{})}));return e.transporter.read({method:x,path:"1/indexes/*/objects",data:{requests:s}},i)}},Ue=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/indexes/%s/rules/%s",e.indexName,t)},r)}},Je=function(e){return function(t){return e.transporter.read({method:I,path:h("1/indexes/%s/settings",e.indexName),data:{getVersion:2}},t)}},ze=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/indexes/%s/synonyms/%s",e.indexName,t)},r)}},Fe=function(e){return function(t,r){return d(He(e)([t],r).then((function(e){return{objectID:e.objectIDs[0],taskID:e.taskIDs[0]}})),(function(t,r){return tt(e)(t.taskID,r)}))}},He=function(e){return function(t,r){var a=r||{},o=a.createIfNotExists,u=n(a,["createIfNotExists"]),i=o?rt.PartialUpdateObject:rt.PartialUpdateObjectNoCreate;return Pe(e)(t,i,u)}},Me=function(e){return function(t,u){var i=u||{},s=i.safe,c=i.autoGenerateObjectIDIfNotExist,f=i.batchSize,l=n(i,["safe","autoGenerateObjectIDIfNotExist","batchSize"]),p=function(t,r,n,a){return d(e.transporter.write({method:x,path:h("1/indexes/%s/operation",t),data:{operation:n,destination:r}},a),(function(t,r){return tt(e)(t.taskID,r)}))},m=Math.random().toString(36).substring(7),y="".concat(e.indexName,"_tmp_").concat(m),g=Qe({appId:e.appId,transporter:e.transporter,indexName:y}),v=[],b=p(e.indexName,y,"copy",r(r({},l),{},{scope:["settings","synonyms","rules"]}));return v.push(b),d((s?b.wait(l):b).then((function(){var e=g(t,r(r({},l),{},{autoGenerateObjectIDIfNotExist:c,batchSize:f}));return v.push(e),s?e.wait(l):e})).then((function(){var t=p(y,e.indexName,"move",l);return v.push(t),s?t.wait(l):t})).then((function(){return Promise.all(v)})).then((function(e){var t=a(e,3),r=t[0],n=t[1],u=t[2];return{objectIDs:n.objectIDs,taskIDs:[r.taskID].concat(o(n.taskIDs),[u.taskID])}})),(function(e,t){return Promise.all(v.map((function(e){return e.wait(t)})))}))}},Ke=function(e){return function(t,n){return Le(e)(t,r(r({},n),{},{clearExistingRules:!0}))}},We=function(e){return function(t,n){return _e(e)(t,r(r({},n),{},{clearExistingSynonyms:!0}))}},Be=function(e){return function(t,r){return d(Qe(e)([t],r).then((function(e){return{objectID:e.objectIDs[0],taskID:e.taskIDs[0]}})),(function(t,r){return tt(e)(t.taskID,r)}))}},Qe=function(e){return function(t,r){var a=r||{},o=a.autoGenerateObjectIDIfNotExist,u=n(a,["autoGenerateObjectIDIfNotExist"]),i=o?rt.AddObject:rt.UpdateObject;if(i===rt.UpdateObject){var s=!0,c=!1,f=void 0;try{for(var l,p=t[Symbol.iterator]();!(s=(l=p.next()).done);s=!0){if(void 0===l.value.objectID)return d(Promise.reject({name:"MissingObjectIDError",message:"All objects must have an unique objectID (like a primary key) to be valid. Algolia is also able to generate objectIDs automatically but *it's not recommended*. To do it, use the `{'autoGenerateObjectIDIfNotExist': true}` option."}))}}catch(e){c=!0,f=e}finally{try{s||null==p.return||p.return()}finally{if(c)throw f}}}return Pe(e)(t,i,u)}},Ge=function(e){return function(t,r){return Le(e)([t],r)}},Le=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=a.clearExistingRules,i=y(n(a,["forwardToReplicas","clearExistingRules"]));return o&&(i.queryParameters.forwardToReplicas=1),u&&(i.queryParameters.clearExistingRules=1),d(e.transporter.write({method:x,path:h("1/indexes/%s/rules/batch",e.indexName),data:t},i),(function(t,r){return tt(e)(t.taskID,r)}))}},Ve=function(e){return function(t,r){return _e(e)([t],r)}},_e=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=a.clearExistingSynonyms,i=a.replaceExistingSynonyms,s=y(n(a,["forwardToReplicas","clearExistingSynonyms","replaceExistingSynonyms"]));return o&&(s.queryParameters.forwardToReplicas=1),(i||u)&&(s.queryParameters.replaceExistingSynonyms=1),d(e.transporter.write({method:x,path:h("1/indexes/%s/synonyms/batch",e.indexName),data:t},s),(function(t,r){return tt(e)(t.taskID,r)}))}},Xe=function(e){return function(t,r){return e.transporter.read({method:x,path:h("1/indexes/%s/query",e.indexName),data:{query:t},cacheable:!0},r)}},Ye=function(e){return function(t,r,n){return e.transporter.read({method:x,path:h("1/indexes/%s/facets/%s/query",e.indexName,t),data:{facetQuery:r},cacheable:!0},n)}},Ze=function(e){return function(t,r){return e.transporter.read({method:x,path:h("1/indexes/%s/rules/search",e.indexName),data:{query:t}},r)}},$e=function(e){return function(t,r){return e.transporter.read({method:x,path:h("1/indexes/%s/synonyms/search",e.indexName),data:{query:t}},r)}},et=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=y(n(a,["forwardToReplicas"]));return o&&(u.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:q,path:h("1/indexes/%s/settings",e.indexName),data:t},u),(function(t,r){return tt(e)(t.taskID,r)}))}},tt=function(e){return function(t,r){return f((function(n){return function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/indexes/%s/task/%s",e.indexName,t.toString())},r)}}(e)(t,r).then((function(e){return"published"!==e.status?n():void 0}))}))}},rt={AddObject:"addObject",UpdateObject:"updateObject",PartialUpdateObject:"partialUpdateObject",PartialUpdateObjectNoCreate:"partialUpdateObjectNoCreate",DeleteObject:"deleteObject",DeleteIndex:"delete",ClearIndex:"clear"},nt={Settings:"settings",Synonyms:"synonyms",Rules:"rules"},at=1,ot=2,ut=3;function it(e,t,n){var a,o={appId:e,apiKey:t,timeouts:{connect:1,read:2,write:30},requester:{send:function(e){return new Promise((function(t){var r=new XMLHttpRequest;r.open(e.method,e.url,!0),Object.keys(e.headers).forEach((function(t){return r.setRequestHeader(t,e.headers[t])}));var n,a=function(e,n){return setTimeout((function(){r.abort(),t({status:0,content:n,isTimedOut:!0})}),1e3*e)},o=a(e.connectTimeout,"Connection timeout");r.onreadystatechange=function(){r.readyState>r.OPENED&&void 0===n&&(clearTimeout(o),n=a(e.responseTimeout,"Socket timeout"))},r.onerror=function(){0===r.status&&(clearTimeout(o),clearTimeout(n),t({content:r.responseText||"Network request failed",status:r.status,isTimedOut:!1}))},r.onload=function(){clearTimeout(o),clearTimeout(n),t({content:r.responseText,status:r.status,isTimedOut:!1})},r.send(e.data)}))}},logger:(a=ut,{debug:function(e,t){return at>=a&&console.debug(e,t),Promise.resolve()},info:function(e,t){return ot>=a&&console.info(e,t),Promise.resolve()},error:function(e,t){return console.error(e,t),Promise.resolve()}}),responsesCache:s(),requestsCache:s({serializable:!1}),hostsCache:i({caches:[u({key:"".concat("4.8.3","-").concat(e)}),s()]}),userAgent:T("4.8.3").add({segment:"Browser"})};return function(e){var t=e.appId,n=c(void 0!==e.authMode?e.authMode:m.WithinHeaders,t,e.apiKey),a=k(r(r({hosts:[{url:"".concat(t,"-dsn.algolia.net"),accept:g.Read},{url:"".concat(t,".algolia.net"),accept:g.Write}].concat(l([{url:"".concat(t,"-1.algolianet.com")},{url:"".concat(t,"-2.algolianet.com")},{url:"".concat(t,"-3.algolianet.com")}]))},e),{},{headers:r(r(r({},n.headers()),{"content-type":"application/x-www-form-urlencoded"}),e.headers),queryParameters:r(r({},n.queryParameters()),e.queryParameters)}));return p({transporter:a,appId:t,addAlgoliaAgent:function(e,t){a.userAgent.add({segment:e,version:t})},clearCache:function(){return Promise.all([a.requestsCache.clear(),a.responsesCache.clear()]).then((function(){}))}},e.methods)}(r(r(r({},o),n),{},{methods:{search:fe,searchForFacetValues:de,multipleBatch:se,multipleGetObjects:ce,multipleQueries:fe,copyIndex:G,copySettings:V,copySynonyms:_,copyRules:L,moveIndex:ie,listIndices:oe,getLogs:Z,listClusters:ae,multipleSearchForFacetValues:de,getApiKey:Y,addApiKey:W,listApiKeys:ne,updateApiKey:me,deleteApiKey:X,restoreApiKey:pe,assignUserID:B,assignUserIDs:Q,getUserID:ee,searchUserIDs:he,listUserIDs:ue,getTopUserIDs:$,removeUserID:le,hasPendingMappings:te,initIndex:function(e){return function(t){return re(e)(t,{methods:{batch:ye,delete:xe,findAnswers:Ne,getObject:Ae,getObjects:Ce,saveObject:Be,saveObjects:Qe,search:Xe,searchForFacetValues:Ye,waitTask:tt,setSettings:et,getSettings:Je,partialUpdateObject:Fe,partialUpdateObjects:He,deleteObject:qe,deleteObjects:De,deleteBy:Ie,clearObjects:Oe,browseObjects:ge,getObjectPosition:Ee,findObject:Re,exists:Te,saveSynonym:Ve,saveSynonyms:_e,getSynonym:ze,searchSynonyms:$e,browseSynonyms:be,deleteSynonym:ke,clearSynonyms:je,replaceAllObjects:Me,replaceAllSynonyms:We,searchRules:Ze,getRule:Ue,deleteRule:Se,saveRule:Ge,saveRules:Le,replaceAllRules:Ke,browseRules:ve,clearRules:we}})}},initAnalytics:function(){return function(e){return function(e){var t=e.region||"us",n=c(m.WithinHeaders,e.appId,e.apiKey),a=k(r(r({hosts:[{url:"analytics.".concat(t,".algolia.com")}]},e),{},{headers:r(r(r({},n.headers()),{"content-type":"application/json"}),e.headers),queryParameters:r(r({},n.queryParameters()),e.queryParameters)}));return p({appId:e.appId,transporter:a},e.methods)}(r(r(r({},o),e),{},{methods:{addABTest:C,getABTest:J,getABTests:z,stopABTest:F,deleteABTest:U}}))}},initRecommendation:function(){return function(e){return function(e){var t=e.region||"us",n=c(m.WithinHeaders,e.appId,e.apiKey),a=k(r(r({hosts:[{url:"recommendation.".concat(t,".algolia.com")}]},e),{},{headers:r(r(r({},n.headers()),{"content-type":"application/json"}),e.headers),queryParameters:r(r({},n.queryParameters()),e.queryParameters)}));return p({appId:e.appId,transporter:a},e.methods)}(r(r(r({},o),e),{},{methods:{getPersonalizationStrategy:H,setPersonalizationStrategy:M}}))}}}}))}return it.version="4.8.3",it}));
 
-},{}],"src/CategoryPages/Men/displayCarouselManPage.js":[function(require,module,exports) {
+},{}],"node_modules/preact/dist/preact.module.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.renderCarouselAllProduct = renderCarouselAllProduct;
-exports.carousel = void 0;
+exports.render = O;
+exports.hydrate = S;
+exports.h = exports.createElement = v;
+exports.Fragment = p;
+exports.createRef = y;
+exports.Component = d;
+exports.cloneElement = q;
+exports.createContext = B;
+exports.toChildArray = b;
+exports.__u = L;
+exports.options = exports.isValidElement = void 0;
+var n,
+    l,
+    u,
+    i,
+    t,
+    o,
+    r,
+    f = {},
+    e = [],
+    c = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;
+exports.isValidElement = l;
+exports.options = n;
 
-var _connectors = require("instantsearch.js/es/connectors");
+function s(n, l) {
+  for (var u in l) n[u] = l[u];
 
-var _instantsearch = _interopRequireDefault(require("instantsearch.js"));
+  return n;
+}
 
-var _algoliasearch = _interopRequireDefault(require("algoliasearch"));
+function a(n) {
+  var l = n.parentNode;
+  l && l.removeChild(n);
+}
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function v(n, l, u) {
+  var i,
+      t,
+      o,
+      r = arguments,
+      f = {};
 
-// import { configure, hits, EXPERIMENTAL_configureRelatedItems } from 'instantsearch.js/es/widgets';
-var carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirstRender) {
-  var _ref$widgetParams = _ref.widgetParams,
-      container = _ref$widgetParams.container,
-      title = _ref$widgetParams.title,
-      hits = _ref.hits;
+  for (o in l) "key" == o ? i = l[o] : "ref" == o ? t = l[o] : f[o] = l[o];
 
-  if (isFirstRender) {
-    console.log(container);
-    var section = document.createElement('section');
-    section.classList.add('section-carousel-winter');
-    container.appendChild(section);
-    var divSection = document.createElement('div');
-    divSection.classList.add('title-carousel-winter');
-    section.appendChild(divSection);
-    var titleSection = document.createElement('h2');
-    titleSection.innerText = title;
-    divSection.appendChild(titleSection);
-    var btnSection = document.createElement('a');
-    btnSection.classList.add('btn-carousel-winter');
-    btnSection.innerHTML = "See All";
-    btnSection.href = "./index.html";
-    divSection.appendChild(btnSection); // document
-    //   .querySelector('.title-carousel-winter').insertAdjacentHTML(
-    //     'afterbegin',
-    //     `<h2>${title}</h2><a href="/searchResults.html" class="btn-carousel-winter">See All</a>`
-    //   );
+  if (arguments.length > 3) for (u = [u], o = 3; o < arguments.length; o++) u.push(r[o]);
+  if (null != u && (f.children = u), "function" == typeof n && null != n.defaultProps) for (o in n.defaultProps) void 0 === f[o] && (f[o] = n.defaultProps[o]);
+  return h(n, f, i, t, null);
+}
 
-    var ul = document.createElement('ul');
-    ul.classList.add('carousel-list-container');
-    section.appendChild(ul);
+function h(l, u, i, t, o) {
+  var r = {
+    type: l,
+    props: u,
+    key: i,
+    ref: t,
+    __k: null,
+    __: null,
+    __b: 0,
+    __e: null,
+    __d: void 0,
+    __c: null,
+    __h: null,
+    constructor: void 0,
+    __v: null == o ? ++n.__v : o
+  };
+  return null != n.vnode && n.vnode(r), r;
+}
+
+function y() {
+  return {
+    current: null
+  };
+}
+
+function p(n) {
+  return n.children;
+}
+
+function d(n, l) {
+  this.props = n, this.context = l;
+}
+
+function _(n, l) {
+  if (null == l) return n.__ ? _(n.__, n.__.__k.indexOf(n) + 1) : null;
+
+  for (var u; l < n.__k.length; l++) if (null != (u = n.__k[l]) && null != u.__e) return u.__e;
+
+  return "function" == typeof n.type ? _(n) : null;
+}
+
+function w(n) {
+  var l, u;
+
+  if (null != (n = n.__) && null != n.__c) {
+    for (n.__e = n.__c.base = null, l = 0; l < n.__k.length; l++) if (null != (u = n.__k[l]) && null != u.__e) {
+      n.__e = n.__c.base = u.__e;
+      break;
+    }
+
+    return w(n);
+  }
+}
+
+function k(l) {
+  (!l.__d && (l.__d = !0) && u.push(l) && !g.__r++ || t !== n.debounceRendering) && ((t = n.debounceRendering) || i)(g);
+}
+
+function g() {
+  for (var n; g.__r = u.length;) n = u.sort(function (n, l) {
+    return n.__v.__b - l.__v.__b;
+  }), u = [], n.some(function (n) {
+    var l, u, i, t, o, r, f;
+    n.__d && (r = (o = (l = n).__v).__e, (f = l.__P) && (u = [], (i = s({}, o)).__v = o.__v + 1, t = $(f, o, i, l.__n, void 0 !== f.ownerSVGElement, null != o.__h ? [r] : null, u, null == r ? _(o) : r, o.__h), j(u, o), t != r && w(o)));
+  });
+}
+
+function m(n, l, u, i, t, o, r, c, s, v) {
+  var y,
+      d,
+      w,
+      k,
+      g,
+      m,
+      b,
+      A = i && i.__k || e,
+      P = A.length;
+
+  for (s == f && (s = null != r ? r[0] : P ? _(i, 0) : null), u.__k = [], y = 0; y < l.length; y++) if (null != (k = u.__k[y] = null == (k = l[y]) || "boolean" == typeof k ? null : "string" == typeof k || "number" == typeof k ? h(null, k, null, null, k) : Array.isArray(k) ? h(p, {
+    children: k
+  }, null, null, null) : null != k.__e || null != k.__c ? h(k.type, k.props, k.key, null, k.__v) : k)) {
+    if (k.__ = u, k.__b = u.__b + 1, null === (w = A[y]) || w && k.key == w.key && k.type === w.type) A[y] = void 0;else for (d = 0; d < P; d++) {
+      if ((w = A[d]) && k.key == w.key && k.type === w.type) {
+        A[d] = void 0;
+        break;
+      }
+
+      w = null;
+    }
+    g = $(n, k, w = w || f, t, o, r, c, s, v), (d = k.ref) && w.ref != d && (b || (b = []), w.ref && b.push(w.ref, null, k), b.push(d, k.__c || g, k)), null != g ? (null == m && (m = g), s = x(n, k, w, A, r, g, s), v || "option" != u.type ? "function" == typeof u.type && (u.__d = s) : n.value = "") : s && w.__e == s && s.parentNode != n && (s = _(w));
   }
 
-  container.querySelector('ul').innerHTML = hits.map(function (hit) {
-    return "\n        <li>\n          <div class=\"image-wrapper\">\n            <img src=\"".concat(hit.image_link, "\" alt=\"").concat(hit.name, "\">\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ");
-  }).join('');
-});
-exports.carousel = carousel;
+  if (u.__e = m, null != r && "function" != typeof u.type) for (y = r.length; y--;) null != r[y] && a(r[y]);
 
-function renderCarouselAllProduct() {
-  var searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-  var search = (0, _instantsearch.default)({
-    indexName: 'gstar_demo_test',
-    searchClient: searchClient
-  });
-  search.addWidgets([_instantsearch.default.widgets.searchBox({
-    container: '#searchbox',
-    placeholder: 'Clothes, Sneakers among men category'
-  }), _instantsearch.default.widgets.configure({
-    hitsPerPage: 15,
-    ruleContexts: ['man_page'],
-    filters: '"hierarchical_categories.lvl0":"men"'
-  }), _instantsearch.default.widgets.stats({
-    container: '#stats-searchResultMan'
-  }), _instantsearch.default.widgets.hits({
-    container: '#hits',
-    templates: {
-      item: "\n \n      <div class=\"image-wrapper\">\n          <img src=\"{{image_link}}\" align=\"left\" alt=\"{{name}}\" class=\"result-img\" />\n      </div>\n      <div class=\"hit-name\">\n          <div class=\"hit-infos\">\n         \n          <div>{{#helpers.highlight}}{ \"attribute\": \"name\" }{{/helpers.highlight}}</div>\n              <div class=\"hit-colors\">{{colourFilter}}</div>\n          </div>\n          <div class=\"hit-price\">${{price}}</div>\n      </div>\n      \n\n  "
+  for (y = P; y--;) null != A[y] && L(A[y], A[y]);
+
+  if (b) for (y = 0; y < b.length; y++) I(b[y], b[++y], b[++y]);
+}
+
+function b(n, l) {
+  return l = l || [], null == n || "boolean" == typeof n || (Array.isArray(n) ? n.some(function (n) {
+    b(n, l);
+  }) : l.push(n)), l;
+}
+
+function x(n, l, u, i, t, o, r) {
+  var f, e, c;
+  if (void 0 !== l.__d) f = l.__d, l.__d = void 0;else if (t == u || o != r || null == o.parentNode) n: if (null == r || r.parentNode !== n) n.appendChild(o), f = null;else {
+    for (e = r, c = 0; (e = e.nextSibling) && c < i.length; c += 2) if (e == o) break n;
+
+    n.insertBefore(o, r), f = r;
+  }
+  return void 0 !== f ? f : o.nextSibling;
+}
+
+function A(n, l, u, i, t) {
+  var o;
+
+  for (o in u) "children" === o || "key" === o || o in l || C(n, o, null, u[o], i);
+
+  for (o in l) t && "function" != typeof l[o] || "children" === o || "key" === o || "value" === o || "checked" === o || u[o] === l[o] || C(n, o, l[o], u[o], i);
+}
+
+function P(n, l, u) {
+  "-" === l[0] ? n.setProperty(l, u) : n[l] = null == u ? "" : "number" != typeof u || c.test(l) ? u : u + "px";
+}
+
+function C(n, l, u, i, t) {
+  var o, r, f;
+  if (t && "className" == l && (l = "class"), "style" === l) {
+    if ("string" == typeof u) n.style.cssText = u;else {
+      if ("string" == typeof i && (n.style.cssText = i = ""), i) for (l in i) u && l in u || P(n.style, l, "");
+      if (u) for (l in u) i && u[l] === i[l] || P(n.style, l, u[l]);
     }
-  }), _instantsearch.default.widgets.pagination({
-    container: '#pagination'
-  })]);
-  search.start();
+  } else "o" === l[0] && "n" === l[1] ? (o = l !== (l = l.replace(/Capture$/, "")), (r = l.toLowerCase()) in n && (l = r), l = l.slice(2), n.l || (n.l = {}), n.l[l + o] = u, f = o ? N : z, u ? i || n.addEventListener(l, f, o) : n.removeEventListener(l, f, o)) : "list" !== l && "tagName" !== l && "form" !== l && "type" !== l && "size" !== l && "download" !== l && "href" !== l && !t && l in n ? n[l] = null == u ? "" : u : "function" != typeof u && "dangerouslySetInnerHTML" !== l && (l !== (l = l.replace(/xlink:?/, "")) ? null == u || !1 === u ? n.removeAttributeNS("http://www.w3.org/1999/xlink", l.toLowerCase()) : n.setAttributeNS("http://www.w3.org/1999/xlink", l.toLowerCase(), u) : null == u || !1 === u && !/^ar/.test(l) ? n.removeAttribute(l) : n.setAttribute(l, u));
 }
 
-;
-},{"instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js","instantsearch.js":"node_modules/instantsearch.js/es/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js"}],"src/burgerMenu.js":[function(require,module,exports) {
-"use strict";
+function z(l) {
+  this.l[l.type + !1](n.event ? n.event(l) : l);
+}
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.burgerMenu = burgerMenu;
+function N(l) {
+  this.l[l.type + !0](n.event ? n.event(l) : l);
+}
 
-function burgerMenu() {
-  var navslide = function navslide() {
-    var burger = document.querySelector('.burger');
-    var nav = document.querySelector('.nav-list ul');
-    var navlinks = document.querySelectorAll('.nav-list ul li a');
-    var navlink = document.querySelectorAll('.nav-list ul li');
-    burger.addEventListener('click', function (e) {
-      nav.classList.toggle("nav-active");
-      navlink.forEach(function (link, idx) {
-        if (link.style.animation) {
-          link.style.animation = "";
-        } else {
-          link.style.animation = "navLinksMove 0.5s ease forwards ".concat(idx / 5 + 0.2, "s");
+function T(n, l, u) {
+  var i, t;
+
+  for (i = 0; i < n.__k.length; i++) (t = n.__k[i]) && (t.__ = n, t.__e && ("function" == typeof t.type && t.__k.length > 1 && T(t, l, u), l = x(u, t, t, n.__k, null, t.__e, l), "function" == typeof n.type && (n.__d = l)));
+}
+
+function $(l, u, i, t, o, r, f, e, c) {
+  var a,
+      v,
+      h,
+      y,
+      _,
+      w,
+      k,
+      g,
+      b,
+      x,
+      A,
+      P = u.type;
+
+  if (void 0 !== u.constructor) return null;
+  null != i.__h && (c = i.__h, e = u.__e = i.__e, u.__h = null, r = [e]), (a = n.__b) && a(u);
+
+  try {
+    n: if ("function" == typeof P) {
+      if (g = u.props, b = (a = P.contextType) && t[a.__c], x = a ? b ? b.props.value : a.__ : t, i.__c ? k = (v = u.__c = i.__c).__ = v.__E : ("prototype" in P && P.prototype.render ? u.__c = v = new P(g, x) : (u.__c = v = new d(g, x), v.constructor = P, v.render = M), b && b.sub(v), v.props = g, v.state || (v.state = {}), v.context = x, v.__n = t, h = v.__d = !0, v.__h = []), null == v.__s && (v.__s = v.state), null != P.getDerivedStateFromProps && (v.__s == v.state && (v.__s = s({}, v.__s)), s(v.__s, P.getDerivedStateFromProps(g, v.__s))), y = v.props, _ = v.state, h) null == P.getDerivedStateFromProps && null != v.componentWillMount && v.componentWillMount(), null != v.componentDidMount && v.__h.push(v.componentDidMount);else {
+        if (null == P.getDerivedStateFromProps && g !== y && null != v.componentWillReceiveProps && v.componentWillReceiveProps(g, x), !v.__e && null != v.shouldComponentUpdate && !1 === v.shouldComponentUpdate(g, v.__s, x) || u.__v === i.__v) {
+          v.props = g, v.state = v.__s, u.__v !== i.__v && (v.__d = !1), v.__v = u, u.__e = i.__e, u.__k = i.__k, v.__h.length && f.push(v), T(u, e, l);
+          break n;
         }
+
+        null != v.componentWillUpdate && v.componentWillUpdate(g, v.__s, x), null != v.componentDidUpdate && v.__h.push(function () {
+          v.componentDidUpdate(y, _, w);
+        });
+      }
+      v.context = x, v.props = g, v.state = v.__s, (a = n.__r) && a(u), v.__d = !1, v.__v = u, v.__P = l, a = v.render(v.props, v.state, v.context), v.state = v.__s, null != v.getChildContext && (t = s(s({}, t), v.getChildContext())), h || null == v.getSnapshotBeforeUpdate || (w = v.getSnapshotBeforeUpdate(y, _)), A = null != a && a.type == p && null == a.key ? a.props.children : a, m(l, Array.isArray(A) ? A : [A], u, i, t, o, r, f, e, c), v.base = u.__e, u.__h = null, v.__h.length && f.push(v), k && (v.__E = v.__ = null), v.__e = !1;
+    } else null == r && u.__v === i.__v ? (u.__k = i.__k, u.__e = i.__e) : u.__e = H(i.__e, u, i, t, o, r, f, c);
+
+    (a = n.diffed) && a(u);
+  } catch (l) {
+    u.__v = null, (c || null != r) && (u.__e = e, u.__h = !!c, r[r.indexOf(e)] = null), n.__e(l, u, i);
+  }
+
+  return u.__e;
+}
+
+function j(l, u) {
+  n.__c && n.__c(u, l), l.some(function (u) {
+    try {
+      l = u.__h, u.__h = [], l.some(function (n) {
+        n.call(u);
       });
-      navlinks.forEach(function (link, idx) {
-        if (link.style.animation) {
-          link.style.animation = "";
-        } else {
-          link.style.animation = "navlinksFade 0.5s ease forwards ".concat(idx / 5 + 0.2, "s");
-        }
-      });
-      burger.classList.toggle('toggle');
-    });
+    } catch (l) {
+      n.__e(l, u.__v);
+    }
+  });
+}
+
+function H(n, l, u, i, t, o, r, c) {
+  var s,
+      a,
+      v,
+      h,
+      y,
+      p = u.props,
+      d = l.props;
+  if (t = "svg" === l.type || t, null != o) for (s = 0; s < o.length; s++) if (null != (a = o[s]) && ((null === l.type ? 3 === a.nodeType : a.localName === l.type) || n == a)) {
+    n = a, o[s] = null;
+    break;
+  }
+
+  if (null == n) {
+    if (null === l.type) return document.createTextNode(d);
+    n = t ? document.createElementNS("http://www.w3.org/2000/svg", l.type) : document.createElement(l.type, d.is && {
+      is: d.is
+    }), o = null, c = !1;
+  }
+
+  if (null === l.type) p === d || c && n.data === d || (n.data = d);else {
+    if (null != o && (o = e.slice.call(n.childNodes)), v = (p = u.props || f).dangerouslySetInnerHTML, h = d.dangerouslySetInnerHTML, !c) {
+      if (null != o) for (p = {}, y = 0; y < n.attributes.length; y++) p[n.attributes[y].name] = n.attributes[y].value;
+      (h || v) && (h && (v && h.__html == v.__html || h.__html === n.innerHTML) || (n.innerHTML = h && h.__html || ""));
+    }
+
+    A(n, d, p, t, c), h ? l.__k = [] : (s = l.props.children, m(n, Array.isArray(s) ? s : [s], l, u, i, "foreignObject" !== l.type && t, o, r, f, c)), c || ("value" in d && void 0 !== (s = d.value) && (s !== n.value || "progress" === l.type && !s) && C(n, "value", s, p.value, !1), "checked" in d && void 0 !== (s = d.checked) && s !== n.checked && C(n, "checked", s, p.checked, !1));
+  }
+  return n;
+}
+
+function I(l, u, i) {
+  try {
+    "function" == typeof l ? l(u) : l.current = u;
+  } catch (l) {
+    n.__e(l, i);
+  }
+}
+
+function L(l, u, i) {
+  var t, o, r;
+
+  if (n.unmount && n.unmount(l), (t = l.ref) && (t.current && t.current !== l.__e || I(t, null, u)), i || "function" == typeof l.type || (i = null != (o = l.__e)), l.__e = l.__d = void 0, null != (t = l.__c)) {
+    if (t.componentWillUnmount) try {
+      t.componentWillUnmount();
+    } catch (l) {
+      n.__e(l, u);
+    }
+    t.base = t.__P = null;
+  }
+
+  if (t = l.__k) for (r = 0; r < t.length; r++) t[r] && L(t[r], u, i);
+  null != o && a(o);
+}
+
+function M(n, l, u) {
+  return this.constructor(n, u);
+}
+
+function O(l, u, i) {
+  var t, r, c;
+  n.__ && n.__(l, u), r = (t = i === o) ? null : i && i.__k || u.__k, l = v(p, null, [l]), c = [], $(u, (t ? u : i || u).__k = l, r || f, f, void 0 !== u.ownerSVGElement, i && !t ? [i] : r ? null : u.childNodes.length ? e.slice.call(u.childNodes) : null, c, i || f, t), j(c, l);
+}
+
+function S(n, l) {
+  O(n, l, o);
+}
+
+function q(n, l, u) {
+  var i,
+      t,
+      o,
+      r = arguments,
+      f = s({}, n.props);
+
+  for (o in l) "key" == o ? i = l[o] : "ref" == o ? t = l[o] : f[o] = l[o];
+
+  if (arguments.length > 3) for (u = [u], o = 3; o < arguments.length; o++) u.push(r[o]);
+  return null != u && (f.children = u), h(n.type, f, i || n.key, t || n.ref, null);
+}
+
+function B(n, l) {
+  var u = {
+    __c: l = "__cC" + r++,
+    __: n,
+    Consumer: function (n, l) {
+      return n.children(l);
+    },
+    Provider: function (n, u, i) {
+      return this.getChildContext || (u = [], (i = {})[l] = this, this.getChildContext = function () {
+        return i;
+      }, this.shouldComponentUpdate = function (n) {
+        this.props.value !== n.value && u.some(k);
+      }, this.sub = function (n) {
+        u.push(n);
+        var l = n.componentWillUnmount;
+
+        n.componentWillUnmount = function () {
+          u.splice(u.indexOf(n), 1), l && l.call(n);
+        };
+      }), n.children;
+    }
   };
-
-  navslide();
+  return u.Provider.__ = u.Consumer.contextType = u;
 }
+
+exports.options = n = {
+  __e: function (n, l) {
+    for (var u, i, t, o = l.__h; l = l.__;) if ((u = l.__c) && !u.__) try {
+      if ((i = u.constructor) && null != i.getDerivedStateFromError && (u.setState(i.getDerivedStateFromError(n)), t = u.__d), null != u.componentDidCatch && (u.componentDidCatch(n), t = u.__d), t) return l.__h = o, u.__E = u;
+    } catch (l) {
+      n = l;
+    }
+
+    throw n;
+  },
+  __v: 0
+}, exports.isValidElement = l = function (n) {
+  return null != n && void 0 === n.constructor;
+}, d.prototype.setState = function (n, l) {
+  var u;
+  u = null != this.__s && this.__s !== this.state ? this.__s : this.__s = s({}, this.state), "function" == typeof n && (n = n(s({}, u), this.props)), n && s(u, n), null != n && this.__v && (l && this.__h.push(l), k(this));
+}, d.prototype.forceUpdate = function (n) {
+  this.__v && (this.__e = !0, n && this.__h.push(n), k(this));
+}, d.prototype.render = p, u = [], i = "function" == typeof Promise ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout, g.__r = 0, o = f, r = 0;
 },{}],"node_modules/classnames/index.js":[function(require,module,exports) {
 var define;
 /*!
@@ -20350,7 +12695,222 @@ var ClearRefinements = function ClearRefinements(_ref) {
 
 var _default = ClearRefinements;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js"}],"node_modules/instantsearch.js/es/widgets/clear-refinements/defaultTemplates.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js"}],"node_modules/instantsearch.js/es/connectors/clear-refinements/connectClearRefinements.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../lib/utils");
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'clear-refinements',
+  connector: true
+});
+
+var connectClearRefinements = function connectClearRefinements(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function (widgetParams) {
+    var _ref = widgetParams || {},
+        _ref$includedAttribut = _ref.includedAttributes,
+        includedAttributes = _ref$includedAttribut === void 0 ? [] : _ref$includedAttribut,
+        _ref$excludedAttribut = _ref.excludedAttributes,
+        excludedAttributes = _ref$excludedAttribut === void 0 ? ['query'] : _ref$excludedAttribut,
+        _ref$transformItems = _ref.transformItems,
+        transformItems = _ref$transformItems === void 0 ? function (items) {
+      return items;
+    } : _ref$transformItems;
+
+    if (widgetParams.includedAttributes && widgetParams.excludedAttributes) {
+      throw new Error(withUsage('The options `includedAttributes` and `excludedAttributes` cannot be used together.'));
+    }
+
+    var connectorState = {
+      refine: _utils.noop,
+      createURL: function createURL() {
+        return '';
+      },
+      attributesToClear: []
+    };
+
+    var cachedRefine = function cachedRefine() {
+      return connectorState.refine();
+    };
+
+    var cachedCreateURL = function cachedCreateURL() {
+      return connectorState.createURL();
+    };
+
+    return {
+      $$type: 'ais.clearRefinements',
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      dispose: function dispose() {
+        unmountFn();
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          clearRefinements: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref2) {
+        var createURL = _ref2.createURL,
+            scopedResults = _ref2.scopedResults;
+        connectorState.attributesToClear = scopedResults.reduce(function (results, scopedResult) {
+          return results.concat(getAttributesToClear({
+            scopedResult: scopedResult,
+            includedAttributes: includedAttributes,
+            excludedAttributes: excludedAttributes,
+            transformItems: transformItems
+          }));
+        }, []);
+
+        connectorState.refine = function () {
+          connectorState.attributesToClear.forEach(function (_ref3) {
+            var indexHelper = _ref3.helper,
+                items = _ref3.items;
+            indexHelper.setState((0, _utils.clearRefinements)({
+              helper: indexHelper,
+              attributesToClear: items
+            })).search();
+          });
+        };
+
+        connectorState.createURL = function () {
+          return createURL(_utils.mergeSearchParameters.apply(void 0, _toConsumableArray(connectorState.attributesToClear.map(function (_ref4) {
+            var indexHelper = _ref4.helper,
+                items = _ref4.items;
+            return (0, _utils.clearRefinements)({
+              helper: indexHelper,
+              attributesToClear: items
+            });
+          }))));
+        };
+
+        return {
+          hasRefinements: connectorState.attributesToClear.some(function (attributeToClear) {
+            return attributeToClear.items.length > 0;
+          }),
+          refine: cachedRefine,
+          createURL: cachedCreateURL,
+          widgetParams: widgetParams
+        };
+      }
+    };
+  };
+};
+
+function getAttributesToClear(_ref5) {
+  var scopedResult = _ref5.scopedResult,
+      includedAttributes = _ref5.includedAttributes,
+      excludedAttributes = _ref5.excludedAttributes,
+      transformItems = _ref5.transformItems;
+  var clearsQuery = includedAttributes.indexOf('query') !== -1 || excludedAttributes.indexOf('query') === -1;
+  return {
+    helper: scopedResult.helper,
+    items: transformItems((0, _utils.uniq)((0, _utils.getRefinements)(scopedResult.results, scopedResult.helper.state, clearsQuery).map(function (refinement) {
+      return refinement.attribute;
+    }).filter(function (attribute) {
+      return (// If the array is empty (default case), we keep all the attributes
+        includedAttributes.length === 0 || // Otherwise, only add the specified attributes
+        includedAttributes.indexOf(attribute) !== -1
+      );
+    }).filter(function (attribute) {
+      return (// If the query is included, we ignore the default `excludedAttributes = ['query']`
+        attribute === 'query' && clearsQuery || // Otherwise, ignore the excluded attributes
+        excludedAttributes.indexOf(attribute) === -1
+      );
+    })))
+  };
+}
+
+var _default = connectClearRefinements;
+exports.default = _default;
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/clear-refinements/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20463,7 +13023,167 @@ var clearRefinements = function clearRefinements(widgetOptions) {
 
 var _default = clearRefinements;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","../../components/ClearRefinements/ClearRefinements":"node_modules/instantsearch.js/es/components/ClearRefinements/ClearRefinements.js","classnames":"node_modules/classnames/index.js","../../connectors/clear-refinements/connectClearRefinements":"node_modules/instantsearch.js/es/connectors/clear-refinements/connectClearRefinements.js","./defaultTemplates":"node_modules/instantsearch.js/es/widgets/clear-refinements/defaultTemplates.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/widgets/configure/configure.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","../../components/ClearRefinements/ClearRefinements":"node_modules/instantsearch.js/es/components/ClearRefinements/ClearRefinements.js","classnames":"node_modules/classnames/index.js","../../connectors/clear-refinements/connectClearRefinements":"node_modules/instantsearch.js/es/connectors/clear-refinements/connectClearRefinements.js","./defaultTemplates":"node_modules/instantsearch.js/es/widgets/clear-refinements/defaultTemplates.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/connectors/configure/connectConfigure.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _algoliasearchHelper = _interopRequireDefault(require("algoliasearch-helper"));
+
+var _utils = require("../../lib/utils");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+/**
+ * Refine the given search parameters.
+ */
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'configure',
+  connector: true
+});
+
+function getInitialSearchParameters(state, widgetParams) {
+  // We leverage the helper internals to remove the `widgetParams` from
+  // the state. The function `setQueryParameters` omits the values that
+  // are `undefined` on the next state.
+  return state.setQueryParameters(Object.keys(widgetParams.searchParameters).reduce(function (acc, key) {
+    return _objectSpread({}, acc, _defineProperty({}, key, undefined));
+  }, {}));
+}
+
+var connectConfigure = function connectConfigure() {
+  var renderFn = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _utils.noop;
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  return function (widgetParams) {
+    if (!widgetParams || !(0, _utils.isPlainObject)(widgetParams.searchParameters)) {
+      throw new Error(withUsage('The `searchParameters` option expects an object.'));
+    }
+
+    var connectorState = {};
+
+    function refine(helper) {
+      return function (searchParameters) {
+        // Merge new `searchParameters` with the ones set from other widgets
+        var actualState = getInitialSearchParameters(helper.state, widgetParams);
+        var nextSearchParameters = (0, _utils.mergeSearchParameters)(actualState, new _algoliasearchHelper.default.SearchParameters(searchParameters)); // Update original `widgetParams.searchParameters` to the new refined one
+
+        widgetParams.searchParameters = searchParameters; // Trigger a search with the resolved search parameters
+
+        helper.setState(nextSearchParameters).search();
+      };
+    }
+
+    return {
+      $$type: 'ais.configure',
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      dispose: function dispose(_ref) {
+        var state = _ref.state;
+        unmountFn();
+        return getInitialSearchParameters(state, widgetParams);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        var _renderState$configur;
+
+        var widgetRenderState = this.getWidgetRenderState(renderOptions);
+        return _objectSpread({}, renderState, {
+          configure: _objectSpread({}, widgetRenderState, {
+            widgetParams: _objectSpread({}, widgetRenderState.widgetParams, {
+              searchParameters: (0, _utils.mergeSearchParameters)(new _algoliasearchHelper.default.SearchParameters((_renderState$configur = renderState.configure) === null || _renderState$configur === void 0 ? void 0 : _renderState$configur.widgetParams.searchParameters), new _algoliasearchHelper.default.SearchParameters(widgetRenderState.widgetParams.searchParameters)).getQueryParams()
+            })
+          })
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref2) {
+        var helper = _ref2.helper;
+
+        if (!connectorState.refine) {
+          connectorState.refine = refine(helper);
+        }
+
+        return {
+          refine: connectorState.refine,
+          widgetParams: widgetParams
+        };
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(state, _ref3) {
+        var uiState = _ref3.uiState;
+        return (0, _utils.mergeSearchParameters)(state, new _algoliasearchHelper.default.SearchParameters(_objectSpread({}, uiState.configure, {}, widgetParams.searchParameters)));
+      },
+      getWidgetUiState: function getWidgetUiState(uiState) {
+        return _objectSpread({}, uiState, {
+          configure: _objectSpread({}, uiState.configure, {}, widgetParams.searchParameters)
+        });
+      }
+    };
+  };
+};
+
+var _default = connectConfigure;
+exports.default = _default;
+},{"algoliasearch-helper":"node_modules/algoliasearch-helper/index.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/configure/configure.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20492,7 +13212,168 @@ var configure = function configure(widgetParams) {
 
 var _default = configure;
 exports.default = _default;
-},{"../../connectors/configure/connectConfigure":"node_modules/instantsearch.js/es/connectors/configure/connectConfigure.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/configure-related-items/configure-related-items.js":[function(require,module,exports) {
+},{"../../connectors/configure/connectConfigure":"node_modules/instantsearch.js/es/connectors/configure/connectConfigure.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/configure-related-items/connectConfigureRelatedItems.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _algoliasearchHelper = _interopRequireDefault(require("algoliasearch-helper"));
+
+var _utils = require("../../lib/utils");
+
+var _connectConfigure = _interopRequireDefault(require("../configure/connectConfigure"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'configure-related-items',
+  connector: true
+});
+
+function createOptionalFilter(_ref) {
+  var attributeName = _ref.attributeName,
+      attributeValue = _ref.attributeValue,
+      attributeScore = _ref.attributeScore;
+  return "".concat(attributeName, ":").concat(attributeValue, "<score=").concat(attributeScore || 1, ">");
+}
+
+var connectConfigureRelatedItems = function connectConfigureRelatedItems(renderFn, unmountFn) {
+  return function (widgetParams) {
+    var _ref2 = widgetParams || {},
+        hit = _ref2.hit,
+        matchingPatterns = _ref2.matchingPatterns,
+        _ref2$transformSearch = _ref2.transformSearchParameters,
+        transformSearchParameters = _ref2$transformSearch === void 0 ? function (x) {
+      return x;
+    } : _ref2$transformSearch;
+
+    if (!hit) {
+      throw new Error(withUsage('The `hit` option is required.'));
+    }
+
+    if (!matchingPatterns) {
+      throw new Error(withUsage('The `matchingPatterns` option is required.'));
+    }
+
+    var optionalFilters = Object.keys(matchingPatterns).reduce(function (acc, attributeName) {
+      var attribute = matchingPatterns[attributeName];
+      var attributeValue = (0, _utils.getPropertyByPath)(hit, attributeName);
+      var attributeScore = attribute.score;
+
+      if (Array.isArray(attributeValue)) {
+        return [].concat(_toConsumableArray(acc), [attributeValue.map(function (attributeSubValue) {
+          return createOptionalFilter({
+            attributeName: attributeName,
+            attributeValue: attributeSubValue,
+            attributeScore: attributeScore
+          });
+        })]);
+      }
+
+      if (typeof attributeValue === 'string') {
+        return [].concat(_toConsumableArray(acc), [createOptionalFilter({
+          attributeName: attributeName,
+          attributeValue: attributeValue,
+          attributeScore: attributeScore
+        })]);
+      }
+
+      "development" === 'development' ? (0, _utils.warning)(false, "\nThe `matchingPatterns` option returned a value of type ".concat((0, _utils.getObjectType)(attributeValue), " for the \"").concat(attributeName, "\" key. This value was not sent to Algolia because `optionalFilters` only supports strings and array of strings.\n\nYou can remove the \"").concat(attributeName, "\" key from the `matchingPatterns` option.\n\nSee https://www.algolia.com/doc/api-reference/api-parameters/optionalFilters/\n            ")) : void 0;
+      return acc;
+    }, []);
+
+    var searchParameters = _objectSpread({}, transformSearchParameters(new _algoliasearchHelper.default.SearchParameters({
+      sumOrFiltersScores: true,
+      facetFilters: ["objectID:-".concat(hit.objectID)],
+      optionalFilters: optionalFilters
+    })));
+
+    var makeConfigure = (0, _connectConfigure.default)(renderFn, unmountFn);
+    return _objectSpread({}, makeConfigure({
+      searchParameters: searchParameters
+    }), {
+      $$type: 'ais.configureRelatedItems'
+    });
+  };
+};
+
+var _default = connectConfigureRelatedItems;
+exports.default = _default;
+},{"algoliasearch-helper":"node_modules/algoliasearch-helper/index.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../configure/connectConfigure":"node_modules/instantsearch.js/es/connectors/configure/connectConfigure.js"}],"node_modules/instantsearch.js/es/widgets/configure-related-items/configure-related-items.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20576,7 +13457,278 @@ var CurrentRefinements = function CurrentRefinements(_ref2) {
 
 var _default = CurrentRefinements;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/current-refinements/current-refinements.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/current-refinements/connectCurrentRefinements.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../lib/utils");
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'current-refinements',
+  connector: true
+});
+
+var connectCurrentRefinements = function connectCurrentRefinements(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function (widgetParams) {
+    if ((widgetParams || {}).includedAttributes && (widgetParams || {}).excludedAttributes) {
+      throw new Error(withUsage('The options `includedAttributes` and `excludedAttributes` cannot be used together.'));
+    }
+
+    var _ref = widgetParams || {},
+        includedAttributes = _ref.includedAttributes,
+        _ref$excludedAttribut = _ref.excludedAttributes,
+        excludedAttributes = _ref$excludedAttribut === void 0 ? ['query'] : _ref$excludedAttribut,
+        _ref$transformItems = _ref.transformItems,
+        transformItems = _ref$transformItems === void 0 ? function (items) {
+      return items;
+    } : _ref$transformItems;
+
+    return {
+      $$type: 'ais.currentRefinements',
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      dispose: function dispose() {
+        unmountFn();
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          currentRefinements: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref2) {
+        var results = _ref2.results,
+            scopedResults = _ref2.scopedResults,
+            _createURL = _ref2.createURL,
+            helper = _ref2.helper;
+
+        function getItems() {
+          if (!results) {
+            return transformItems(getRefinementsItems({
+              results: {},
+              helper: helper,
+              includedAttributes: includedAttributes,
+              excludedAttributes: excludedAttributes
+            }));
+          }
+
+          return scopedResults.reduce(function (accResults, scopedResult) {
+            return accResults.concat(transformItems(getRefinementsItems({
+              results: scopedResult.results,
+              helper: scopedResult.helper,
+              includedAttributes: includedAttributes,
+              excludedAttributes: excludedAttributes
+            })));
+          }, []);
+        }
+
+        return {
+          items: getItems(),
+          refine: function refine(refinement) {
+            return clearRefinement(helper, refinement);
+          },
+          createURL: function createURL(refinement) {
+            return _createURL(clearRefinementFromState(helper.state, refinement));
+          },
+          widgetParams: widgetParams
+        };
+      }
+    };
+  };
+};
+
+function getRefinementsItems(_ref3) {
+  var results = _ref3.results,
+      helper = _ref3.helper,
+      includedAttributes = _ref3.includedAttributes,
+      excludedAttributes = _ref3.excludedAttributes;
+  var clearsQuery = (includedAttributes || []).indexOf('query') !== -1 || (excludedAttributes || []).indexOf('query') === -1;
+  var filterFunction = includedAttributes ? function (item) {
+    return includedAttributes.indexOf(item.attribute) !== -1;
+  } : function (item) {
+    return excludedAttributes.indexOf(item.attribute) === -1;
+  };
+  var items = (0, _utils.getRefinements)(results, helper.state, clearsQuery).map(normalizeRefinement).filter(filterFunction);
+  return items.reduce(function (allItems, currentItem) {
+    return [].concat(_toConsumableArray(allItems.filter(function (item) {
+      return item.attribute !== currentItem.attribute;
+    })), [{
+      indexName: helper.state.index,
+      attribute: currentItem.attribute,
+      label: currentItem.attribute,
+      refinements: items.filter(function (result) {
+        return result.attribute === currentItem.attribute;
+      }) // We want to keep the order of refinements except the numeric ones.
+      .sort(function (a, b) {
+        return a.type === 'numeric' ? a.value - b.value : 0;
+      }),
+      refine: function refine(refinement) {
+        return clearRefinement(helper, refinement);
+      }
+    }]);
+  }, []);
+}
+
+function clearRefinementFromState(state, refinement) {
+  switch (refinement.type) {
+    case 'facet':
+      return state.removeFacetRefinement(refinement.attribute, String(refinement.value));
+
+    case 'disjunctive':
+      return state.removeDisjunctiveFacetRefinement(refinement.attribute, String(refinement.value));
+
+    case 'hierarchical':
+      return state.removeHierarchicalFacetRefinement(refinement.attribute);
+
+    case 'exclude':
+      return state.removeExcludeRefinement(refinement.attribute, String(refinement.value));
+
+    case 'numeric':
+      return state.removeNumericRefinement(refinement.attribute, refinement.operator, String(refinement.value));
+
+    case 'tag':
+      return state.removeTagRefinement(String(refinement.value));
+
+    case 'query':
+      return state.setQueryParameter('query', '');
+
+    default:
+      "development" === 'development' ? (0, _utils.warning)(false, "The refinement type \"".concat(refinement.type, "\" does not exist and cannot be cleared from the current refinements.")) : void 0;
+      return state;
+  }
+}
+
+function clearRefinement(helper, refinement) {
+  helper.setState(clearRefinementFromState(helper.state, refinement)).search();
+}
+
+function getOperatorSymbol(operator) {
+  switch (operator) {
+    case '>=':
+      return '≥';
+
+    case '<=':
+      return '≤';
+
+    default:
+      return operator;
+  }
+}
+
+function normalizeRefinement(refinement) {
+  var value = refinement.type === 'numeric' ? Number(refinement.name) : refinement.name;
+  var label = refinement.operator ? "".concat(getOperatorSymbol(refinement.operator), " ").concat(refinement.name) : refinement.name;
+  var normalizedRefinement = {
+    attribute: refinement.attribute,
+    type: refinement.type,
+    value: value,
+    label: label
+  };
+
+  if (refinement.operator !== undefined) {
+    normalizedRefinement.operator = refinement.operator;
+  }
+
+  if (refinement.count !== undefined) {
+    normalizedRefinement.count = refinement.count;
+  }
+
+  if (refinement.exhaustive !== undefined) {
+    normalizedRefinement.exhaustive = refinement.exhaustive;
+  }
+
+  return normalizedRefinement;
+}
+
+var _default = connectCurrentRefinements;
+exports.default = _default;
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/current-refinements/current-refinements.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20669,7 +13821,354 @@ var currentRefinements = function currentRefinements(widgetParams) {
 
 var _default = currentRefinements;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/CurrentRefinements/CurrentRefinements":"node_modules/instantsearch.js/es/components/CurrentRefinements/CurrentRefinements.js","../../connectors/current-refinements/connectCurrentRefinements":"node_modules/instantsearch.js/es/connectors/current-refinements/connectCurrentRefinements.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/components/GeoSearchControls/GeoSearchButton.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/CurrentRefinements/CurrentRefinements":"node_modules/instantsearch.js/es/components/CurrentRefinements/CurrentRefinements.js","../../connectors/current-refinements/connectCurrentRefinements":"node_modules/instantsearch.js/es/connectors/current-refinements/connectCurrentRefinements.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/connectors/geo-search/connectGeoSearch.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../lib/utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'geo-search',
+  connector: true
+});
+var $$type = 'ais.geoSearch';
+/**
+ * @typedef {Object} LatLng
+ * @property {number} lat The latitude in degrees.
+ * @property {number} lng The longitude in degrees.
+ */
+
+/**
+ * @typedef {Object} Bounds
+ * @property {LatLng} northEast The top right corner of the map view.
+ * @property {LatLng} southWest The bottom left corner of the map view.
+ */
+
+/**
+ * @typedef {Object} CustomGeoSearchWidgetOptions
+ * @property {boolean} [enableRefineOnMapMove=true] If true, refine will be triggered as you move the map.
+ * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
+ */
+
+/**
+ * @typedef {Object} GeoSearchRenderingOptions
+ * @property {Object[]} items The matched hits from Algolia API.
+ * @property {LatLng} position The current position of the search.
+ * @property {Bounds} currentRefinement The current bounding box of the search.
+ * @property {function(Bounds)} refine Sets a bounding box to filter the results from the given map bounds.
+ * @property {function()} clearMapRefinement Reset the current bounding box refinement.
+ * @property {function(): boolean} isRefinedWithMap Return true if the current refinement is set with the map bounds.
+ * @property {function()} toggleRefineOnMapMove Toggle the fact that the user is able to refine on map move.
+ * @property {function(): boolean} isRefineOnMapMove Return true if the user is able to refine on map move.
+ * @property {function()} setMapMoveSinceLastRefine Set the fact that the map has moved since the last refinement, should be call on each map move. The call to the function triggers a new rendering only when the value change.
+ * @property {function(): boolean} hasMapMoveSinceLastRefine Return true if the map has move since the last refinement.
+ * @property {Object} widgetParams All original `CustomGeoSearchWidgetOptions` forwarded to the `renderFn`.
+ * @property {LatLng} [position] The current position of the search.
+ */
+
+/**
+ * The **GeoSearch** connector provides the logic to build a widget that will display the results on a map. It also provides a way to search for results based on their position. The connector provides functions to manage the search experience (search on map interaction or control the interaction for example).
+ *
+ * @requirements
+ *
+ * Note that the GeoSearch connector uses the [geosearch](https://www.algolia.com/doc/guides/searching/geo-search) capabilities of Algolia. Your hits **must** have a `_geoloc` attribute in order to be passed to the rendering function.
+ *
+ * Currently, the feature is not compatible with multiple values in the _geoloc attribute.
+ *
+ * @param {function(GeoSearchRenderingOptions, boolean)} renderFn Rendering function for the custom **GeoSearch** widget.
+ * @param {function} unmountFn Unmount function called when the widget is disposed.
+ * @return {function(CustomGeoSearchWidgetOptions)} Re-usable widget factory for a custom **GeoSearch** widget.
+ * @staticExample
+ * // This example use Leaflet for the rendering, be sure to have the library correctly setup
+ * // before trying the demo. You can find more details in their documentation (link below).
+ * // We choose Leaflet for the example but you can use any libraries that you want.
+ * // See: http://leafletjs.com/examples/quick-start
+ *
+ * let map = null;
+ * let markers = [];
+ *
+ * // custom `renderFn` to render the custom GeoSearch widget
+ * function renderFn(GeoSearchRenderingOptions, isFirstRendering) {
+ *   const { items, widgetParams } = GeoSearchRenderingOptions;
+ *
+ *   if (isFirstRendering) {
+ *     map = L.map(widgetParams.container);
+ *
+ *     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+ *       attribution:
+ *         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+ *     }).addTo(map);
+ *   }
+ *
+ *   markers.forEach(marker => marker.remove());
+ *
+ *   markers = items.map(({ _geoloc }) =>
+ *     L.marker([_geoloc.lat, _geoloc.lng]).addTo(map)
+ *   );
+ *
+ *   if (markers.length) {
+ *     map.fitBounds(L.featureGroup(markers).getBounds());
+ *   }
+ * }
+ *
+ * // connect `renderFn` to GeoSearch logic
+ * const customGeoSearch = instantsearch.connectors.connectGeoSearch(renderFn);
+ *
+ * // mount widget on the page
+ * search.addWidgets([
+ *   customGeoSearch({
+ *     container: document.getElementById('custom-geo-search'),
+ *   })
+ * ]);
+ */
+
+var connectGeoSearch = function connectGeoSearch(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function () {
+    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var _widgetParams$enableR = widgetParams.enableRefineOnMapMove,
+        enableRefineOnMapMove = _widgetParams$enableR === void 0 ? true : _widgetParams$enableR,
+        _widgetParams$transfo = widgetParams.transformItems,
+        transformItems = _widgetParams$transfo === void 0 ? function (items) {
+      return items;
+    } : _widgetParams$transfo;
+    var widgetState = {
+      isRefineOnMapMove: enableRefineOnMapMove,
+      // @MAJOR hasMapMoveSinceLastRefine -> hasMapMovedSinceLastRefine
+      hasMapMoveSinceLastRefine: false,
+      lastRefinePosition: '',
+      lastRefineBoundingBox: '',
+      internalToggleRefineOnMapMove: _utils.noop,
+      internalSetMapMoveSinceLastRefine: _utils.noop
+    };
+
+    var getPositionFromState = function getPositionFromState(state) {
+      return state.aroundLatLng && (0, _utils.aroundLatLngToPosition)(state.aroundLatLng);
+    };
+
+    var getCurrentRefinementFromState = function getCurrentRefinementFromState(state) {
+      return state.insideBoundingBox && (0, _utils.insideBoundingBoxToBoundingBox)(state.insideBoundingBox);
+    };
+
+    var refine = function refine(helper) {
+      return function (_ref) {
+        var ne = _ref.northEast,
+            sw = _ref.southWest;
+        var boundingBox = [ne.lat, ne.lng, sw.lat, sw.lng].join();
+        helper.setQueryParameter('insideBoundingBox', boundingBox).search();
+        widgetState.hasMapMoveSinceLastRefine = false;
+        widgetState.lastRefineBoundingBox = boundingBox;
+      };
+    };
+
+    var clearMapRefinement = function clearMapRefinement(helper) {
+      return function () {
+        helper.setQueryParameter('insideBoundingBox', undefined).search();
+      };
+    };
+
+    var isRefinedWithMap = function isRefinedWithMap(state) {
+      return function () {
+        return Boolean(state.insideBoundingBox);
+      };
+    };
+
+    var toggleRefineOnMapMove = function toggleRefineOnMapMove() {
+      return widgetState.internalToggleRefineOnMapMove();
+    };
+
+    var createInternalToggleRefinementOnMapMove = function createInternalToggleRefinementOnMapMove(render, args) {
+      return function () {
+        widgetState.isRefineOnMapMove = !widgetState.isRefineOnMapMove;
+        render(args);
+      };
+    };
+
+    var isRefineOnMapMove = function isRefineOnMapMove() {
+      return widgetState.isRefineOnMapMove;
+    };
+
+    var setMapMoveSinceLastRefine = function setMapMoveSinceLastRefine() {
+      return widgetState.internalSetMapMoveSinceLastRefine();
+    };
+
+    var createInternalSetMapMoveSinceLastRefine = function createInternalSetMapMoveSinceLastRefine(render, args) {
+      return function () {
+        var shouldTriggerRender = widgetState.hasMapMoveSinceLastRefine !== true;
+        widgetState.hasMapMoveSinceLastRefine = true;
+
+        if (shouldTriggerRender) {
+          render(args);
+        }
+      };
+    };
+
+    var hasMapMoveSinceLastRefine = function hasMapMoveSinceLastRefine() {
+      return widgetState.hasMapMoveSinceLastRefine;
+    };
+
+    var sendEvent;
+    return {
+      $$type: $$type,
+      init: function init(initArgs) {
+        var instantSearchInstance = initArgs.instantSearchInstance;
+        var isFirstRendering = true;
+        widgetState.internalToggleRefineOnMapMove = createInternalToggleRefinementOnMapMove(_utils.noop, initArgs);
+        widgetState.internalSetMapMoveSinceLastRefine = createInternalSetMapMoveSinceLastRefine(_utils.noop, initArgs);
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initArgs), {
+          instantSearchInstance: instantSearchInstance
+        }), isFirstRendering);
+      },
+      render: function render(renderArgs) {
+        var helper = renderArgs.helper,
+            instantSearchInstance = renderArgs.instantSearchInstance;
+        var isFirstRendering = false; // We don't use the state provided by the render function because we need
+        // to be sure that the state is the latest one for the following condition
+
+        var state = helper.state;
+        var positionChangedSinceLastRefine = Boolean(state.aroundLatLng) && Boolean(widgetState.lastRefinePosition) && state.aroundLatLng !== widgetState.lastRefinePosition;
+        var boundingBoxChangedSinceLastRefine = !state.insideBoundingBox && Boolean(widgetState.lastRefineBoundingBox) && state.insideBoundingBox !== widgetState.lastRefineBoundingBox;
+
+        if (positionChangedSinceLastRefine || boundingBoxChangedSinceLastRefine) {
+          widgetState.hasMapMoveSinceLastRefine = false;
+        }
+
+        widgetState.lastRefinePosition = state.aroundLatLng || '';
+        widgetState.lastRefineBoundingBox = state.insideBoundingBox || '';
+        widgetState.internalToggleRefineOnMapMove = createInternalToggleRefinementOnMapMove(this.render.bind(this), renderArgs);
+        widgetState.internalSetMapMoveSinceLastRefine = createInternalSetMapMoveSinceLastRefine(this.render.bind(this), renderArgs);
+        var widgetRenderState = this.getWidgetRenderState(renderArgs);
+        sendEvent('view', widgetRenderState.items);
+        renderFn(_objectSpread({}, widgetRenderState, {
+          instantSearchInstance: instantSearchInstance
+        }), isFirstRendering);
+      },
+      getWidgetRenderState: function getWidgetRenderState(renderOptions) {
+        var helper = renderOptions.helper,
+            results = renderOptions.results,
+            instantSearchInstance = renderOptions.instantSearchInstance;
+        var state = helper.state;
+        var items = results ? transformItems(results.hits.filter(function (hit) {
+          return hit._geoloc;
+        })) : [];
+
+        if (!sendEvent) {
+          sendEvent = (0, _utils.createSendEventForHits)({
+            instantSearchInstance: instantSearchInstance,
+            index: helper.getIndex(),
+            widgetType: $$type
+          });
+        }
+
+        return {
+          items: items,
+          position: getPositionFromState(state),
+          currentRefinement: getCurrentRefinementFromState(state),
+          refine: refine(helper),
+          sendEvent: sendEvent,
+          clearMapRefinement: clearMapRefinement(helper),
+          isRefinedWithMap: isRefinedWithMap(state),
+          toggleRefineOnMapMove: toggleRefineOnMapMove,
+          isRefineOnMapMove: isRefineOnMapMove,
+          setMapMoveSinceLastRefine: setMapMoveSinceLastRefine,
+          hasMapMoveSinceLastRefine: hasMapMoveSinceLastRefine,
+          widgetParams: widgetParams
+        };
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          geoSearch: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      dispose: function dispose(_ref2) {
+        var state = _ref2.state;
+        unmountFn();
+        return state.setQueryParameter('insideBoundingBox', undefined);
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref3) {
+        var searchParameters = _ref3.searchParameters;
+        var boundingBox = searchParameters.insideBoundingBox;
+
+        if (!boundingBox || uiState && uiState.geoSearch && uiState.geoSearch.boundingBox === boundingBox) {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          geoSearch: {
+            boundingBox: boundingBox
+          }
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref4) {
+        var uiState = _ref4.uiState;
+
+        if (!uiState || !uiState.geoSearch) {
+          return searchParameters.setQueryParameter('insideBoundingBox', undefined);
+        }
+
+        return searchParameters.setQueryParameter('insideBoundingBox', uiState.geoSearch.boundingBox);
+      }
+    };
+  };
+};
+
+var _default = connectGeoSearch;
+exports.default = _default;
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/components/GeoSearchControls/GeoSearchButton.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -22547,7 +16046,409 @@ RefinementList.defaultProps = {
 };
 var _default = RefinementList;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js","./RefinementListItem":"node_modules/instantsearch.js/es/components/RefinementList/RefinementListItem.js","../SearchBox/SearchBox":"node_modules/instantsearch.js/es/components/SearchBox/SearchBox.js"}],"node_modules/instantsearch.js/es/widgets/hierarchical-menu/defaultTemplates.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js","./RefinementListItem":"node_modules/instantsearch.js/es/components/RefinementList/RefinementListItem.js","../SearchBox/SearchBox":"node_modules/instantsearch.js/es/components/SearchBox/SearchBox.js"}],"node_modules/instantsearch.js/es/connectors/hierarchical-menu/connectHierarchicalMenu.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = connectHierarchicalMenu;
+
+var _utils = require("../../lib/utils");
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+}
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+}
+
+function _iterableToArrayLimit(arr, i) {
+  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
+    return;
+  }
+
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'hierarchical-menu',
+  connector: true
+});
+/**
+ * @typedef {Object} HierarchicalMenuItem
+ * @property {string} value Value of the menu item.
+ * @property {string} label Human-readable value of the menu item.
+ * @property {number} count Number of matched results after refinement is applied.
+ * @property {isRefined} boolean Indicates if the refinement is applied.
+ * @property {Object} [data = undefined] n+1 level of items, same structure HierarchicalMenuItem (default: `undefined`).
+ */
+
+/**
+ * @typedef {Object} CustomHierarchicalMenuWidgetOptions
+ * @property {string[]} attributes Attributes to use to generate the hierarchy of the menu.
+ * @property {string} [separator = '>'] Separator used in the attributes to separate level values.
+ * @property {string} [rootPath = null] Prefix path to use if the first level is not the root level.
+ * @property {boolean} [showParentLevel=false] Show the siblings of the selected parent levels of the current refined value. This
+ * does not impact the root level.
+ * @property {number} [limit = 10] Max number of values to display.
+ * @property {boolean} [showMore = false] Whether to display the "show more" button.
+ * @property {number} [showMoreLimit = 20] Max number of values to display when showing more.
+ * @property  {string[]|function} [sortBy = ['name:asc']] How to sort refinements. Possible values: `count|isRefined|name:asc|name:desc`.
+ *
+ * You can also use a sort function that behaves like the standard Javascript [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Syntax).
+ * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
+ */
+
+/**
+ * @typedef {Object} HierarchicalMenuRenderingOptions
+ * @property {function(item.value): string} createURL Creates an url for the next state for a clicked item.
+ * @property {HierarchicalMenuItem[]} items Values to be rendered.
+ * @property {function(item.value)} refine Sets the path of the hierarchical filter and triggers a new search.
+ * @property {Object} widgetParams All original `CustomHierarchicalMenuWidgetOptions` forwarded to the `renderFn`.
+ */
+
+/**
+ * **HierarchicalMenu** connector provides the logic to build a custom widget
+ * that will give the user the ability to explore facets in a tree-like structure.
+ *
+ * This is commonly used for multi-level categorization of products on e-commerce
+ * websites. From a UX point of view, we suggest not displaying more than two
+ * levels deep.
+ *
+ * @type {Connector}
+ * @param {function(HierarchicalMenuRenderingOptions, boolean)} renderFn Rendering function for the custom **HierarchicalMenu** widget.
+ * @param {function} unmountFn Unmount function called when the widget is disposed.
+ * @return {function(CustomHierarchicalMenuWidgetOptions)} Re-usable widget factory for a custom **HierarchicalMenu** widget.
+ */
+
+function connectHierarchicalMenu(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function () {
+    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var attributes = widgetParams.attributes,
+        _widgetParams$separat = widgetParams.separator,
+        separator = _widgetParams$separat === void 0 ? ' > ' : _widgetParams$separat,
+        _widgetParams$rootPat = widgetParams.rootPath,
+        rootPath = _widgetParams$rootPat === void 0 ? null : _widgetParams$rootPat,
+        _widgetParams$showPar = widgetParams.showParentLevel,
+        showParentLevel = _widgetParams$showPar === void 0 ? true : _widgetParams$showPar,
+        _widgetParams$limit = widgetParams.limit,
+        limit = _widgetParams$limit === void 0 ? 10 : _widgetParams$limit,
+        _widgetParams$showMor = widgetParams.showMore,
+        showMore = _widgetParams$showMor === void 0 ? false : _widgetParams$showMor,
+        _widgetParams$showMor2 = widgetParams.showMoreLimit,
+        showMoreLimit = _widgetParams$showMor2 === void 0 ? 20 : _widgetParams$showMor2,
+        _widgetParams$sortBy = widgetParams.sortBy,
+        sortBy = _widgetParams$sortBy === void 0 ? ['name:asc'] : _widgetParams$sortBy,
+        _widgetParams$transfo = widgetParams.transformItems,
+        transformItems = _widgetParams$transfo === void 0 ? function (items) {
+      return items;
+    } : _widgetParams$transfo;
+
+    if (!attributes || !Array.isArray(attributes) || attributes.length === 0) {
+      throw new Error(withUsage('The `attributes` option expects an array of strings.'));
+    }
+
+    if (showMore === true && showMoreLimit <= limit) {
+      throw new Error(withUsage('The `showMoreLimit` option must be greater than `limit`.'));
+    } // we need to provide a hierarchicalFacet name for the search state
+    // so that we can always map $hierarchicalFacetName => real attributes
+    // we use the first attribute name
+
+
+    var _attributes = _slicedToArray(attributes, 1),
+        hierarchicalFacetName = _attributes[0];
+
+    var sendEvent; // Provide the same function to the `renderFn` so that way the user
+    // has to only bind it once when `isFirstRendering` for instance
+
+    var toggleShowMore = function toggleShowMore() {};
+
+    function cachedToggleShowMore() {
+      toggleShowMore();
+    }
+
+    return {
+      $$type: 'ais.hierarchicalMenu',
+      isShowingMore: false,
+      createToggleShowMore: function createToggleShowMore(renderOptions) {
+        var _this = this;
+
+        return function () {
+          _this.isShowingMore = !_this.isShowingMore;
+
+          _this.render(renderOptions);
+        };
+      },
+      getLimit: function getLimit() {
+        return this.isShowingMore ? showMoreLimit : limit;
+      },
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      _prepareFacetValues: function _prepareFacetValues(facetValues) {
+        var _this2 = this;
+
+        return facetValues.slice(0, this.getLimit()).map(function (_ref) {
+          var label = _ref.name,
+              value = _ref.path,
+              subValue = _objectWithoutProperties(_ref, ["name", "path"]);
+
+          if (Array.isArray(subValue.data)) {
+            subValue.data = _this2._prepareFacetValues(subValue.data);
+          }
+
+          return _objectSpread({}, subValue, {
+            label: label,
+            value: value
+          });
+        });
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        toggleShowMore = this.createToggleShowMore(renderOptions);
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+
+      /**
+       * @param {Object} param0 cleanup arguments
+       * @param {any} param0.state current search parameters
+       * @returns {any} next search parameters
+       */
+      dispose: function dispose(_ref2) {
+        var state = _ref2.state;
+        unmountFn();
+        return state.removeHierarchicalFacet(hierarchicalFacetName).setQueryParameter('maxValuesPerFacet', undefined);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          hierarchicalMenu: _objectSpread({}, renderState.hierarchicalMenu, _defineProperty({}, hierarchicalFacetName, this.getWidgetRenderState(renderOptions)))
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref3) {
+        var _this3 = this;
+
+        var results = _ref3.results,
+            state = _ref3.state,
+            createURL = _ref3.createURL,
+            instantSearchInstance = _ref3.instantSearchInstance,
+            helper = _ref3.helper; // Bind createURL to this specific attribute
+
+        function _createURL(facetValue) {
+          return createURL(state.toggleRefinement(hierarchicalFacetName, facetValue));
+        }
+
+        if (!sendEvent) {
+          sendEvent = (0, _utils.createSendEventForFacet)({
+            instantSearchInstance: instantSearchInstance,
+            helper: helper,
+            attribute: hierarchicalFacetName,
+            widgetType: this.$$type
+          });
+        }
+
+        if (!this._refine) {
+          this._refine = function (facetValue) {
+            sendEvent('click', facetValue);
+            helper.toggleRefinement(hierarchicalFacetName, facetValue).search();
+          };
+        }
+
+        var facetValues = results ? results.getFacetValues(hierarchicalFacetName, {
+          sortBy: sortBy
+        }).data || [] : [];
+        var items = transformItems(results ? this._prepareFacetValues(facetValues) : []);
+
+        var getHasExhaustiveItems = function getHasExhaustiveItems() {
+          if (!results) {
+            return false;
+          }
+
+          var currentLimit = _this3.getLimit(); // If the limit is the max number of facet retrieved it is impossible to know
+          // if the facets are exhaustive. The only moment we are sure it is exhaustive
+          // is when it is strictly under the number requested unless we know that another
+          // widget has requested more values (maxValuesPerFacet > getLimit()).
+          // Because this is used for making the search of facets unable or not, it is important
+          // to be conservative here.
+
+
+          return state.maxValuesPerFacet > currentLimit ? facetValues.length <= currentLimit : facetValues.length < currentLimit;
+        };
+
+        return {
+          items: items,
+          refine: this._refine,
+          createURL: _createURL,
+          sendEvent: sendEvent,
+          widgetParams: widgetParams,
+          isShowingMore: this.isShowingMore,
+          toggleShowMore: cachedToggleShowMore,
+          canToggleShowMore: showMore && (this.isShowingMore || !getHasExhaustiveItems())
+        };
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref4) {
+        var searchParameters = _ref4.searchParameters;
+        var path = searchParameters.getHierarchicalFacetBreadcrumb(hierarchicalFacetName);
+
+        if (!path.length) {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          hierarchicalMenu: _objectSpread({}, uiState.hierarchicalMenu, _defineProperty({}, hierarchicalFacetName, path))
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref5) {
+        var uiState = _ref5.uiState;
+        var values = uiState.hierarchicalMenu && uiState.hierarchicalMenu[hierarchicalFacetName];
+
+        if (searchParameters.isHierarchicalFacet(hierarchicalFacetName)) {
+          var facet = searchParameters.getHierarchicalFacetByName(hierarchicalFacetName);
+          "development" === 'development' ? (0, _utils.warning)((0, _utils.isEqual)(facet.attributes, attributes) && facet.separator === separator && facet.rootPath === rootPath, 'Using Breadcrumb and HierarchicalMenu on the same facet with different options overrides the configuration of the HierarchicalMenu.') : void 0;
+        }
+
+        var withFacetConfiguration = searchParameters.removeHierarchicalFacet(hierarchicalFacetName).addHierarchicalFacet({
+          name: hierarchicalFacetName,
+          attributes: attributes,
+          separator: separator,
+          rootPath: rootPath,
+          showParentLevel: showParentLevel
+        });
+        var currentMaxValuesPerFacet = withFacetConfiguration.maxValuesPerFacet || 0;
+        var nextMaxValuesPerFacet = Math.max(currentMaxValuesPerFacet, showMore ? showMoreLimit : limit);
+        var withMaxValuesPerFacet = withFacetConfiguration.setQueryParameter('maxValuesPerFacet', nextMaxValuesPerFacet);
+
+        if (!values) {
+          return withMaxValuesPerFacet.setQueryParameters({
+            hierarchicalFacetsRefinements: _objectSpread({}, withMaxValuesPerFacet.hierarchicalFacetsRefinements, _defineProperty({}, hierarchicalFacetName, []))
+          });
+        }
+
+        return withMaxValuesPerFacet.addHierarchicalFacetRefinement(hierarchicalFacetName, values.join(separator));
+      }
+    };
+  };
+}
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/hierarchical-menu/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -22825,7 +16726,185 @@ function hierarchicalMenu() {
     transformItems: transformItems
   });
 }
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/RefinementList/RefinementList":"node_modules/instantsearch.js/es/components/RefinementList/RefinementList.js","../../connectors/hierarchical-menu/connectHierarchicalMenu":"node_modules/instantsearch.js/es/connectors/hierarchical-menu/connectHierarchicalMenu.js","./defaultTemplates":"node_modules/instantsearch.js/es/widgets/hierarchical-menu/defaultTemplates.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/components/Hits/Hits.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/RefinementList/RefinementList":"node_modules/instantsearch.js/es/components/RefinementList/RefinementList.js","../../connectors/hierarchical-menu/connectHierarchicalMenu":"node_modules/instantsearch.js/es/connectors/hierarchical-menu/connectHierarchicalMenu.js","./defaultTemplates":"node_modules/instantsearch.js/es/widgets/hierarchical-menu/defaultTemplates.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/connectors/hits/connectHits.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _escapeHighlight = _interopRequireWildcard(require("../../lib/escape-highlight"));
+
+var _utils = require("../../lib/utils");
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'hits',
+  connector: true
+});
+
+var connectHits = function connectHits(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function (widgetParams) {
+    var _ref = widgetParams || {},
+        _ref$escapeHTML = _ref.escapeHTML,
+        escapeHTML = _ref$escapeHTML === void 0 ? true : _ref$escapeHTML,
+        _ref$transformItems = _ref.transformItems,
+        transformItems = _ref$transformItems === void 0 ? function (items) {
+      return items;
+    } : _ref$transformItems;
+
+    var sendEvent;
+    var bindEvent;
+    return {
+      $$type: 'ais.hits',
+      init: function init(initOptions) {
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: initOptions.instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var renderState = this.getWidgetRenderState(renderOptions);
+        renderState.sendEvent('view', renderState.hits);
+        renderFn(_objectSpread({}, renderState, {
+          instantSearchInstance: renderOptions.instantSearchInstance
+        }), false);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          hits: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref2) {
+        var results = _ref2.results,
+            helper = _ref2.helper,
+            instantSearchInstance = _ref2.instantSearchInstance;
+
+        if (!sendEvent) {
+          sendEvent = (0, _utils.createSendEventForHits)({
+            instantSearchInstance: instantSearchInstance,
+            index: helper.getIndex(),
+            widgetType: this.$$type
+          });
+        }
+
+        if (!bindEvent) {
+          bindEvent = (0, _utils.createBindEventForHits)({
+            index: helper.getIndex(),
+            widgetType: this.$$type
+          });
+        }
+
+        if (!results) {
+          return {
+            hits: [],
+            results: undefined,
+            sendEvent: sendEvent,
+            bindEvent: bindEvent,
+            widgetParams: widgetParams
+          };
+        }
+
+        if (escapeHTML && results.hits.length > 0) {
+          results.hits = (0, _escapeHighlight.default)(results.hits);
+        }
+
+        var initialEscaped = results.hits.__escaped;
+        results.hits = (0, _utils.addAbsolutePosition)(results.hits, results.page, results.hitsPerPage);
+        results.hits = (0, _utils.addQueryID)(results.hits, results.queryID);
+        results.hits = transformItems(results.hits); // Make sure the escaped tag stays, even after mapping over the hits.
+        // This prevents the hits from being double-escaped if there are multiple
+        // hits widgets mounted on the page.
+
+        results.hits.__escaped = initialEscaped;
+        return {
+          hits: results.hits,
+          results: results,
+          sendEvent: sendEvent,
+          bindEvent: bindEvent,
+          widgetParams: widgetParams
+        };
+      },
+      dispose: function dispose(_ref3) {
+        var state = _ref3.state;
+        unmountFn();
+
+        if (!escapeHTML) {
+          return state;
+        }
+
+        return state.setQueryParameters(Object.keys(_escapeHighlight.TAG_PLACEHOLDER).reduce(function (acc, key) {
+          return _objectSpread({}, acc, _defineProperty({}, key, undefined));
+        }, {}));
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(state) {
+        if (!escapeHTML) {
+          return state;
+        }
+
+        return state.setQueryParameters(_escapeHighlight.TAG_PLACEHOLDER);
+      }
+    };
+  };
+};
+
+var _default = connectHits;
+exports.default = _default;
+},{"../../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/components/Hits/Hits.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -22969,7 +17048,306 @@ var _default = {
   }
 };
 exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/widgets/hits/hits.js":[function(require,module,exports) {
+},{}],"node_modules/instantsearch.js/es/lib/insights/client.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = withInsights;
+exports.inferPayload = void 0;
+
+var _utils = require("../utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var getSelectedHits = function getSelectedHits(hits, selectedObjectIDs) {
+  return selectedObjectIDs.map(function (objectID) {
+    var hit = (0, _utils.find)(hits, function (h) {
+      return h.objectID === objectID;
+    });
+
+    if (typeof hit === 'undefined') {
+      throw new Error("Could not find objectID \"".concat(objectID, "\" passed to `clickedObjectIDsAfterSearch` in the returned hits. This is necessary to infer the absolute position and the query ID."));
+    }
+
+    return hit;
+  });
+};
+
+var getQueryID = function getQueryID(selectedHits) {
+  var queryIDs = (0, _utils.uniq)(selectedHits.map(function (hit) {
+    return hit.__queryID;
+  }));
+
+  if (queryIDs.length > 1) {
+    throw new Error('Insights currently allows a single `queryID`. The `objectIDs` provided map to multiple `queryID`s.');
+  }
+
+  var queryID = queryIDs[0];
+
+  if (typeof queryID !== 'string') {
+    throw new Error("Could not infer `queryID`. Ensure InstantSearch `clickAnalytics: true` was added with the Configure widget.\n\nSee: https://alg.li/lNiZZ7");
+  }
+
+  return queryID;
+};
+
+var getPositions = function getPositions(selectedHits) {
+  return selectedHits.map(function (hit) {
+    return hit.__position;
+  });
+};
+
+var inferPayload = function inferPayload(_ref) {
+  var method = _ref.method,
+      results = _ref.results,
+      hits = _ref.hits,
+      objectIDs = _ref.objectIDs;
+  var index = results.index;
+  var selectedHits = getSelectedHits(hits, objectIDs);
+  var queryID = getQueryID(selectedHits);
+
+  switch (method) {
+    case 'clickedObjectIDsAfterSearch':
+      {
+        var positions = getPositions(selectedHits);
+        return {
+          index: index,
+          queryID: queryID,
+          objectIDs: objectIDs,
+          positions: positions
+        };
+      }
+
+    case 'convertedObjectIDsAfterSearch':
+      return {
+        index: index,
+        queryID: queryID,
+        objectIDs: objectIDs
+      };
+
+    default:
+      throw new Error("Unsupported method passed to insights: \"".concat(method, "\"."));
+  }
+};
+
+exports.inferPayload = inferPayload;
+
+var wrapInsightsClient = function wrapInsightsClient(aa, results, hits) {
+  return function (method, payload) {
+    "development" === 'development' ? (0, _utils.warning)(false, "`insights` function has been deprecated. It is still supported in 4.x releases, but not further. It is replaced by the `insights` middleware.\n\nFor more information, visit https://www.algolia.com/doc/guides/getting-insights-and-analytics/search-analytics/click-through-and-conversions/how-to/send-click-and-conversion-events-with-instantsearch/js/") : void 0;
+
+    if (!aa) {
+      var withInstantSearchUsage = (0, _utils.createDocumentationMessageGenerator)({
+        name: 'instantsearch'
+      });
+      throw new Error(withInstantSearchUsage('The `insightsClient` option has not been provided to `instantsearch`.'));
+    }
+
+    if (!Array.isArray(payload.objectIDs)) {
+      throw new TypeError('Expected `objectIDs` to be an array.');
+    }
+
+    var inferredPayload = inferPayload({
+      method: method,
+      results: results,
+      hits: hits,
+      objectIDs: payload.objectIDs
+    });
+    aa(method, _objectSpread({}, inferredPayload, {}, payload));
+  };
+};
+/**
+ * @deprecated This function will be still supported in 4.x releases, but not further. It is replaced by the `insights` middleware. For more information, visit https://www.algolia.com/doc/guides/getting-insights-and-analytics/search-analytics/click-through-and-conversions/how-to/send-click-and-conversion-events-with-instantsearch/js/
+ * It passes `insights` to `HitsWithInsightsListener` and `InfiniteHitsWithInsightsListener`.
+ */
+
+
+function withInsights(connector) {
+  var wrapRenderFn = function wrapRenderFn(renderFn) {
+    return function (renderOptions, isFirstRender) {
+      var results = renderOptions.results,
+          hits = renderOptions.hits,
+          instantSearchInstance = renderOptions.instantSearchInstance;
+
+      if (results && hits && instantSearchInstance) {
+        var insights = wrapInsightsClient(instantSearchInstance.insightsClient, results, hits);
+        return renderFn(_objectSpread({}, renderOptions, {
+          insights: insights
+        }), isFirstRender);
+      }
+
+      return renderFn(renderOptions, isFirstRender);
+    };
+  };
+
+  return function (renderFn, unmountFn) {
+    return connector(wrapRenderFn(renderFn), unmountFn);
+  };
+}
+},{"../utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/lib/insights/listener.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _preact = require("preact");
+
+var _insights = require("../../helpers/insights");
+
+/** @jsx h */
+var findInsightsTarget = function findInsightsTarget(startElement, endElement, validator) {
+  var element = startElement;
+
+  while (element && !validator(element)) {
+    if (element === endElement) {
+      return null;
+    }
+
+    element = element.parentElement;
+  }
+
+  return element;
+};
+
+var parseInsightsEvent = function parseInsightsEvent(element) {
+  var serializedPayload = element.getAttribute('data-insights-event');
+
+  if (typeof serializedPayload !== 'string') {
+    throw new Error('The insights middleware expects `data-insights-event` to be a base64-encoded JSON string.');
+  }
+
+  try {
+    return JSON.parse(atob(serializedPayload));
+  } catch (error) {
+    throw new Error('The insights middleware was unable to parse `data-insights-event`.');
+  }
+};
+
+var insightsListener = function insightsListener(BaseComponent) {
+  function WithInsightsListener(props) {
+    var handleClick = function handleClick(event) {
+      if (props.sendEvent) {
+        // new way with insights middleware
+        var targetWithEvent = findInsightsTarget(event.target, event.currentTarget, function (element) {
+          return element.hasAttribute('data-insights-event');
+        });
+
+        if (targetWithEvent) {
+          var payload = parseInsightsEvent(targetWithEvent);
+          props.sendEvent(payload);
+        }
+      } // old way, e.g. instantsearch.insights("clickedObjectIDsAfterSearch", { .. })
+
+
+      var insightsTarget = findInsightsTarget(event.target, event.currentTarget, function (element) {
+        return (0, _insights.hasDataAttributes)(element);
+      });
+
+      if (insightsTarget) {
+        var _readDataAttributes = (0, _insights.readDataAttributes)(insightsTarget),
+            method = _readDataAttributes.method,
+            _payload = _readDataAttributes.payload;
+
+        props.insights(method, _payload);
+      }
+    };
+
+    return (0, _preact.h)("div", {
+      onClick: handleClick
+    }, (0, _preact.h)(BaseComponent, props));
+  }
+
+  return WithInsightsListener;
+};
+
+var _default = insightsListener;
+exports.default = _default;
+},{"preact":"node_modules/preact/dist/preact.module.js","../../helpers/insights":"node_modules/instantsearch.js/es/helpers/insights.js"}],"node_modules/instantsearch.js/es/lib/insights/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "withInsights", {
+  enumerable: true,
+  get: function () {
+    return _client.default;
+  }
+});
+Object.defineProperty(exports, "inferInsightsPayload", {
+  enumerable: true,
+  get: function () {
+    return _client.inferPayload;
+  }
+});
+Object.defineProperty(exports, "withInsightsListener", {
+  enumerable: true,
+  get: function () {
+    return _listener.default;
+  }
+});
+
+var _client = _interopRequireWildcard(require("./client"));
+
+var _listener = _interopRequireDefault(require("./listener"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+},{"./client":"node_modules/instantsearch.js/es/lib/insights/client.js","./listener":"node_modules/instantsearch.js/es/lib/insights/listener.js"}],"node_modules/instantsearch.js/es/widgets/hits/hits.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23118,7 +17496,226 @@ function Selector(_ref) {
 
 var _default = Selector;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js"}],"node_modules/instantsearch.js/es/widgets/hits-per-page/hits-per-page.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js"}],"node_modules/instantsearch.js/es/connectors/hits-per-page/connectHitsPerPage.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../lib/utils");
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'hits-per-page',
+  connector: true
+});
+
+var connectHitsPerPage = function connectHitsPerPage(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function (widgetParams) {
+    var _ref = widgetParams || {},
+        userItems = _ref.items,
+        _ref$transformItems = _ref.transformItems,
+        transformItems = _ref$transformItems === void 0 ? function (items) {
+      return items;
+    } : _ref$transformItems;
+
+    var items = userItems;
+
+    if (!Array.isArray(items)) {
+      throw new Error(withUsage('The `items` option expects an array of objects.'));
+    }
+
+    var defaultItems = items.filter(function (item) {
+      return item.default === true;
+    });
+
+    if (defaultItems.length === 0) {
+      throw new Error(withUsage("A default value must be specified in `items`."));
+    }
+
+    if (defaultItems.length > 1) {
+      throw new Error(withUsage('More than one default value is specified in `items`.'));
+    }
+
+    var defaultItem = defaultItems[0];
+
+    var normalizeItems = function normalizeItems(_ref2) {
+      var hitsPerPage = _ref2.hitsPerPage;
+      return items.map(function (item) {
+        return _objectSpread({}, item, {
+          isRefined: Number(item.value) === Number(hitsPerPage)
+        });
+      });
+    };
+
+    var connectorState = {
+      getRefine: function getRefine(helper) {
+        return function (value) {
+          return !value && value !== 0 ? helper.setQueryParameter('hitsPerPage', undefined).search() : helper.setQueryParameter('hitsPerPage', value).search();
+        };
+      },
+      createURLFactory: function createURLFactory(_ref3) {
+        var state = _ref3.state,
+            createURL = _ref3.createURL;
+        return function (value) {
+          return createURL(state.setQueryParameter('hitsPerPage', !value && value !== 0 ? undefined : value));
+        };
+      }
+    };
+    return {
+      $$type: 'ais.hitsPerPage',
+      init: function init(initOptions) {
+        var state = initOptions.state,
+            instantSearchInstance = initOptions.instantSearchInstance;
+        var isCurrentInOptions = items.some(function (item) {
+          return Number(state.hitsPerPage) === Number(item.value);
+        });
+
+        if (!isCurrentInOptions) {
+          "development" === 'development' ? (0, _utils.warning)(state.hitsPerPage !== undefined, "\n`hitsPerPage` is not defined.\nThe option `hitsPerPage` needs to be set using the `configure` widget.\n\nLearn more: https://www.algolia.com/doc/api-reference/widgets/hits-per-page/js/\n            ") : void 0;
+          "development" === 'development' ? (0, _utils.warning)(false, "\nThe `items` option of `hitsPerPage` does not contain the \"hits per page\" value coming from the state: ".concat(state.hitsPerPage, ".\n\nYou may want to add another entry to the `items` option with this value.")) : void 0;
+          items = [// The helper will convert the empty string to `undefined`.
+          {
+            value: '',
+            label: ''
+          }].concat(_toConsumableArray(items));
+        }
+
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      dispose: function dispose(_ref4) {
+        var state = _ref4.state;
+        unmountFn();
+        return state.setQueryParameter('hitsPerPage', undefined);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          hitsPerPage: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref5) {
+        var state = _ref5.state,
+            results = _ref5.results,
+            createURL = _ref5.createURL,
+            helper = _ref5.helper;
+        return {
+          items: transformItems(normalizeItems(state)),
+          refine: connectorState.getRefine(helper),
+          createURL: connectorState.createURLFactory({
+            state: state,
+            createURL: createURL
+          }),
+          hasNoResults: results ? results.nbHits === 0 : true,
+          widgetParams: widgetParams
+        };
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref6) {
+        var searchParameters = _ref6.searchParameters;
+        var hitsPerPage = searchParameters.hitsPerPage;
+
+        if (hitsPerPage === undefined || hitsPerPage === defaultItem.value) {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          hitsPerPage: hitsPerPage
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref7) {
+        var uiState = _ref7.uiState;
+        return searchParameters.setQueryParameters({
+          hitsPerPage: uiState.hitsPerPage || defaultItem.value
+        });
+      }
+    };
+  };
+};
+
+var _default = connectHitsPerPage;
+exports.default = _default;
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/hits-per-page/hits-per-page.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23353,7 +17950,363 @@ var InfiniteHits = function InfiniteHits(_ref) {
 
 var _default = InfiniteHits;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js"}],"node_modules/instantsearch.js/es/widgets/infinite-hits/defaultTemplates.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js"}],"node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHits.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _escapeHighlight = _interopRequireWildcard(require("../../lib/escape-highlight"));
+
+var _utils = require("../../lib/utils");
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'infinite-hits',
+  connector: true
+});
+
+function getStateWithoutPage(state) {
+  var _ref = state || {},
+      page = _ref.page,
+      rest = _objectWithoutProperties(_ref, ["page"]);
+
+  return rest;
+}
+
+function getInMemoryCache() {
+  var cachedHits = null;
+  var cachedState = undefined;
+  return {
+    read: function read(_ref2) {
+      var state = _ref2.state;
+      return (0, _utils.isEqual)(cachedState, getStateWithoutPage(state)) ? cachedHits : null;
+    },
+    write: function write(_ref3) {
+      var state = _ref3.state,
+          hits = _ref3.hits;
+      cachedState = getStateWithoutPage(state);
+      cachedHits = hits;
+    }
+  };
+}
+
+function extractHitsFromCachedHits(cachedHits) {
+  return Object.keys(cachedHits).map(Number).sort(function (a, b) {
+    return a - b;
+  }).reduce(function (acc, page) {
+    return acc.concat(cachedHits[page]);
+  }, []);
+}
+
+var connectInfiniteHits = function connectInfiniteHits(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function (widgetParams) {
+    var _ref4 = widgetParams || {},
+        _ref4$escapeHTML = _ref4.escapeHTML,
+        escapeHTML = _ref4$escapeHTML === void 0 ? true : _ref4$escapeHTML,
+        _ref4$transformItems = _ref4.transformItems,
+        transformItems = _ref4$transformItems === void 0 ? function (items) {
+      return items;
+    } : _ref4$transformItems,
+        _ref4$cache = _ref4.cache,
+        cache = _ref4$cache === void 0 ? getInMemoryCache() : _ref4$cache;
+
+    var showPrevious;
+    var showMore;
+    var sendEvent;
+    var bindEvent;
+
+    var getFirstReceivedPage = function getFirstReceivedPage(state, cachedHits) {
+      var _state$page = state.page,
+          page = _state$page === void 0 ? 0 : _state$page;
+      var pages = Object.keys(cachedHits).map(Number);
+
+      if (pages.length === 0) {
+        return page;
+      } else {
+        return Math.min.apply(Math, [page].concat(_toConsumableArray(pages)));
+      }
+    };
+
+    var getLastReceivedPage = function getLastReceivedPage(state, cachedHits) {
+      var _state$page2 = state.page,
+          page = _state$page2 === void 0 ? 0 : _state$page2;
+      var pages = Object.keys(cachedHits).map(Number);
+
+      if (pages.length === 0) {
+        return page;
+      } else {
+        return Math.max.apply(Math, [page].concat(_toConsumableArray(pages)));
+      }
+    };
+
+    var getShowPrevious = function getShowPrevious(helper, cachedHits) {
+      return function () {
+        // Using the helper's `overrideStateWithoutTriggeringChangeEvent` method
+        // avoid updating the browser URL when the user displays the previous page.
+        helper.overrideStateWithoutTriggeringChangeEvent(_objectSpread({}, helper.state, {
+          page: getFirstReceivedPage(helper.state, cachedHits) - 1
+        })).searchWithoutTriggeringOnStateChange();
+      };
+    };
+
+    var getShowMore = function getShowMore(helper, cachedHits) {
+      return function () {
+        helper.setPage(getLastReceivedPage(helper.state, cachedHits) + 1).search();
+      };
+    };
+
+    return {
+      $$type: 'ais.infiniteHits',
+      init: function init(initOptions) {
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: initOptions.instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        var widgetRenderState = this.getWidgetRenderState(renderOptions);
+        sendEvent('view', widgetRenderState.currentPageHits);
+        renderFn(_objectSpread({}, widgetRenderState, {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          infiniteHits: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref5) {
+        var results = _ref5.results,
+            helper = _ref5.helper,
+            state = _ref5.state,
+            instantSearchInstance = _ref5.instantSearchInstance;
+        var isFirstPage;
+        var currentPageHits = [];
+        var cachedHits = cache.read({
+          state: state
+        }) || {};
+
+        if (!results) {
+          showPrevious = getShowPrevious(helper, cachedHits);
+          showMore = getShowMore(helper, cachedHits);
+          sendEvent = (0, _utils.createSendEventForHits)({
+            instantSearchInstance: instantSearchInstance,
+            index: helper.getIndex(),
+            widgetType: this.$$type
+          });
+          bindEvent = (0, _utils.createBindEventForHits)({
+            index: helper.getIndex(),
+            widgetType: this.$$type
+          });
+          isFirstPage = helper.state.page === undefined || getFirstReceivedPage(helper.state, cachedHits) === 0;
+        } else {
+          var _state$page3 = state.page,
+              _page = _state$page3 === void 0 ? 0 : _state$page3;
+
+          if (escapeHTML && results.hits.length > 0) {
+            results.hits = (0, _escapeHighlight.default)(results.hits);
+          }
+
+          var initialEscaped = results.hits.__escaped;
+          results.hits = (0, _utils.addAbsolutePosition)(results.hits, results.page, results.hitsPerPage);
+          results.hits = (0, _utils.addQueryID)(results.hits, results.queryID);
+          results.hits = transformItems(results.hits); // Make sure the escaped tag stays after mapping over the hits.
+          // This prevents the hits from being double-escaped if there are multiple
+          // hits widgets mounted on the page.
+
+          results.hits.__escaped = initialEscaped;
+
+          if (cachedHits[_page] === undefined) {
+            cachedHits[_page] = results.hits;
+            cache.write({
+              state: state,
+              hits: cachedHits
+            });
+          }
+
+          currentPageHits = results.hits;
+          isFirstPage = getFirstReceivedPage(state, cachedHits) === 0;
+        }
+
+        var hits = extractHitsFromCachedHits(cachedHits);
+        var isLastPage = results ? results.nbPages <= getLastReceivedPage(state, cachedHits) + 1 : true;
+        return {
+          hits: hits,
+          currentPageHits: currentPageHits,
+          sendEvent: sendEvent,
+          bindEvent: bindEvent,
+          results: results,
+          showPrevious: showPrevious,
+          showMore: showMore,
+          isFirstPage: isFirstPage,
+          isLastPage: isLastPage,
+          widgetParams: widgetParams
+        };
+      },
+      dispose: function dispose(_ref6) {
+        var state = _ref6.state;
+        unmountFn();
+        var stateWithoutPage = state.setQueryParameter('page', undefined);
+
+        if (!escapeHTML) {
+          return stateWithoutPage;
+        }
+
+        return stateWithoutPage.setQueryParameters(Object.keys(_escapeHighlight.TAG_PLACEHOLDER).reduce(function (acc, key) {
+          return _objectSpread({}, acc, _defineProperty({}, key, undefined));
+        }, {}));
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref7) {
+        var searchParameters = _ref7.searchParameters;
+        var page = searchParameters.page || 0;
+
+        if (!page) {
+          // return without adding `page` to uiState
+          // because we don't want `page=1` in the URL
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          // The page in the UI state is incremented by one
+          // to expose the user value (not `0`).
+          page: page + 1
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref8) {
+        var uiState = _ref8.uiState;
+        var widgetSearchParameters = searchParameters;
+
+        if (escapeHTML) {
+          widgetSearchParameters = searchParameters.setQueryParameters(_escapeHighlight.TAG_PLACEHOLDER);
+        } // The page in the search parameters is decremented by one
+        // to get to the actual parameter value from the UI state.
+
+
+        var page = uiState.page ? uiState.page - 1 : 0;
+        return widgetSearchParameters.setQueryParameter('page', page);
+      }
+    };
+  };
+};
+
+var _default = connectInfiniteHits;
+exports.default = _default;
+},{"../../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/infinite-hits/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23510,7 +18463,415 @@ var infiniteHits = function infiniteHits() {
 
 var _default = infiniteHits;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/InfiniteHits/InfiniteHits":"node_modules/instantsearch.js/es/components/InfiniteHits/InfiniteHits.js","../../connectors/infinite-hits/connectInfiniteHits":"node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHits.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js","../../lib/insights":"node_modules/instantsearch.js/es/lib/insights/index.js","./defaultTemplates":"node_modules/instantsearch.js/es/widgets/infinite-hits/defaultTemplates.js"}],"node_modules/instantsearch.js/es/widgets/menu/defaultTemplates.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/InfiniteHits/InfiniteHits":"node_modules/instantsearch.js/es/components/InfiniteHits/InfiniteHits.js","../../connectors/infinite-hits/connectInfiniteHits":"node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHits.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js","../../lib/insights":"node_modules/instantsearch.js/es/lib/insights/index.js","./defaultTemplates":"node_modules/instantsearch.js/es/widgets/infinite-hits/defaultTemplates.js"}],"node_modules/instantsearch.js/es/connectors/menu/connectMenu.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = connectMenu;
+
+var _utils = require("../../lib/utils");
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+}
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+}
+
+function _iterableToArrayLimit(arr, i) {
+  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
+    return;
+  }
+
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'menu',
+  connector: true
+});
+/**
+ * @typedef {Object} MenuItem
+ * @property {string} value The value of the menu item.
+ * @property {string} label Human-readable value of the menu item.
+ * @property {number} count Number of results matched after refinement is applied.
+ * @property {boolean} isRefined Indicates if the refinement is applied.
+ */
+
+/**
+ * @typedef {Object} CustomMenuWidgetOptions
+ * @property {string} attribute Name of the attribute for faceting (eg. "free_shipping").
+ * @property {number} [limit = 10] How many facets values to retrieve.
+ * @property {boolean} [showMore = false] Whether to display a button that expands the number of items.
+ * @property {number} [showMoreLimit = 20] How many facets values to retrieve when `toggleShowMore` is called, this value is meant to be greater than `limit` option.
+ * @property {string[]|function} [sortBy = ['isRefined', 'name:asc']] How to sort refinements. Possible values: `count|isRefined|name:asc|name:desc`.
+ *
+ * You can also use a sort function that behaves like the standard Javascript [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Syntax).
+ * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
+ */
+
+/**
+ * @typedef {Object} MenuRenderingOptions
+ * @property {MenuItem[]} items The elements that can be refined for the current search results.
+ * @property {function(item.value): string} createURL Creates the URL for a single item name in the list.
+ * @property {function(item.value)} refine Filter the search to item value.
+ * @property {boolean} canRefine True if refinement can be applied.
+ * @property {Object} widgetParams All original `CustomMenuWidgetOptions` forwarded to the `renderFn`.
+ * @property {boolean} isShowingMore True if the menu is displaying all the menu items.
+ * @property {function} toggleShowMore Toggles the number of values displayed between `limit` and `showMore.limit`.
+ * @property {boolean} canToggleShowMore `true` if the toggleShowMore button can be activated (enough items to display more or
+ * already displaying more than `limit` items)
+ */
+
+/**
+ * **Menu** connector provides the logic to build a widget that will give the user the ability to choose a single value for a specific facet. The typical usage of menu is for navigation in categories.
+ *
+ * This connector provides a `toggleShowMore()` function to display more or less items and a `refine()`
+ * function to select an item. While selecting a new element, the `refine` will also unselect the
+ * one that is currently selected.
+ *
+ * **Requirement:** the attribute passed as `attribute` must be present in "attributes for faceting" on the Algolia dashboard or configured as attributesForFaceting via a set settings call to the Algolia API.
+ * @type {Connector}
+ * @param {function(MenuRenderingOptions, boolean)} renderFn Rendering function for the custom **Menu** widget. widget.
+ * @param {function} unmountFn Unmount function called when the widget is disposed.
+ * @return {function(CustomMenuWidgetOptions)} Re-usable widget factory for a custom **Menu** widget.
+ * @example
+ * // custom `renderFn` to render the custom Menu widget
+ * function renderFn(MenuRenderingOptions, isFirstRendering) {
+ *   if (isFirstRendering) {
+ *     MenuRenderingOptions.widgetParams.containerNode
+ *       .html('<select></select');
+ *
+ *     MenuRenderingOptions.widgetParams.containerNode
+ *       .find('select')
+ *       .on('change', function(event) {
+ *         MenuRenderingOptions.refine(event.target.value);
+ *       });
+ *   }
+ *
+ *   var options = MenuRenderingOptions.items.map(function(item) {
+ *     return item.isRefined
+ *       ? '<option value="' + item.value + '" selected>' + item.label + '</option>'
+ *       : '<option value="' + item.value + '">' + item.label + '</option>';
+ *   });
+ *
+ *   MenuRenderingOptions.widgetParams.containerNode
+ *     .find('select')
+ *     .html(options);
+ * }
+ *
+ * // connect `renderFn` to Menu logic
+ * var customMenu = instantsearch.connectors.connectMenu(renderFn);
+ *
+ * // mount widget on the page
+ * search.addWidgets([
+ *   customMenu({
+ *     containerNode: $('#custom-menu-container'),
+ *     attribute: 'categories',
+ *     limit: 10,
+ *   })
+ * ]);
+ */
+
+function connectMenu(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function () {
+    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var attribute = widgetParams.attribute,
+        _widgetParams$limit = widgetParams.limit,
+        limit = _widgetParams$limit === void 0 ? 10 : _widgetParams$limit,
+        _widgetParams$showMor = widgetParams.showMore,
+        showMore = _widgetParams$showMor === void 0 ? false : _widgetParams$showMor,
+        _widgetParams$showMor2 = widgetParams.showMoreLimit,
+        showMoreLimit = _widgetParams$showMor2 === void 0 ? 20 : _widgetParams$showMor2,
+        _widgetParams$sortBy = widgetParams.sortBy,
+        sortBy = _widgetParams$sortBy === void 0 ? ['isRefined', 'name:asc'] : _widgetParams$sortBy,
+        _widgetParams$transfo = widgetParams.transformItems,
+        transformItems = _widgetParams$transfo === void 0 ? function (items) {
+      return items;
+    } : _widgetParams$transfo;
+
+    if (!attribute) {
+      throw new Error(withUsage('The `attribute` option is required.'));
+    }
+
+    if (showMore === true && showMoreLimit <= limit) {
+      throw new Error(withUsage('The `showMoreLimit` option must be greater than `limit`.'));
+    }
+
+    var sendEvent; // Provide the same function to the `renderFn` so that way the user
+    // has to only bind it once when `isFirstRendering` for instance
+
+    var toggleShowMore = function toggleShowMore() {};
+
+    function cachedToggleShowMore() {
+      toggleShowMore();
+    }
+
+    return {
+      $$type: 'ais.menu',
+      isShowingMore: false,
+      createToggleShowMore: function createToggleShowMore(_ref) {
+        var _this = this;
+
+        var results = _ref.results,
+            instantSearchInstance = _ref.instantSearchInstance;
+        return function () {
+          _this.isShowingMore = !_this.isShowingMore;
+
+          _this.render({
+            results: results,
+            instantSearchInstance: instantSearchInstance
+          });
+        };
+      },
+      getLimit: function getLimit() {
+        return this.isShowingMore ? showMoreLimit : limit;
+      },
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      dispose: function dispose(_ref2) {
+        var state = _ref2.state;
+        unmountFn();
+        return state.removeHierarchicalFacet(attribute).setQueryParameter('maxValuesPerFacet', undefined);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          menu: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref3) {
+        var results = _ref3.results,
+            createURL = _ref3.createURL,
+            instantSearchInstance = _ref3.instantSearchInstance,
+            helper = _ref3.helper;
+        var items = [];
+        var canToggleShowMore = false;
+
+        if (!sendEvent) {
+          sendEvent = (0, _utils.createSendEventForFacet)({
+            instantSearchInstance: instantSearchInstance,
+            helper: helper,
+            attribute: attribute,
+            widgetType: this.$$type
+          });
+        }
+
+        if (!this._createURL) {
+          this._createURL = function (facetValue) {
+            return createURL(helper.state.toggleRefinement(attribute, facetValue));
+          };
+        }
+
+        if (!this._refine) {
+          this._refine = function (facetValue) {
+            var _helper$getHierarchic = helper.getHierarchicalFacetBreadcrumb(attribute),
+                _helper$getHierarchic2 = _slicedToArray(_helper$getHierarchic, 1),
+                refinedItem = _helper$getHierarchic2[0];
+
+            sendEvent('click', facetValue ? facetValue : refinedItem);
+            helper.toggleRefinement(attribute, facetValue ? facetValue : refinedItem).search();
+          };
+        }
+
+        toggleShowMore = this.createToggleShowMore({
+          results: results,
+          instantSearchInstance: instantSearchInstance
+        });
+
+        if (results) {
+          var facetValues = results.getFacetValues(attribute, {
+            sortBy: sortBy
+          });
+          var facetItems = facetValues && facetValues.data ? facetValues.data : [];
+          canToggleShowMore = showMore && (this.isShowingMore || facetItems.length > this.getLimit());
+          items = transformItems(facetItems.slice(0, this.getLimit()).map(function (_ref4) {
+            var label = _ref4.name,
+                value = _ref4.path,
+                item = _objectWithoutProperties(_ref4, ["name", "path"]);
+
+            return _objectSpread({}, item, {
+              label: label,
+              value: value
+            });
+          }));
+        }
+
+        return {
+          items: items,
+          createURL: this._createURL,
+          refine: this._refine,
+          sendEvent: sendEvent,
+          canRefine: items.length > 0,
+          widgetParams: widgetParams,
+          isShowingMore: this.isShowingMore,
+          toggleShowMore: cachedToggleShowMore,
+          canToggleShowMore: canToggleShowMore
+        };
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref5) {
+        var searchParameters = _ref5.searchParameters;
+
+        var _searchParameters$get = searchParameters.getHierarchicalFacetBreadcrumb(attribute),
+            _searchParameters$get2 = _slicedToArray(_searchParameters$get, 1),
+            value = _searchParameters$get2[0];
+
+        if (!value) {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          menu: _objectSpread({}, uiState.menu, _defineProperty({}, attribute, value))
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
+        var uiState = _ref6.uiState;
+        var value = uiState.menu && uiState.menu[attribute];
+        var withFacetConfiguration = searchParameters.removeHierarchicalFacet(attribute).addHierarchicalFacet({
+          name: attribute,
+          attributes: [attribute]
+        });
+        var currentMaxValuesPerFacet = withFacetConfiguration.maxValuesPerFacet || 0;
+        var nextMaxValuesPerFacet = Math.max(currentMaxValuesPerFacet, showMore ? showMoreLimit : limit);
+        var withMaxValuesPerFacet = withFacetConfiguration.setQueryParameter('maxValuesPerFacet', nextMaxValuesPerFacet);
+
+        if (!value) {
+          return withMaxValuesPerFacet.setQueryParameters({
+            hierarchicalFacetsRefinements: _objectSpread({}, withMaxValuesPerFacet.hierarchicalFacetsRefinements, _defineProperty({}, attribute, []))
+          });
+        }
+
+        return withMaxValuesPerFacet.addHierarchicalFacetRefinement(attribute, value);
+      }
+    };
+  };
+}
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/menu/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23774,7 +19135,485 @@ function menu(_ref3) {
     transformItems: transformItems
   });
 }
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/RefinementList/RefinementList":"node_modules/instantsearch.js/es/components/RefinementList/RefinementList.js","../../connectors/menu/connectMenu":"node_modules/instantsearch.js/es/connectors/menu/connectMenu.js","./defaultTemplates":"node_modules/instantsearch.js/es/widgets/menu/defaultTemplates.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/widgets/search-box/defaultTemplates.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/RefinementList/RefinementList":"node_modules/instantsearch.js/es/components/RefinementList/RefinementList.js","../../connectors/menu/connectMenu":"node_modules/instantsearch.js/es/connectors/menu/connectMenu.js","./defaultTemplates":"node_modules/instantsearch.js/es/widgets/menu/defaultTemplates.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/connectors/refinement-list/connectRefinementList.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = connectRefinementList;
+
+var _utils = require("../../lib/utils");
+
+var _escapeHighlight = require("../../lib/escape-highlight");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'refinement-list',
+  connector: true
+});
+/**
+ * @typedef {Object} RefinementListItem
+ * @property {string} value The value of the refinement list item.
+ * @property {string} label Human-readable value of the refinement list item.
+ * @property {number} count Number of matched results after refinement is applied.
+ * @property {boolean} isRefined Indicates if the list item is refined.
+ */
+
+/**
+ * @typedef {Object} CustomRefinementListWidgetOptions
+ * @property {string} attribute The name of the attribute in the records.
+ * @property {"and"|"or"} [operator = 'or'] How the filters are combined together.
+ * @property {number} [limit = 10] The max number of items to display when
+ * `showMoreLimit` is not set or if the widget is showing less value.
+ * @property {boolean} [showMore = false] Whether to display a button that expands the number of items.
+ * @property {number} [showMoreLimit = 20] The max number of items to display if the widget
+ * is showing more items.
+ * @property {string[]|function} [sortBy = ['isRefined', 'count:desc', 'name:asc']] How to sort refinements. Possible values: `count|isRefined|name:asc|name:desc`.
+ * @property {boolean} [escapeFacetValues = true] Escapes the content of the facet values.
+ * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
+ */
+
+/**
+ * @typedef {Object} RefinementListRenderingOptions
+ * @property {RefinementListItem[]} items The list of filtering values returned from Algolia API.
+ * @property {function(item.value): string} createURL Creates the next state url for a selected refinement.
+ * @property {function(item.value)} refine Action to apply selected refinements.
+ * @property {function} searchForItems Searches for values inside the list.
+ * @property {boolean} isFromSearch `true` if the values are from an index search.
+ * @property {boolean} canRefine `true` if a refinement can be applied.
+ * @property {boolean} canToggleShowMore `true` if the toggleShowMore button can be activated (enough items to display more or
+ * already displaying more than `limit` items)
+ * @property {Object} widgetParams All original `CustomRefinementListWidgetOptions` forwarded to the `renderFn`.
+ * @property {boolean} isShowingMore True if the menu is displaying all the menu items.
+ * @property {function} toggleShowMore Toggles the number of values displayed between `limit` and `showMoreLimit`.
+ */
+
+/**
+ * **RefinementList** connector provides the logic to build a custom widget that will let the
+ * user filter the results based on the values of a specific facet.
+ *
+ * This connector provides a `toggleShowMore()` function to display more or less items and a `refine()`
+ * function to select an item.
+ * @type {Connector}
+ * @param {function(RefinementListRenderingOptions, boolean)} renderFn Rendering function for the custom **RefinementList** widget.
+ * @param {function} unmountFn Unmount function called when the widget is disposed.
+ * @return {function(CustomRefinementListWidgetOptions)} Re-usable widget factory for a custom **RefinementList** widget.
+ * @example
+ * // custom `renderFn` to render the custom RefinementList widget
+ * function renderFn(RefinementListRenderingOptions, isFirstRendering) {
+ *   if (isFirstRendering) {
+ *     RefinementListRenderingOptions.widgetParams.containerNode
+ *       .html('<ul></ul>')
+ *   }
+ *
+ *     RefinementListRenderingOptions.widgetParams.containerNode
+ *       .find('li[data-refine-value]')
+ *       .each(function() { $(this).off('click'); });
+ *
+ *   if (RefinementListRenderingOptions.canRefine) {
+ *     var list = RefinementListRenderingOptions.items.map(function(item) {
+ *       return `
+ *         <li data-refine-value="${item.value}">
+ *           <input type="checkbox" value="${item.value}" ${item.isRefined ? 'checked' : ''} />
+ *           <a href="${RefinementListRenderingOptions.createURL(item.value)}">
+ *             ${item.label} (${item.count})
+ *           </a>
+ *         </li>
+ *       `;
+ *     });
+ *
+ *     RefinementListRenderingOptions.widgetParams.containerNode.find('ul').html(list);
+ *     RefinementListRenderingOptions.widgetParams.containerNode
+ *       .find('li[data-refine-value]')
+ *       .each(function() {
+ *         $(this).on('click', function(event) {
+ *           event.stopPropagation();
+ *           event.preventDefault();
+ *
+ *           RefinementListRenderingOptions.refine($(this).data('refine-value'));
+ *         });
+ *       });
+ *   } else {
+ *     RefinementListRenderingOptions.widgetParams.containerNode.find('ul').html('');
+ *   }
+ * }
+ *
+ * // connect `renderFn` to RefinementList logic
+ * var customRefinementList = instantsearch.connectors.connectRefinementList(renderFn);
+ *
+ * // mount widget on the page
+ * search.addWidgets([
+ *   customRefinementList({
+ *     containerNode: $('#custom-refinement-list-container'),
+ *     attribute: 'categories',
+ *     limit: 10,
+ *   })
+ * ]);
+ */
+
+function connectRefinementList(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function () {
+    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var attribute = widgetParams.attribute,
+        _widgetParams$operato = widgetParams.operator,
+        operator = _widgetParams$operato === void 0 ? 'or' : _widgetParams$operato,
+        _widgetParams$limit = widgetParams.limit,
+        limit = _widgetParams$limit === void 0 ? 10 : _widgetParams$limit,
+        _widgetParams$showMor = widgetParams.showMore,
+        showMore = _widgetParams$showMor === void 0 ? false : _widgetParams$showMor,
+        _widgetParams$showMor2 = widgetParams.showMoreLimit,
+        showMoreLimit = _widgetParams$showMor2 === void 0 ? 20 : _widgetParams$showMor2,
+        _widgetParams$sortBy = widgetParams.sortBy,
+        sortBy = _widgetParams$sortBy === void 0 ? ['isRefined', 'count:desc', 'name:asc'] : _widgetParams$sortBy,
+        _widgetParams$escapeF = widgetParams.escapeFacetValues,
+        escapeFacetValues = _widgetParams$escapeF === void 0 ? true : _widgetParams$escapeF,
+        _widgetParams$transfo = widgetParams.transformItems,
+        transformItems = _widgetParams$transfo === void 0 ? function (items) {
+      return items;
+    } : _widgetParams$transfo;
+
+    if (!attribute) {
+      throw new Error(withUsage('The `attribute` option is required.'));
+    }
+
+    if (!/^(and|or)$/.test(operator)) {
+      throw new Error(withUsage("The `operator` must one of: `\"and\"`, `\"or\"` (got \"".concat(operator, "\").")));
+    }
+
+    if (showMore === true && showMoreLimit <= limit) {
+      throw new Error(withUsage('`showMoreLimit` should be greater than `limit`.'));
+    }
+
+    var formatItems = function formatItems(_ref) {
+      var label = _ref.name,
+          item = _objectWithoutProperties(_ref, ["name"]);
+
+      return _objectSpread({}, item, {
+        label: label,
+        value: label,
+        highlighted: label
+      });
+    };
+
+    var _getLimit = function getLimit(isShowingMore) {
+      return isShowingMore ? showMoreLimit : limit;
+    };
+
+    var lastResultsFromMainSearch;
+    var lastItemsFromMainSearch = [];
+    var hasExhaustiveItems = true;
+    var searchForFacetValues;
+    var triggerRefine;
+    var sendEvent;
+    var toggleShowMore;
+    /* eslint-disable max-params */
+
+    var createSearchForFacetValues = function createSearchForFacetValues(helper) {
+      var _this = this;
+
+      return function (renderOptions) {
+        return function (query) {
+          var instantSearchInstance = renderOptions.instantSearchInstance;
+
+          if (query === '' && lastItemsFromMainSearch) {
+            // render with previous data from the helper.
+            renderFn(_objectSpread({}, _this.getWidgetRenderState(_objectSpread({}, renderOptions, {
+              results: lastResultsFromMainSearch
+            })), {
+              instantSearchInstance: instantSearchInstance
+            }));
+          } else {
+            var tags = {
+              highlightPreTag: escapeFacetValues ? _escapeHighlight.TAG_PLACEHOLDER.highlightPreTag : _escapeHighlight.TAG_REPLACEMENT.highlightPreTag,
+              highlightPostTag: escapeFacetValues ? _escapeHighlight.TAG_PLACEHOLDER.highlightPostTag : _escapeHighlight.TAG_REPLACEMENT.highlightPostTag
+            };
+            helper.searchForFacetValues(attribute, query, // We cap the `maxFacetHits` value to 100 because the Algolia API
+            // doesn't support a greater number.
+            // See https://www.algolia.com/doc/api-reference/api-parameters/maxFacetHits/
+            Math.min(_getLimit(_this.isShowingMore), 100), tags).then(function (results) {
+              var facetValues = escapeFacetValues ? (0, _escapeHighlight.escapeFacets)(results.facetHits) : results.facetHits;
+              var normalizedFacetValues = transformItems(facetValues.map(function (_ref2) {
+                var value = _ref2.value,
+                    item = _objectWithoutProperties(_ref2, ["value"]);
+
+                return _objectSpread({}, item, {
+                  value: value,
+                  label: value
+                });
+              }));
+              var canToggleShowMore = _this.isShowingMore && lastItemsFromMainSearch.length > limit;
+              renderFn(_objectSpread({}, _this.getWidgetRenderState(_objectSpread({}, renderOptions, {
+                results: lastResultsFromMainSearch
+              })), {
+                items: normalizedFacetValues,
+                canToggleShowMore: canToggleShowMore,
+                canRefine: true,
+                instantSearchInstance: instantSearchInstance,
+                isFromSearch: true
+              }));
+            });
+          }
+        };
+      };
+    };
+    /* eslint-enable max-params */
+
+
+    return {
+      $$type: 'ais.refinementList',
+      isShowingMore: false,
+      // Provide the same function to the `renderFn` so that way the user
+      // has to only bind it once when `isFirstRendering` for instance
+      toggleShowMore: function toggleShowMore() {},
+      cachedToggleShowMore: function cachedToggleShowMore() {
+        toggleShowMore();
+      },
+      createToggleShowMore: function createToggleShowMore(renderOptions) {
+        var _this2 = this;
+
+        return function () {
+          _this2.isShowingMore = !_this2.isShowingMore;
+
+          _this2.render(renderOptions);
+        };
+      },
+      getLimit: function getLimit() {
+        return _getLimit(this.isShowingMore);
+      },
+      init: function init(initOptions) {
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: initOptions.instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: renderOptions.instantSearchInstance
+        }), false);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          refinementList: _objectSpread({}, renderState.refinementList, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(renderOptions) {
+        var results = renderOptions.results,
+            state = renderOptions.state,
+            createURL = renderOptions.createURL,
+            instantSearchInstance = renderOptions.instantSearchInstance,
+            _renderOptions$isFrom = renderOptions.isFromSearch,
+            isFromSearch = _renderOptions$isFrom === void 0 ? false : _renderOptions$isFrom,
+            helper = renderOptions.helper;
+        var items = [];
+        var facetValues;
+
+        if (!sendEvent || !triggerRefine || !searchForFacetValues) {
+          sendEvent = (0, _utils.createSendEventForFacet)({
+            instantSearchInstance: instantSearchInstance,
+            helper: helper,
+            attribute: attribute,
+            widgetType: this.$$type
+          });
+
+          triggerRefine = function triggerRefine(facetValue) {
+            sendEvent('click', facetValue);
+            helper.toggleRefinement(attribute, facetValue).search();
+          };
+
+          searchForFacetValues = createSearchForFacetValues.call(this, helper);
+        }
+
+        if (results) {
+          if (!isFromSearch) {
+            facetValues = results.getFacetValues(attribute, {
+              sortBy: sortBy
+            }) || [];
+            items = transformItems(facetValues.slice(0, this.getLimit()).map(formatItems));
+          } else {
+            facetValues = escapeFacetValues ? (0, _escapeHighlight.escapeFacets)(results.facetHits) : results.facetHits;
+            items = transformItems(facetValues.map(function (_ref3) {
+              var value = _ref3.value,
+                  item = _objectWithoutProperties(_ref3, ["value"]);
+
+              return _objectSpread({}, item, {
+                value: value,
+                label: value
+              });
+            }));
+          }
+
+          var maxValuesPerFacetConfig = state.maxValuesPerFacet;
+          var currentLimit = this.getLimit(); // If the limit is the max number of facet retrieved it is impossible to know
+          // if the facets are exhaustive. The only moment we are sure it is exhaustive
+          // is when it is strictly under the number requested unless we know that another
+          // widget has requested more values (maxValuesPerFacet > getLimit()).
+          // Because this is used for making the search of facets unable or not, it is important
+          // to be conservative here.
+
+          hasExhaustiveItems = maxValuesPerFacetConfig > currentLimit ? facetValues.length <= currentLimit : facetValues.length < currentLimit;
+          lastResultsFromMainSearch = results;
+          lastItemsFromMainSearch = items;
+          toggleShowMore = this.createToggleShowMore(renderOptions);
+        } // Compute a specific createURL method able to link to any facet value state change
+
+
+        var _createURL = function _createURL(facetValue) {
+          return createURL(state.toggleRefinement(attribute, facetValue));
+        }; // Do not mistake searchForFacetValues and searchFacetValues which is the actual search
+        // function
+
+
+        var searchFacetValues = searchForFacetValues && searchForFacetValues(renderOptions);
+        var canShowLess = this.isShowingMore && lastItemsFromMainSearch.length > limit;
+        var canShowMore = showMore && !isFromSearch && !hasExhaustiveItems;
+        var canToggleShowMore = canShowLess || canShowMore;
+        return {
+          createURL: _createURL,
+          items: items,
+          refine: triggerRefine,
+          searchForItems: searchFacetValues,
+          isFromSearch: isFromSearch,
+          canRefine: isFromSearch || items.length > 0,
+          widgetParams: widgetParams,
+          isShowingMore: this.isShowingMore,
+          canToggleShowMore: canToggleShowMore,
+          toggleShowMore: this.cachedToggleShowMore,
+          sendEvent: sendEvent,
+          hasExhaustiveItems: hasExhaustiveItems
+        };
+      },
+      dispose: function dispose(_ref4) {
+        var state = _ref4.state;
+        unmountFn();
+        var withoutMaxValuesPerFacet = state.setQueryParameter('maxValuesPerFacet', undefined);
+
+        if (operator === 'and') {
+          return withoutMaxValuesPerFacet.removeFacet(attribute);
+        }
+
+        return withoutMaxValuesPerFacet.removeDisjunctiveFacet(attribute);
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref5) {
+        var searchParameters = _ref5.searchParameters;
+        var values = operator === 'or' ? searchParameters.getDisjunctiveRefinements(attribute) : searchParameters.getConjunctiveRefinements(attribute);
+
+        if (!values.length) {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          refinementList: _objectSpread({}, uiState.refinementList, _defineProperty({}, attribute, values))
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
+        var uiState = _ref6.uiState;
+        var isDisjunctive = operator === 'or';
+        var values = uiState.refinementList && uiState.refinementList[attribute];
+        var withoutRefinements = searchParameters.clearRefinements(attribute);
+        var withFacetConfiguration = isDisjunctive ? withoutRefinements.addDisjunctiveFacet(attribute) : withoutRefinements.addFacet(attribute);
+        var currentMaxValuesPerFacet = withFacetConfiguration.maxValuesPerFacet || 0;
+        var nextMaxValuesPerFacet = Math.max(currentMaxValuesPerFacet, showMore ? showMoreLimit : limit);
+        var withMaxValuesPerFacet = withFacetConfiguration.setQueryParameter('maxValuesPerFacet', nextMaxValuesPerFacet);
+
+        if (!values) {
+          var key = isDisjunctive ? 'disjunctiveFacetsRefinements' : 'facetsRefinements';
+          return withMaxValuesPerFacet.setQueryParameters(_defineProperty({}, key, _objectSpread({}, withMaxValuesPerFacet[key], _defineProperty({}, attribute, []))));
+        }
+
+        return values.reduce(function (parameters, value) {
+          return isDisjunctive ? parameters.addDisjunctiveFacetRefinement(attribute, value) : parameters.addFacetRefinement(attribute, value);
+        }, withMaxValuesPerFacet);
+      }
+    };
+  };
+}
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js"}],"node_modules/instantsearch.js/es/widgets/search-box/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24211,7 +20050,403 @@ function refinementList() {
     transformItems: transformItems
   });
 }
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/RefinementList/RefinementList":"node_modules/instantsearch.js/es/components/RefinementList/RefinementList.js","../../connectors/refinement-list/connectRefinementList":"node_modules/instantsearch.js/es/connectors/refinement-list/connectRefinementList.js","./defaultTemplates":"node_modules/instantsearch.js/es/widgets/refinement-list/defaultTemplates.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/widgets/numeric-menu/defaultTemplates.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/RefinementList/RefinementList":"node_modules/instantsearch.js/es/components/RefinementList/RefinementList.js","../../connectors/refinement-list/connectRefinementList":"node_modules/instantsearch.js/es/connectors/refinement-list/connectRefinementList.js","./defaultTemplates":"node_modules/instantsearch.js/es/widgets/refinement-list/defaultTemplates.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/connectors/numeric-menu/connectNumericMenu.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../lib/utils");
+
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+}
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+}
+
+function _iterableToArrayLimit(arr, i) {
+  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
+    return;
+  }
+
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'numeric-menu',
+  connector: true
+});
+var $$type = 'ais.numericMenu';
+
+var createSendEvent = function createSendEvent(_ref) {
+  var instantSearchInstance = _ref.instantSearchInstance,
+      helper = _ref.helper,
+      attribute = _ref.attribute;
+  return function () {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    if (args.length === 1) {
+      instantSearchInstance.sendEventToInsights(args[0]);
+      return;
+    }
+
+    var eventType = args[0],
+        facetValue = args[1],
+        _args$ = args[2],
+        eventName = _args$ === void 0 ? 'Filter Applied' : _args$;
+
+    if (eventType !== 'click') {
+      return;
+    } // facetValue === "%7B%22start%22:5,%22end%22:10%7D"
+
+
+    var filters = (0, _utils.convertNumericRefinementsToFilters)(getRefinedState(helper.state, attribute, facetValue), attribute);
+
+    if (filters && filters.length > 0) {
+      /*
+          filters === ["price<=10", "price>=5"]
+        */
+      instantSearchInstance.sendEventToInsights({
+        insightsMethod: 'clickedFilters',
+        widgetType: $$type,
+        eventType: eventType,
+        payload: {
+          eventName: eventName,
+          index: helper.getIndex(),
+          filters: filters
+        }
+      });
+    }
+  };
+};
+
+var connectNumericMenu = function connectNumericMenu(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function (widgetParams) {
+    var _ref2 = widgetParams || {},
+        _ref2$attribute = _ref2.attribute,
+        attribute = _ref2$attribute === void 0 ? '' : _ref2$attribute,
+        _ref2$items = _ref2.items,
+        items = _ref2$items === void 0 ? [] : _ref2$items,
+        _ref2$transformItems = _ref2.transformItems,
+        transformItems = _ref2$transformItems === void 0 ? function (x) {
+      return x;
+    } : _ref2$transformItems;
+
+    if (attribute === '') {
+      throw new Error(withUsage('The `attribute` option is required.'));
+    }
+
+    if (!items || items.length === 0) {
+      throw new Error(withUsage('The `items` option expects an array of objects.'));
+    }
+
+    var prepareItems = function prepareItems(state) {
+      return items.map(function (_ref3) {
+        var start = _ref3.start,
+            end = _ref3.end,
+            label = _ref3.label;
+        return {
+          label: label,
+          value: window.encodeURI(JSON.stringify({
+            start: start,
+            end: end
+          })),
+          isRefined: isRefined(state, attribute, {
+            start: start,
+            end: end,
+            label: label
+          })
+        };
+      });
+    };
+
+    var connectorState = {};
+    return {
+      $$type: $$type,
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      dispose: function dispose(_ref4) {
+        var state = _ref4.state;
+        unmountFn();
+        return state.clearRefinements(attribute);
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref5) {
+        var searchParameters = _ref5.searchParameters;
+        var values = searchParameters.getNumericRefinements(attribute);
+        var equal = values['='] && values['='][0];
+
+        if (equal || equal === 0) {
+          return _objectSpread({}, uiState, {
+            numericMenu: _objectSpread({}, uiState.numericMenu, _defineProperty({}, attribute, "".concat(values['='])))
+          });
+        }
+
+        var min = values['>='] && values['>='][0] || '';
+        var max = values['<='] && values['<='][0] || '';
+
+        if (min === '' && max === '') {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          numericMenu: _objectSpread({}, uiState.numericMenu, _defineProperty({}, attribute, "".concat(min, ":").concat(max)))
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
+        var uiState = _ref6.uiState;
+        var value = uiState.numericMenu && uiState.numericMenu[attribute];
+        var withoutRefinements = searchParameters.clearRefinements(attribute);
+
+        if (!value) {
+          return withoutRefinements.setQueryParameters({
+            numericRefinements: _objectSpread({}, withoutRefinements.numericRefinements, _defineProperty({}, attribute, {}))
+          });
+        }
+
+        var isExact = value.indexOf(':') === -1;
+
+        if (isExact) {
+          return withoutRefinements.addNumericRefinement(attribute, '=', Number(value));
+        }
+
+        var _value$split$map = value.split(':').map(parseFloat),
+            _value$split$map2 = _slicedToArray(_value$split$map, 2),
+            min = _value$split$map2[0],
+            max = _value$split$map2[1];
+
+        var withMinRefinement = (0, _utils.isFiniteNumber)(min) ? withoutRefinements.addNumericRefinement(attribute, '>=', min) : withoutRefinements;
+        var withMaxRefinement = (0, _utils.isFiniteNumber)(max) ? withMinRefinement.addNumericRefinement(attribute, '<=', max) : withMinRefinement;
+        return withMaxRefinement;
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          numericMenu: _objectSpread({}, renderState.numericMenu, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref7) {
+        var results = _ref7.results,
+            state = _ref7.state,
+            instantSearchInstance = _ref7.instantSearchInstance,
+            helper = _ref7.helper,
+            createURL = _ref7.createURL;
+
+        if (!connectorState.refine) {
+          connectorState.refine = function (facetValue) {
+            var refinedState = getRefinedState(helper.state, attribute, facetValue);
+            connectorState.sendEvent('click', facetValue);
+            helper.setState(refinedState).search();
+          };
+        }
+
+        if (!connectorState.createURL) {
+          connectorState.createURL = function (newState) {
+            return function (facetValue) {
+              return createURL(getRefinedState(newState, attribute, facetValue));
+            };
+          };
+        }
+
+        if (!connectorState.sendEvent) {
+          connectorState.sendEvent = createSendEvent({
+            instantSearchInstance: instantSearchInstance,
+            helper: helper,
+            attribute: attribute
+          });
+        }
+
+        return {
+          createURL: connectorState.createURL(state),
+          items: transformItems(prepareItems(state)),
+          hasNoResults: results ? results.nbHits === 0 : true,
+          refine: connectorState.refine,
+          sendEvent: connectorState.sendEvent,
+          widgetParams: widgetParams
+        };
+      }
+    };
+  };
+};
+
+function isRefined(state, attribute, option) {
+  // @TODO: same as another spot, why is this mixing arrays & elements?
+  var currentRefinements = state.getNumericRefinements(attribute);
+
+  if (option.start !== undefined && option.end !== undefined) {
+    if (option.start === option.end) {
+      return hasNumericRefinement(currentRefinements, '=', option.start);
+    }
+  }
+
+  if (option.start !== undefined) {
+    return hasNumericRefinement(currentRefinements, '>=', option.start);
+  }
+
+  if (option.end !== undefined) {
+    return hasNumericRefinement(currentRefinements, '<=', option.end);
+  }
+
+  if (option.start === undefined && option.end === undefined) {
+    return Object.keys(currentRefinements).every(function (operator) {
+      return (currentRefinements[operator] || []).length === 0;
+    });
+  }
+
+  return false;
+}
+
+function getRefinedState(state, attribute, facetValue) {
+  var resolvedState = state;
+  var refinedOption = JSON.parse(window.decodeURI(facetValue)); // @TODO: why is array / element mixed here & hasRefinements; seems wrong?
+
+  var currentRefinements = resolvedState.getNumericRefinements(attribute);
+
+  if (refinedOption.start === undefined && refinedOption.end === undefined) {
+    return resolvedState.removeNumericRefinement(attribute);
+  }
+
+  if (!isRefined(resolvedState, attribute, refinedOption)) {
+    resolvedState = resolvedState.removeNumericRefinement(attribute);
+  }
+
+  if (refinedOption.start !== undefined && refinedOption.end !== undefined) {
+    if (refinedOption.start > refinedOption.end) {
+      throw new Error('option.start should be > to option.end');
+    }
+
+    if (refinedOption.start === refinedOption.end) {
+      if (hasNumericRefinement(currentRefinements, '=', refinedOption.start)) {
+        resolvedState = resolvedState.removeNumericRefinement(attribute, '=', refinedOption.start);
+      } else {
+        resolvedState = resolvedState.addNumericRefinement(attribute, '=', refinedOption.start);
+      }
+
+      return resolvedState;
+    }
+  }
+
+  if (refinedOption.start !== undefined) {
+    if (hasNumericRefinement(currentRefinements, '>=', refinedOption.start)) {
+      resolvedState = resolvedState.removeNumericRefinement(attribute, '>=', refinedOption.start);
+    } else {
+      resolvedState = resolvedState.addNumericRefinement(attribute, '>=', refinedOption.start);
+    }
+  }
+
+  if (refinedOption.end !== undefined) {
+    if (hasNumericRefinement(currentRefinements, '<=', refinedOption.end)) {
+      resolvedState = resolvedState.removeNumericRefinement(attribute, '<=', refinedOption.end);
+    } else {
+      resolvedState = resolvedState.addNumericRefinement(attribute, '<=', refinedOption.end);
+    }
+  }
+
+  if (typeof resolvedState.page === 'number') {
+    resolvedState.page = 0;
+  }
+
+  return resolvedState;
+}
+
+function hasNumericRefinement(currentRefinements, operator, value) {
+  return currentRefinements[operator] !== undefined && currentRefinements[operator].includes(value);
+}
+
+var _default = connectNumericMenu;
+exports.default = _default;
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/numeric-menu/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24678,7 +20913,310 @@ Pagination.defaultProps = {
 };
 var _default = Pagination;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","./PaginationLink":"node_modules/instantsearch.js/es/components/Pagination/PaginationLink.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/pagination/pagination.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","./PaginationLink":"node_modules/instantsearch.js/es/components/Pagination/PaginationLink.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/pagination/Paginator.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../lib/utils");
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var Paginator = /*#__PURE__*/function () {
+  function Paginator(params) {
+    _classCallCheck(this, Paginator);
+
+    _defineProperty(this, "currentPage", void 0);
+
+    _defineProperty(this, "total", void 0);
+
+    _defineProperty(this, "padding", void 0);
+
+    this.currentPage = params.currentPage;
+    this.total = params.total;
+    this.padding = params.padding;
+  }
+
+  _createClass(Paginator, [{
+    key: "pages",
+    value: function pages() {
+      var total = this.total,
+          currentPage = this.currentPage,
+          padding = this.padding;
+      if (total === 0) return [0];
+      var totalDisplayedPages = this.nbPagesDisplayed(padding, total);
+
+      if (totalDisplayedPages === total) {
+        return (0, _utils.range)({
+          end: total
+        });
+      }
+
+      var paddingLeft = this.calculatePaddingLeft(currentPage, padding, total, totalDisplayedPages);
+      var paddingRight = totalDisplayedPages - paddingLeft;
+      var first = currentPage - paddingLeft;
+      var last = currentPage + paddingRight;
+      return (0, _utils.range)({
+        start: first,
+        end: last
+      });
+    }
+  }, {
+    key: "nbPagesDisplayed",
+    value: function nbPagesDisplayed(padding, total) {
+      return Math.min(2 * padding + 1, total);
+    }
+  }, {
+    key: "calculatePaddingLeft",
+    value: function calculatePaddingLeft(current, padding, total, totalDisplayedPages) {
+      if (current <= padding) {
+        return current;
+      }
+
+      if (current >= total - padding) {
+        return totalDisplayedPages - (total - current);
+      }
+
+      return padding;
+    }
+  }, {
+    key: "isLastPage",
+    value: function isLastPage() {
+      return this.currentPage === this.total - 1 || this.total === 0;
+    }
+  }, {
+    key: "isFirstPage",
+    value: function isFirstPage() {
+      return this.currentPage === 0;
+    }
+  }]);
+
+  return Paginator;
+}();
+
+var _default = Paginator;
+exports.default = _default;
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/pagination/connectPagination.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../lib/utils");
+
+var _Paginator = _interopRequireDefault(require("./Paginator"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'pagination',
+  connector: true
+});
+/**
+ * **Pagination** connector provides the logic to build a widget that will let the user
+ * choose the current page of the results.
+ *
+ * When using the pagination with Algolia, you should be aware that the engine won't provide you pages
+ * beyond the 1000th hits by default. You can find more information on the [Algolia documentation](https://www.algolia.com/doc/guides/searching/pagination/#pagination-limitations).
+ */
+
+var connectPagination = function connectPagination(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function (widgetParams) {
+    var _ref = widgetParams || {},
+        totalPages = _ref.totalPages,
+        _ref$padding = _ref.padding,
+        padding = _ref$padding === void 0 ? 3 : _ref$padding;
+
+    var pager = new _Paginator.default({
+      currentPage: 0,
+      total: 0,
+      padding: padding
+    });
+    var connectorState = {};
+
+    function getMaxPage(_ref2) {
+      var nbPages = _ref2.nbPages;
+      return totalPages !== undefined ? Math.min(totalPages, nbPages) : nbPages;
+    }
+
+    return {
+      $$type: 'ais.pagination',
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      dispose: function dispose(_ref3) {
+        var state = _ref3.state;
+        unmountFn();
+        return state.setQueryParameter('page', undefined);
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref4) {
+        var searchParameters = _ref4.searchParameters;
+        var page = searchParameters.page || 0;
+
+        if (!page) {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          page: page + 1
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref5) {
+        var uiState = _ref5.uiState;
+        var page = uiState.page ? uiState.page - 1 : 0;
+        return searchParameters.setQueryParameter('page', page);
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref6) {
+        var results = _ref6.results,
+            helper = _ref6.helper,
+            createURL = _ref6.createURL;
+
+        if (!connectorState.refine) {
+          connectorState.refine = function (page) {
+            helper.setPage(page);
+            helper.search();
+          };
+        }
+
+        if (!connectorState.createURL) {
+          connectorState.createURL = function (state) {
+            return function (page) {
+              return createURL(state.setPage(page));
+            };
+          };
+        }
+
+        var state = helper.state;
+        var page = state.page || 0;
+        var nbPages = getMaxPage(results || {
+          nbPages: 0
+        });
+        pager.currentPage = page;
+        pager.total = nbPages;
+        return {
+          createURL: connectorState.createURL(state),
+          refine: connectorState.refine,
+          currentRefinement: page,
+          nbHits: (results === null || results === void 0 ? void 0 : results.nbHits) || 0,
+          nbPages: nbPages,
+          pages: results ? pager.pages() : [],
+          isFirstPage: pager.isFirstPage(),
+          isLastPage: pager.isLastPage(),
+          widgetParams: widgetParams
+        };
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          pagination: this.getWidgetRenderState(renderOptions)
+        });
+      }
+    };
+  };
+};
+
+var _default = connectPagination;
+exports.default = _default;
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","./Paginator":"node_modules/instantsearch.js/es/connectors/pagination/Paginator.js"}],"node_modules/instantsearch.js/es/widgets/pagination/pagination.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25208,7 +21746,464 @@ var RangeInput = /*#__PURE__*/function (_Component) {
 
 var _default = RangeInput;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js"}],"node_modules/instantsearch.js/es/widgets/range-input/range-input.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js"}],"node_modules/instantsearch.js/es/connectors/range/connectRange.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../lib/utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+}
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+}
+
+function _iterableToArrayLimit(arr, i) {
+  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
+    return;
+  }
+
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'range-input',
+  connector: true
+}, {
+  name: 'range-slider',
+  connector: true
+});
+var $$type = 'ais.range';
+
+function toPrecision(_ref) {
+  var min = _ref.min,
+      max = _ref.max,
+      precision = _ref.precision;
+  var pow = Math.pow(10, precision);
+  return {
+    min: min ? Math.floor(min * pow) / pow : min,
+    max: max ? Math.ceil(max * pow) / pow : max
+  };
+}
+/**
+ * **Range** connector provides the logic to create custom widget that will let
+ * the user refine results using a numeric range.
+ *
+ * This connectors provides a `refine()` function that accepts bounds. It will also provide
+ * information about the min and max bounds for the current result set.
+ */
+
+
+var connectRange = function connectRange(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function (widgetParams) {
+    var _ref2 = widgetParams || {},
+        attribute = _ref2.attribute,
+        minBound = _ref2.min,
+        maxBound = _ref2.max,
+        _ref2$precision = _ref2.precision,
+        precision = _ref2$precision === void 0 ? 0 : _ref2$precision;
+
+    if (!attribute) {
+      throw new Error(withUsage('The `attribute` option is required.'));
+    }
+
+    if ((0, _utils.isFiniteNumber)(minBound) && (0, _utils.isFiniteNumber)(maxBound) && minBound > maxBound) {
+      throw new Error(withUsage("The `max` option can't be lower than `min`."));
+    }
+
+    var formatToNumber = function formatToNumber(v) {
+      return Number(Number(v).toFixed(precision));
+    };
+
+    var rangeFormatter = {
+      from: function from(v) {
+        return v.toLocaleString();
+      },
+      to: function to(v) {
+        return formatToNumber(v).toLocaleString();
+      }
+    }; // eslint-disable-next-line complexity
+
+    var getRefinedState = function getRefinedState(helper, currentRange, nextMin, nextMax) {
+      var resolvedState = helper.state;
+      var currentRangeMin = currentRange.min,
+          currentRangeMax = currentRange.max;
+
+      var _ref3 = resolvedState.getNumericRefinement(attribute, '>=') || [],
+          _ref4 = _slicedToArray(_ref3, 1),
+          min = _ref4[0];
+
+      var _ref5 = resolvedState.getNumericRefinement(attribute, '<=') || [],
+          _ref6 = _slicedToArray(_ref5, 1),
+          max = _ref6[0];
+
+      var isResetMin = nextMin === undefined || nextMin === '';
+      var isResetMax = nextMax === undefined || nextMax === '';
+
+      var _toPrecision = toPrecision({
+        min: !isResetMin ? parseFloat(nextMin) : undefined,
+        max: !isResetMax ? parseFloat(nextMax) : undefined,
+        precision: precision
+      }),
+          nextMinAsNumber = _toPrecision.min,
+          nextMaxAsNumber = _toPrecision.max;
+
+      var newNextMin;
+
+      if (!(0, _utils.isFiniteNumber)(minBound) && currentRangeMin === nextMinAsNumber) {
+        newNextMin = undefined;
+      } else if ((0, _utils.isFiniteNumber)(minBound) && isResetMin) {
+        newNextMin = minBound;
+      } else {
+        newNextMin = nextMinAsNumber;
+      }
+
+      var newNextMax;
+
+      if (!(0, _utils.isFiniteNumber)(maxBound) && currentRangeMax === nextMaxAsNumber) {
+        newNextMax = undefined;
+      } else if ((0, _utils.isFiniteNumber)(maxBound) && isResetMax) {
+        newNextMax = maxBound;
+      } else {
+        newNextMax = nextMaxAsNumber;
+      }
+
+      var isResetNewNextMin = newNextMin === undefined;
+      var isGreaterThanCurrentRange = (0, _utils.isFiniteNumber)(currentRangeMin) && currentRangeMin <= newNextMin;
+      var isMinValid = isResetNewNextMin || (0, _utils.isFiniteNumber)(newNextMin) && (!(0, _utils.isFiniteNumber)(currentRangeMin) || isGreaterThanCurrentRange);
+      var isResetNewNextMax = newNextMax === undefined;
+      var isLowerThanRange = (0, _utils.isFiniteNumber)(newNextMax) && currentRangeMax >= newNextMax;
+      var isMaxValid = isResetNewNextMax || (0, _utils.isFiniteNumber)(newNextMax) && (!(0, _utils.isFiniteNumber)(currentRangeMax) || isLowerThanRange);
+      var hasMinChange = min !== newNextMin;
+      var hasMaxChange = max !== newNextMax;
+
+      if ((hasMinChange || hasMaxChange) && isMinValid && isMaxValid) {
+        resolvedState = resolvedState.removeNumericRefinement(attribute);
+
+        if ((0, _utils.isFiniteNumber)(newNextMin)) {
+          resolvedState = resolvedState.addNumericRefinement(attribute, '>=', newNextMin);
+        }
+
+        if ((0, _utils.isFiniteNumber)(newNextMax)) {
+          resolvedState = resolvedState.addNumericRefinement(attribute, '<=', newNextMax);
+        }
+
+        return resolvedState;
+      }
+
+      return null;
+    };
+
+    var sendEventWithRefinedState = function sendEventWithRefinedState(refinedState, instantSearchInstance, helper) {
+      var eventName = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'Filter Applied';
+      var filters = (0, _utils.convertNumericRefinementsToFilters)(refinedState, attribute);
+
+      if (filters && filters.length > 0) {
+        instantSearchInstance.sendEventToInsights({
+          insightsMethod: 'clickedFilters',
+          widgetType: $$type,
+          eventType: 'click',
+          payload: {
+            eventName: eventName,
+            index: helper.getIndex(),
+            filters: filters
+          }
+        });
+      }
+    };
+
+    var createSendEvent = function createSendEvent(instantSearchInstance, helper, currentRange) {
+      return function () {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        if (args.length === 1) {
+          instantSearchInstance.sendEventToInsights(args[0]);
+          return;
+        }
+
+        var eventType = args[0],
+            facetValue = args[1],
+            eventName = args[2];
+
+        if (eventType !== 'click') {
+          return;
+        }
+
+        var _facetValue = _slicedToArray(facetValue, 2),
+            nextMin = _facetValue[0],
+            nextMax = _facetValue[1];
+
+        var refinedState = getRefinedState(helper, currentRange, nextMin, nextMax);
+        sendEventWithRefinedState(refinedState, instantSearchInstance, helper, eventName);
+      };
+    };
+
+    function _getCurrentRange(stats) {
+      var min;
+
+      if ((0, _utils.isFiniteNumber)(minBound)) {
+        min = minBound;
+      } else if ((0, _utils.isFiniteNumber)(stats.min)) {
+        min = stats.min;
+      } else {
+        min = 0;
+      }
+
+      var max;
+
+      if ((0, _utils.isFiniteNumber)(maxBound)) {
+        max = maxBound;
+      } else if ((0, _utils.isFiniteNumber)(stats.max)) {
+        max = stats.max;
+      } else {
+        max = 0;
+      }
+
+      return toPrecision({
+        min: min,
+        max: max,
+        precision: precision
+      });
+    }
+
+    function _getCurrentRefinement(helper) {
+      var _ref7 = helper.getNumericRefinement(attribute, '>=') || [],
+          _ref8 = _slicedToArray(_ref7, 1),
+          minValue = _ref8[0];
+
+      var _ref9 = helper.getNumericRefinement(attribute, '<=') || [],
+          _ref10 = _slicedToArray(_ref9, 1),
+          maxValue = _ref10[0];
+
+      var min = (0, _utils.isFiniteNumber)(minValue) ? minValue : -Infinity;
+      var max = (0, _utils.isFiniteNumber)(maxValue) ? maxValue : Infinity;
+      return [min, max];
+    }
+
+    function _refine(instantSearchInstance, helper, currentRange) {
+      return function () {
+        var _ref11 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [undefined, undefined],
+            _ref12 = _slicedToArray(_ref11, 2),
+            nextMin = _ref12[0],
+            nextMax = _ref12[1];
+
+        var refinedState = getRefinedState(helper, currentRange, nextMin, nextMax);
+
+        if (refinedState) {
+          sendEventWithRefinedState(refinedState, instantSearchInstance, helper);
+          helper.setState(refinedState).search();
+        }
+      };
+    }
+
+    return {
+      $$type: $$type,
+      init: function init(initOptions) {
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: initOptions.instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: renderOptions.instantSearchInstance
+        }), false);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          range: _objectSpread({}, renderState.range, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref13) {
+        var results = _ref13.results,
+            helper = _ref13.helper,
+            instantSearchInstance = _ref13.instantSearchInstance;
+        var facetsFromResults = results && results.disjunctiveFacets || [];
+        var facet = (0, _utils.find)(facetsFromResults, function (facetResult) {
+          return facetResult.name === attribute;
+        });
+        var stats = facet && facet.stats || {
+          min: undefined,
+          max: undefined
+        };
+
+        var currentRange = _getCurrentRange(stats);
+
+        var start = _getCurrentRefinement(helper);
+
+        var refine;
+
+        if (!results) {
+          // On first render pass an empty range
+          // to be able to bypass the validation
+          // related to it
+          refine = _refine(instantSearchInstance, helper, {
+            min: undefined,
+            max: undefined
+          });
+        } else {
+          refine = _refine(instantSearchInstance, helper, currentRange);
+        }
+
+        return {
+          refine: refine,
+          format: rangeFormatter,
+          range: currentRange,
+          sendEvent: createSendEvent(instantSearchInstance, helper, currentRange),
+          widgetParams: _objectSpread({}, widgetParams, {
+            precision: precision
+          }),
+          start: start
+        };
+      },
+      dispose: function dispose(_ref14) {
+        var state = _ref14.state;
+        unmountFn();
+        return state.removeDisjunctiveFacet(attribute).removeNumericRefinement(attribute);
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref15) {
+        var searchParameters = _ref15.searchParameters;
+
+        var _searchParameters$get = searchParameters.getNumericRefinements(attribute),
+            _searchParameters$get2 = _searchParameters$get['>='],
+            min = _searchParameters$get2 === void 0 ? [] : _searchParameters$get2,
+            _searchParameters$get3 = _searchParameters$get['<='],
+            max = _searchParameters$get3 === void 0 ? [] : _searchParameters$get3;
+
+        if (min.length === 0 && max.length === 0) {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          range: _objectSpread({}, uiState.range, _defineProperty({}, attribute, "".concat(min, ":").concat(max)))
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref16) {
+        var uiState = _ref16.uiState;
+        var widgetSearchParameters = searchParameters.addDisjunctiveFacet(attribute).setQueryParameters({
+          numericRefinements: _objectSpread({}, searchParameters.numericRefinements, _defineProperty({}, attribute, {}))
+        });
+
+        if ((0, _utils.isFiniteNumber)(minBound)) {
+          widgetSearchParameters = widgetSearchParameters.addNumericRefinement(attribute, '>=', minBound);
+        }
+
+        if ((0, _utils.isFiniteNumber)(maxBound)) {
+          widgetSearchParameters = widgetSearchParameters.addNumericRefinement(attribute, '<=', maxBound);
+        }
+
+        var value = uiState.range && uiState.range[attribute];
+
+        if (!value || value.indexOf(':') === -1) {
+          return widgetSearchParameters;
+        }
+
+        var _value$split$map = value.split(':').map(parseFloat),
+            _value$split$map2 = _slicedToArray(_value$split$map, 2),
+            lowerBound = _value$split$map2[0],
+            upperBound = _value$split$map2[1];
+
+        if ((0, _utils.isFiniteNumber)(lowerBound)) {
+          widgetSearchParameters = widgetSearchParameters.addNumericRefinement(attribute, '>=', lowerBound);
+        }
+
+        if ((0, _utils.isFiniteNumber)(upperBound)) {
+          widgetSearchParameters = widgetSearchParameters.addNumericRefinement(attribute, '<=', upperBound);
+        }
+
+        return widgetSearchParameters;
+      }
+    };
+  };
+};
+
+var _default = connectRange;
+exports.default = _default;
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/range-input/range-input.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25500,7 +22495,218 @@ function rangeInput() {
     $$type: 'ais.rangeInput'
   });
 }
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/RangeInput/RangeInput":"node_modules/instantsearch.js/es/components/RangeInput/RangeInput.js","../../connectors/range/connectRange":"node_modules/instantsearch.js/es/connectors/range/connectRange.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/widgets/search-box/search-box.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/RangeInput/RangeInput":"node_modules/instantsearch.js/es/components/RangeInput/RangeInput.js","../../connectors/range/connectRange":"node_modules/instantsearch.js/es/connectors/range/connectRange.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/connectors/search-box/connectSearchBox.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = connectSearchBox;
+
+var _utils = require("../../lib/utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'search-box',
+  connector: true
+});
+/**
+ * @typedef {Object} CustomSearchBoxWidgetOptions
+ * @property {function(string, function(string))} [queryHook = undefined] A function that will be called every time
+ * a new value for the query is set. The first parameter is the query and the second is a
+ * function to actually trigger the search. The function takes the query as the parameter.
+ *
+ * This queryHook can be used to debounce the number of searches done from the searchBox.
+ */
+
+/**
+ * @typedef {Object} SearchBoxRenderingOptions
+ * @property {string} query The query from the last search.
+ * @property {function(string)} refine Sets a new query and searches.
+ * @property {function()} clear Remove the query and perform search.
+ * @property {Object} widgetParams All original `CustomSearchBoxWidgetOptions` forwarded to the `renderFn`.
+ * @property {boolean} isSearchStalled `true` if the search results takes more than a certain time to come back
+ * from Algolia servers. This can be configured on the InstantSearch constructor with the attribute
+ * `stalledSearchDelay` which is 200ms, by default.
+ */
+
+/**
+ * **SearchBox** connector provides the logic to build a widget that will let the user search for a query.
+ *
+ * The connector provides to the rendering: `refine()` to set the query. The behaviour of this function
+ * may be impacted by the `queryHook` widget parameter.
+ * @type {Connector}
+ * @param {function(SearchBoxRenderingOptions, boolean)} renderFn Rendering function for the custom **SearchBox** widget.
+ * @param {function} unmountFn Unmount function called when the widget is disposed.
+ * @return {function(CustomSearchBoxWidgetOptions)} Re-usable widget factory for a custom **SearchBox** widget.
+ * @example
+ * // custom `renderFn` to render the custom SearchBox widget
+ * function renderFn(SearchBoxRenderingOptions, isFirstRendering) {
+ *   if (isFirstRendering) {
+ *     SearchBoxRenderingOptions.widgetParams.containerNode.html('<input type="text" />');
+ *     SearchBoxRenderingOptions.widgetParams.containerNode
+ *       .find('input')
+ *       .on('keyup', function() {
+ *         SearchBoxRenderingOptions.refine($(this).val());
+ *       });
+ *     SearchBoxRenderingOptions.widgetParams.containerNode
+ *       .find('input')
+ *       .val(SearchBoxRenderingOptions.query);
+ *   }
+ * }
+ *
+ * // connect `renderFn` to SearchBox logic
+ * var customSearchBox = instantsearch.connectors.connectSearchBox(renderFn);
+ *
+ * // mount widget on the page
+ * search.addWidgets([
+ *   customSearchBox({
+ *     containerNode: $('#custom-searchbox'),
+ *   })
+ * ]);
+ */
+
+function connectSearchBox(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function () {
+    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var queryHook = widgetParams.queryHook;
+
+    function clear(helper) {
+      return function () {
+        helper.setQuery('').search();
+      };
+    }
+
+    var _clear = function _clear() {};
+
+    function _cachedClear() {
+      _clear();
+    }
+
+    return {
+      $$type: 'ais.searchBox',
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      dispose: function dispose(_ref) {
+        var state = _ref.state;
+        unmountFn();
+        return state.setQueryParameter('query', undefined);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          searchBox: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref2) {
+        var helper = _ref2.helper,
+            searchMetadata = _ref2.searchMetadata;
+
+        if (!this._refine) {
+          var setQueryAndSearch = function setQueryAndSearch(query) {
+            if (query !== helper.state.query) {
+              helper.setQuery(query).search();
+            }
+          };
+
+          this._refine = function (query) {
+            if (queryHook) {
+              queryHook(query, setQueryAndSearch);
+              return;
+            }
+
+            setQueryAndSearch(query);
+          };
+        }
+
+        _clear = clear(helper);
+        return {
+          query: helper.state.query || '',
+          refine: this._refine,
+          clear: _cachedClear,
+          widgetParams: widgetParams,
+          isSearchStalled: searchMetadata.isSearchStalled
+        };
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref3) {
+        var searchParameters = _ref3.searchParameters;
+        var query = searchParameters.query || '';
+
+        if (query === '' || uiState && uiState.query === query) {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          query: query
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref4) {
+        var uiState = _ref4.uiState;
+        return searchParameters.setQueryParameter('query', uiState.query || '');
+      }
+    };
+  };
+}
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/search-box/search-box.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27208,7 +24414,236 @@ function rangeSlider() {
     $$type: 'ais.rangeSlider'
   });
 }
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/Slider/Slider":"node_modules/instantsearch.js/es/components/Slider/Slider.js","../../connectors/range/connectRange":"node_modules/instantsearch.js/es/connectors/range/connectRange.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/widgets/sort-by/sort-by.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/Slider/Slider":"node_modules/instantsearch.js/es/components/Slider/Slider.js","../../connectors/range/connectRange":"node_modules/instantsearch.js/es/connectors/range/connectRange.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/connectors/sort-by/connectSortBy.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = connectSortBy;
+
+var _utils = require("../../lib/utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'sort-by',
+  connector: true
+});
+/**
+ * @typedef {Object} SortByItem
+ * @property {string} value The name of the index to target.
+ * @property {string} label The label of the index to display.
+ */
+
+/**
+ * @typedef {Object} CustomSortByWidgetOptions
+ * @property {SortByItem[]} items Array of objects defining the different indices to choose from.
+ * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
+ */
+
+/**
+ * @typedef {Object} SortByRenderingOptions
+ * @property {string} currentRefinement The currently selected index.
+ * @property {SortByItem[]} options All the available indices
+ * @property {function(string)} refine Switches indices and triggers a new search.
+ * @property {boolean} hasNoResults `true` if the last search contains no result.
+ * @property {Object} widgetParams All original `CustomSortByWidgetOptions` forwarded to the `renderFn`.
+ */
+
+/**
+ * The **SortBy** connector provides the logic to build a custom widget that will display a
+ * list of indices. With Algolia, this is most commonly used for changing ranking strategy. This allows
+ * a user to change how the hits are being sorted.
+ *
+ * This connector provides the `refine` function that allows to switch indices.
+ * The connector provides to the rendering: `refine()` to switch the current index and
+ * `options` that are the values that can be selected. `refine` should be used
+ * with `options.value`.
+ * @type {Connector}
+ * @param {function(SortByRenderingOptions, boolean)} renderFn Rendering function for the custom **SortBy** widget.
+ * @param {function} unmountFn Unmount function called when the widget is disposed.
+ * @return {function(CustomSortByWidgetOptions)} Re-usable widget factory for a custom **SortBy** widget.
+ * @example
+ * // custom `renderFn` to render the custom SortBy widget
+ * function renderFn(SortByRenderingOptions, isFirstRendering) {
+ *   if (isFirstRendering) {
+ *     SortByRenderingOptions.widgetParams.containerNode.html('<select></select>');
+ *     SortByRenderingOptions.widgetParams.containerNode
+ *       .find('select')
+ *       .on('change', function(event) {
+ *         SortByRenderingOptions.refine(event.target.value);
+ *       });
+ *   }
+ *
+ *   var optionsHTML = SortByRenderingOptions.options.map(function(option) {
+ *     return `
+ *       <option
+ *         value="${option.value}"
+ *         ${SortByRenderingOptions.currentRefinement === option.value ? 'selected' : ''}
+ *       >
+ *         ${option.label}
+ *       </option>
+ *     `;
+ *   });
+ *
+ *   SortByRenderingOptions.widgetParams.containerNode
+ *     .find('select')
+ *     .html(optionsHTML);
+ * }
+ *
+ * // connect `renderFn` to SortBy logic
+ * var customSortBy = instantsearch.connectors.connectSortBy(renderFn);
+ *
+ * // mount widget on the page
+ * search.addWidgets([
+ *   customSortBy({
+ *     containerNode: $('#custom-sort-by-container'),
+ *     items: [
+ *       { value: 'instant_search', label: 'Most relevant' },
+ *       { value: 'instant_search_price_asc', label: 'Lowest price' },
+ *       { value: 'instant_search_price_desc', label: 'Highest price' },
+ *     ],
+ *   })
+ * ]);
+ */
+
+function connectSortBy(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function () {
+    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var items = widgetParams.items,
+        _widgetParams$transfo = widgetParams.transformItems,
+        transformItems = _widgetParams$transfo === void 0 ? function (x) {
+      return x;
+    } : _widgetParams$transfo;
+
+    if (!Array.isArray(items)) {
+      throw new Error(withUsage('The `items` option expects an array of objects.'));
+    }
+
+    return {
+      $$type: 'ais.sortBy',
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        var widgetRenderState = this.getWidgetRenderState(initOptions);
+        var currentIndex = widgetRenderState.currentRefinement;
+        var isCurrentIndexInItems = (0, _utils.find)(items, function (item) {
+          return item.value === currentIndex;
+        });
+        "development" === 'development' ? (0, _utils.warning)(isCurrentIndexInItems, "The index named \"".concat(currentIndex, "\" is not listed in the `items` of `sortBy`.")) : void 0;
+        renderFn(_objectSpread({}, widgetRenderState, {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      dispose: function dispose(_ref) {
+        var state = _ref.state;
+        unmountFn();
+        return state.setIndex(this.initialIndex);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          sortBy: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref2) {
+        var results = _ref2.results,
+            helper = _ref2.helper,
+            parent = _ref2.parent;
+
+        if (!this.initialIndex) {
+          this.initialIndex = parent.getIndexName();
+        }
+
+        if (!this.setIndex) {
+          this.setIndex = function (indexName) {
+            helper.setIndex(indexName).search();
+          };
+        }
+
+        return {
+          currentRefinement: helper.state.index,
+          options: transformItems(items),
+          refine: this.setIndex,
+          hasNoResults: results ? results.nbHits === 0 : true,
+          widgetParams: widgetParams
+        };
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref3) {
+        var searchParameters = _ref3.searchParameters;
+        var currentIndex = searchParameters.index;
+        var isInitialIndex = currentIndex === this.initialIndex;
+
+        if (isInitialIndex) {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          sortBy: currentIndex
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref4) {
+        var uiState = _ref4.uiState;
+        return searchParameters.setQueryParameter('index', uiState.sortBy || this.initialIndex || searchParameters.index);
+      }
+    };
+  };
+}
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/sort-by/sort-by.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27337,7 +24772,408 @@ function sortBy() {
     transformItems: transformItems
   });
 }
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/Selector/Selector":"node_modules/instantsearch.js/es/components/Selector/Selector.js","../../connectors/sort-by/connectSortBy":"node_modules/instantsearch.js/es/connectors/sort-by/connectSortBy.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/widgets/rating-menu/defaultTemplates.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../components/Selector/Selector":"node_modules/instantsearch.js/es/components/Selector/Selector.js","../../connectors/sort-by/connectSortBy":"node_modules/instantsearch.js/es/connectors/sort-by/connectSortBy.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/connectors/rating-menu/connectRatingMenu.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = connectRatingMenu;
+
+var _utils = require("../../lib/utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'rating-menu',
+  connector: true
+});
+var $$type = 'ais.ratingMenu';
+
+var createSendEvent = function createSendEvent(_ref) {
+  var instantSearchInstance = _ref.instantSearchInstance,
+      helper = _ref.helper,
+      getRefinedStar = _ref.getRefinedStar,
+      attribute = _ref.attribute;
+  return function () {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    if (args.length === 1) {
+      instantSearchInstance.sendEventToInsights(args[0]);
+      return;
+    }
+
+    var eventType = args[0],
+        facetValue = args[1],
+        _args$ = args[2],
+        eventName = _args$ === void 0 ? 'Filter Applied' : _args$;
+
+    if (eventType !== 'click') {
+      return;
+    }
+
+    var isRefined = getRefinedStar() === Number(facetValue);
+
+    if (!isRefined) {
+      instantSearchInstance.sendEventToInsights({
+        insightsMethod: 'clickedFilters',
+        widgetType: $$type,
+        eventType: eventType,
+        payload: {
+          eventName: eventName,
+          index: helper.getIndex(),
+          filters: ["".concat(attribute, ">=").concat(facetValue)]
+        }
+      });
+    }
+  };
+};
+/**
+ * @typedef {Object} StarRatingItems
+ * @property {string} name Name corresponding to the number of stars.
+ * @property {string} value Number of stars as string.
+ * @property {number} count Count of matched results corresponding to the number of stars.
+ * @property {boolean[]} stars Array of length of maximum rating value with stars to display or not.
+ * @property {boolean} isRefined Indicates if star rating refinement is applied.
+ */
+
+/**
+ * @typedef {Object} CustomStarRatingWidgetOptions
+ * @property {string} attribute Name of the attribute for faceting (eg. "free_shipping").
+ * @property {number} [max = 5] The maximum rating value.
+ */
+
+/**
+ * @typedef {Object} StarRatingRenderingOptions
+ * @property {StarRatingItems[]} items Possible star ratings the user can apply.
+ * @property {function(string): string} createURL Creates an URL for the next
+ * state (takes the item value as parameter). Takes the value of an item as parameter.
+ * @property {function(string)} refine Selects a rating to filter the results
+ * (takes the filter value as parameter). Takes the value of an item as parameter.
+ * @property {boolean} hasNoResults `true` if the last search contains no result.
+ * @property {Object} widgetParams All original `CustomStarRatingWidgetOptions` forwarded to the `renderFn`.
+ */
+
+/**
+ * **StarRating** connector provides the logic to build a custom widget that will let
+ * the user refine search results based on ratings.
+ *
+ * The connector provides to the rendering: `refine()` to select a value and
+ * `items` that are the values that can be selected. `refine` should be used
+ * with `items.value`.
+ * @type {Connector}
+ * @param {function(StarRatingRenderingOptions, boolean)} renderFn Rendering function for the custom **StarRating** widget.
+ * @param {function} unmountFn Unmount function called when the widget is disposed.
+ * @return {function(CustomStarRatingWidgetOptions)} Re-usable widget factory for a custom **StarRating** widget.
+ * @example
+ * // custom `renderFn` to render the custom StarRating widget
+ * function renderFn(StarRatingRenderingOptions, isFirstRendering) {
+ *   if (isFirstRendering) {
+ *     StarRatingRenderingOptions.widgetParams.containerNode.html('<ul></ul>');
+ *   }
+ *
+ *   StarRatingRenderingOptions.widgetParams.containerNode
+ *     .find('li[data-refine-value]')
+ *     .each(function() { $(this).off('click'); });
+ *
+ *   var listHTML = StarRatingRenderingOptions.items.map(function(item) {
+ *     return '<li data-refine-value="' + item.value + '">' +
+ *       '<a href="' + StarRatingRenderingOptions.createURL(item.value) + '">' +
+ *       item.stars.map(function(star) { return star === false ? '☆' : '★'; }).join(' ') +
+ *       '& up (' + item.count + ')' +
+ *       '</a></li>';
+ *   });
+ *
+ *   StarRatingRenderingOptions.widgetParams.containerNode
+ *     .find('ul')
+ *     .html(listHTML);
+ *
+ *   StarRatingRenderingOptions.widgetParams.containerNode
+ *     .find('li[data-refine-value]')
+ *     .each(function() {
+ *       $(this).on('click', function(event) {
+ *         event.preventDefault();
+ *         event.stopPropagation();
+ *
+ *         StarRatingRenderingOptions.refine($(this).data('refine-value'));
+ *       });
+ *     });
+ * }
+ *
+ * // connect `renderFn` to StarRating logic
+ * var customStarRating = instantsearch.connectors.connectRatingMenu(renderFn);
+ *
+ * // mount widget on the page
+ * search.addWidgets([
+ *   customStarRating({
+ *     containerNode: $('#custom-rating-menu-container'),
+ *     attribute: 'rating',
+ *     max: 5,
+ *   })
+ * ]);
+ */
+
+
+function connectRatingMenu(renderFn) {
+  var _this = this;
+
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function () {
+    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var attribute = widgetParams.attribute,
+        _widgetParams$max = widgetParams.max,
+        max = _widgetParams$max === void 0 ? 5 : _widgetParams$max;
+    var sendEvent;
+
+    if (!attribute) {
+      throw new Error(withUsage('The `attribute` option is required.'));
+    }
+
+    var _getRefinedStar = function getRefinedStar(state) {
+      var refinements = state.getDisjunctiveRefinements(attribute);
+
+      if (!refinements.length) {
+        return undefined;
+      }
+
+      return Math.min.apply(Math, _toConsumableArray(refinements.map(Number)));
+    };
+
+    var toggleRefinement = function toggleRefinement(helper, facetValue) {
+      sendEvent('click', facetValue);
+      var isRefined = _getRefinedStar(helper.state) === Number(facetValue);
+      helper.removeDisjunctiveFacetRefinement(attribute);
+
+      if (!isRefined) {
+        for (var val = Number(facetValue); val <= max; ++val) {
+          helper.addDisjunctiveFacetRefinement(attribute, val);
+        }
+      }
+
+      helper.search();
+    };
+
+    var connectorState = {
+      toggleRefinementFactory: function toggleRefinementFactory(helper) {
+        return toggleRefinement.bind(_this, helper);
+      },
+      createURLFactory: function createURLFactory(_ref2) {
+        var state = _ref2.state,
+            createURL = _ref2.createURL;
+        return function (value) {
+          return createURL(state.toggleRefinement(attribute, value));
+        };
+      }
+    };
+    return {
+      $$type: $$type,
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          ratingMenu: _objectSpread({}, renderState.ratingMenu, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref3) {
+        var helper = _ref3.helper,
+            results = _ref3.results,
+            state = _ref3.state,
+            instantSearchInstance = _ref3.instantSearchInstance,
+            createURL = _ref3.createURL;
+        var facetValues = [];
+
+        if (!sendEvent) {
+          sendEvent = createSendEvent({
+            instantSearchInstance: instantSearchInstance,
+            helper: helper,
+            getRefinedStar: function getRefinedStar() {
+              return _getRefinedStar(helper.state);
+            },
+            attribute: attribute
+          });
+        }
+
+        if (results) {
+          var allValues = {};
+
+          for (var v = max; v >= 0; --v) {
+            allValues[v] = 0;
+          }
+
+          (results.getFacetValues(attribute) || []).forEach(function (facet) {
+            var val = Math.round(facet.name);
+
+            if (!val || val > max) {
+              return;
+            }
+
+            for (var _v = val; _v >= 1; --_v) {
+              allValues[_v] += facet.count;
+            }
+          });
+
+          var refinedStar = _getRefinedStar(state);
+
+          for (var star = max - 1; star >= 1; --star) {
+            var count = allValues[star];
+
+            if (refinedStar && star !== refinedStar && count === 0) {
+              // skip count==0 when at least 1 refinement is enabled
+              // eslint-disable-next-line no-continue
+              continue;
+            }
+
+            var stars = [];
+
+            for (var i = 1; i <= max; ++i) {
+              stars.push(i <= star);
+            }
+
+            facetValues.push({
+              stars: stars,
+              name: String(star),
+              value: String(star),
+              count: count,
+              isRefined: refinedStar === star
+            });
+          }
+        }
+
+        return {
+          items: facetValues,
+          hasNoResults: results ? results.nbHits === 0 : true,
+          refine: connectorState.toggleRefinementFactory(helper),
+          sendEvent: sendEvent,
+          createURL: connectorState.createURLFactory({
+            state: state,
+            createURL: createURL
+          }),
+          widgetParams: widgetParams
+        };
+      },
+      dispose: function dispose(_ref4) {
+        var state = _ref4.state;
+        unmountFn();
+        return state.removeDisjunctiveFacet(attribute);
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref5) {
+        var searchParameters = _ref5.searchParameters;
+
+        var value = _getRefinedStar(searchParameters);
+
+        if (typeof value !== 'number') {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          ratingMenu: _objectSpread({}, uiState.ratingMenu, _defineProperty({}, attribute, value))
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
+        var uiState = _ref6.uiState;
+        var value = uiState.ratingMenu && uiState.ratingMenu[attribute];
+        var withoutRefinements = searchParameters.clearRefinements(attribute);
+        var withDisjunctiveFacet = withoutRefinements.addDisjunctiveFacet(attribute);
+
+        if (!value) {
+          return withDisjunctiveFacet.setQueryParameters({
+            disjunctiveFacetsRefinements: _objectSpread({}, withDisjunctiveFacet.disjunctiveFacetsRefinements, _defineProperty({}, attribute, []))
+          });
+        }
+
+        return (0, _utils.range)({
+          start: Number(value),
+          end: max + 1
+        }).reduce(function (parameters, number) {
+          return parameters.addDisjunctiveFacetRefinement(attribute, number);
+        }, withDisjunctiveFacet);
+      }
+    };
+  };
+}
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/rating-menu/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27624,7 +25460,169 @@ var Stats = function Stats(_ref) {
 
 var _default = Stats;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js"}],"node_modules/instantsearch.js/es/widgets/stats/defaultTemplates.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js"}],"node_modules/instantsearch.js/es/connectors/stats/connectStats.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = connectStats;
+
+var _utils = require("../../lib/utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'stats',
+  connector: true
+});
+/**
+ * @typedef {Object} StatsRenderingOptions
+ * @property {number} hitsPerPage The maximum number of hits per page returned by Algolia.
+ * @property {number} nbHits The number of hits in the result set.
+ * @property {number} nbPages The number of pages computed for the result set.
+ * @property {number} page The current page.
+ * @property {number} processingTimeMS The time taken to compute the results inside the Algolia engine.
+ * @property {string} query The query used for the current search.
+ * @property {object} widgetParams All original `CustomStatsWidgetOptions` forwarded to the `renderFn`.
+ */
+
+/**
+ * @typedef {Object} CustomStatsWidgetOptions
+ */
+
+/**
+ * **Stats** connector provides the logic to build a custom widget that will displays
+ * search statistics (hits number and processing time).
+ *
+ * @type {Connector}
+ * @param {function(StatsRenderingOptions, boolean)} renderFn Rendering function for the custom **Stats** widget.
+ * @param {function} unmountFn Unmount function called when the widget is disposed.
+ * @return {function(CustomStatsWidgetOptions)} Re-usable widget factory for a custom **Stats** widget.
+ * @example
+ * // custom `renderFn` to render the custom Stats widget
+ * function renderFn(StatsRenderingOptions, isFirstRendering) {
+ *   if (isFirstRendering) return;
+ *
+ *   StatsRenderingOptions.widgetParams.containerNode
+ *     .html(StatsRenderingOptions.nbHits + ' results found in ' + StatsRenderingOptions.processingTimeMS);
+ * }
+ *
+ * // connect `renderFn` to Stats logic
+ * var customStatsWidget = instantsearch.connectors.connectStats(renderFn);
+ *
+ * // mount widget on the page
+ * search.addWidgets([
+ *   customStatsWidget({
+ *     containerNode: $('#custom-stats-container'),
+ *   })
+ * ]);
+ */
+
+function connectStats(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function () {
+    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    return {
+      $$type: 'ais.stats',
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      dispose: function dispose() {
+        unmountFn();
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          stats: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref) {
+        var results = _ref.results,
+            helper = _ref.helper;
+
+        if (!results) {
+          return {
+            hitsPerPage: helper.state.hitsPerPage,
+            nbHits: 0,
+            nbPages: 0,
+            page: helper.state.page || 0,
+            processingTimeMS: -1,
+            query: helper.state.query || '',
+            widgetParams: widgetParams
+          };
+        }
+
+        return {
+          hitsPerPage: results.hitsPerPage,
+          nbHits: results.nbHits,
+          nbPages: results.nbPages,
+          page: results.page,
+          processingTimeMS: results.processingTimeMS,
+          query: results.query,
+          widgetParams: widgetParams
+        };
+      }
+    };
+  };
+}
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/stats/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27843,7 +25841,438 @@ var ToggleRefinement = function ToggleRefinement(_ref) {
 
 var _default = ToggleRefinement;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js"}],"node_modules/instantsearch.js/es/widgets/toggle-refinement/defaultTemplates.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js"}],"node_modules/instantsearch.js/es/connectors/toggle-refinement/connectToggleRefinement.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = connectToggleRefinement;
+
+var _utils = require("../../lib/utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'toggle-refinement',
+  connector: true
+});
+var $$type = 'ais.toggleRefinement';
+
+var createSendEvent = function createSendEvent(_ref) {
+  var instantSearchInstance = _ref.instantSearchInstance,
+      attribute = _ref.attribute,
+      on = _ref.on,
+      helper = _ref.helper;
+  return function () {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    if (args.length === 1) {
+      instantSearchInstance.sendEventToInsights(args[0]);
+      return;
+    }
+
+    var eventType = args[0],
+        isRefined = args[1],
+        _args$ = args[2],
+        eventName = _args$ === void 0 ? 'Filter Applied' : _args$;
+
+    if (eventType !== 'click' || on === undefined) {
+      return;
+    } // Checking
+
+
+    if (!isRefined) {
+      instantSearchInstance.sendEventToInsights({
+        insightsMethod: 'clickedFilters',
+        widgetType: $$type,
+        eventType: eventType,
+        payload: {
+          eventName: eventName,
+          index: helper.getIndex(),
+          filters: on.map(function (value) {
+            return "".concat(attribute, ":").concat(JSON.stringify(value));
+          })
+        }
+      });
+    }
+  };
+};
+/**
+ * @typedef {Object} ToggleValue
+ * @property {boolean} isRefined `true` if the toggle is on.
+ * @property {number} count Number of results matched after applying the toggle refinement.
+ * @property {Object} onFacetValue Value of the toggle when it's on.
+ * @property {Object} offFacetValue Value of the toggle when it's off.
+ */
+
+/**
+ * @typedef {Object} CustomToggleWidgetOptions
+ * @property {string} attribute Name of the attribute for faceting (eg. "free_shipping").
+ * @property {Object} [on = true] Value to filter on when toggled.
+ * @property {Object} [off] Value to filter on when not toggled.
+ */
+
+/**
+ * @typedef {Object} ToggleRenderingOptions
+ * @property {ToggleValue} value The current toggle value.
+ * @property {function():string} createURL Creates an URL for the next state.
+ * @property {function(value)} refine Updates to the next state by applying the toggle refinement.
+ * @property {Object} widgetParams All original `CustomToggleWidgetOptions` forwarded to the `renderFn`.
+ */
+
+/**
+ * **Toggle** connector provides the logic to build a custom widget that will provide
+ * an on/off filtering feature based on an attribute value or values.
+ *
+ * Two modes are implemented in the custom widget:
+ *  - with or without the value filtered
+ *  - switch between two values.
+ *
+ * @type {Connector}
+ * @param {function(ToggleRenderingOptions, boolean)} renderFn Rendering function for the custom **Toggle** widget.
+ * @param {function} unmountFn Unmount function called when the widget is disposed.
+ * @return {function(CustomToggleWidgetOptions)} Re-usable widget factory for a custom **Toggle** widget.
+ * @example
+ * // custom `renderFn` to render the custom ClearAll widget
+ * function renderFn(ToggleRenderingOptions, isFirstRendering) {
+ *   ToggleRenderingOptions.widgetParams.containerNode
+ *     .find('a')
+ *     .off('click');
+ *
+ *   var buttonHTML = `
+ *     <a href="${ToggleRenderingOptions.createURL()}">
+ *       <input
+ *         type="checkbox"
+ *         value="${ToggleRenderingOptions.value.name}"
+ *         ${ToggleRenderingOptions.value.isRefined ? 'checked' : ''}
+ *       />
+ *       ${ToggleRenderingOptions.value.name} (${ToggleRenderingOptions.value.count})
+ *     </a>
+ *   `;
+ *
+ *   ToggleRenderingOptions.widgetParams.containerNode.html(buttonHTML);
+ *   ToggleRenderingOptions.widgetParams.containerNode
+ *     .find('a')
+ *     .on('click', function(event) {
+ *       event.preventDefault();
+ *       event.stopPropagation();
+ *
+ *       ToggleRenderingOptions.refine(ToggleRenderingOptions.value);
+ *     });
+ * }
+ *
+ * // connect `renderFn` to Toggle logic
+ * var customToggle = instantsearch.connectors.connectToggleRefinement(renderFn);
+ *
+ * // mount widget on the page
+ * search.addWidgets([
+ *   customToggle({
+ *     containerNode: $('#custom-toggle-container'),
+ *     attribute: 'free_shipping',
+ *   })
+ * ]);
+ */
+
+
+function connectToggleRefinement(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function () {
+    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var attribute = widgetParams.attribute,
+        _widgetParams$on = widgetParams.on,
+        userOn = _widgetParams$on === void 0 ? true : _widgetParams$on,
+        userOff = widgetParams.off;
+
+    if (!attribute) {
+      throw new Error(withUsage('The `attribute` option is required.'));
+    }
+
+    var hasAnOffValue = userOff !== undefined;
+    var hasAnOnValue = userOn !== undefined;
+    var on = hasAnOnValue ? (0, _utils.toArray)(userOn).map(_utils.escapeRefinement) : undefined;
+    var off = hasAnOffValue ? (0, _utils.toArray)(userOff).map(_utils.escapeRefinement) : undefined;
+    var sendEvent;
+
+    var toggleRefinementFactory = function toggleRefinementFactory(helper) {
+      return function () {
+        var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+            isRefined = _ref2.isRefined; // Checking
+
+
+        if (!isRefined) {
+          sendEvent('click', isRefined);
+
+          if (hasAnOffValue) {
+            off.forEach(function (v) {
+              return helper.removeDisjunctiveFacetRefinement(attribute, v);
+            });
+          }
+
+          on.forEach(function (v) {
+            return helper.addDisjunctiveFacetRefinement(attribute, v);
+          });
+        } else {
+          // Unchecking
+          on.forEach(function (v) {
+            return helper.removeDisjunctiveFacetRefinement(attribute, v);
+          });
+
+          if (hasAnOffValue) {
+            off.forEach(function (v) {
+              return helper.addDisjunctiveFacetRefinement(attribute, v);
+            });
+          }
+        }
+
+        helper.search();
+      };
+    };
+
+    var connectorState = {
+      createURLFactory: function createURLFactory(isRefined, _ref3) {
+        var state = _ref3.state,
+            createURL = _ref3.createURL;
+        return function () {
+          var valuesToRemove = isRefined ? on : off;
+
+          if (valuesToRemove) {
+            valuesToRemove.forEach(function (v) {
+              state.removeDisjunctiveFacetRefinement(attribute, v);
+            });
+          }
+
+          var valuesToAdd = isRefined ? off : on;
+
+          if (valuesToAdd) {
+            valuesToAdd.forEach(function (v) {
+              state.addDisjunctiveFacetRefinement(attribute, v);
+            });
+          }
+
+          return createURL(state);
+        };
+      }
+    };
+    return {
+      $$type: $$type,
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      dispose: function dispose(_ref4) {
+        var state = _ref4.state;
+        unmountFn();
+        return state.removeDisjunctiveFacet(attribute);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          toggleRefinement: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref5) {
+        var state = _ref5.state,
+            helper = _ref5.helper,
+            results = _ref5.results,
+            createURL = _ref5.createURL,
+            instantSearchInstance = _ref5.instantSearchInstance;
+        var isRefined = results ? on === null || on === void 0 ? void 0 : on.every(function (v) {
+          return helper.state.isDisjunctiveFacetRefined(attribute, v);
+        }) : on === null || on === void 0 ? void 0 : on.every(function (v) {
+          return state.isDisjunctiveFacetRefined(attribute, v);
+        });
+        var onFacetValue = {
+          isRefined: isRefined,
+          count: 0
+        };
+        var offFacetValue = {
+          isRefined: hasAnOffValue && !isRefined,
+          count: 0
+        };
+
+        if (results) {
+          var offValue = (0, _utils.toArray)(off || false);
+          var allFacetValues = results.getFacetValues(attribute) || [];
+          var onData = on === null || on === void 0 ? void 0 : on.map(function (v) {
+            return (0, _utils.find)(allFacetValues, function (_ref6) {
+              var name = _ref6.name;
+              return name === (0, _utils.unescapeRefinement)(v);
+            });
+          }).filter(function (v) {
+            return v !== undefined;
+          });
+          var offData = hasAnOffValue ? offValue.map(function (v) {
+            return (0, _utils.find)(allFacetValues, function (_ref7) {
+              var name = _ref7.name;
+              return name === (0, _utils.unescapeRefinement)(v);
+            });
+          }).filter(function (v) {
+            return v !== undefined;
+          }) : [];
+          onFacetValue = {
+            isRefined: onData.length ? onData.every(function (v) {
+              return v.isRefined;
+            }) : false,
+            count: onData.reduce(function (acc, v) {
+              return acc + v.count;
+            }, 0) || null
+          };
+          offFacetValue = {
+            isRefined: offData.length ? offData.every(function (v) {
+              return v.isRefined;
+            }) : false,
+            count: offData.reduce(function (acc, v) {
+              return acc + v.count;
+            }, 0) || allFacetValues.reduce(function (total, _ref8) {
+              var count = _ref8.count;
+              return total + count;
+            }, 0)
+          };
+        } else if (hasAnOffValue && !isRefined) {
+          if (off) {
+            off.forEach(function (v) {
+              return helper.addDisjunctiveFacetRefinement(attribute, v);
+            });
+          }
+
+          helper.setPage(helper.state.page);
+        }
+
+        if (!sendEvent) {
+          sendEvent = createSendEvent({
+            instantSearchInstance: instantSearchInstance,
+            attribute: attribute,
+            on: on,
+            helper: helper
+          });
+        }
+
+        var nextRefinement = isRefined ? offFacetValue : onFacetValue;
+        return {
+          value: {
+            name: attribute,
+            isRefined: isRefined,
+            count: results ? nextRefinement.count : null,
+            onFacetValue: onFacetValue,
+            offFacetValue: offFacetValue
+          },
+          state: state,
+          createURL: connectorState.createURLFactory(isRefined, {
+            state: state,
+            createURL: createURL
+          }),
+          sendEvent: sendEvent,
+          refine: toggleRefinementFactory(helper),
+          widgetParams: widgetParams
+        };
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref9) {
+        var searchParameters = _ref9.searchParameters;
+        var isRefined = on && on.every(function (v) {
+          return searchParameters.isDisjunctiveFacetRefined(attribute, v);
+        });
+
+        if (!isRefined) {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          toggle: _objectSpread({}, uiState.toggle, _defineProperty({}, attribute, isRefined))
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref10) {
+        var uiState = _ref10.uiState;
+        var withFacetConfiguration = searchParameters.clearRefinements(attribute).addDisjunctiveFacet(attribute);
+        var isRefined = Boolean(uiState.toggle && uiState.toggle[attribute]);
+
+        if (isRefined) {
+          if (on) {
+            on.forEach(function (v) {
+              withFacetConfiguration = withFacetConfiguration.addDisjunctiveFacetRefinement(attribute, v);
+            });
+          }
+
+          return withFacetConfiguration;
+        } // It's not refined with an `off` value
+
+
+        if (hasAnOffValue) {
+          if (off) {
+            off.forEach(function (v) {
+              withFacetConfiguration = withFacetConfiguration.addDisjunctiveFacetRefinement(attribute, v);
+            });
+          }
+
+          return withFacetConfiguration;
+        } // It's not refined without an `off` value
+
+
+        return withFacetConfiguration.setQueryParameters({
+          disjunctiveFacetsRefinements: _objectSpread({}, searchParameters.disjunctiveFacetsRefinements, _defineProperty({}, attribute, []))
+        });
+      }
+    };
+  };
+}
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/toggle-refinement/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28348,7 +26777,260 @@ var Breadcrumb = function Breadcrumb(_ref) {
 
 var _default = Breadcrumb;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js"}],"node_modules/instantsearch.js/es/widgets/breadcrumb/defaultTemplates.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../Template/Template":"node_modules/instantsearch.js/es/components/Template/Template.js"}],"node_modules/instantsearch.js/es/connectors/breadcrumb/connectBreadcrumb.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../lib/utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+}
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+}
+
+function _iterableToArrayLimit(arr, i) {
+  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
+    return;
+  }
+
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'breadcrumb',
+  connector: true
+});
+
+var connectBreadcrumb = function connectBreadcrumb(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  var connectorState = {};
+  return function (widgetParams) {
+    var _ref = widgetParams || {},
+        attributes = _ref.attributes,
+        _ref$separator = _ref.separator,
+        separator = _ref$separator === void 0 ? ' > ' : _ref$separator,
+        _ref$rootPath = _ref.rootPath,
+        rootPath = _ref$rootPath === void 0 ? null : _ref$rootPath,
+        _ref$transformItems = _ref.transformItems,
+        transformItems = _ref$transformItems === void 0 ? function (items) {
+      return items;
+    } : _ref$transformItems;
+
+    if (!attributes || !Array.isArray(attributes) || attributes.length === 0) {
+      throw new Error(withUsage('The `attributes` option expects an array of strings.'));
+    }
+
+    var _attributes = _slicedToArray(attributes, 1),
+        hierarchicalFacetName = _attributes[0];
+
+    return {
+      $$type: 'ais.breadcrumb',
+      init: function init(initOptions) {
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: initOptions.instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: renderOptions.instantSearchInstance
+        }), false);
+      },
+      dispose: function dispose() {
+        unmountFn();
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          breadcrumb: _objectSpread({}, renderState.breadcrumb, _defineProperty({}, hierarchicalFacetName, this.getWidgetRenderState(renderOptions)))
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref2) {
+        var helper = _ref2.helper,
+            createURL = _ref2.createURL,
+            results = _ref2.results,
+            state = _ref2.state;
+
+        function getItems() {
+          if (!results) {
+            return [];
+          }
+
+          var _state$hierarchicalFa = _slicedToArray(state.hierarchicalFacets, 1),
+              facetName = _state$hierarchicalFa[0].name;
+
+          var facetValues = results.getFacetValues(facetName, {});
+          var data = Array.isArray(facetValues.data) ? facetValues.data : [];
+          var items = transformItems(shiftItemsValues(prepareItems(data)));
+          return items;
+        }
+
+        var items = getItems();
+
+        if (!connectorState.createURL) {
+          connectorState.createURL = function (facetValue) {
+            if (!facetValue) {
+              var breadcrumb = helper.getHierarchicalFacetBreadcrumb(hierarchicalFacetName);
+
+              if (breadcrumb.length > 0) {
+                return createURL(helper.state.toggleFacetRefinement(hierarchicalFacetName, breadcrumb[0]));
+              }
+            }
+
+            return createURL(helper.state.toggleFacetRefinement(hierarchicalFacetName, facetValue));
+          };
+        }
+
+        if (!connectorState.refine) {
+          connectorState.refine = function (facetValue) {
+            if (!facetValue) {
+              var breadcrumb = helper.getHierarchicalFacetBreadcrumb(hierarchicalFacetName);
+
+              if (breadcrumb.length > 0) {
+                helper.toggleRefinement(hierarchicalFacetName, breadcrumb[0]).search();
+              }
+            } else {
+              helper.toggleRefinement(hierarchicalFacetName, facetValue).search();
+            }
+          };
+        }
+
+        return {
+          canRefine: items.length > 0,
+          createURL: connectorState.createURL,
+          items: items,
+          refine: connectorState.refine,
+          widgetParams: widgetParams
+        };
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters) {
+        if (searchParameters.isHierarchicalFacet(hierarchicalFacetName)) {
+          var facet = searchParameters.getHierarchicalFacetByName(hierarchicalFacetName);
+          "development" === 'development' ? (0, _utils.warning)((0, _utils.isEqual)(facet.attributes, attributes) && facet.separator === separator && facet.rootPath === rootPath, 'Using Breadcrumb and HierarchicalMenu on the same facet with different options overrides the configuration of the HierarchicalMenu.') : void 0;
+          return searchParameters;
+        }
+
+        return searchParameters.addHierarchicalFacet({
+          name: hierarchicalFacetName,
+          attributes: attributes,
+          separator: separator,
+          rootPath: rootPath
+        });
+      }
+    };
+  };
+};
+
+function prepareItems(data) {
+  return data.reduce(function (result, currentItem) {
+    if (currentItem.isRefined) {
+      result.push({
+        label: currentItem.name,
+        value: currentItem.path
+      });
+
+      if (Array.isArray(currentItem.data)) {
+        result = result.concat(prepareItems(currentItem.data));
+      }
+    }
+
+    return result;
+  }, []);
+}
+
+function shiftItemsValues(array) {
+  return array.map(function (x, idx) {
+    return {
+      label: x.label,
+      value: idx + 1 === array.length ? null : array[idx + 1].value
+    };
+  });
+}
+
+var _default = connectBreadcrumb;
+exports.default = _default;
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/breadcrumb/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28792,7 +27474,118 @@ var PoweredBy = function PoweredBy(_ref) {
 
 var _default = PoweredBy;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js"}],"node_modules/instantsearch.js/es/widgets/powered-by/powered-by.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js"}],"node_modules/instantsearch.js/es/connectors/powered-by/connectPoweredBy.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../lib/utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'powered-by',
+  connector: true
+});
+/**
+ * **PoweredBy** connector provides the logic to build a custom widget that will displays
+ * the logo to redirect to Algolia.
+ */
+
+var connectPoweredBy = function connectPoweredBy(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  var defaultUrl = 'https://www.algolia.com/?' + 'utm_source=instantsearch.js&' + 'utm_medium=website&' + "utm_content=".concat(typeof window !== 'undefined' && window.location ? window.location.hostname : '', "&") + 'utm_campaign=poweredby';
+  return function (widgetParams) {
+    var _ref = widgetParams || {},
+        _ref$url = _ref.url,
+        url = _ref$url === void 0 ? defaultUrl : _ref$url;
+
+    return {
+      $$type: 'ais.poweredBy',
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          poweredBy: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState() {
+        return {
+          url: url,
+          widgetParams: widgetParams
+        };
+      },
+      dispose: function dispose() {
+        unmountFn();
+      }
+    };
+  };
+};
+
+var _default = connectPoweredBy;
+exports.default = _default;
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/widgets/powered-by/powered-by.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29455,7 +28248,410 @@ var panel = function panel(widgetParams) {
 
 var _default = panel;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js","../../components/Panel/Panel":"node_modules/instantsearch.js/es/components/Panel/Panel.js"}],"node_modules/instantsearch.js/es/components/VoiceSearch/VoiceSearch.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js","../../components/Panel/Panel":"node_modules/instantsearch.js/es/components/Panel/Panel.js"}],"node_modules/instantsearch.js/es/lib/voiceSearchHelper/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var createVoiceSearchHelper = function createVoiceSearchHelper(_ref) {
+  var searchAsYouSpeak = _ref.searchAsYouSpeak,
+      language = _ref.language,
+      onQueryChange = _ref.onQueryChange,
+      onStateChange = _ref.onStateChange;
+  var SpeechRecognitionAPI = window.webkitSpeechRecognition || window.SpeechRecognition;
+
+  var getDefaultState = function getDefaultState(status) {
+    return {
+      status: status,
+      transcript: '',
+      isSpeechFinal: false,
+      errorCode: undefined
+    };
+  };
+
+  var state = getDefaultState('initial');
+  var recognition;
+
+  var isBrowserSupported = function isBrowserSupported() {
+    return Boolean(SpeechRecognitionAPI);
+  };
+
+  var isListening = function isListening() {
+    return state.status === 'askingPermission' || state.status === 'waiting' || state.status === 'recognizing';
+  };
+
+  var setState = function setState() {
+    var newState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    state = _objectSpread({}, state, {}, newState);
+    onStateChange();
+  };
+
+  var getState = function getState() {
+    return state;
+  };
+
+  var resetState = function resetState() {
+    var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'initial';
+    setState(getDefaultState(status));
+  };
+
+  var onStart = function onStart() {
+    setState({
+      status: 'waiting'
+    });
+  };
+
+  var onError = function onError(event) {
+    setState({
+      status: 'error',
+      errorCode: event.error
+    });
+  };
+
+  var onResult = function onResult(event) {
+    setState({
+      status: 'recognizing',
+      transcript: event.results[0] && event.results[0][0] && event.results[0][0].transcript || '',
+      isSpeechFinal: event.results[0] && event.results[0].isFinal
+    });
+
+    if (searchAsYouSpeak && state.transcript) {
+      onQueryChange(state.transcript);
+    }
+  };
+
+  var onEnd = function onEnd() {
+    if (!state.errorCode && state.transcript && !searchAsYouSpeak) {
+      onQueryChange(state.transcript);
+    }
+
+    if (state.status !== 'error') {
+      setState({
+        status: 'finished'
+      });
+    }
+  };
+
+  var startListening = function startListening() {
+    recognition = new SpeechRecognitionAPI();
+
+    if (!recognition) {
+      return;
+    }
+
+    resetState('askingPermission');
+    recognition.interimResults = true;
+
+    if (language) {
+      recognition.lang = language;
+    }
+
+    recognition.addEventListener('start', onStart);
+    recognition.addEventListener('error', onError);
+    recognition.addEventListener('result', onResult);
+    recognition.addEventListener('end', onEnd);
+    recognition.start();
+  };
+
+  var dispose = function dispose() {
+    if (!recognition) {
+      return;
+    }
+
+    recognition.stop();
+    recognition.removeEventListener('start', onStart);
+    recognition.removeEventListener('error', onError);
+    recognition.removeEventListener('result', onResult);
+    recognition.removeEventListener('end', onEnd);
+    recognition = undefined;
+  };
+
+  var stopListening = function stopListening() {
+    dispose(); // Because `dispose` removes event listeners, `end` listener is not called.
+    // So we're setting the `status` as `finished` here.
+    // If we don't do it, it will be still `waiting` or `recognizing`.
+
+    resetState('finished');
+  };
+
+  return {
+    getState: getState,
+    isBrowserSupported: isBrowserSupported,
+    isListening: isListening,
+    startListening: startListening,
+    stopListening: stopListening,
+    dispose: dispose
+  };
+};
+
+var _default = createVoiceSearchHelper;
+exports.default = _default;
+},{}],"node_modules/instantsearch.js/es/connectors/voice-search/connectVoiceSearch.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../lib/utils");
+
+var _voiceSearchHelper2 = _interopRequireDefault(require("../../lib/voiceSearchHelper"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'voice-search',
+  connector: true
+});
+
+var connectVoiceSearch = function connectVoiceSearch(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function (widgetParams) {
+    var _widgetParams$searchA = widgetParams.searchAsYouSpeak,
+        searchAsYouSpeak = _widgetParams$searchA === void 0 ? false : _widgetParams$searchA,
+        language = widgetParams.language,
+        additionalQueryParameters = widgetParams.additionalQueryParameters,
+        _widgetParams$createV = widgetParams.createVoiceSearchHelper,
+        createVoiceSearchHelper = _widgetParams$createV === void 0 ? _voiceSearchHelper2.default : _widgetParams$createV;
+    return {
+      $$type: 'ais.voiceSearch',
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          voiceSearch: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(renderOptions) {
+        var _this = this;
+
+        var helper = renderOptions.helper,
+            instantSearchInstance = renderOptions.instantSearchInstance;
+
+        if (!this._refine) {
+          this._refine = function (query) {
+            if (query !== helper.state.query) {
+              var queryLanguages = language ? [language.split('-')[0]] : undefined;
+              helper.setQueryParameter('queryLanguages', queryLanguages);
+
+              if (typeof additionalQueryParameters === 'function') {
+                helper.setState(helper.state.setQueryParameters(_objectSpread({
+                  ignorePlurals: true,
+                  removeStopWords: true,
+                  // @ts-ignore (optionalWords only allows array, while string is also valid)
+                  optionalWords: query
+                }, additionalQueryParameters({
+                  query: query
+                }))));
+              }
+
+              helper.setQuery(query).search();
+            }
+          };
+        }
+
+        if (!this._voiceSearchHelper) {
+          this._voiceSearchHelper = createVoiceSearchHelper({
+            searchAsYouSpeak: searchAsYouSpeak,
+            language: language,
+            onQueryChange: function onQueryChange(query) {
+              return _this._refine(query);
+            },
+            onStateChange: function onStateChange() {
+              renderFn(_objectSpread({}, _this.getWidgetRenderState(renderOptions), {
+                instantSearchInstance: instantSearchInstance
+              }), false);
+            }
+          });
+        }
+
+        var _voiceSearchHelper = this._voiceSearchHelper,
+            isBrowserSupported = _voiceSearchHelper.isBrowserSupported,
+            isListening = _voiceSearchHelper.isListening,
+            startListening = _voiceSearchHelper.startListening,
+            stopListening = _voiceSearchHelper.stopListening,
+            getState = _voiceSearchHelper.getState;
+        return {
+          isBrowserSupported: isBrowserSupported(),
+          isListening: isListening(),
+          toggleListening: function toggleListening() {
+            if (!isBrowserSupported()) {
+              return;
+            }
+
+            if (isListening()) {
+              stopListening();
+            } else {
+              startListening();
+            }
+          },
+          voiceListeningState: getState(),
+          widgetParams: widgetParams
+        };
+      },
+      dispose: function dispose(_ref) {
+        var state = _ref.state;
+
+        this._voiceSearchHelper.dispose();
+
+        unmountFn();
+        var newState = state;
+
+        if (typeof additionalQueryParameters === 'function') {
+          var additional = additionalQueryParameters({
+            query: ''
+          });
+          var toReset = additional ? Object.keys(additional).reduce(function (acc, current) {
+            acc[current] = undefined;
+            return acc;
+          }, {}) : {};
+          newState = state.setQueryParameters(_objectSpread({
+            // @ts-ignore (queryLanguages is not yet added to algoliasearch)
+            queryLanguages: undefined,
+            ignorePlurals: undefined,
+            removeStopWords: undefined,
+            optionalWords: undefined
+          }, toReset));
+        }
+
+        return newState.setQueryParameter('query', undefined);
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref2) {
+        var searchParameters = _ref2.searchParameters;
+        var query = searchParameters.query || '';
+
+        if (!query) {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          query: query
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref3) {
+        var uiState = _ref3.uiState;
+        return searchParameters.setQueryParameter('query', uiState.query || '');
+      }
+    };
+  };
+};
+
+var _default = connectVoiceSearch;
+exports.default = _default;
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/voiceSearchHelper":"node_modules/instantsearch.js/es/lib/voiceSearchHelper/index.js"}],"node_modules/instantsearch.js/es/components/VoiceSearch/VoiceSearch.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29694,7 +28890,254 @@ var voiceSearch = function voiceSearch() {
 
 var _default = voiceSearch;
 exports.default = _default;
-},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js","../../connectors/voice-search/connectVoiceSearch":"node_modules/instantsearch.js/es/connectors/voice-search/connectVoiceSearch.js","../../components/VoiceSearch/VoiceSearch":"node_modules/instantsearch.js/es/components/VoiceSearch/VoiceSearch.js","./defaultTemplates":"node_modules/instantsearch.js/es/widgets/voice-search/defaultTemplates.js"}],"node_modules/instantsearch.js/es/components/QueryRuleCustomData/QueryRuleCustomData.js":[function(require,module,exports) {
+},{"preact":"node_modules/preact/dist/preact.module.js","classnames":"node_modules/classnames/index.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js","../../connectors/voice-search/connectVoiceSearch":"node_modules/instantsearch.js/es/connectors/voice-search/connectVoiceSearch.js","../../components/VoiceSearch/VoiceSearch":"node_modules/instantsearch.js/es/components/VoiceSearch/VoiceSearch.js","./defaultTemplates":"node_modules/instantsearch.js/es/widgets/voice-search/defaultTemplates.js"}],"node_modules/instantsearch.js/es/connectors/query-rules/connectQueryRules.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _utils = require("../../lib/utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'query-rules',
+  connector: true
+});
+
+function hasStateRefinements(state) {
+  return [state.disjunctiveFacetsRefinements, state.facetsRefinements, state.hierarchicalFacetsRefinements, state.numericRefinements].some(function (refinement) {
+    return Boolean(refinement && Object.keys(refinement).length > 0);
+  });
+} // A context rule must consist only of alphanumeric characters, hyphens, and underscores.
+// See https://www.algolia.com/doc/guides/managing-results/refine-results/merchandising-and-promoting/in-depth/implementing-query-rules/#context
+
+
+function escapeRuleContext(ruleName) {
+  return ruleName.replace(/[^a-z0-9-_]+/gi, '_');
+}
+
+function getRuleContextsFromTrackedFilters(_ref) {
+  var helper = _ref.helper,
+      sharedHelperState = _ref.sharedHelperState,
+      trackedFilters = _ref.trackedFilters;
+  var ruleContexts = Object.keys(trackedFilters).reduce(function (facets, facetName) {
+    var facetRefinements = (0, _utils.getRefinements)( // An empty object is technically not a `SearchResults` but `getRefinements`
+    // only accesses properties, meaning it will not throw with an empty object.
+    helper.lastResults || {}, sharedHelperState).filter(function (refinement) {
+      return refinement.attribute === facetName;
+    }).map(function (refinement) {
+      return refinement.numericValue || refinement.name;
+    });
+    var getTrackedFacetValues = trackedFilters[facetName];
+    var trackedFacetValues = getTrackedFacetValues(facetRefinements);
+    return [].concat(_toConsumableArray(facets), _toConsumableArray(facetRefinements.filter(function (facetRefinement) {
+      return trackedFacetValues.includes(facetRefinement);
+    }).map(function (facetValue) {
+      return escapeRuleContext("ais-".concat(facetName, "-").concat(facetValue));
+    })));
+  }, []);
+  return ruleContexts;
+}
+
+function applyRuleContexts(event) {
+  var helper = this.helper,
+      initialRuleContexts = this.initialRuleContexts,
+      trackedFilters = this.trackedFilters,
+      transformRuleContexts = this.transformRuleContexts;
+  var sharedHelperState = event.state;
+  var previousRuleContexts = sharedHelperState.ruleContexts || [];
+  var newRuleContexts = getRuleContextsFromTrackedFilters({
+    helper: helper,
+    sharedHelperState: sharedHelperState,
+    trackedFilters: trackedFilters
+  });
+  var nextRuleContexts = [].concat(_toConsumableArray(initialRuleContexts), _toConsumableArray(newRuleContexts));
+  "development" === 'development' ? (0, _utils.warning)(nextRuleContexts.length <= 10, "\nThe maximum number of `ruleContexts` is 10. They have been sliced to that limit.\nConsider using `transformRuleContexts` to minimize the number of rules sent to Algolia.\n") : void 0;
+  var ruleContexts = transformRuleContexts(nextRuleContexts).slice(0, 10);
+
+  if (!(0, _utils.isEqual)(previousRuleContexts, ruleContexts)) {
+    helper.overrideStateWithoutTriggeringChangeEvent(_objectSpread({}, sharedHelperState, {
+      ruleContexts: ruleContexts
+    }));
+  }
+}
+
+var connectQueryRules = function connectQueryRules(_render) {
+  var unmount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(_render, withUsage());
+  return function (widgetParams) {
+    var _ref2 = widgetParams || {},
+        _ref2$trackedFilters = _ref2.trackedFilters,
+        trackedFilters = _ref2$trackedFilters === void 0 ? {} : _ref2$trackedFilters,
+        _ref2$transformRuleCo = _ref2.transformRuleContexts,
+        transformRuleContexts = _ref2$transformRuleCo === void 0 ? function (rules) {
+      return rules;
+    } : _ref2$transformRuleCo,
+        _ref2$transformItems = _ref2.transformItems,
+        transformItems = _ref2$transformItems === void 0 ? function (items) {
+      return items;
+    } : _ref2$transformItems;
+
+    Object.keys(trackedFilters).forEach(function (facetName) {
+      if (typeof trackedFilters[facetName] !== 'function') {
+        throw new Error(withUsage("'The \"".concat(facetName, "\" filter value in the `trackedFilters` option expects a function.")));
+      }
+    });
+    var hasTrackedFilters = Object.keys(trackedFilters).length > 0; // We store the initial rule contexts applied before creating the widget
+    // so that we do not override them with the rules created from `trackedFilters`.
+
+    var initialRuleContexts = [];
+    var onHelperChange;
+    return {
+      $$type: 'ais.queryRules',
+      init: function init(initOptions) {
+        var helper = initOptions.helper,
+            state = initOptions.state,
+            instantSearchInstance = initOptions.instantSearchInstance;
+        initialRuleContexts = state.ruleContexts || [];
+        onHelperChange = applyRuleContexts.bind({
+          helper: helper,
+          initialRuleContexts: initialRuleContexts,
+          trackedFilters: trackedFilters,
+          transformRuleContexts: transformRuleContexts
+        });
+
+        if (hasTrackedFilters) {
+          // We need to apply the `ruleContexts` based on the `trackedFilters`
+          // before the helper changes state in some cases:
+          //   - Some filters are applied on the first load (e.g. using `configure`)
+          //   - The `transformRuleContexts` option sets initial `ruleContexts`.
+          if (hasStateRefinements(state) || Boolean(widgetParams.transformRuleContexts)) {
+            onHelperChange({
+              state: state
+            });
+          } // We track every change in the helper to override its state and add
+          // any `ruleContexts` needed based on the `trackedFilters`.
+
+
+          helper.on('change', onHelperChange);
+        }
+
+        _render(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+
+        _render(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref3) {
+        var results = _ref3.results;
+
+        var _ref4 = results || {},
+            _ref4$userData = _ref4.userData,
+            userData = _ref4$userData === void 0 ? [] : _ref4$userData;
+
+        var items = transformItems(userData);
+        return {
+          items: items,
+          widgetParams: widgetParams
+        };
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          queryRules: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      dispose: function dispose(_ref5) {
+        var helper = _ref5.helper,
+            state = _ref5.state;
+        unmount();
+
+        if (hasTrackedFilters) {
+          helper.removeListener('change', onHelperChange);
+          return state.setQueryParameter('ruleContexts', initialRuleContexts);
+        }
+
+        return state;
+      }
+    };
+  };
+};
+
+var _default = connectQueryRules;
+exports.default = _default;
+},{"../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/components/QueryRuleCustomData/QueryRuleCustomData.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30386,7 +29829,566 @@ var _index = _interopRequireDefault(require("./index/index"));
 var _places = _interopRequireDefault(require("./places/places"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./clear-refinements/clear-refinements":"node_modules/instantsearch.js/es/widgets/clear-refinements/clear-refinements.js","./configure/configure":"node_modules/instantsearch.js/es/widgets/configure/configure.js","./configure-related-items/configure-related-items":"node_modules/instantsearch.js/es/widgets/configure-related-items/configure-related-items.js","./current-refinements/current-refinements":"node_modules/instantsearch.js/es/widgets/current-refinements/current-refinements.js","./geo-search/geo-search":"node_modules/instantsearch.js/es/widgets/geo-search/geo-search.js","./hierarchical-menu/hierarchical-menu":"node_modules/instantsearch.js/es/widgets/hierarchical-menu/hierarchical-menu.js","./hits/hits":"node_modules/instantsearch.js/es/widgets/hits/hits.js","./hits-per-page/hits-per-page":"node_modules/instantsearch.js/es/widgets/hits-per-page/hits-per-page.js","./infinite-hits/infinite-hits":"node_modules/instantsearch.js/es/widgets/infinite-hits/infinite-hits.js","./menu/menu":"node_modules/instantsearch.js/es/widgets/menu/menu.js","./refinement-list/refinement-list":"node_modules/instantsearch.js/es/widgets/refinement-list/refinement-list.js","./numeric-menu/numeric-menu":"node_modules/instantsearch.js/es/widgets/numeric-menu/numeric-menu.js","./pagination/pagination":"node_modules/instantsearch.js/es/widgets/pagination/pagination.js","./range-input/range-input":"node_modules/instantsearch.js/es/widgets/range-input/range-input.js","./search-box/search-box":"node_modules/instantsearch.js/es/widgets/search-box/search-box.js","./range-slider/range-slider":"node_modules/instantsearch.js/es/widgets/range-slider/range-slider.js","./sort-by/sort-by":"node_modules/instantsearch.js/es/widgets/sort-by/sort-by.js","./rating-menu/rating-menu":"node_modules/instantsearch.js/es/widgets/rating-menu/rating-menu.js","./stats/stats":"node_modules/instantsearch.js/es/widgets/stats/stats.js","./toggle-refinement/toggle-refinement":"node_modules/instantsearch.js/es/widgets/toggle-refinement/toggle-refinement.js","./analytics/analytics":"node_modules/instantsearch.js/es/widgets/analytics/analytics.js","./breadcrumb/breadcrumb":"node_modules/instantsearch.js/es/widgets/breadcrumb/breadcrumb.js","./menu-select/menu-select":"node_modules/instantsearch.js/es/widgets/menu-select/menu-select.js","./powered-by/powered-by":"node_modules/instantsearch.js/es/widgets/powered-by/powered-by.js","./panel/panel":"node_modules/instantsearch.js/es/widgets/panel/panel.js","./voice-search/voice-search":"node_modules/instantsearch.js/es/widgets/voice-search/voice-search.js","./query-rule-custom-data/query-rule-custom-data":"node_modules/instantsearch.js/es/widgets/query-rule-custom-data/query-rule-custom-data.js","./query-rule-context/query-rule-context":"node_modules/instantsearch.js/es/widgets/query-rule-context/query-rule-context.js","./index/index":"node_modules/instantsearch.js/es/widgets/index/index.js","./places/places":"node_modules/instantsearch.js/es/widgets/places/places.js"}],"src/CategoryPages/Men/manPage.js":[function(require,module,exports) {
+},{"./clear-refinements/clear-refinements":"node_modules/instantsearch.js/es/widgets/clear-refinements/clear-refinements.js","./configure/configure":"node_modules/instantsearch.js/es/widgets/configure/configure.js","./configure-related-items/configure-related-items":"node_modules/instantsearch.js/es/widgets/configure-related-items/configure-related-items.js","./current-refinements/current-refinements":"node_modules/instantsearch.js/es/widgets/current-refinements/current-refinements.js","./geo-search/geo-search":"node_modules/instantsearch.js/es/widgets/geo-search/geo-search.js","./hierarchical-menu/hierarchical-menu":"node_modules/instantsearch.js/es/widgets/hierarchical-menu/hierarchical-menu.js","./hits/hits":"node_modules/instantsearch.js/es/widgets/hits/hits.js","./hits-per-page/hits-per-page":"node_modules/instantsearch.js/es/widgets/hits-per-page/hits-per-page.js","./infinite-hits/infinite-hits":"node_modules/instantsearch.js/es/widgets/infinite-hits/infinite-hits.js","./menu/menu":"node_modules/instantsearch.js/es/widgets/menu/menu.js","./refinement-list/refinement-list":"node_modules/instantsearch.js/es/widgets/refinement-list/refinement-list.js","./numeric-menu/numeric-menu":"node_modules/instantsearch.js/es/widgets/numeric-menu/numeric-menu.js","./pagination/pagination":"node_modules/instantsearch.js/es/widgets/pagination/pagination.js","./range-input/range-input":"node_modules/instantsearch.js/es/widgets/range-input/range-input.js","./search-box/search-box":"node_modules/instantsearch.js/es/widgets/search-box/search-box.js","./range-slider/range-slider":"node_modules/instantsearch.js/es/widgets/range-slider/range-slider.js","./sort-by/sort-by":"node_modules/instantsearch.js/es/widgets/sort-by/sort-by.js","./rating-menu/rating-menu":"node_modules/instantsearch.js/es/widgets/rating-menu/rating-menu.js","./stats/stats":"node_modules/instantsearch.js/es/widgets/stats/stats.js","./toggle-refinement/toggle-refinement":"node_modules/instantsearch.js/es/widgets/toggle-refinement/toggle-refinement.js","./analytics/analytics":"node_modules/instantsearch.js/es/widgets/analytics/analytics.js","./breadcrumb/breadcrumb":"node_modules/instantsearch.js/es/widgets/breadcrumb/breadcrumb.js","./menu-select/menu-select":"node_modules/instantsearch.js/es/widgets/menu-select/menu-select.js","./powered-by/powered-by":"node_modules/instantsearch.js/es/widgets/powered-by/powered-by.js","./panel/panel":"node_modules/instantsearch.js/es/widgets/panel/panel.js","./voice-search/voice-search":"node_modules/instantsearch.js/es/widgets/voice-search/voice-search.js","./query-rule-custom-data/query-rule-custom-data":"node_modules/instantsearch.js/es/widgets/query-rule-custom-data/query-rule-custom-data.js","./query-rule-context/query-rule-context":"node_modules/instantsearch.js/es/widgets/query-rule-context/query-rule-context.js","./index/index":"node_modules/instantsearch.js/es/widgets/index/index.js","./places/places":"node_modules/instantsearch.js/es/widgets/places/places.js"}],"node_modules/instantsearch.js/es/connectors/hits/connectHitsWithInsights.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _insights = require("../../lib/insights");
+
+var _connectHits = _interopRequireDefault(require("./connectHits"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var connectHitsWithInsights = (0, _insights.withInsights)(_connectHits.default);
+var _default = connectHitsWithInsights;
+exports.default = _default;
+},{"../../lib/insights":"node_modules/instantsearch.js/es/lib/insights/index.js","./connectHits":"node_modules/instantsearch.js/es/connectors/hits/connectHits.js"}],"node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHitsWithInsights.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _insights = require("../../lib/insights");
+
+var _connectInfiniteHits = _interopRequireDefault(require("./connectInfiniteHits"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var connectInfiniteHitsWithInsights = (0, _insights.withInsights)(_connectInfiniteHits.default);
+var _default = connectInfiniteHitsWithInsights;
+exports.default = _default;
+},{"../../lib/insights":"node_modules/instantsearch.js/es/lib/insights/index.js","./connectInfiniteHits":"node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHits.js"}],"node_modules/instantsearch.js/es/connectors/autocomplete/connectAutocomplete.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _escapeHighlight = _interopRequireWildcard(require("../../lib/escape-highlight"));
+
+var _utils = require("../../lib/utils");
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var withUsage = (0, _utils.createDocumentationMessageGenerator)({
+  name: 'autocomplete',
+  connector: true
+});
+
+var connectAutocomplete = function connectAutocomplete(renderFn) {
+  var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
+  (0, _utils.checkRendering)(renderFn, withUsage());
+  return function (widgetParams) {
+    var _ref = widgetParams || {},
+        _ref$escapeHTML = _ref.escapeHTML,
+        escapeHTML = _ref$escapeHTML === void 0 ? true : _ref$escapeHTML;
+
+    "development" === 'development' ? (0, _utils.warning)(!widgetParams.indices, "\nThe option `indices` has been removed from the Autocomplete connector.\n\nThe indices to target are now inferred from the widgets tree.\n".concat(Array.isArray(widgetParams.indices) ? "\nAn alternative would be:\n\nconst autocomplete = connectAutocomplete(renderer);\n\nsearch.addWidgets([\n  ".concat(widgetParams.indices.map(function (_ref2) {
+      var value = _ref2.value;
+      return "index({ indexName: '".concat(value, "' }),");
+    }).join('\n  '), "\n  autocomplete()\n]);\n") : '', "\n      ")) : void 0;
+    var connectorState = {};
+    return {
+      $$type: 'ais.autocomplete',
+      init: function init(initOptions) {
+        var instantSearchInstance = initOptions.instantSearchInstance;
+        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+          instantSearchInstance: instantSearchInstance
+        }), true);
+      },
+      render: function render(renderOptions) {
+        var instantSearchInstance = renderOptions.instantSearchInstance;
+        var renderState = this.getWidgetRenderState(renderOptions);
+        renderState.indices.forEach(function (_ref3) {
+          var sendEvent = _ref3.sendEvent,
+              hits = _ref3.hits;
+          sendEvent('view', hits);
+        });
+        renderFn(_objectSpread({}, renderState, {
+          instantSearchInstance: instantSearchInstance
+        }), false);
+      },
+      getRenderState: function getRenderState(renderState, renderOptions) {
+        return _objectSpread({}, renderState, {
+          autocomplete: this.getWidgetRenderState(renderOptions)
+        });
+      },
+      getWidgetRenderState: function getWidgetRenderState(_ref4) {
+        var _this = this;
+
+        var helper = _ref4.helper,
+            scopedResults = _ref4.scopedResults,
+            instantSearchInstance = _ref4.instantSearchInstance;
+
+        if (!connectorState.refine) {
+          connectorState.refine = function (query) {
+            helper.setQuery(query).search();
+          };
+        }
+
+        var indices = scopedResults.map(function (scopedResult) {
+          // We need to escape the hits because highlighting
+          // exposes HTML tags to the end-user.
+          scopedResult.results.hits = escapeHTML ? (0, _escapeHighlight.default)(scopedResult.results.hits) : scopedResult.results.hits;
+          var sendEvent = (0, _utils.createSendEventForHits)({
+            instantSearchInstance: instantSearchInstance,
+            index: scopedResult.results.index,
+            widgetType: _this.$$type
+          });
+          return {
+            indexId: scopedResult.indexId,
+            indexName: scopedResult.results.index,
+            hits: scopedResult.results.hits,
+            results: scopedResult.results,
+            sendEvent: sendEvent
+          };
+        });
+        return {
+          currentRefinement: helper.state.query || '',
+          indices: indices,
+          refine: connectorState.refine,
+          widgetParams: widgetParams
+        };
+      },
+      getWidgetUiState: function getWidgetUiState(uiState, _ref5) {
+        var searchParameters = _ref5.searchParameters;
+        var query = searchParameters.query || '';
+
+        if (query === '' || uiState && uiState.query === query) {
+          return uiState;
+        }
+
+        return _objectSpread({}, uiState, {
+          query: query
+        });
+      },
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
+        var uiState = _ref6.uiState;
+        var parameters = {
+          query: uiState.query || ''
+        };
+
+        if (!escapeHTML) {
+          return searchParameters.setQueryParameters(parameters);
+        }
+
+        return searchParameters.setQueryParameters(_objectSpread({}, parameters, {}, _escapeHighlight.TAG_PLACEHOLDER));
+      },
+      dispose: function dispose(_ref7) {
+        var state = _ref7.state;
+        unmountFn();
+        var stateWithoutQuery = state.setQueryParameter('query', undefined);
+
+        if (!escapeHTML) {
+          return stateWithoutQuery;
+        }
+
+        return stateWithoutQuery.setQueryParameters(Object.keys(_escapeHighlight.TAG_PLACEHOLDER).reduce(function (acc, key) {
+          return _objectSpread({}, acc, _defineProperty({}, key, undefined));
+        }, {}));
+      }
+    };
+  };
+};
+
+var _default = connectAutocomplete;
+exports.default = _default;
+},{"../../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js","../../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/connectors/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "connectClearRefinements", {
+  enumerable: true,
+  get: function () {
+    return _connectClearRefinements.default;
+  }
+});
+Object.defineProperty(exports, "connectCurrentRefinements", {
+  enumerable: true,
+  get: function () {
+    return _connectCurrentRefinements.default;
+  }
+});
+Object.defineProperty(exports, "connectHierarchicalMenu", {
+  enumerable: true,
+  get: function () {
+    return _connectHierarchicalMenu.default;
+  }
+});
+Object.defineProperty(exports, "connectHits", {
+  enumerable: true,
+  get: function () {
+    return _connectHits.default;
+  }
+});
+Object.defineProperty(exports, "connectHitsWithInsights", {
+  enumerable: true,
+  get: function () {
+    return _connectHitsWithInsights.default;
+  }
+});
+Object.defineProperty(exports, "connectHitsPerPage", {
+  enumerable: true,
+  get: function () {
+    return _connectHitsPerPage.default;
+  }
+});
+Object.defineProperty(exports, "connectInfiniteHits", {
+  enumerable: true,
+  get: function () {
+    return _connectInfiniteHits.default;
+  }
+});
+Object.defineProperty(exports, "connectInfiniteHitsWithInsights", {
+  enumerable: true,
+  get: function () {
+    return _connectInfiniteHitsWithInsights.default;
+  }
+});
+Object.defineProperty(exports, "connectMenu", {
+  enumerable: true,
+  get: function () {
+    return _connectMenu.default;
+  }
+});
+Object.defineProperty(exports, "connectNumericMenu", {
+  enumerable: true,
+  get: function () {
+    return _connectNumericMenu.default;
+  }
+});
+Object.defineProperty(exports, "connectPagination", {
+  enumerable: true,
+  get: function () {
+    return _connectPagination.default;
+  }
+});
+Object.defineProperty(exports, "connectRange", {
+  enumerable: true,
+  get: function () {
+    return _connectRange.default;
+  }
+});
+Object.defineProperty(exports, "connectRefinementList", {
+  enumerable: true,
+  get: function () {
+    return _connectRefinementList.default;
+  }
+});
+Object.defineProperty(exports, "connectSearchBox", {
+  enumerable: true,
+  get: function () {
+    return _connectSearchBox.default;
+  }
+});
+Object.defineProperty(exports, "connectSortBy", {
+  enumerable: true,
+  get: function () {
+    return _connectSortBy.default;
+  }
+});
+Object.defineProperty(exports, "connectRatingMenu", {
+  enumerable: true,
+  get: function () {
+    return _connectRatingMenu.default;
+  }
+});
+Object.defineProperty(exports, "connectStats", {
+  enumerable: true,
+  get: function () {
+    return _connectStats.default;
+  }
+});
+Object.defineProperty(exports, "connectToggleRefinement", {
+  enumerable: true,
+  get: function () {
+    return _connectToggleRefinement.default;
+  }
+});
+Object.defineProperty(exports, "connectBreadcrumb", {
+  enumerable: true,
+  get: function () {
+    return _connectBreadcrumb.default;
+  }
+});
+Object.defineProperty(exports, "connectGeoSearch", {
+  enumerable: true,
+  get: function () {
+    return _connectGeoSearch.default;
+  }
+});
+Object.defineProperty(exports, "connectPoweredBy", {
+  enumerable: true,
+  get: function () {
+    return _connectPoweredBy.default;
+  }
+});
+Object.defineProperty(exports, "connectConfigure", {
+  enumerable: true,
+  get: function () {
+    return _connectConfigure.default;
+  }
+});
+Object.defineProperty(exports, "EXPERIMENTAL_connectConfigureRelatedItems", {
+  enumerable: true,
+  get: function () {
+    return _connectConfigureRelatedItems.default;
+  }
+});
+Object.defineProperty(exports, "connectAutocomplete", {
+  enumerable: true,
+  get: function () {
+    return _connectAutocomplete.default;
+  }
+});
+Object.defineProperty(exports, "connectQueryRules", {
+  enumerable: true,
+  get: function () {
+    return _connectQueryRules.default;
+  }
+});
+Object.defineProperty(exports, "connectVoiceSearch", {
+  enumerable: true,
+  get: function () {
+    return _connectVoiceSearch.default;
+  }
+});
+
+var _connectClearRefinements = _interopRequireDefault(require("./clear-refinements/connectClearRefinements"));
+
+var _connectCurrentRefinements = _interopRequireDefault(require("./current-refinements/connectCurrentRefinements"));
+
+var _connectHierarchicalMenu = _interopRequireDefault(require("./hierarchical-menu/connectHierarchicalMenu"));
+
+var _connectHits = _interopRequireDefault(require("./hits/connectHits"));
+
+var _connectHitsWithInsights = _interopRequireDefault(require("./hits/connectHitsWithInsights"));
+
+var _connectHitsPerPage = _interopRequireDefault(require("./hits-per-page/connectHitsPerPage"));
+
+var _connectInfiniteHits = _interopRequireDefault(require("./infinite-hits/connectInfiniteHits"));
+
+var _connectInfiniteHitsWithInsights = _interopRequireDefault(require("./infinite-hits/connectInfiniteHitsWithInsights"));
+
+var _connectMenu = _interopRequireDefault(require("./menu/connectMenu"));
+
+var _connectNumericMenu = _interopRequireDefault(require("./numeric-menu/connectNumericMenu"));
+
+var _connectPagination = _interopRequireDefault(require("./pagination/connectPagination"));
+
+var _connectRange = _interopRequireDefault(require("./range/connectRange"));
+
+var _connectRefinementList = _interopRequireDefault(require("./refinement-list/connectRefinementList"));
+
+var _connectSearchBox = _interopRequireDefault(require("./search-box/connectSearchBox"));
+
+var _connectSortBy = _interopRequireDefault(require("./sort-by/connectSortBy"));
+
+var _connectRatingMenu = _interopRequireDefault(require("./rating-menu/connectRatingMenu"));
+
+var _connectStats = _interopRequireDefault(require("./stats/connectStats"));
+
+var _connectToggleRefinement = _interopRequireDefault(require("./toggle-refinement/connectToggleRefinement"));
+
+var _connectBreadcrumb = _interopRequireDefault(require("./breadcrumb/connectBreadcrumb"));
+
+var _connectGeoSearch = _interopRequireDefault(require("./geo-search/connectGeoSearch"));
+
+var _connectPoweredBy = _interopRequireDefault(require("./powered-by/connectPoweredBy"));
+
+var _connectConfigure = _interopRequireDefault(require("./configure/connectConfigure"));
+
+var _connectConfigureRelatedItems = _interopRequireDefault(require("./configure-related-items/connectConfigureRelatedItems"));
+
+var _connectAutocomplete = _interopRequireDefault(require("./autocomplete/connectAutocomplete"));
+
+var _connectQueryRules = _interopRequireDefault(require("./query-rules/connectQueryRules"));
+
+var _connectVoiceSearch = _interopRequireDefault(require("./voice-search/connectVoiceSearch"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+},{"./clear-refinements/connectClearRefinements":"node_modules/instantsearch.js/es/connectors/clear-refinements/connectClearRefinements.js","./current-refinements/connectCurrentRefinements":"node_modules/instantsearch.js/es/connectors/current-refinements/connectCurrentRefinements.js","./hierarchical-menu/connectHierarchicalMenu":"node_modules/instantsearch.js/es/connectors/hierarchical-menu/connectHierarchicalMenu.js","./hits/connectHits":"node_modules/instantsearch.js/es/connectors/hits/connectHits.js","./hits/connectHitsWithInsights":"node_modules/instantsearch.js/es/connectors/hits/connectHitsWithInsights.js","./hits-per-page/connectHitsPerPage":"node_modules/instantsearch.js/es/connectors/hits-per-page/connectHitsPerPage.js","./infinite-hits/connectInfiniteHits":"node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHits.js","./infinite-hits/connectInfiniteHitsWithInsights":"node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHitsWithInsights.js","./menu/connectMenu":"node_modules/instantsearch.js/es/connectors/menu/connectMenu.js","./numeric-menu/connectNumericMenu":"node_modules/instantsearch.js/es/connectors/numeric-menu/connectNumericMenu.js","./pagination/connectPagination":"node_modules/instantsearch.js/es/connectors/pagination/connectPagination.js","./range/connectRange":"node_modules/instantsearch.js/es/connectors/range/connectRange.js","./refinement-list/connectRefinementList":"node_modules/instantsearch.js/es/connectors/refinement-list/connectRefinementList.js","./search-box/connectSearchBox":"node_modules/instantsearch.js/es/connectors/search-box/connectSearchBox.js","./sort-by/connectSortBy":"node_modules/instantsearch.js/es/connectors/sort-by/connectSortBy.js","./rating-menu/connectRatingMenu":"node_modules/instantsearch.js/es/connectors/rating-menu/connectRatingMenu.js","./stats/connectStats":"node_modules/instantsearch.js/es/connectors/stats/connectStats.js","./toggle-refinement/connectToggleRefinement":"node_modules/instantsearch.js/es/connectors/toggle-refinement/connectToggleRefinement.js","./breadcrumb/connectBreadcrumb":"node_modules/instantsearch.js/es/connectors/breadcrumb/connectBreadcrumb.js","./geo-search/connectGeoSearch":"node_modules/instantsearch.js/es/connectors/geo-search/connectGeoSearch.js","./powered-by/connectPoweredBy":"node_modules/instantsearch.js/es/connectors/powered-by/connectPoweredBy.js","./configure/connectConfigure":"node_modules/instantsearch.js/es/connectors/configure/connectConfigure.js","./configure-related-items/connectConfigureRelatedItems":"node_modules/instantsearch.js/es/connectors/configure-related-items/connectConfigureRelatedItems.js","./autocomplete/connectAutocomplete":"node_modules/instantsearch.js/es/connectors/autocomplete/connectAutocomplete.js","./query-rules/connectQueryRules":"node_modules/instantsearch.js/es/connectors/query-rules/connectQueryRules.js","./voice-search/connectVoiceSearch":"node_modules/instantsearch.js/es/connectors/voice-search/connectVoiceSearch.js"}],"src/CategoryPages/Men/displayCarouselManPage.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.renderCarouselAllProduct = renderCarouselAllProduct;
+exports.carousel = void 0;
+
+var _instantsearch = _interopRequireDefault(require("instantsearch.js"));
+
+var _algoliasearch = _interopRequireDefault(require("algoliasearch"));
+
+var _widgets = require("instantsearch.js/es/widgets");
+
+var _connectors = require("instantsearch.js/es/connectors");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// import { configure, hits, EXPERIMENTAL_configureRelatedItems } from 'instantsearch.js/es/widgets';
+var carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirstRender) {
+  var _ref$widgetParams = _ref.widgetParams,
+      container = _ref$widgetParams.container,
+      title = _ref$widgetParams.title,
+      hits = _ref.hits;
+
+  if (isFirstRender) {
+    console.log(container);
+    var section = document.createElement('section');
+    section.classList.add('section-carousel-winter');
+    container.appendChild(section);
+    var divSection = document.createElement('div');
+    divSection.classList.add('title-carousel-winter');
+    section.appendChild(divSection);
+    var titleSection = document.createElement('h2');
+    titleSection.innerText = title;
+    divSection.appendChild(titleSection);
+    var btnSection = document.createElement('a');
+    btnSection.classList.add('btn-carousel-winter');
+    btnSection.innerHTML = "See All";
+    btnSection.href = "./index.html";
+    divSection.appendChild(btnSection); // document
+    //   .querySelector('.title-carousel-winter').insertAdjacentHTML(
+    //     'afterbegin',
+    //     `<h2>${title}</h2><a href="/searchResults.html" class="btn-carousel-winter">See All</a>`
+    //   );
+
+    var ul = document.createElement('ul');
+    ul.classList.add('carousel-list-container');
+    section.appendChild(ul);
+  }
+
+  container.querySelector('ul').innerHTML = hits.map(function (hit) {
+    return "\n        <li>\n          <div class=\"image-wrapper\">\n            <img src=\"".concat(hit.image_link, "\" alt=\"").concat(hit.name, "\">\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ");
+  }).join('');
+});
+exports.carousel = carousel;
+
+function renderCarouselAllProduct() {
+  var searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+  var search = (0, _instantsearch.default)({
+    indexName: 'gstar_demo_test',
+    searchClient: searchClient
+  });
+  search.addWidgets([(0, _widgets.searchBox)({
+    container: '#searchbox',
+    placeholder: 'Clothes, Sneakers among men category'
+  }), (0, _widgets.configure)({
+    hitsPerPage: 15,
+    ruleContexts: ['man_page'],
+    filters: '"hierarchical_categories.lvl0":"men"'
+  }), (0, _widgets.stats)({
+    container: '#stats-searchResultMan'
+  }), (0, _widgets.hits)({
+    container: '#hits',
+    templates: {
+      item: "\n \n      <div class=\"image-wrapper\">\n          <img src=\"{{image_link}}\" align=\"left\" alt=\"{{name}}\" class=\"result-img\" />\n      </div>\n      <div class=\"hit-name\">\n          <div class=\"hit-infos\">\n         \n          <div>{{#helpers.highlight}}{ \"attribute\": \"name\" }{{/helpers.highlight}}</div>\n              <div class=\"hit-colors\">{{colourFilter}}</div>\n          </div>\n          <div class=\"hit-price\">${{price}}</div>\n      </div>\n      \n\n  "
+    }
+  }), (0, _widgets.pagination)({
+    container: '#pagination'
+  })]);
+  search.start();
+}
+
+;
+},{"instantsearch.js":"node_modules/instantsearch.js/es/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js"}],"src/burgerMenu.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.burgerMenu = burgerMenu;
+
+function burgerMenu() {
+  var navslide = function navslide() {
+    var burger = document.querySelector('.burger');
+    var nav = document.querySelector('.nav-list ul');
+    var navlinks = document.querySelectorAll('.nav-list ul li a');
+    var navlink = document.querySelectorAll('.nav-list ul li');
+    burger.addEventListener('click', function (e) {
+      nav.classList.toggle("nav-active");
+      navlink.forEach(function (link, idx) {
+        if (link.style.animation) {
+          link.style.animation = "";
+        } else {
+          link.style.animation = "navLinksMove 0.5s ease forwards ".concat(idx / 5 + 0.2, "s");
+        }
+      });
+      navlinks.forEach(function (link, idx) {
+        if (link.style.animation) {
+          link.style.animation = "";
+        } else {
+          link.style.animation = "navlinksFade 0.5s ease forwards ".concat(idx / 5 + 0.2, "s");
+        }
+      });
+      burger.classList.toggle('toggle');
+    });
+  };
+
+  navslide();
+}
+},{}],"src/CategoryPages/Men/manPage.js":[function(require,module,exports) {
 "use strict";
 
 var _displayCarouselManPage = require("./displayCarouselManPage");
@@ -30509,7 +30511,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62771" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54071" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

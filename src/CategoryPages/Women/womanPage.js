@@ -2,7 +2,9 @@ import { carousel, renderCarouselAllProduct } from "./displayCarouselWomanPage";
 import { burgerMenu } from "../../burgerMenu";
 import instantsearch from "instantsearch.js";
 import algoliasearch from "algoliasearch";
-import { configure, index, searchBox, pagination, refinementList, autocomplete, stats } from "instantsearch.js/es/widgets";
+import { configure, pagination, hits, stats, searchBox, connectHits, index } from 'instantsearch.js/es/widgets'
+
+
 
 
 function GetDataCarousel() {

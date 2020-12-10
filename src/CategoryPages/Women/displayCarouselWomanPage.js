@@ -1,6 +1,9 @@
-import { connectHits } from 'instantsearch.js/es/connectors'
-import instantsearch from 'instantsearch.js';
+import instantsearch from "instantsearch.js";
 import algoliasearch from 'algoliasearch';
+import { configure, pagination, hits, stats, searchBox } from 'instantsearch.js/es/widgets'
+import { connectHits } from 'instantsearch.js/es/connectors';
+
+
 
 export const carousel = connectHits(function renderCarousel(
     { widgetParams: { container, title }, hits },
@@ -63,19 +66,19 @@ export function renderCarouselAllProduct() {
     });
 
     search.addWidgets([
-        instantsearch.widgets.searchBox({
+        searchBox({
             container: '#searchbox',
             placeholder: 'Clothes, Sneakers among women category',
         }),
-        instantsearch.widgets.configure({
+        configure({
             hitsPerPage: 15,
             ruleContexts: ['woman_page'],
             filters: '"hierarchical_categories.lvl0":"women"'
         }),
-        instantsearch.widgets.stats({
+        stats({
             container: '#stats-searchResultWoman',
         }),
-        instantsearch.widgets.hits({
+        hits({
             container: '#hits',
             templates: {
                 item: `
@@ -96,7 +99,7 @@ export function renderCarouselAllProduct() {
   `,
             },
         }),
-        instantsearch.widgets.pagination({
+        pagination({
             container: '#pagination',
         }),
     ]);
