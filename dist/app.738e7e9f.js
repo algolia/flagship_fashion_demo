@@ -463,4 +463,4 @@ module.exports="0.38.0";
 },{}],"vZyd":[function(require,module,exports) {
 "use strict";var e=require("instantsearch.js/es/connectors"),r=require("./glide"),a=require("./getCarousel"),u=require("./displayCarouselDetail"),s=require("./autocomplete"),i=require("./burgerMenu"),o=require("./searchbarDropdown");(0,r.carouselGlideJS)(),(0,a.GetDataForCarousel)(),(0,u.carouselDetailed)(),(0,s.autoComplete)(),(0,i.burgerMenu)(),(0,o.searchBar)();
 },{"instantsearch.js/es/connectors":"sVcA","./glide":"yeU6","./getCarousel":"lD4q","./displayCarouselDetail":"QNf5","./autocomplete":"QpCc","./burgerMenu":"flN2","./searchbarDropdown":"o6a0"}]},{},["vZyd"], null)
-//# sourceMappingURL=/app.738e7e9f.js.map
+//# sourceMappingURL=app.738e7e9f.js.map

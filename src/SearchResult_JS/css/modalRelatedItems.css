@@ -139,7 +139,7 @@
   }
 
 .modal-relatedItems--closeBtn{
-    position: absolute;
+    position: fixed;
     top: 1rem;
     right: 1rem;
     cursor: pointer;

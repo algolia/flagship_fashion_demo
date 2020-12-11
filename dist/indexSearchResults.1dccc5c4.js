@@ -29954,7 +29954,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function relatedResultModal() {
   var searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
   var index = searchClient.initIndex('gstar_demo_test');
-  console.log('relatedmodal');
   var search = (0, _instantsearch.default)({
     indexName: 'gstar_demo_test',
     searchClient: searchClient
@@ -29984,10 +29983,10 @@ function relatedResultModal() {
 
   function handleKeyPress(e) {
     window.clearTimeout(timer);
-  }
+  } // Listen to the Dom and change the content of the relatedsearch carousel with the search
+
 
   var domListening = function domListening() {
-    // Listen to the Dom and change the content of the relatedsearch carousel with the search
     var observer = new MutationObserver(function (mutation) {
       if (mutation) {
         console.log('je passe dans display mutation 1fois');
@@ -30013,7 +30012,7 @@ function relatedResultModal() {
     });
   };
 
-  getObjectID();
+  getObjectID(); // Display Modal
 
   function displayModal() {
     var modalWrapper = document.querySelector('.modal-relatedItems--wrapper');

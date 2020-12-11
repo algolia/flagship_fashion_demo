@@ -7,12 +7,11 @@ export function relatedResultModal() {
     const searchClient = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
     const index = searchClient.initIndex('gstar_demo_test');
 
-    console.log('relatedmodal')
-
     const search = instantsearch({
         indexName: 'gstar_demo_test',
         searchClient
     });
+
     const searchIndexSecond = instantsearch({
         indexName: 'Gstar_demo_carousel_detail',
         searchClient
@@ -42,21 +41,19 @@ export function relatedResultModal() {
         window.clearTimeout(timer);
     }
 
-
+    // Listen to the Dom and change the content of the relatedsearch carousel with the search
     const domListening = () => {
-        // Listen to the Dom and change the content of the relatedsearch carousel with the search
+
         const observer = new MutationObserver(mutation => {
             if (mutation) {
                 console.log('je passe dans display mutation 1fois')
                 getObjectID()
             }
         });
-
         observer.observe(document.body, {
             childList: true,
             subtree: true,
         });
-
     }
 
 
@@ -78,8 +75,7 @@ export function relatedResultModal() {
     }
     getObjectID()
 
-
-
+    // Display Modal
     function displayModal() {
 
         let modalWrapper = document.querySelector('.modal-relatedItems--wrapper');
