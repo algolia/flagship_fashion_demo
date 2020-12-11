@@ -1,13 +1,13 @@
 .modal-relatedItems--wrapper{
-    position: absolute;
+    position: fixed;
     z-index: 10;
     height: 100vh;
     width: 100vw;
     background-color:rgba(3, 3, 3, 0.5);
-    top: 0%;
-    left:0%;
-    /* visibility: hidden;  */
+    top: 0;
+    left:0;
     visibility: hidden;
+    overflow: clip;
 
 }
 
@@ -25,15 +25,129 @@
 }
 
 .displayBlock{
-    animation: fadeFilters 0.5s ease-in-out forwards;
+    animation: fadeModal 0.5s ease-in-out forwards;
    
 }
 
-.fadeOutFilter{
-    animation: fadeOutFilter 0.5s ease-in-out forwards;
+.fadeOutModal{
+    animation: fadeOutModal 0.3s ease-in-out forwards;
+}
+.fadeInModal{
+    animation: fadeInModal 1.3s ease-in-out forwards;
 }
 
-@keyframes fadeFilters {
+.modal-carousel--wraper{
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-carousel--title{
+    position: relative;
+    width: fit-content;
+}
+.modal-carousel--title h2{
+   margin: 5rem 2rem 1rem 6rem;
+   font-size: 2rem;
+
+}
+
+.underline{
+    border: 1px solid rgba(0, 0, 0, 0);
+    box-shadow: 1px 1px 0px rgba(0, 0,0, 0.1);
+    width: 50%;
+    position: absolute;
+    right: -30px;
+}
+
+.carousel-relatedItems .ais-Hits-list{
+    width: 90%;
+    flex-wrap: nowrap !important;
+    display: -webkit-box !important;
+    overflow-x: scroll !important;
+    padding: 2rem;
+    list-style-type: none;
+}
+.carousel-relatedItems  .ais-Hits-item{
+    height: 450px;
+    padding: 1.5rem;
+    margin: auto auto;
+    width: 380px;
+    background-color: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid rgba(240,240,239, 0.9);
+    box-shadow: none;
+    transition: 0.2s ease-in-out;
+}
+
+
+.carousel-relatedItems .ais-Hits-item:hover{  
+  box-shadow: 4px 4px 20px rgba(240, 240, 239, 1) ;
+  transition: 0.2s ease-in-out;
+}
+.carousel-relatedItemsSecond .ais-Hits-list{
+    width: 90%;
+    flex-wrap: nowrap !important;
+    display: -webkit-box !important;
+    overflow-x: scroll !important;
+    padding: 2rem;
+    list-style-type: none;
+}
+.carousel-relatedItemsSecond  .ais-Hits-item{
+    height: 450px;
+    padding: 1.5rem;
+    margin: auto auto;
+    width: 380px;
+    background-color: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid rgba(240,240,239, 0.9);
+    box-shadow: none;
+    transition: 0.2s ease-in-out;
+}
+
+
+.carousel-relatedItemsSecond .ais-Hits-item:hover{  
+  box-shadow: 4px 4px 20px rgba(240, 240, 239, 1) ;
+  transition: 0.2s ease-in-out;
+}
+
+/* HORIZONTAL SCROLLBAR */
+
+.ais-Hits-list::-webkit-scrollbar {
+    -webkit-appearance: none;
+  }
+  
+.ais-Hits-list::-webkit-scrollbar:horizontal {
+    height: 4px;
+  
+  }
+  
+.ais-Hits-list::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    border: 1px solid white;
+    background-color: rgba(0, 0, 0, .9);
+    
+  }
+.ais-Hits-list::-webkit-scrollbar-track { 
+    background-color: #fff; 
+    border-radius: 8px;
+  }
+
+.modal-relatedItems--closeBtn{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border: 1px solid rgba(8, 8, 8, 0.3);
+}
+
+@keyframes fadeModal {
     0%{
         transform: translateY(-100%);
         visibility: visible;
@@ -45,7 +159,7 @@
         opacity: 1;
     }
 }
-@keyframes fadeOutFilter {
+@keyframes fadeOutModal {
     0%{
         transform: translateY(0%);
         visibility: visible;
@@ -55,5 +169,19 @@
         transform: translateY(-100%);
         visibility: hidden;
         opacity: 0;
+    }
+}
+@keyframes fadeInModal {
+    0%{
+        /* transform: translateY(0%); */
+        transform: translate(-50%, 100%);
+        visibility: hidden;
+        opacity: 0;
+    }
+    100%{
+        /* transform: translateY(-100%); */
+        transform: translate(-50%, -50%);
+        visibility: visible;
+        opacity: 1;
     }
 }

@@ -391,4 +391,4 @@ var e;!function(){"use strict";var r={}.hasOwnProperty;function n(){for(var e=[]
 },{"algoliasearch":"ApTp","instantsearch.js":"SiVx","instantsearch.js/es/widgets":"VTbC"}],"nhkN":[function(require,module,exports) {
 "use strict";var e=require("./searchResults"),r=require("./filterResults"),u=require("../burgerMenu"),t=require("./relatedResultModal");(0,e.searchResults)(),(0,r.filterResult)(),(0,u.burgerMenu)(),setTimeout(t.relatedResultModal,1e3),(0,t.relatedResultModal)();
 },{"./searchResults":"RMwA","./filterResults":"bKYO","../burgerMenu":"flN2","./relatedResultModal":"cSAs"}]},{},["nhkN"], null)
-//# sourceMappingURL=indexSearchResults.5bc888b1.js.map
+//# sourceMappingURL=/indexSearchResults.5bc888b1.js.map

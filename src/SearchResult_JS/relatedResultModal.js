@@ -7,44 +7,72 @@ export function relatedResultModal() {
     const searchClient = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
     const index = searchClient.initIndex('gstar_demo_test');
 
-
+    console.log('relatedmodal')
 
     const search = instantsearch({
         indexName: 'gstar_demo_test',
         searchClient
     });
+    const searchIndexSecond = instantsearch({
+        indexName: 'Gstar_demo_carousel_detail',
+        searchClient
+    });
 
 
     let searchInput = document.querySelector('.ais-SearchBox-input')
-    searchInput.addEventListener('change', (e) => {
+    let timer,
+        timeoutVal = 500;
+    // detects when the user is actively typing
+    searchInput.addEventListener('keypress', handleKeyPress);
+    // triggers a check to see if the user is actually done typing
+    searchInput.addEventListener('keyup', handleKeyUp);
+
+    function handleKeyUp(e) {
+        window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
         if (e) {
-            domListening()
+            timer = window.setTimeout(() => {
+                console.log('coucou')
+                domListening()
+            }, timeoutVal);
+
         }
-    })
+    }
+
+    function handleKeyPress(e) {
+        window.clearTimeout(timer);
+    }
+
 
     const domListening = () => {
         // Listen to the Dom and change the content of the relatedsearch carousel with the search
         const observer = new MutationObserver(mutation => {
             if (mutation) {
-                console.log(mutation)
+                console.log('je passe dans display mutation 1fois')
                 getObjectID()
             }
         });
+
         observer.observe(document.body, {
             childList: true,
             subtree: true,
         });
+
     }
 
+
+
     const getObjectID = () => {
+
         let productSearchResult = document.querySelectorAll('.product-searchResult');
         productSearchResult.forEach((item) => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault()
-                index.getObject(item.dataset.id).then(object => {
+            index.getObject(item.dataset.id).then(object => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault()
                     displayrelateditems(object);
+                    displayModal()
                 })
-                displayModal()
+
+
             })
         })
     }
@@ -53,13 +81,23 @@ export function relatedResultModal() {
 
 
     function displayModal() {
+
         let modalWrapper = document.querySelector('.modal-relatedItems--wrapper');
-        if (modalWrapper.classList.contains('displayBlock')) {
-            modalWrapper.classList.add('fadeOutFilter')
+        let closeModal = document.querySelector('.modal-relatedItems--closeBtn');
+        let fadeInModal = document.querySelector('.modal-relatedItems');
+        // modalWrapper.classList.toggle('displayBlock')
+
+        closeModal.addEventListener('click', () => {
             modalWrapper.classList.remove('displayBlock')
-        } else {
+            fadeInModal.classList.remove('fadeInModal')
+            modalWrapper.classList.add('fadeOutModal')
+        })
+
+        if (!modalWrapper.classList.contains('displayBlock')) {
             modalWrapper.classList.add('displayBlock')
-            modalWrapper.classList.remove('fadeOutFilter')
+            fadeInModal.classList.add('fadeInModal')
+            modalWrapper.classList.remove('fadeOutModal')
+            console.log('off')
         }
     }
 
@@ -93,7 +131,7 @@ export function relatedResultModal() {
             fullStock: object.fullStock,
             sizes: object.sizes
         };
-        console.log('referenceHit')
+        console.log('je passe dans display related item 1fois')
 
         // Add the widgets
         search.addWidgets([
@@ -130,9 +168,47 @@ export function relatedResultModal() {
                 }
             }),
         ]);
+        // Add the widgets 2nd index
+        searchIndexSecond.addWidgets([
+            configure({
+                hitsPerPage: 8,
+                query: '',
+            }),
+            EXPERIMENTAL_configureRelatedItems({
+                hit: referenceHit,
+                matchingPatterns: {
+                    genderFilter: { score: 3 },
+                    category: { score: 2 },
+                    colourFilter: { score: 2 }
+                },
+            }),
+            hits({
+                container: '#carousel-relatedItemsSecond',
+                templates: {
+                    item: (hit) =>
 
-        search.start()
+                        `          
+                        <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
+                        <div class="image-wrapper">
+                            <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                        </div>
+                        <div class="hit-name">
+                            <div class="hit-infos">
+                            <div>${hit.name}</div>
+                                <div class="hit-colors">${hit.colourFilter}</div>
+                            </div>
+                            <div class="hit-price">$${hit.price}</div>
+                        </div>
+                    </a>
+                        `
+                }
+            }),
+        ]);
+
+
     }
 
+    search.start()
+    searchIndexSecond.start()
 }
 
