@@ -32,6 +32,7 @@ export function relatedResultModal() {
             timer = window.setTimeout(() => {
                 console.log('coucou')
                 domListening()
+                getObjectID()
             }, timeoutVal);
 
         }
@@ -42,7 +43,8 @@ export function relatedResultModal() {
     }
 
     // Listen to the Dom and change the content of the relatedsearch carousel with the search
-    const domListening = () => {
+    function domListening() {
+        console.log("je suis dans domlistening")
 
         const observer = new MutationObserver(mutation => {
             if (mutation) {

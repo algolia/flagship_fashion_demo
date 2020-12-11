@@ -29977,6 +29977,7 @@ function relatedResultModal() {
       timer = window.setTimeout(function () {
         console.log('coucou');
         domListening();
+        getObjectID();
       }, timeoutVal);
     }
   }
@@ -29986,7 +29987,8 @@ function relatedResultModal() {
   } // Listen to the Dom and change the content of the relatedsearch carousel with the search
 
 
-  var domListening = function domListening() {
+  function domListening() {
+    console.log("je suis dans domlistening");
     var observer = new MutationObserver(function (mutation) {
       if (mutation) {
         console.log('je passe dans display mutation 1fois');
@@ -29997,7 +29999,7 @@ function relatedResultModal() {
       childList: true,
       subtree: true
     });
-  };
+  }
 
   var getObjectID = function getObjectID() {
     var productSearchResult = document.querySelectorAll('.product-searchResult');
