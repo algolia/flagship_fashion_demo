@@ -30,7 +30,6 @@ export function relatedResultModal() {
         window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
         if (e) {
             timer = window.setTimeout(() => {
-                console.log('coucou')
                 domListening()
                 getObjectID()
             }, timeoutVal);
@@ -44,11 +43,9 @@ export function relatedResultModal() {
 
     // Listen to the Dom and change the content of the relatedsearch carousel with the search
     function domListening() {
-        console.log("je suis dans domlistening")
 
         const observer = new MutationObserver(mutation => {
             if (mutation) {
-                console.log('je passe dans display mutation 1fois')
                 getObjectID()
             }
         });
@@ -95,7 +92,6 @@ export function relatedResultModal() {
             modalWrapper.classList.add('displayBlock')
             fadeInModal.classList.add('fadeInModal')
             modalWrapper.classList.remove('fadeOutModal')
-            console.log('off')
         }
     }
 
@@ -129,7 +125,6 @@ export function relatedResultModal() {
             fullStock: object.fullStock,
             sizes: object.sizes
         };
-        console.log('je passe dans display related item 1fois')
 
         // Add the widgets
         search.addWidgets([
