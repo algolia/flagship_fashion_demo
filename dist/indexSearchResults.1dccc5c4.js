@@ -30298,9 +30298,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function searchResults() {
+  var searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
   var search = (0, _instantsearch.default)({
     indexName: 'gstar_demo_test',
-    searchClient: (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508')
+    searchClient: searchClient
   });
   search.addWidgets([(0, _widgets.searchBox)({
     container: '#searchbox',
@@ -30377,15 +30378,42 @@ function searchResults() {
     if (item.isRefined) {
       return 'color: white !important; background-color: rgba(0,0,0, 0.9)';
     }
-  } // 2. Create the custom widget
+  }
+
+  ; // Create the render function
+
+  var renderQueryRuleCustomData = function renderQueryRuleCustomData(renderOptions, isFirstRender) {
+    var items = renderOptions.items,
+        widgetParams = renderOptions.widgetParams,
+        refine = renderOptions.refine;
+
+    if (isFirstRender) {// const inputSearchResult = document.querySelector('.ais-SearchBox-input');
+      // inputSearchResult.addEventListener('change', (e) => {
+      //     if (e) {
+      //         refine({
+      //             ruleContexts: ['men_banner'],
+      //         });
+      //     } else {
+      //         refine({});
+      //     }
+      // });
+    }
+
+    widgetParams.container.innerHTML = "\n    <div class=\"banner-wrapper\">\n      ".concat(items.map(function (item) {
+      return "<img src=\"".concat(item.banner, "\">");
+    }).join(''), "\n    </div>\n  ");
+  }; // 2. Create the custom widget
 
 
-  var customRefinementList = (0, _connectors.connectRefinementList)(renderRefinementList); // 3. Instantiate
+  var customRefinementList = (0, _connectors.connectRefinementList)(renderRefinementList);
+  var customQueryRuleCustomData = (0, _connectors.connectQueryRules)(renderQueryRuleCustomData); // 3. Instantiate
 
   search.addWidgets([customRefinementList({
     container: document.querySelector('#refinement-list-SearchResult'),
     attribute: 'keywords',
     showMoreLimit: 10
+  }), customQueryRuleCustomData({
+    container: document.querySelector('#queryRuleCustomData')
   })]);
   search.start();
 }
@@ -30670,7 +30698,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57005" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54632" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
