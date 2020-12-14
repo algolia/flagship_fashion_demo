@@ -1,13 +1,19 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
-import { searchBox, clearRefinements, refinementList, stats, hits, pagination } from 'instantsearch.js/es/widgets'
-import { connectRefinementList } from 'instantsearch.js/es/connectors';
+import { searchBox, clearRefinements, refinementList, stats, hits, pagination, queryRuleCustomData } from 'instantsearch.js/es/widgets'
+import { connectRefinementList, connectQueryRules } from 'instantsearch.js/es/connectors';
 
 
 export function searchResults() {
+
+    const searchClient = algoliasearch(
+        'HYDY1KWTWB',
+        '28cf6d38411215e2eef188e635216508'
+    );
+
     const search = instantsearch({
         indexName: 'gstar_demo_test',
-        searchClient: algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508'),
+        searchClient,
     });
 
     search.addWidgets([
@@ -58,6 +64,8 @@ export function searchResults() {
         pagination({
             container: '#pagination',
         }),
+
+
     ]);
 
 
@@ -134,11 +142,41 @@ export function searchResults() {
         if (item.isRefined) {
             return 'color: white !important; background-color: rgba(0,0,0, 0.9)'
         }
-    }
+    };
+
+    // Create the render function
+    const renderQueryRuleCustomData = (renderOptions, isFirstRender) => {
+        const { items, widgetParams, refine } = renderOptions;
+
+        if (isFirstRender) {
+            // const inputSearchResult = document.querySelector('.ais-SearchBox-input');
+
+            // inputSearchResult.addEventListener('change', (e) => {
+            //     if (e) {
+            //         refine({
+            //             ruleContexts: ['men_banner'],
+            //         });
+            //     } else {
+            //         refine({});
+            //     }
+            // });
+        }
+
+        widgetParams.container.innerHTML =
+            `
+    <div class="banner-wrapper">
+      ${items.map(item => `<img src="${item.banner}">`).join('')}
+    </div>
+  `
+
+    };
 
     // 2. Create the custom widget
     const customRefinementList = connectRefinementList(
         renderRefinementList
+    );
+    const customQueryRuleCustomData = connectQueryRules(
+        renderQueryRuleCustomData
     );
 
     // 3. Instantiate
@@ -147,6 +185,9 @@ export function searchResults() {
             container: document.querySelector('#refinement-list-SearchResult'),
             attribute: 'keywords',
             showMoreLimit: 10,
+        }),
+        customQueryRuleCustomData({
+            container: document.querySelector('#queryRuleCustomData'),
         })
     ]);
 

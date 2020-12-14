@@ -1,0 +1,12 @@
+.banner-wrapper{
+    max-height: 500px;
+    overflow-y: hidden;
+
+}
+.banner-wrapper img{
+    width: 100%;
+    object-fit: contain;
+    object-position: 0px -25rem;
+    filter: grayscale(50%);
+
+}
