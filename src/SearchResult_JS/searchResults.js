@@ -165,7 +165,17 @@ export function searchResults() {
         widgetParams.container.innerHTML =
             `
     <div class="banner-wrapper">
-      ${items.map(item => `<img src="${item.banner}">`).join('')}
+      ${items.map(item =>
+
+                `<a href="${item.link}">
+                    <div class="banner-overlay"></div>
+                    <div class="banner-title--wrapper">
+                        <h3>${item.title}</h3>
+                        <div class="underline-bannerTitle"></div>
+                    </div>
+                    <img src="${item.banner}">
+                </a>`
+            ).join('')}
     </div>
   `
 

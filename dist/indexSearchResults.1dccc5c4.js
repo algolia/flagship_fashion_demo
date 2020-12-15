@@ -30400,7 +30400,7 @@ function searchResults() {
     }
 
     widgetParams.container.innerHTML = "\n    <div class=\"banner-wrapper\">\n      ".concat(items.map(function (item) {
-      return "<img src=\"".concat(item.banner, "\">");
+      return "<a href=\"".concat(item.link, "\">\n                    <div class=\"banner-overlay\"></div>\n                    <div class=\"banner-title--wrapper\">\n                        <h3>").concat(item.title, "</h3>\n                        <div class=\"underline-bannerTitle\"></div>\n                    </div>\n                    <img src=\"").concat(item.banner, "\">\n                </a>");
     }).join(''), "\n    </div>\n  ");
   }; // 2. Create the custom widget
 
@@ -30698,7 +30698,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54632" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52876" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
