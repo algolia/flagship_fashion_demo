@@ -30319,6 +30319,10 @@ function searchResults() {
     attribute: 'colourFilter'
   }), (0, _widgets.stats)({
     container: '#stats-searchResult'
+  }), (0, _widgets.voiceSearch)({
+    container: '#voicesearch',
+    searchAsYouSpeak: true,
+    language: 'en-US'
   }), (0, _widgets.hits)({
     container: '#hits',
     templates: {
@@ -30439,6 +30443,42 @@ function filterResult() {
       showfilter.classList.remove('fadeOutFilter');
     }
   });
+
+  function colorCircle() {
+    var colorInput = document.querySelectorAll('.color-list .ais-RefinementList-checkbox');
+    colorInput.forEach(function (input) {
+      console.log(input);
+      console.log(input.value);
+      var inputColor = input.value;
+
+      switch (inputColor) {
+        case inputColor = 'Red':
+          input.value = "#FF0000";
+          input.type = 'color';
+          break;
+
+        case inputColor = 'Beige':
+          input.value = "#F5F5DC";
+          input.type = 'color';
+          break;
+
+        case inputColor = 'Dark blue':
+          input.value = "#000158";
+          input.type = 'color';
+          break;
+
+        case inputColor = 'Beige':
+          input.value = "#F5F5DC";
+          input.type = 'color';
+
+        case inputColor = 'Beige':
+          input.value = "#F5F5DC";
+          input.type = 'color';
+      }
+    });
+  }
+
+  setTimeout(colorCircle, 1000);
 }
 },{}],"src/burgerMenu.js":[function(require,module,exports) {
 "use strict";
@@ -30698,7 +30738,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52876" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55264" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -11,19 +11,13 @@ export const carousel = connectHits(function renderCarousel(
   isFirstRender
 ) {
   if (isFirstRender) {
+    console.log(title)
     console.log(container);
-    const section = document.createElement('section');
-    section.classList.add('section-carousel-winter');
-    container.appendChild(section);
-    document
-      .querySelector('.section-carousel-winter')
-      .insertAdjacentHTML(
-        'afterbegin',
-        `<div class="title-carousel-winter"><h2>${title}</h2><a href="/searchResults.html" class="btn-carousel-winter">See All</a></div>`
-      );
+    container.insertAdjacentHTML('afterbegin',
+      `<div class="title-carousel-winter"><h2>${title}</h2><a href="/searchResults.html" class="btn-carousel-winter">See All</a></div>`)
     const ul = document.createElement('ul');
     ul.classList.add('carousel-list-container');
-    section.appendChild(ul);
+    container.appendChild(ul);
   }
 
   container.querySelector('ul').innerHTML = hits

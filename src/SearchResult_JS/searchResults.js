@@ -1,6 +1,6 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
-import { searchBox, clearRefinements, refinementList, stats, hits, pagination, queryRuleCustomData } from 'instantsearch.js/es/widgets'
+import { searchBox, clearRefinements, refinementList, stats, hits, pagination, voiceSearch } from 'instantsearch.js/es/widgets'
 import { connectRefinementList, connectQueryRules } from 'instantsearch.js/es/connectors';
 
 
@@ -38,6 +38,11 @@ export function searchResults() {
         }),
         stats({
             container: '#stats-searchResult',
+        }),
+        voiceSearch({
+            container: '#voicesearch',
+            searchAsYouSpeak: true,
+            language: 'en-US',
         }),
         hits({
             container: '#hits',

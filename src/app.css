@@ -211,8 +211,73 @@ transition: 0.2s ease-in-out;
   float: right;
 }
 
+/* USER PERSONA SELECTOR */
+
+.userPersonaSelector {
+ visibility: hidden;
+ display: flex;
+ flex-direction: column;
+ justify-content: center;
+ background-color: white;
+ color: black;
+ width: 200px;
+ padding: 1rem;
+ text-align: center;
+ box-shadow: 4px 4px 20px rgb(0, 0, 0, 0.3);
+ border-radius: 3px;
+ position: fixed;
+ top: 20vh;
+ left: 0;
+ z-index: 999;
+}
+
+.closePersona{
+cursor: pointer;
+position: absolute;
+top: 0.1rem;
+right: 0.8rem;
+}
+
+.userPersonaSelector p {
+  color: black;
+  font-size: 0.8rem;
+  font-style: italic;
+  font-family: 'Castoro', serif;
+}
+.userPersonaSelector select {
+  background-color:rgb(246,245,243);
+     border: none;
+     padding: 0.6rem;
+     padding-left: 3rem;
+     border-radius: 5px;
+     font-family: 'Castoro', serif;
+}
+
+.personaFadeIn{
+  animation: personaIn 0.8s forwards;
+}
+.personaFadeOut{
+  animation: personaOut 0.8s forwards;
+}
 
 
-
-
-
+@keyframes personaIn{
+  0%{
+    visibility: hidden;
+    transform: translateX(-100%);
+  }
+  100%{
+    visibility: visible;
+    transform: translateX(0%);
+  }
+}
+@keyframes personaOut{
+  0%{
+    visibility: visible;
+    transform: translateX(0%);
+  }
+  100%{
+    visibility: hidden;
+    transform: translateX(-100%);
+  }
+}

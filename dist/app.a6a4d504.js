@@ -20480,14 +20480,12 @@ var carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirs
       hits = _ref.hits;
 
   if (isFirstRender) {
+    console.log(title);
     console.log(container);
-    var section = document.createElement('section');
-    section.classList.add('section-carousel-winter');
-    container.appendChild(section);
-    document.querySelector('.section-carousel-winter').insertAdjacentHTML('afterbegin', "<div class=\"title-carousel-winter\"><h2>".concat(title, "</h2><a href=\"/searchResults.html\" class=\"btn-carousel-winter\">See All</a></div>"));
+    container.insertAdjacentHTML('afterbegin', "<div class=\"title-carousel-winter\"><h2>".concat(title, "</h2><a href=\"/searchResults.html\" class=\"btn-carousel-winter\">See All</a></div>"));
     var ul = document.createElement('ul');
     ul.classList.add('carousel-list-container');
-    section.appendChild(ul);
+    container.appendChild(ul);
   }
 
   container.querySelector('ul').innerHTML = hits.map(function (hit) {
@@ -33837,10 +33835,27 @@ function GetDataForCarousel() {
   var search = (0, _instantsearch.default)({
     indexName: 'gstar_demo_test',
     searchClient: searchClient
-  }); //GET THE CONFIG
+  });
+  var userTokenSelector = document.getElementById("user-token-selector");
+  userTokenSelector.addEventListener("change", function () {
+    userTokenSelector.disabled = true;
+    search.removeWidgets(carouselWidgets);
+    getCarouselConfigs().then(function (carousels) {
+      console.log(carousels);
+      userTokenSelector.disabled = false;
+      carouselWidgets = createWidgets(carousels);
+      search.addWidgets(carouselWidgets);
+    });
+  });
+
+  function getUserToken() {
+    return userTokenSelector.value;
+  } //GET THE CONFIG
+
 
   function getCarouselConfigs() {
     return searchClient.initIndex("gstar_demo_config").search("", {
+      facetFilters: ['userToken:' + getUserToken()],
       attributesToHighlight: [],
       attributesToRetrieve: ["title", "indexName", "configure"]
     }).then(function (res) {
@@ -33864,12 +33879,14 @@ function GetDataForCarousel() {
 
       if (carouselConfig.configure) {
         console.log(carouselConfig.configure);
-        indexWidget.addWidgets([(0, _widgets.configure)(_objectSpread({}, carouselConfig.configure))]);
-      }
+        indexWidget.addWidgets([(0, _widgets.configure)(_objectSpread(_objectSpread({}, carouselConfig.configure), {}, {
+          userToken: getUserToken()
+        }))]);
+      } // const client = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+      // const gstar = client.initIndex('gstar_demo_test');
+      // const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
 
-      var client = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-      var gstar = client.initIndex('gstar_demo_test');
-      var gstardetail = client.initIndex('Gstar_demo_carousel_detail');
+
       indexWidget.addWidgets([(0, _displayCarousel.carousel)({
         title: carouselConfig.title,
         container: carouselContainer
@@ -33898,6 +33915,7 @@ function GetDataForCarousel() {
 
 
   getCarouselConfigs().then(function (carousels) {
+    userTokenSelector.disabled = false;
     carouselWidgets = createWidgets(carousels);
     search.addWidgets(carouselWidgets);
     search.start();
@@ -37889,7 +37907,7 @@ function autoComplete() {
       header: '<div class="aa-suggestions-category">Product</div>',
       suggestion: function suggestion(_ref) {
         var _highlightResult = _ref._highlightResult;
-        return "<div class=\"aa-suggestions-product\">\n                                <img src=\"".concat(_highlightResult.image_link.value, "\">\n                                <div class=\"aa-suggestions-product-info\">\n                                    <span>").concat(_highlightResult.name.value, "</span>\n                                    <p>$").concat(_highlightResult.price.value, "</p>\n                                </div>\n                            </div>\n                            ");
+        return " <a href=\"./searchResults.html\" >\n                                <div class=\"aa-suggestions-product\">\n                                    <img src=\"".concat(_highlightResult.image_link.value, "\">\n                                    <div class=\"aa-suggestions-product-info\">\n                                        <span>").concat(_highlightResult.name.value, "</span>\n                                        <p>$").concat(_highlightResult.price.value, "</p>\n                                    </div>\n                                </div>\n                            </a>\n                            ");
       }
     }
   }, {
@@ -37901,7 +37919,7 @@ function autoComplete() {
       header: '<div class="aa-suggestions-category">Category</div>',
       suggestion: function suggestion(_ref2) {
         var _highlightResult = _ref2._highlightResult;
-        return "<span>".concat(_highlightResult.category.value, "</span>");
+        return "\n                    <a href=\"./searchResults.html>\n                        <span>".concat(_highlightResult.category.value, "</span>\n                    </a>");
       }
     }
   }]).on('autocomplete:selected', function (event, suggestion, dataset, context) {
@@ -37992,6 +38010,33 @@ function searchBar() {
     }
   });
 }
+},{}],"src/persona.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.togglePersona = togglePersona;
+
+function togglePersona() {
+  var btnPersona = document.querySelector('.btnPersona');
+  var personaChoice = document.querySelector('.userPersonaSelector');
+  var closePersona = document.querySelector('.closePersona');
+  btnPersona.addEventListener('click', toggleModal);
+  closePersona.addEventListener('click', toggleModal);
+
+  function toggleModal(e) {
+    e.preventDefault();
+
+    if (personaChoice.classList.contains('personaFadeIn')) {
+      personaChoice.classList.add('personaFadeOut');
+      personaChoice.classList.remove('personaFadeIn');
+    } else {
+      personaChoice.classList.add('personaFadeIn');
+      personaChoice.classList.remove('personaFadeOut');
+    }
+  }
+}
 },{}],"src/app.js":[function(require,module,exports) {
 "use strict";
 
@@ -38009,12 +38054,15 @@ var _burgerMenu = require("./burgerMenu");
 
 var _searchbarDropdown = require("./searchbarDropdown");
 
+var _persona = require("./persona");
+
 (0, _glide.carouselGlideJS)();
 (0, _getCarousel.GetDataForCarousel)();
 (0, _displayCarouselDetail.carouselDetailed)();
 (0, _autocomplete.autoComplete)();
 (0, _burgerMenu.burgerMenu)();
 (0, _searchbarDropdown.searchBar)();
+(0, _persona.togglePersona)();
 /* global algoliasearch instantsearch */
 // const searchClient = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
 // const search = instantsearch({
@@ -38075,7 +38123,7 @@ var _searchbarDropdown = require("./searchbarDropdown");
 //   })
 // });
 // search.start();
-},{"instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js","./glide":"src/glide.js","./getCarousel":"src/getCarousel.js","./displayCarouselDetail":"src/displayCarouselDetail.js","./autocomplete":"src/autocomplete.js","./burgerMenu":"src/burgerMenu.js","./searchbarDropdown":"src/searchbarDropdown.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js","./glide":"src/glide.js","./getCarousel":"src/getCarousel.js","./displayCarouselDetail":"src/displayCarouselDetail.js","./autocomplete":"src/autocomplete.js","./burgerMenu":"src/burgerMenu.js","./searchbarDropdown":"src/searchbarDropdown.js","./persona":"src/persona.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -38103,7 +38151,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52876" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55264" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -30,13 +30,15 @@ export function autoComplete() {
             templates: {
                 header: '<div class="aa-suggestions-category">Product</div>',
                 suggestion({ _highlightResult }) {
-                    return `<div class="aa-suggestions-product">
-                                <img src="${_highlightResult.image_link.value}">
-                                <div class="aa-suggestions-product-info">
-                                    <span>${_highlightResult.name.value}</span>
-                                    <p>$${_highlightResult.price.value}</p>
+                    return ` <a href="./searchResults.html" >
+                                <div class="aa-suggestions-product">
+                                    <img src="${_highlightResult.image_link.value}">
+                                    <div class="aa-suggestions-product-info">
+                                        <span>${_highlightResult.name.value}</span>
+                                        <p>$${_highlightResult.price.value}</p>
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                             `;
                 }
             }
@@ -47,7 +49,10 @@ export function autoComplete() {
             templates: {
                 header: '<div class="aa-suggestions-category">Category</div>',
                 suggestion({ _highlightResult }) {
-                    return `<span>${_highlightResult.category.value}</span>`;
+                    return `
+                    <a href="./searchResults.html>
+                        <span>${_highlightResult.category.value}</span>
+                    </a>`;
                 }
             }
         }

@@ -77,6 +77,20 @@
    outline: none;
   }
 
+  .voicesearch{
+    position: absolute;
+    right: 2rem;
+    top: 6px;
+  }
+
+  .ais-VoiceSearch-button{
+    color: rgb(75, 75, 75);
+  }
+
+  .ais-VoiceSearch-status p {
+    display: none;
+  }
+
   /* BURGER MENU */
 
   .burger {

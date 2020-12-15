@@ -24,7 +24,6 @@
     "eslint-plugin-import": "2.19.1",
     "eslint-plugin-prettier": "3.1.2",
     "gh-pages": "^3.1.0",
-    "parcel-bundler": "^1.12.4",
     "prettier": "1.19.1"
   },
   "keywords": [
@@ -34,6 +33,7 @@
     "instantsearch.js"
   ],
   "dependencies": {
+    "parcel-bundler": "^1.12.4",
     "@glidejs/glide": "^3.4.1",
     "algoliasearch": "^4.8.3",
     "autocomplete.js": "^0.38.0",

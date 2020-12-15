@@ -6,6 +6,7 @@ import { carouselDetailed } from "./displayCarouselDetail";
 import { autoComplete } from "./autocomplete";
 import { burgerMenu } from "./burgerMenu";
 import { searchBar } from "./searchbarDropdown";
+import { togglePersona } from "./persona";
 
 
 
@@ -15,6 +16,7 @@ carouselDetailed()
 autoComplete()
 burgerMenu()
 searchBar()
+togglePersona()
 
 
 

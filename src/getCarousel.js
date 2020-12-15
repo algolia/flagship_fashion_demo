@@ -13,6 +13,21 @@ export function GetDataForCarousel() {
         searchClient,
     });
 
+    const userTokenSelector = document.getElementById("user-token-selector");
+    userTokenSelector.addEventListener("change", () => {
+        userTokenSelector.disabled = true;
+        search.removeWidgets(carouselWidgets);
+        getCarouselConfigs().then((carousels) => {
+            console.log(carousels)
+            userTokenSelector.disabled = false;
+            carouselWidgets = createWidgets(carousels);
+            search.addWidgets(carouselWidgets);
+        });
+    });
+
+    function getUserToken() {
+        return userTokenSelector.value;
+    }
 
 
     //GET THE CONFIG
@@ -20,6 +35,7 @@ export function GetDataForCarousel() {
         return searchClient
             .initIndex("gstar_demo_config")
             .search("", {
+                facetFilters: ['userToken:' + getUserToken()],
                 attributesToHighlight: [],
                 attributesToRetrieve: ["title", "indexName", "configure"],
             })
@@ -47,15 +63,15 @@ export function GetDataForCarousel() {
                 console.log(carouselConfig.configure)
                 indexWidget.addWidgets([
                     configure({
-                        ...carouselConfig.configure
-                        // userToken: getUserToken(),
+                        ...carouselConfig.configure,
+                        userToken: getUserToken(),
                     }),
                 ]);
             }
 
-            const client = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-            const gstar = client.initIndex('gstar_demo_test');
-            const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
+            // const client = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+            // const gstar = client.initIndex('gstar_demo_test');
+            // const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
 
             indexWidget.addWidgets([
                 carousel({
@@ -91,6 +107,7 @@ export function GetDataForCarousel() {
 
     // retrieve the carousel configuration once
     getCarouselConfigs().then((carousels) => {
+        userTokenSelector.disabled = false;
         carouselWidgets = createWidgets(carousels);
         search.addWidgets(carouselWidgets);
         search.start();
