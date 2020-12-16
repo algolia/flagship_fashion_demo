@@ -131,14 +131,33 @@
 }
 
 .ais-RefinementList-count{
-    width: 20px;
+    width: 30px;
     height: 20px;
     font-size: .6rem;
     font-style: italic;
     color: white;
     background-color: rgba(78, 78, 78, 0.295);
     border-radius: 5px;
+    align-self: center;
+}
 
+
+
+.color-list .ais-RefinementList-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1rem;
+}
+.color-list .ais-RefinementList-list .ais-RefinementList-label{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+   
+}
+.color-list .ais-RefinementList-list .ais-RefinementList-label .ais-RefinementList-labelText{
+    font-size: 0.8rem;
+    margin: 0.2rem auto 0.1rem auto; 
 }
 
 .ais-RefinementList-checkbox[type="color"] {
@@ -146,14 +165,14 @@
     border: none;
     border-radius: 50%;
 	width: 32px;
-	height: 32px;
+    height: 32px;
+    align-self: center;
 }
 .ais-RefinementList-checkbox[type="color"]::-webkit-color-swatch-wrapper {
     padding: 0;
-    border-radius: 50%;
 }
 .ais-RefinementList-checkbox[type="color"]::-webkit-color-swatch {
-    border: none;
+    border: 1px solid rgba(0, 0, 0, .5) ;
     border-radius: 50%;
 }
 

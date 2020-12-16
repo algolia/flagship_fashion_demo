@@ -36,6 +36,10 @@ export function searchResults() {
             container: '#color-list',
             attribute: 'colourFilter',
         }),
+        // refinementList({
+        //     container: '#hex-color-list',
+        //     attribute: 'hexColorCode',
+        // }),
         stats({
             container: '#stats-searchResult',
         }),
