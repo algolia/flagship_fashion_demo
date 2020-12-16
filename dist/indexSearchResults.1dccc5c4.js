@@ -30317,7 +30317,11 @@ function searchResults() {
   }), (0, _widgets.refinementList)({
     container: '#color-list',
     attribute: 'colourFilter'
-  }), (0, _widgets.stats)({
+  }), // refinementList({
+  //     container: '#hex-color-list',
+  //     attribute: 'hexColorCode',
+  // }),
+  (0, _widgets.stats)({
     container: '#stats-searchResult'
   }), (0, _widgets.voiceSearch)({
     container: '#voicesearch',
@@ -30447,34 +30451,74 @@ function filterResult() {
   function colorCircle() {
     var colorInput = document.querySelectorAll('.color-list .ais-RefinementList-checkbox');
     colorInput.forEach(function (input) {
-      console.log(input);
-      console.log(input.value);
-      var inputColor = input.value;
+      input.addEventListener('click', function (e) {
+        e.preventDefault();
+        console.log(e);
+        changeColor();
+      });
 
-      switch (inputColor) {
-        case inputColor = 'Red':
-          input.value = "#FF0000";
-          input.type = 'color';
-          break;
+      function changeColor() {
+        var inputColor = input.value;
 
-        case inputColor = 'Beige':
-          input.value = "#F5F5DC";
-          input.type = 'color';
-          break;
+        switch (inputColor) {
+          case inputColor = 'Red':
+            input.value = "#FF0000";
+            input.type = 'color';
+            break;
 
-        case inputColor = 'Dark blue':
-          input.value = "#000158";
-          input.type = 'color';
-          break;
+          case inputColor = 'Beige':
+            input.value = "#F5F5DC";
+            input.type = 'color';
+            break;
 
-        case inputColor = 'Beige':
-          input.value = "#F5F5DC";
-          input.type = 'color';
+          case inputColor = 'Dark blue':
+            input.value = "#000158";
+            input.type = 'color';
+            break;
 
-        case inputColor = 'Beige':
-          input.value = "#F5F5DC";
-          input.type = 'color';
+          case inputColor = 'Grey':
+            input.value = "#808080";
+            input.type = 'color';
+            break;
+
+          case inputColor = 'Black':
+            input.value = "#000";
+            input.type = 'color';
+            break;
+
+          case inputColor = 'Medium blue':
+            input.value = "#0000CD";
+            input.type = 'color';
+            break;
+
+          case inputColor = 'White':
+            input.value = "#FFFFFF";
+            input.type = 'color';
+            break;
+
+          case inputColor = 'Green':
+            input.value = "#008000";
+            input.type = 'color';
+            break;
+
+          case inputColor = 'Green':
+            input.value = "#008000";
+            input.type = 'color';
+            break;
+
+          case inputColor = 'Light blue':
+            input.value = "#ADD8E6";
+            input.type = 'color';
+            break;
+
+          case inputColor = 'Brown':
+            input.value = "#A0522D";
+            input.type = 'color';
+            break;
+        }
       }
+
+      changeColor();
     });
   }
 
@@ -30738,7 +30782,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55264" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52549" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
