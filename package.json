@@ -17,6 +17,7 @@
   },
   "type": "module",
   "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.12.10",
     "babel-eslint": "10.0.3",
     "eslint": "5.7.0",
     "eslint-config-algolia": "13.2.3",
@@ -33,11 +34,13 @@
     "instantsearch.js"
   ],
   "dependencies": {
-    "parcel-bundler": "^1.12.4",
+    "@babel/runtime": "^7.12.5",
     "@glidejs/glide": "^3.4.1",
     "algoliasearch": "^4.8.3",
     "autocomplete.js": "^0.38.0",
+    "babel-polyfill": "^6.26.0",
     "instantsearch.js": "^4.9.1",
+    "parcel-bundler": "^1.12.4",
     "serve-static": "^1.14.1"
   },
   "repository": "git@github.com:algolia/flasgship_fashion_demo.git",
