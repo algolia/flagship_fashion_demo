@@ -26,11 +26,20 @@ export function filterResult() {
             })
         }
 
+        function clearFilters() {
+            const btnClear = document.querySelector('.ais-ClearRefinements-button')
+            btnClear.addEventListener('click', (e) => {
+
+                colorUnselected()
+            })
+
+        }
+        clearFilters()
 
         function colorSelected() {
             const colorInputSelected = document.querySelectorAll('.color-list .ais-RefinementList-item--selected .ais-RefinementList-checkbox')
             colorInputSelected.forEach(input => {
-                console.log(input)
+
                 changeColor(input)
                 input.addEventListener('click', (e) => {
                     e.preventDefault()
@@ -41,7 +50,7 @@ export function filterResult() {
 
         function changeColor(input) {
             let inputColor = input.value
-            console.log(input)
+
 
 
             switch (inputColor) {

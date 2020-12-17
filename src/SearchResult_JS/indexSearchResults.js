@@ -3,11 +3,15 @@ import { filterResult } from "./filterResults";
 import { burgerMenu } from "../burgerMenu";
 // import { searchBar } from "../searchbarDropdown";
 import { relatedResultModal } from "./relatedResultModal";
+import { cardAnimation } from "./cardAnimations";
 
 
-searchResults()
+searchResults().then(() => cardAnimation())
 filterResult()
 burgerMenu()
 // searchBar()
 setTimeout(relatedResultModal, 1000)
+// setTimeout(cardAnimation, 1000)
+
+
 // relatedResultModal()
