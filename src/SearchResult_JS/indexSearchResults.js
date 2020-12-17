@@ -6,11 +6,25 @@ import { relatedResultModal } from "./relatedResultModal";
 import { cardAnimation } from "./cardAnimations";
 
 
-searchResults().then(() => cardAnimation())
+searchResults()
 filterResult()
 burgerMenu()
 // searchBar()
-setTimeout(relatedResultModal, 1000)
+// window.setInterval(relatedResultModal, 500);
+// window.setInterval(cardAnimation, 500);
+console.log(document.readyState)
+var checkExist = setInterval(function () {
+    if (document.readyState != 'loading') {
+        console.log("Exists!");
+        relatedResultModal()
+        cardAnimation()
+        clearInterval(checkExist);
+    }
+}, 500)
+
+
+
+// setTimeout(relatedResultModal, 1000)
 // setTimeout(cardAnimation, 1000)
 
 

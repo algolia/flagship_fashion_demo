@@ -30298,140 +30298,132 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function searchResults() {
-  return new Promise(function (resolve, reject) {
-    try {
-      var isRefined = function isRefined(item) {
-        if (item.isRefined) {
-          return 'color: white !important; background-color: rgba(0,0,0, 0.9)';
-        }
-      };
-
-      var searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-      var search = (0, _instantsearch.default)({
-        indexName: 'gstar_demo_test',
-        searchClient: searchClient
-      });
-      search.addWidgets([(0, _widgets.searchBox)({
-        container: '#searchbox',
-        placeholder: 'Clothes, Sneakers...'
-      }), (0, _widgets.clearRefinements)({
-        container: '#clear-refinements'
-      }), (0, _widgets.refinementList)({
-        container: '#brand-list',
-        attribute: 'category'
-      }), (0, _widgets.refinementList)({
-        container: '#gender-list',
-        attribute: 'genderFilter'
-      }), (0, _widgets.refinementList)({
-        container: '#color-list',
-        attribute: 'colourFilter'
-      }), // refinementList({
-      //     container: '#hex-color-list',
-      //     attribute: 'hexColorCode',
-      // }),
-      (0, _widgets.stats)({
-        container: '#stats-searchResult'
-      }), (0, _widgets.voiceSearch)({
-        container: '#voicesearch',
-        searchAsYouSpeak: true,
-        language: 'en-US'
-      }), (0, _widgets.hits)({
-        container: '#hits',
-        templates: {
-          item: "\n                 <a href=\"{{url}}\" class=\"product-searchResult\" data-id=\"{{objectID}}\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"{{image_link}}\" align=\"left\" alt=\"{{name}}\" class=\"result-img\" />\n                        <div class=\"hit-sizeFilter\">\n                            <p>{{sizeFilter}}</p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>{{#helpers.highlight}}{ \"attribute\": \"name\" }{{/helpers.highlight}}</div>\n                                <div class=\"hit-colors\">{{colourFilter}}</div>\n                            </div>\n                        <div class=\"hit-price\">${{price}}</div>\n                        \n                    </div>\n                   \n                </a>\n                    \n              \n                "
-        }
-      }), (0, _widgets.pagination)({
-        container: '#pagination'
-      })]); // 1. Create a render function
-
-      var renderRefinementList = function renderRefinementList(renderOptions, isFirstRender) {
-        var items = renderOptions.items,
-            isFromSearch = renderOptions.isFromSearch,
-            refine = renderOptions.refine,
-            createURL = renderOptions.createURL,
-            isShowingMore = renderOptions.isShowingMore,
-            canToggleShowMore = renderOptions.canToggleShowMore,
-            searchForItems = renderOptions.searchForItems,
-            toggleShowMore = renderOptions.toggleShowMore,
-            widgetParams = renderOptions.widgetParams;
-
-        if (isFirstRender) {
-          // const input = document.createElement('input');
-          var ul = document.createElement('ul'); // const button = document.createElement('button');
-          // button.classList.add('btn-showMore')
-          // button.textContent = 'Show more';
-          // // input.addEventListener('input', event => {
-          // //   searchForItems(event.currentTarget.value);
-          // // });
-          // button.addEventListener('click', () => {
-          //     toggleShowMore();
-          // });
-          // widgetParams.container.appendChild(input);
-
-          widgetParams.container.appendChild(ul); // widgetParams.container.appendChild(button);
-        } // const input = widgetParams.container.querySelector('input');
-        // if (!isFromSearch && input.value) {
-        //   input.value = '';
-        // }
-
-
-        widgetParams.container.querySelector('ul').innerHTML = items.map(function (item) {
-          return "\n                  <li style=\"".concat(isRefined(item), "\">\n                    <a\n                      href=\"").concat(createURL(item.value), "\"\n                      data-value=\"").concat(item.value, "\"\n                      style=\"").concat(isRefined(item), "\"\n                    >\n                      ").concat(item.label, " <span style=\"").concat(isRefined(item), "\">(").concat(item.count, ")</span>\n                    </a>\n                  </li>\n                ");
-        }).join('');
-
-        _toConsumableArray(widgetParams.container.querySelectorAll('a')).forEach(function (element) {
-          element.addEventListener('click', function (event) {
-            event.preventDefault();
-            refine(event.currentTarget.dataset.value);
-          });
-        }); // const button = widgetParams.container.querySelector('button');
-        // // button.disabled = !canToggleShowMore;
-        // button.textContent = isShowingMore ? 'Show less' : 'Show more';
-
-      };
-
-      ; // Create the render function
-
-      var renderQueryRuleCustomData = function renderQueryRuleCustomData(renderOptions, isFirstRender) {
-        var items = renderOptions.items,
-            widgetParams = renderOptions.widgetParams,
-            refine = renderOptions.refine;
-
-        if (isFirstRender) {// const inputSearchResult = document.querySelector('.ais-SearchBox-input');
-          // inputSearchResult.addEventListener('change', (e) => {
-          //     if (e) {
-          //         refine({
-          //             ruleContexts: ['men_banner'],
-          //         });
-          //     } else {
-          //         refine({});
-          //     }
-          // });
-        }
-
-        widgetParams.container.innerHTML = "\n            <div class=\"banner-wrapper\">\n              ".concat(items.map(function (item) {
-          return "<a href=\"".concat(item.link, "\">\n                            <div class=\"banner-overlay\"></div>\n                            <div class=\"banner-title--wrapper\">\n                                <h3>").concat(item.title, "</h3>\n                                <div class=\"underline-bannerTitle\"></div>\n                            </div>\n                            <img src=\"").concat(item.banner, "\">\n                        </a>");
-        }).join(''), "\n            </div>\n          ");
-      }; // 2. Create the custom widget
-
-
-      var customRefinementList = (0, _connectors.connectRefinementList)(renderRefinementList);
-      var customQueryRuleCustomData = (0, _connectors.connectQueryRules)(renderQueryRuleCustomData); // 3. Instantiate
-
-      search.addWidgets([customRefinementList({
-        container: document.querySelector('#refinement-list-SearchResult'),
-        attribute: 'keywords',
-        showMoreLimit: 10
-      }), customQueryRuleCustomData({
-        container: document.querySelector('#queryRuleCustomData')
-      })]);
-      search.start();
-      resolve();
-    } catch (e) {
-      console.log(e);
-      reject(e);
-    }
+  var searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+  var search = (0, _instantsearch.default)({
+    indexName: 'gstar_demo_test',
+    searchClient: searchClient
   });
+  search.addWidgets([(0, _widgets.searchBox)({
+    container: '#searchbox',
+    placeholder: 'Clothes, Sneakers...'
+  }), (0, _widgets.clearRefinements)({
+    container: '#clear-refinements'
+  }), (0, _widgets.refinementList)({
+    container: '#brand-list',
+    attribute: 'category'
+  }), (0, _widgets.refinementList)({
+    container: '#gender-list',
+    attribute: 'genderFilter'
+  }), (0, _widgets.refinementList)({
+    container: '#color-list',
+    attribute: 'colourFilter'
+  }), // refinementList({
+  //     container: '#hex-color-list',
+  //     attribute: 'hexColorCode',
+  // }),
+  (0, _widgets.stats)({
+    container: '#stats-searchResult'
+  }), (0, _widgets.voiceSearch)({
+    container: '#voicesearch',
+    searchAsYouSpeak: true,
+    language: 'en-US'
+  }), (0, _widgets.hits)({
+    container: '#hits',
+    templates: {
+      item: "\n                 <a href=\"{{url}}\" class=\"product-searchResult\" data-id=\"{{objectID}}\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"{{image_link}}\" align=\"left\" alt=\"{{name}}\" class=\"result-img\" />\n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>{{sizeFilter}}</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>{{#helpers.highlight}}{ \"attribute\": \"name\" }{{/helpers.highlight}}</div>\n                                <div class=\"hit-colors\">{{colourFilter}}</div>\n                            </div>\n                        <div class=\"hit-price\">${{price}}</div>\n                        \n                    </div>\n                   \n                </a>\n                    \n              \n                "
+    }
+  }), (0, _widgets.pagination)({
+    container: '#pagination'
+  })]); // 1. Create a render function
+
+  var renderRefinementList = function renderRefinementList(renderOptions, isFirstRender) {
+    var items = renderOptions.items,
+        isFromSearch = renderOptions.isFromSearch,
+        refine = renderOptions.refine,
+        createURL = renderOptions.createURL,
+        isShowingMore = renderOptions.isShowingMore,
+        canToggleShowMore = renderOptions.canToggleShowMore,
+        searchForItems = renderOptions.searchForItems,
+        toggleShowMore = renderOptions.toggleShowMore,
+        widgetParams = renderOptions.widgetParams;
+
+    if (isFirstRender) {
+      // const input = document.createElement('input');
+      var ul = document.createElement('ul'); // const button = document.createElement('button');
+      // button.classList.add('btn-showMore')
+      // button.textContent = 'Show more';
+      // // input.addEventListener('input', event => {
+      // //   searchForItems(event.currentTarget.value);
+      // // });
+      // button.addEventListener('click', () => {
+      //     toggleShowMore();
+      // });
+      // widgetParams.container.appendChild(input);
+
+      widgetParams.container.appendChild(ul); // widgetParams.container.appendChild(button);
+    } // const input = widgetParams.container.querySelector('input');
+    // if (!isFromSearch && input.value) {
+    //   input.value = '';
+    // }
+
+
+    widgetParams.container.querySelector('ul').innerHTML = items.map(function (item) {
+      return "\n                  <li style=\"".concat(isRefined(item), "\">\n                    <a\n                      href=\"").concat(createURL(item.value), "\"\n                      data-value=\"").concat(item.value, "\"\n                      style=\"").concat(isRefined(item), "\"\n                    >\n                      ").concat(item.label, " <span style=\"").concat(isRefined(item), "\">(").concat(item.count, ")</span>\n                    </a>\n                  </li>\n                ");
+    }).join('');
+
+    _toConsumableArray(widgetParams.container.querySelectorAll('a')).forEach(function (element) {
+      element.addEventListener('click', function (event) {
+        event.preventDefault();
+        refine(event.currentTarget.dataset.value);
+      });
+    }); // const button = widgetParams.container.querySelector('button');
+    // // button.disabled = !canToggleShowMore;
+    // button.textContent = isShowingMore ? 'Show less' : 'Show more';
+
+  };
+
+  function isRefined(item) {
+    if (item.isRefined) {
+      return 'color: white !important; background-color: rgba(0,0,0, 0.9)';
+    }
+  }
+
+  ; // Create the render function
+
+  var renderQueryRuleCustomData = function renderQueryRuleCustomData(renderOptions, isFirstRender) {
+    var items = renderOptions.items,
+        widgetParams = renderOptions.widgetParams,
+        refine = renderOptions.refine;
+
+    if (isFirstRender) {// const inputSearchResult = document.querySelector('.ais-SearchBox-input');
+      // inputSearchResult.addEventListener('change', (e) => {
+      //     if (e) {
+      //         refine({
+      //             ruleContexts: ['men_banner'],
+      //         });
+      //     } else {
+      //         refine({});
+      //     }
+      // });
+    }
+
+    widgetParams.container.innerHTML = "\n            <div class=\"banner-wrapper\">\n              ".concat(items.map(function (item) {
+      return "<a href=\"".concat(item.link, "\">\n                            <div class=\"banner-overlay\"></div>\n                            <div class=\"banner-title--wrapper\">\n                                <h3>").concat(item.title, "</h3>\n                                <div class=\"underline-bannerTitle\"></div>\n                            </div>\n                            <img src=\"").concat(item.banner, "\">\n                        </a>");
+    }).join(''), "\n            </div>\n          ");
+  }; // 2. Create the custom widget
+
+
+  var customRefinementList = (0, _connectors.connectRefinementList)(renderRefinementList);
+  var customQueryRuleCustomData = (0, _connectors.connectQueryRules)(renderQueryRuleCustomData); // 3. Instantiate
+
+  search.addWidgets([customRefinementList({
+    container: document.querySelector('#refinement-list-SearchResult'),
+    attribute: 'keywords',
+    showMoreLimit: 10
+  }), customQueryRuleCustomData({
+    container: document.querySelector('#queryRuleCustomData')
+  })]);
+  search.start();
 }
 },{"instantsearch.js":"node_modules/instantsearch.js/es/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js"}],"src/SearchResult_JS/filterResults.js":[function(require,module,exports) {
 "use strict";
@@ -30733,7 +30725,7 @@ function relatedResultModal() {
       container: '#carousel-relatedItems',
       templates: {
         item: function item(hit) {
-          return "          \n                        <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                        <div class=\"image-wrapper\">\n                            <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                        </div>\n                        <div class=\"hit-name\">\n                            <div class=\"hit-infos\">\n                            <div>").concat(hit.name, "</div>\n                                <div class=\"hit-colors\">").concat(hit.colourFilter, "</div>\n                            </div>\n                            <div class=\"hit-price\">$").concat(hit.price, "</div>\n                        </div>\n                    </a>\n                        ");
+          return "          \n                        <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                        <div class=\"image-wrapper\">\n                            <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                            <div class=\"hit-sizeFilter\">\n                                <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                            </div>\n                        </div>\n                        <div class=\"hit-name\">\n                            <div class=\"hit-infos\">\n                            <div>").concat(hit.name, "</div>\n                                <div class=\"hit-colors\">").concat(hit.colourFilter, "</div>\n                            </div>\n                            <div class=\"hit-price\">$").concat(hit.price, "</div>\n                        </div>\n                    </a>\n                        ");
         }
       }
     })]); // Add the widgets 2nd index
@@ -30758,7 +30750,7 @@ function relatedResultModal() {
       container: '#carousel-relatedItemsSecond',
       templates: {
         item: function item(hit) {
-          return "          \n                        <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                        <div class=\"image-wrapper\">\n                            <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                        </div>\n                        <div class=\"hit-name\">\n                            <div class=\"hit-infos\">\n                            <div>").concat(hit.name, "</div>\n                                <div class=\"hit-colors\">").concat(hit.colourFilter, "</div>\n                            </div>\n                            <div class=\"hit-price\">$").concat(hit.price, "</div>\n                        </div>\n                    </a>\n                        ");
+          return "          \n                        <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                        <div class=\"image-wrapper\">\n                            <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                            <div class=\"hit-sizeFilter\">\n                                <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                            </div>\n                        </div>\n                        <div class=\"hit-name\">\n                            <div class=\"hit-infos\">\n                            <div>").concat(hit.name, "</div>\n                                <div class=\"hit-colors\">").concat(hit.colourFilter, "</div>\n                            </div>\n                            <div class=\"hit-price\">$").concat(hit.price, "</div>\n                        </div>\n                    </a>\n                        ");
         }
       }
     })]);
@@ -30776,16 +30768,35 @@ Object.defineProperty(exports, "__esModule", {
 exports.cardAnimation = cardAnimation;
 
 function cardAnimation() {
-  var cardProduct = document.querySelectorAll('.ais-Hits-item');
-  cardProduct.forEach(function (product) {
-    console.log(product);
-    product.addEventListener('mouseenter', function (e) {
-      console.log(e); // let divSize = e.target.innerHTML
-      // console.log(divSize)
-      // let sizeInfos = document.querySelector(divSize, '.hit-sizeFilter')
-      // sizeInfo.classList.toggle('fadeInSize')
+  function domListening() {
+    var observer = new MutationObserver(function (mutation) {
+      if (mutation) {
+        sizeAnimation();
+      }
     });
-  });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  function sizeAnimation() {
+    var cardProduct = document.querySelectorAll('.ais-Hits-item');
+    cardProduct.forEach(function (product) {
+      var sizeInfo = product.querySelector('.hit-sizeFilter');
+      product.addEventListener('mouseenter', function (e) {
+        sizeInfo.classList.remove('fadeOutSize');
+        sizeInfo.classList.add('fadeInSize');
+      });
+      product.addEventListener('mouseleave', function (e) {
+        sizeInfo.classList.add('fadeOutSize');
+        sizeInfo.classList.remove('fadeInSize');
+      });
+    });
+  }
+
+  sizeAnimation();
+  domListening();
 }
 },{}],"src/SearchResult_JS/indexSearchResults.js":[function(require,module,exports) {
 "use strict";
@@ -30801,13 +30812,22 @@ var _relatedResultModal = require("./relatedResultModal");
 var _cardAnimations = require("./cardAnimations");
 
 // import { searchBar } from "../searchbarDropdown";
-(0, _searchResults.searchResults)().then(function () {
-  return (0, _cardAnimations.cardAnimation)();
-});
+(0, _searchResults.searchResults)();
 (0, _filterResults.filterResult)();
 (0, _burgerMenu.burgerMenu)(); // searchBar()
+// window.setInterval(relatedResultModal, 500);
+// window.setInterval(cardAnimation, 500);
 
-setTimeout(_relatedResultModal.relatedResultModal, 1000); // setTimeout(cardAnimation, 1000)
+console.log(document.readyState);
+var checkExist = setInterval(function () {
+  if (document.readyState != 'loading') {
+    console.log("Exists!");
+    (0, _relatedResultModal.relatedResultModal)();
+    (0, _cardAnimations.cardAnimation)();
+    clearInterval(checkExist);
+  }
+}, 500); // setTimeout(relatedResultModal, 1000)
+// setTimeout(cardAnimation, 1000)
 // relatedResultModal()
 },{"./searchResults":"src/SearchResult_JS/searchResults.js","./filterResults":"src/SearchResult_JS/filterResults.js","../burgerMenu":"src/burgerMenu.js","./relatedResultModal":"src/SearchResult_JS/relatedResultModal.js","./cardAnimations":"src/SearchResult_JS/cardAnimations.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -30837,7 +30857,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53833" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62030" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
