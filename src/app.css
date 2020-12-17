@@ -213,6 +213,31 @@ transition: 0.2s ease-in-out;
 
 /* USER PERSONA SELECTOR */
 
+.labelUserPersonna{
+  position: fixed;
+  top: 20vh;
+  left: -1rem;
+  width: 40px;
+  height: 100px;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid rgba(240,240,239, 0.5);
+  z-index: 16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 2s infinite;
+  cursor: pointer;
+}
+.labelUserPersonna p{
+  writing-mode: vertical-rl;
+  margin-left: 20px;
+  text-orientation: sideways-right;
+  font-size: 0.8rem;
+  font-family: 'Castoro', serif;
+  font-style: italic;
+}
+
 .userPersonaSelector {
  visibility: hidden;
  display: flex;
@@ -228,7 +253,7 @@ transition: 0.2s ease-in-out;
  position: fixed;
  top: 20vh;
  left: 0;
- z-index: 999;
+ z-index: 15;
 }
 
 .closePersona{
@@ -279,5 +304,25 @@ right: 0.8rem;
   100%{
     visibility: hidden;
     transform: translateX(-100%);
+  }
+}
+@keyframes bounce{
+  0%{
+    transform: translateX(0) scale(1);
+  }
+  50%{
+    transform: translateX(5px);
+  }
+  75%{
+    transform: translateX(3px);
+  }
+  80%{
+    transform: translateX(2px);
+  }
+  90%{
+    transform: translateX(4px);
+  }
+  100%{
+    transform: translateX(0px);
   }
 }

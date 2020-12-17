@@ -38022,8 +38022,10 @@ function togglePersona() {
   var btnPersona = document.querySelector('.btnPersona');
   var personaChoice = document.querySelector('.userPersonaSelector');
   var closePersona = document.querySelector('.closePersona');
+  var labelPersona = document.querySelector('.labelUserPersonna');
   btnPersona.addEventListener('click', toggleModal);
   closePersona.addEventListener('click', toggleModal);
+  labelPersona.addEventListener('click', toggleModal);
 
   function toggleModal(e) {
     e.preventDefault();
@@ -38031,9 +38033,11 @@ function togglePersona() {
     if (personaChoice.classList.contains('personaFadeIn')) {
       personaChoice.classList.add('personaFadeOut');
       personaChoice.classList.remove('personaFadeIn');
+      labelPersona.style.display = 'flex';
     } else {
       personaChoice.classList.add('personaFadeIn');
       personaChoice.classList.remove('personaFadeOut');
+      labelPersona.style.display = 'none';
     }
   }
 }
