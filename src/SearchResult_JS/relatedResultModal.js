@@ -4,6 +4,8 @@ import { configure, hits, EXPERIMENTAL_configureRelatedItems } from 'instantsear
 
 
 export function relatedResultModal() {
+
+
     const searchClient = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
     const index = searchClient.initIndex('gstar_demo_test');
 
@@ -148,6 +150,9 @@ export function relatedResultModal() {
                         <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
                         <div class="image-wrapper">
                             <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                            <div class="hit-sizeFilter">
+                                <p>Sizes available: <span>${hit.sizeFilter}</span></p>
+                            </div>
                         </div>
                         <div class="hit-name">
                             <div class="hit-infos">
@@ -184,6 +189,9 @@ export function relatedResultModal() {
                         <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
                         <div class="image-wrapper">
                             <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                            <div class="hit-sizeFilter">
+                                <p>Sizes available: <span>${hit.sizeFilter}</span></p>
+                            </div>
                         </div>
                         <div class="hit-name">
                             <div class="hit-infos">
@@ -203,5 +211,7 @@ export function relatedResultModal() {
 
     search.start()
     searchIndexSecond.start()
+
+
 }
 

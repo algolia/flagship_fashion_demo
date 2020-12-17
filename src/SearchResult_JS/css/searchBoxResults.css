@@ -98,6 +98,7 @@ align-items: center;
 
 .hit-sizeFilter{
     visibility: hidden;
+    opacity: 0;
     display: flex;
     justify-content: center;
     position: absolute;
@@ -106,20 +107,32 @@ align-items: center;
     align-items: center;
     width: 100%;
     height: 4rem;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.8);
     color: black;
 }
 .hit-sizeFilter p{
     /* visibility: hidden; */
-   font-size: 1rem;
+   font-size: 0.8rem;
    font-family: 'Roboto';
     color: black;
     font-weight: bold;
-    letter-spacing: 0.3rem;
+    
+}
+.hit-sizeFilter span{
+    /* visibility: hidden; */
+   font-size: 0.8rem;
+   font-family: 'Roboto';
+    color: black;
+    font-weight: medium;
+    font-style: italic;
+    
 }
 
 .fadeInSize{
-    animation: fadeInSize 0.3s forwards;
+    animation: fadeInSize 0.5s forwards;
+}
+.fadeOutSize{
+    animation: fadeOutSize 0.1s forwards;
 }
 
 @media screen and (max-width: 768px){
@@ -153,10 +166,26 @@ align-items: center;
     0%{
         visibility: hidden;
         transform: translateY(4rem) scale(1);
+        opacity: 0;
+
 
     }
     100%{
         visibility: visible;
+        opacity: 1;
         transform: translateY(0rem) scale(1.1);
+    }
+}
+@keyframes fadeOutSize{
+    0%{
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0rem) scale(1.1);
+    }
+    100%{
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(4rem) scale(1);
+
     }
 }
