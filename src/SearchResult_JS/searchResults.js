@@ -53,6 +53,14 @@ export function searchResults() {
         }),
         hits({
             container: '#hits',
+            transformItems(items) {
+                console.log(items.hexColorCode)
+                return items.map(item => ({
+                    ...item,
+                    color: item.hexColorCode.split('//')[1],
+                    ColorCode: item.hexColorCode.split('//')[0]
+                }));
+            },
             templates: {
                 item: `
                  <a href="{{url}}" class="product-searchResult" data-id="{{objectID}}">
@@ -65,7 +73,13 @@ export function searchResults() {
                     <div class="hit-name">
                         <div class="hit-infos">
                             <div>{{#helpers.highlight}}{ "attribute": "name" }{{/helpers.highlight}}</div>
-                                <div class="hit-colors">{{colourFilter}}</div>
+                                
+                               <div class="colorWrapper">
+                                    <div>{{ColorCode}}</div>
+                                    <div style="background: {{color}}" class="hit-colorsHex"></div>
+                                </div>
+                                
+                                
                             </div>
                         <div class="hit-price">\${{price}}</div>
                         
