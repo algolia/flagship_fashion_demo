@@ -564,6 +564,23 @@ align-items: center;
     background-color: rgb(240, 240, 239);
 }
 
+/* COLOR CODE */
+
+.colorWrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hit-colorsHex{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border:1px solid rgba(240,240,239, 0.9);
+    margin-top: 1rem;
+}
+
 
 /* SIZE FILTER HOVER */
 
