@@ -36,10 +36,12 @@ export function searchResults() {
         refinementList({
             container: '#color-list',
             attribute: 'colourFilter',
+
         }),
         // refinementList({
         //     container: '#hex-color-list',
         //     attribute: 'hexColorCode',
+
         // }),
         stats({
             container: '#stats-searchResult',
@@ -64,6 +66,8 @@ export function searchResults() {
                         <div class="hit-infos">
                             <div>{{#helpers.highlight}}{ "attribute": "name" }{{/helpers.highlight}}</div>
                                 <div class="hit-colors">{{colourFilter}}</div>
+                                // <div class="hit-colors">${hit.hexColorCode}</div>
+                                // <div class="hit-colors" id="hexColorCode">${colorSplit('{{hexColorCode}}')}</div>
                             </div>
                         <div class="hit-price">\${{price}}</div>
                         
@@ -81,6 +85,16 @@ export function searchResults() {
 
 
     ]);
+
+    function colorSplit(hexColorCode) {
+        let color = document.querySelectorAll('#hexColorCode')
+        console.log(color)
+        color.forEach(i => {
+            console.log(i)
+        })
+        console.log(hexColorCode)
+        return 'test'
+    }
 
 
     // 1. Create a render function
