@@ -66,8 +66,6 @@ export function searchResults() {
                         <div class="hit-infos">
                             <div>{{#helpers.highlight}}{ "attribute": "name" }{{/helpers.highlight}}</div>
                                 <div class="hit-colors">{{colourFilter}}</div>
-                                // <div class="hit-colors">${hit.hexColorCode}</div>
-                                // <div class="hit-colors" id="hexColorCode">${colorSplit('{{hexColorCode}}')}</div>
                             </div>
                         <div class="hit-price">\${{price}}</div>
                         
