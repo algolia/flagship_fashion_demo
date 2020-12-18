@@ -30330,7 +30330,7 @@ function searchResults() {
   }), (0, _widgets.hits)({
     container: '#hits',
     templates: {
-      item: "\n                 <a href=\"{{url}}\" class=\"product-searchResult\" data-id=\"{{objectID}}\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"{{image_link}}\" align=\"left\" alt=\"{{name}}\" class=\"result-img\" />\n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>{{sizeFilter}}</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>{{#helpers.highlight}}{ \"attribute\": \"name\" }{{/helpers.highlight}}</div>\n                                <div class=\"hit-colors\">{{colourFilter}}</div>\n                                // <div class=\"hit-colors\">".concat(hit.hexColorCode, "</div>\n                                // <div class=\"hit-colors\" id=\"hexColorCode\">").concat(colorSplit('{{hexColorCode}}'), "</div>\n                            </div>\n                        <div class=\"hit-price\">${{price}}</div>\n                        \n                    </div>\n                   \n                </a>\n                    \n              \n                ")
+      item: "\n                 <a href=\"{{url}}\" class=\"product-searchResult\" data-id=\"{{objectID}}\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"{{image_link}}\" align=\"left\" alt=\"{{name}}\" class=\"result-img\" />\n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>{{sizeFilter}}</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>{{#helpers.highlight}}{ \"attribute\": \"name\" }{{/helpers.highlight}}</div>\n                                <div class=\"hit-colors\">{{colourFilter}}</div>\n                            </div>\n                        <div class=\"hit-price\">${{price}}</div>\n                        \n                    </div>\n                   \n                </a>\n                    \n              \n                "
     }
   }), (0, _widgets.pagination)({
     container: '#pagination'
@@ -30868,7 +30868,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50198" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64397" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
