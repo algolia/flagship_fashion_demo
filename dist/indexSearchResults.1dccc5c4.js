@@ -30309,10 +30309,11 @@ function searchResults() {
     indexName: 'gstar_demo_test',
     searchClient: searchClient
   });
-  search.addWidgets([(0, _widgets.searchBox)({
-    container: '#searchbox',
-    placeholder: 'Clothes, Sneakers...'
-  }), // searchBox({
+  search.addWidgets([// searchBox({
+  //     container: '#searchbox',
+  //     placeholder: 'Clothes, Sneakers...',
+  // }),
+  // searchBox({
   //     container: '#searchbox-filter',
   //     placeholder: 'Woman, size...',
   // }),
@@ -30475,12 +30476,52 @@ function searchResults() {
         refine(item);
       });
     });
+  }; // AUTOCOMPLETE
+  // Helper for the render function
+
+
+  var renderIndexListItem = function renderIndexListItem(_ref) {
+    var indexId = _ref.indexId,
+        hits = _ref.hits;
+    return "\n        <div class=\"wrapperList-product\">\n        ".concat(hits.slice(0, 5).map(function (hit, hitIndex) {
+      return "         \n            <a href=\"./searchResults.html\" >\n            <div class=\"suggestions-product\">\n                <img src=\"".concat(hit.image_link, "\">\n                <div class=\"suggestions-product-info\">\n                    <span>").concat(hit.name, "</span>\n                    <p>$").concat(hit.price, "</p>\n                </div>\n            </div>\n        </a>\n              ");
+    }).join(''), "\n                </div>\n        <div class=\"wrapperList-category\">\n        ").concat(hits.slice(0, 3).map(function (hit, hitIndex) {
+      return "         \n                    <a href=\"./searchResults.html\">\n                        <span>".concat(hit.category, "</span>\n                    </a>\n  ");
+    }).join(''), "\n        </div>\n ");
+  }; // Create the render function
+
+
+  var renderAutocomplete = function renderAutocomplete(renderOptions, isFirstRender) {
+    var indices = renderOptions.indices,
+        currentRefinement = renderOptions.currentRefinement,
+        refine = renderOptions.refine,
+        widgetParams = renderOptions.widgetParams;
+
+    if (isFirstRender) {
+      var input = document.createElement('input'); // const input = document.querySelector('#searchbox')
+
+      var ul = document.createElement('ul');
+      ul.classList.add('autoCompleteList');
+      var listWrapper = document.createElement('div');
+      listWrapper.classList.add('listWrapper');
+      input.addEventListener('input', function (event) {
+        refine(event.currentTarget.value);
+      });
+      widgetParams.container.appendChild(input);
+      widgetParams.container.appendChild(listWrapper);
+      listWrapper.appendChild(ul);
+      ul.addEventListener('click', function (event) {});
+    }
+
+    widgetParams.container.querySelector('input').value = currentRefinement;
+    widgetParams.container.querySelector('.listWrapper').innerHTML = indices.map(renderIndexListItem).join('');
   }; // 2. Create the custom widget
 
 
   var customRefinementList = (0, _connectors.connectRefinementList)(renderRefinementList);
   var customQueryRuleCustomData = (0, _connectors.connectQueryRules)(renderQueryRuleCustomData);
-  var customCurrentRefinements = (0, _connectors.connectCurrentRefinements)(renderCurrentRefinements); // 3. Instantiate
+  var customCurrentRefinements = (0, _connectors.connectCurrentRefinements)(renderCurrentRefinements);
+  var customAutocomplete = (0, _connectors.connectAutocomplete)(renderAutocomplete); // 3. Instantiate
 
   search.addWidgets([customRefinementList({
     container: document.querySelector('#refinement-list-SearchResult'),
@@ -30490,6 +30531,8 @@ function searchResults() {
     container: document.querySelector('#queryRuleCustomData')
   }), customCurrentRefinements({
     container: document.querySelector('#current-refinements')
+  }), customAutocomplete({
+    container: document.querySelector('#autocomplete')
   })]);
   search.start();
 }
@@ -30756,7 +30799,7 @@ function relatedResultModal() {
     indexName: 'Gstar_demo_carousel_detail',
     searchClient: searchClient
   });
-  var searchInput = document.querySelector('.ais-SearchBox-input');
+  var searchInput = document.querySelector('.autocomplete input');
   var timer,
       timeoutVal = 500; // detects when the user is actively typing
 
@@ -31004,7 +31047,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56145" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60524" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

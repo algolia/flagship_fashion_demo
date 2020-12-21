@@ -81,6 +81,8 @@
     position: absolute;
     right: 2rem;
     top: 6px;
+    z-index: 999;
+
   }
 
   .ais-VoiceSearch-button{
@@ -126,6 +128,8 @@
 .toggle .line3{
     transform: rotate(45deg) translate(-5px, -6px);
 }
+
+
 
 
 

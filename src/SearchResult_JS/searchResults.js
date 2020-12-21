@@ -1,7 +1,7 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
-import { searchBox, clearRefinements, refinementList, currentRefinements, stats, hits, pagination, voiceSearch } from 'instantsearch.js/es/widgets'
-import { connectRefinementList, connectQueryRules, connectCurrentRefinements } from 'instantsearch.js/es/connectors';
+import { searchBox, clearRefinements, refinementList, currentRefinements, stats, hits, pagination, voiceSearch, configure } from 'instantsearch.js/es/widgets'
+import { connectRefinementList, connectQueryRules, connectCurrentRefinements, connectAutocomplete } from 'instantsearch.js/es/connectors';
 
 
 export function searchResults() {
@@ -18,10 +18,10 @@ export function searchResults() {
     });
 
     search.addWidgets([
-        searchBox({
-            container: '#searchbox',
-            placeholder: 'Clothes, Sneakers...',
-        }),
+        // searchBox({
+        //     container: '#searchbox',
+        //     placeholder: 'Clothes, Sneakers...',
+        // }),
         // searchBox({
         //     container: '#searchbox-filter',
         //     placeholder: 'Woman, size...',
@@ -276,6 +276,67 @@ export function searchResults() {
         });
     };
 
+    // AUTOCOMPLETE
+    // Helper for the render function
+    const renderIndexListItem = ({ indexId, hits }) => {
+        return `
+        <div class="wrapperList-product">
+        ${hits.slice(0, 5).map((hit, hitIndex) =>
+            `         
+            <a href="./searchResults.html" >
+            <div class="suggestions-product">
+                <img src="${hit.image_link}">
+                <div class="suggestions-product-info">
+                    <span>${hit.name}</span>
+                    <p>$${hit.price}</p>
+                </div>
+            </div>
+        </a>
+              `
+        )
+                .join('')}
+                </div>
+        <div class="wrapperList-category">
+        ${hits.slice(0, 3).map((hit, hitIndex) =>
+                    `         
+                    <a href="./searchResults.html">
+                        <span>${hit.category}</span>
+                    </a>
+  `
+                )
+                .join('')}
+        </div>
+ `}
+
+    // Create the render function
+    const renderAutocomplete = (renderOptions, isFirstRender) => {
+        const { indices, currentRefinement, refine, widgetParams } = renderOptions;
+
+        if (isFirstRender) {
+            const input = document.createElement('input');
+            // const input = document.querySelector('#searchbox')
+            const ul = document.createElement('ul');
+            ul.classList.add('autoCompleteList')
+            const listWrapper = document.createElement('div');
+            listWrapper.classList.add('listWrapper')
+
+            input.addEventListener('input', event => {
+                refine(event.currentTarget.value);
+            });
+
+            widgetParams.container.appendChild(input);
+            widgetParams.container.appendChild(listWrapper);
+            listWrapper.appendChild(ul)
+
+            ul.addEventListener('click', (event) => {
+            });
+        }
+
+        widgetParams.container.querySelector('input').value = currentRefinement;
+        widgetParams.container.querySelector('.listWrapper').innerHTML = indices.map(renderIndexListItem).join('');
+
+    };
+
     // 2. Create the custom widget
     const customRefinementList = connectRefinementList(
         renderRefinementList
@@ -286,6 +347,9 @@ export function searchResults() {
     const customCurrentRefinements = connectCurrentRefinements(
         renderCurrentRefinements
     );
+    const customAutocomplete = connectAutocomplete(
+        renderAutocomplete
+    )
 
     // 3. Instantiate
     search.addWidgets([
@@ -301,12 +365,13 @@ export function searchResults() {
             container: document.querySelector('#current-refinements'),
 
         }),
+        customAutocomplete({
+            container: document.querySelector('#autocomplete'),
+
+        }),
     ]);
 
     search.start();
-
-
-
 
 }
 

@@ -20,7 +20,7 @@ export function relatedResultModal() {
     });
 
 
-    let searchInput = document.querySelector('.ais-SearchBox-input')
+    let searchInput = document.querySelector('.autocomplete input')
     let timer,
         timeoutVal = 500;
     // detects when the user is actively typing
