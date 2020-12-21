@@ -1,7 +1,7 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
-import { searchBox, clearRefinements, refinementList, stats, hits, pagination, voiceSearch } from 'instantsearch.js/es/widgets'
-import { connectRefinementList, connectQueryRules } from 'instantsearch.js/es/connectors';
+import { searchBox, clearRefinements, refinementList, currentRefinements, stats, hits, pagination, voiceSearch } from 'instantsearch.js/es/widgets'
+import { connectRefinementList, connectQueryRules, connectCurrentRefinements } from 'instantsearch.js/es/connectors';
 
 
 export function searchResults() {
@@ -22,22 +22,50 @@ export function searchResults() {
             container: '#searchbox',
             placeholder: 'Clothes, Sneakers...',
         }),
+        // searchBox({
+        //     container: '#searchbox-filter',
+        //     placeholder: 'Woman, size...',
+        // }),
         clearRefinements({
             container: '#clear-refinements',
         }),
         refinementList({
-            container: '#brand-list',
+            container: '#category-list',
             attribute: 'category',
         }),
         refinementList({
             container: '#gender-list',
             attribute: 'genderFilter',
         }),
+        // refinementList({
+        //     container: '#color-list',
+        //     attribute: 'colourFilter',
+        // }),
         refinementList({
-            container: '#color-list',
-            attribute: 'colourFilter',
+            container: '#hexColor-list',
+            attribute: 'hexColorCode',
+            transformItems(items) {
+                return items.map(item => ({
+                    ...item,
+                    color: item.value.split('//')[1],
+                    colorCode: item.value.split('//')[0]
+                }));
+            },
+            templates: {
+                item: `
+                  <input type="color" value={{color}} class="colorInput" id="{{colorCode}}" {{#isRefined}}checked{{/isRefined}}/>
+                  <label for="{{colorCode}}" class="{{#isRefined}}isRefined{{/isRefined}}">
+                    {{colorCode}}
+                    <span class="color" style="background-color: {{color}}"></span>
+                  </label>`
+            }
+        }),
+        refinementList({
+            container: '#size-list',
+            attribute: 'sizeFilter',
 
         }),
+
         // refinementList({
         //     container: '#hex-color-list',
         //     attribute: 'hexColorCode',
@@ -54,7 +82,6 @@ export function searchResults() {
         hits({
             container: '#hits',
             transformItems(items) {
-                console.log(items.hexColorCode)
                 return items.map(item => ({
                     ...item,
                     color: item.hexColorCode.split('//')[1],
@@ -98,15 +125,6 @@ export function searchResults() {
 
     ]);
 
-    function colorSplit(hexColorCode) {
-        let color = document.querySelectorAll('#hexColorCode')
-        console.log(color)
-        color.forEach(i => {
-            console.log(i)
-        })
-        console.log(hexColorCode)
-        return 'test'
-    }
 
 
     // 1. Create a render function
@@ -221,12 +239,52 @@ export function searchResults() {
 
     };
 
+    // CURRENT REFINMENT
+
+    const createDataAttribtues = refinement =>
+        Object.keys(refinement)
+            .map(key => `data-${key}="${refinement[key]}"`)
+            .join(' ');
+
+    const renderListItem = item => `
+      ${item.refinements
+            .map(refinement => `<li>${refinement.value.split('//')[0]} (${refinement.count})
+            <button ${createDataAttribtues(refinement)} class="btnCloseRefinements">X</button></li>`)
+            .join('')}
+`;
+
+    const renderCurrentRefinements = (renderOptions, isFirstRender) => {
+        const { items, widgetParams, refine } = renderOptions;
+        document.querySelector('#current-refinements').innerHTML = `
+    <ul class="currentRefinment-filters">
+      ${items.map(renderListItem).join('')}
+    </ul>
+  `;
+
+        [...widgetParams.container.querySelectorAll('.btnCloseRefinements')].forEach(element => {
+            element.addEventListener('click', event => {
+                const item = Object.keys(event.currentTarget.dataset).reduce(
+                    (acc, key) => ({
+                        ...acc,
+                        [key]: event.currentTarget.dataset[key],
+                    }),
+                    {}
+                );
+
+                refine(item);
+            });
+        });
+    };
+
     // 2. Create the custom widget
     const customRefinementList = connectRefinementList(
         renderRefinementList
     );
     const customQueryRuleCustomData = connectQueryRules(
         renderQueryRuleCustomData
+    );
+    const customCurrentRefinements = connectCurrentRefinements(
+        renderCurrentRefinements
     );
 
     // 3. Instantiate
@@ -238,7 +296,11 @@ export function searchResults() {
         }),
         customQueryRuleCustomData({
             container: document.querySelector('#queryRuleCustomData'),
-        })
+        }),
+        customCurrentRefinements({
+            container: document.querySelector('#current-refinements'),
+
+        }),
     ]);
 
     search.start();

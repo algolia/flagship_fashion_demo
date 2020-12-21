@@ -30312,17 +30312,39 @@ function searchResults() {
   search.addWidgets([(0, _widgets.searchBox)({
     container: '#searchbox',
     placeholder: 'Clothes, Sneakers...'
-  }), (0, _widgets.clearRefinements)({
+  }), // searchBox({
+  //     container: '#searchbox-filter',
+  //     placeholder: 'Woman, size...',
+  // }),
+  (0, _widgets.clearRefinements)({
     container: '#clear-refinements'
   }), (0, _widgets.refinementList)({
-    container: '#brand-list',
+    container: '#category-list',
     attribute: 'category'
   }), (0, _widgets.refinementList)({
     container: '#gender-list',
     attribute: 'genderFilter'
+  }), // refinementList({
+  //     container: '#color-list',
+  //     attribute: 'colourFilter',
+  // }),
+  (0, _widgets.refinementList)({
+    container: '#hexColor-list',
+    attribute: 'hexColorCode',
+    transformItems: function transformItems(items) {
+      return items.map(function (item) {
+        return _objectSpread(_objectSpread({}, item), {}, {
+          color: item.value.split('//')[1],
+          colorCode: item.value.split('//')[0]
+        });
+      });
+    },
+    templates: {
+      item: "\n                  <input type=\"color\" value={{color}} class=\"colorInput\" id=\"{{colorCode}}\" {{#isRefined}}checked{{/isRefined}}/>\n                  <label for=\"{{colorCode}}\" class=\"{{#isRefined}}isRefined{{/isRefined}}\">\n                    {{colorCode}}\n                    <span class=\"color\" style=\"background-color: {{color}}\"></span>\n                  </label>"
+    }
   }), (0, _widgets.refinementList)({
-    container: '#color-list',
-    attribute: 'colourFilter'
+    container: '#size-list',
+    attribute: 'sizeFilter'
   }), // refinementList({
   //     container: '#hex-color-list',
   //     attribute: 'hexColorCode',
@@ -30336,7 +30358,6 @@ function searchResults() {
   }), (0, _widgets.hits)({
     container: '#hits',
     transformItems: function transformItems(items) {
-      console.log(items.hexColorCode);
       return items.map(function (item) {
         return _objectSpread(_objectSpread({}, item), {}, {
           color: item.hexColorCode.split('//')[1],
@@ -30349,18 +30370,7 @@ function searchResults() {
     }
   }), (0, _widgets.pagination)({
     container: '#pagination'
-  })]);
-
-  function colorSplit(hexColorCode) {
-    var color = document.querySelectorAll('#hexColorCode');
-    console.log(color);
-    color.forEach(function (i) {
-      console.log(i);
-    });
-    console.log(hexColorCode);
-    return 'test';
-  } // 1. Create a render function
-
+  })]); // 1. Create a render function
 
   var renderRefinementList = function renderRefinementList(renderOptions, isFirstRender) {
     var items = renderOptions.items,
@@ -30436,11 +30446,41 @@ function searchResults() {
     widgetParams.container.innerHTML = "\n            <div class=\"banner-wrapper\">\n              ".concat(items.map(function (item) {
       return "<a href=\"".concat(item.link, "\">\n                            <div class=\"banner-overlay\"></div>\n                            <div class=\"banner-title--wrapper\">\n                                <h3>").concat(item.title, "</h3>\n                                <div class=\"underline-bannerTitle\"></div>\n                            </div>\n                            <img src=\"").concat(item.banner, "\">\n                        </a>");
     }).join(''), "\n            </div>\n          ");
+  }; // CURRENT REFINMENT
+
+
+  var createDataAttribtues = function createDataAttribtues(refinement) {
+    return Object.keys(refinement).map(function (key) {
+      return "data-".concat(key, "=\"").concat(refinement[key], "\"");
+    }).join(' ');
+  };
+
+  var renderListItem = function renderListItem(item) {
+    return "\n      ".concat(item.refinements.map(function (refinement) {
+      return "<li>".concat(refinement.value.split('//')[0], " (").concat(refinement.count, ")\n            <button ").concat(createDataAttribtues(refinement), " class=\"btnCloseRefinements\">X</button></li>");
+    }).join(''), "\n");
+  };
+
+  var renderCurrentRefinements = function renderCurrentRefinements(renderOptions, isFirstRender) {
+    var items = renderOptions.items,
+        widgetParams = renderOptions.widgetParams,
+        refine = renderOptions.refine;
+    document.querySelector('#current-refinements').innerHTML = "\n    <ul class=\"currentRefinment-filters\">\n      ".concat(items.map(renderListItem).join(''), "\n    </ul>\n  ");
+
+    _toConsumableArray(widgetParams.container.querySelectorAll('.btnCloseRefinements')).forEach(function (element) {
+      element.addEventListener('click', function (event) {
+        var item = Object.keys(event.currentTarget.dataset).reduce(function (acc, key) {
+          return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, key, event.currentTarget.dataset[key]));
+        }, {});
+        refine(item);
+      });
+    });
   }; // 2. Create the custom widget
 
 
   var customRefinementList = (0, _connectors.connectRefinementList)(renderRefinementList);
-  var customQueryRuleCustomData = (0, _connectors.connectQueryRules)(renderQueryRuleCustomData); // 3. Instantiate
+  var customQueryRuleCustomData = (0, _connectors.connectQueryRules)(renderQueryRuleCustomData);
+  var customCurrentRefinements = (0, _connectors.connectCurrentRefinements)(renderCurrentRefinements); // 3. Instantiate
 
   search.addWidgets([customRefinementList({
     container: document.querySelector('#refinement-list-SearchResult'),
@@ -30448,6 +30488,8 @@ function searchResults() {
     showMoreLimit: 10
   }), customQueryRuleCustomData({
     container: document.querySelector('#queryRuleCustomData')
+  }), customCurrentRefinements({
+    container: document.querySelector('#current-refinements')
   })]);
   search.start();
 }
@@ -30462,116 +30504,195 @@ exports.filterResult = filterResult;
 function filterResult() {
   var btnFilterResults = document.querySelector(".btn-filter");
   var showfilter = document.querySelector(".showfilter-wrapper");
-  btnFilterResults.addEventListener('click', function (e) {
-    e.preventDefault();
+  var genderFilter = document.querySelector('.gender-wrapper');
+  var genderBtn = document.querySelector('.gender');
+  var categoryFilter = document.querySelector('.category-wrapper');
+  var categoryBtn = document.querySelector('.category');
+  var colorFilter = document.querySelector('.color-wrapper');
+  var colorBtn = document.querySelector('.colors');
+  var sizeFilter = document.querySelector('.size-wrapper');
+  var sizeBtn = document.querySelector('.sizes');
+  var sideBarFilters = document.querySelector('.sideBarFilter');
+  var btnBackToFilter = document.querySelectorAll('.btn-backFilter');
+  var filterItem = document.querySelectorAll('.filter-item-wrapper');
+  btnFilterResults.addEventListener('click', fadeFiltersInOut);
+  genderBtn.addEventListener('click', fadeFiltersGender);
+  categoryBtn.addEventListener('click', fadeFiltersCategory);
+  colorBtn.addEventListener('click', fadeFiltersColor);
+  sizeBtn.addEventListener('click', fadeFiltersSize); // btnBackToFilter.addEventListener('click', backToFilters)
 
-    if (showfilter.classList.contains('displayBlock')) {
-      showfilter.classList.add('fadeOutFilter');
-      showfilter.classList.remove('displayBlock');
-    } else {
-      showfilter.classList.add('displayBlock');
-      showfilter.classList.remove('fadeOutFilter');
-    }
+  btnBackToFilter.forEach(function (btn) {
+    btn.addEventListener('click', backToFilters);
   });
 
-  function colorCircle() {
-    function colorUnselected() {
-      var colorInput = document.querySelectorAll('.color-list .ais-RefinementList-checkbox');
-      colorInput.forEach(function (input) {
-        changeColor(input);
-        input.addEventListener('click', function (e) {
-          e.preventDefault();
-          setTimeout(colorSelected, 50);
-        });
-      });
-    }
-
-    function clearFilters() {
-      var btnClear = document.querySelector('.ais-ClearRefinements-button');
-      btnClear.addEventListener('click', function (e) {
-        colorUnselected();
-      });
-    }
-
-    clearFilters();
-
-    function colorSelected() {
-      var colorInputSelected = document.querySelectorAll('.color-list .ais-RefinementList-item--selected .ais-RefinementList-checkbox');
-      colorInputSelected.forEach(function (input) {
-        changeColor(input);
-        input.addEventListener('click', function (e) {
-          e.preventDefault();
-          setTimeout(colorUnselected, 50);
-        });
-      });
-    }
-
-    function changeColor(input) {
-      var inputColor = input.value;
-
-      switch (inputColor) {
-        case inputColor = 'Red':
-          input.value = "#FF0000";
-          input.type = 'color';
-          break;
-
-        case inputColor = 'Beige':
-          input.value = "#F5F5DC";
-          input.type = 'color';
-          break;
-
-        case inputColor = 'Dark blue':
-          input.value = "#000158";
-          input.type = 'color';
-          break;
-
-        case inputColor = 'Grey':
-          input.value = "#808080";
-          input.type = 'color';
-          break;
-
-        case inputColor = 'Black':
-          input.value = "#000";
-          input.type = 'color';
-          break;
-
-        case inputColor = 'Medium blue':
-          input.value = "#0000CD";
-          input.type = 'color';
-          break;
-
-        case inputColor = 'White':
-          input.value = "#FFFFFF";
-          input.type = 'color';
-          break;
-
-        case inputColor = 'Green':
-          input.value = "#008000";
-          input.type = 'color';
-          break;
-
-        case inputColor = 'Green':
-          input.value = "#008000";
-          input.type = 'color';
-          break;
-
-        case inputColor = 'Light blue':
-          input.value = "#ADD8E6";
-          input.type = 'color';
-          break;
-
-        case inputColor = 'Brown':
-          input.value = "#A0522D";
-          input.type = 'color';
-          break;
-      }
-    }
-
-    colorUnselected();
+  function backToFilters(e) {
+    console.log(e);
+    e.preventDefault();
+    filterItem.forEach(function (filter) {
+      filter.classList.remove('fadeFilters');
+      filter.classList.add('fadeOutFilter');
+      sideBarFilters.classList.add('fadeFilters');
+      sideBarFilters.classList.remove('fadeOutFilter');
+    });
   }
 
-  setTimeout(colorCircle, 1000);
-}
+  function fadeFiltersInOut(e) {
+    e.preventDefault();
+
+    if (showfilter.classList.contains('fadeFilters')) {
+      showfilter.classList.add('fadeOutFilter');
+      showfilter.classList.remove('fadeFilters');
+    } else {
+      showfilter.classList.add('fadeFilters');
+      showfilter.classList.remove('fadeOutFilter');
+    }
+  }
+
+  function fadeFiltersGender(e) {
+    e.preventDefault();
+
+    if (genderFilter.classList.contains('fadeFilters')) {
+      genderFilter.classList.remove('fadeFilters');
+      genderFilter.classList.add('fadeOutFilter');
+      sideBarFilters.classList.remove('fadeFilters');
+    } else {
+      genderFilter.classList.remove('fadeOutFilter');
+      sideBarFilters.classList.add('fadeOutFilter');
+      genderFilter.classList.add('fadeFilters');
+      console.log(sideBarFilters);
+    }
+  }
+
+  function fadeFiltersCategory(e) {
+    e.preventDefault();
+
+    if (categoryFilter.classList.contains('fadeFilters')) {
+      categoryFilter.classList.remove('fadeFilters');
+      categoryFilter.classList.add('fadeOutFilter');
+      sideBarFilters.classList.remove('fadeFilters');
+    } else {
+      categoryFilter.classList.remove('fadeOutFilter');
+      sideBarFilters.classList.add('fadeOutFilter');
+      categoryFilter.classList.add('fadeFilters');
+      console.log(sideBarFilters);
+    }
+  }
+
+  function fadeFiltersColor(e) {
+    e.preventDefault();
+
+    if (colorFilter.classList.contains('fadeFilters')) {
+      colorFilter.classList.remove('fadeFilters');
+      colorFilter.classList.add('fadeOutFilter');
+      sideBarFilters.classList.remove('fadeFilters');
+    } else {
+      colorFilter.classList.remove('fadeOutFilter');
+      sideBarFilters.classList.add('fadeOutFilter');
+      colorFilter.classList.add('fadeFilters');
+      console.log(sideBarFilters);
+    }
+  }
+
+  function fadeFiltersSize(e) {
+    e.preventDefault();
+
+    if (sizeFilter.classList.contains('fadeFilters')) {
+      sizeFilter.classList.remove('fadeFilters');
+      sizeFilter.classList.add('fadeOutFilter');
+      sideBarFilters.classList.remove('fadeFilters');
+    } else {
+      sizeFilter.classList.remove('fadeOutFilter');
+      sideBarFilters.classList.add('fadeOutFilter');
+      sizeFilter.classList.add('fadeFilters');
+      console.log(sideBarFilters);
+    }
+  }
+} // function colorCircle() {
+//     function colorUnselected() {
+//         const colorInput = document.querySelectorAll('.color-list .ais-RefinementList-checkbox')
+//         colorInput.forEach(input => {
+//             changeColor(input)
+//             input.addEventListener('click', (e) => {
+//                 e.preventDefault()
+//                 setTimeout(colorSelected, 50)
+//             })
+//         })
+//     }
+//     function clearFilters() {
+//         const btnClear = document.querySelector('.ais-ClearRefinements-button')
+//         const refineResultColor = document.querySelectorAll('.ais-CurrentRefinements-delete')
+//         refineResultColor.forEach(close => {
+//             close.addEventListener('click', (e) => {
+//                 colorUnselected()
+//             })
+//         })
+//         btnClear.addEventListener('click', (e) => {
+//             colorUnselected()
+//         })
+//     }
+//     clearFilters()
+//     function colorSelected() {
+//         const colorInputSelected = document.querySelectorAll('.color-list .ais-RefinementList-item--selected .ais-RefinementList-checkbox')
+//         colorInputSelected.forEach(input => {
+//             changeColor(input)
+//             input.addEventListener('click', (e) => {
+//                 e.preventDefault()
+//                 setTimeout(colorUnselected, 500)
+//             })
+//         })
+//     }
+//     function changeColor(input) {
+//         let inputColor = input.value
+//         switch (inputColor) {
+//             case inputColor = 'Red':
+//                 input.value = "#FF0000"
+//                 input.type = 'color'
+//                 break;
+//             case inputColor = 'Beige':
+//                 input.value = "#F5F5DC"
+//                 input.type = 'color'
+//                 break;
+//             case inputColor = 'Dark blue':
+//                 input.value = "#000158"
+//                 input.type = 'color'
+//                 break;
+//             case inputColor = 'Grey':
+//                 input.value = "#808080"
+//                 input.type = 'color'
+//                 break;
+//             case inputColor = 'Black':
+//                 input.value = "#000"
+//                 input.type = 'color'
+//                 break;
+//             case inputColor = 'Medium blue':
+//                 input.value = "#0000CD"
+//                 input.type = 'color'
+//                 break;
+//             case inputColor = 'White':
+//                 input.value = "#FFFFFF"
+//                 input.type = 'color'
+//                 break;
+//             case inputColor = 'Green':
+//                 input.value = "#008000"
+//                 input.type = 'color'
+//                 break;
+//             case inputColor = 'Green':
+//                 input.value = "#008000"
+//                 input.type = 'color'
+//                 break;
+//             case inputColor = 'Light blue':
+//                 input.value = "#ADD8E6"
+//                 input.type = 'color'
+//                 break;
+//             case inputColor = 'Brown':
+//                 input.value = "#A0522D"
+//                 input.type = 'color'
+//                 break;
+//         }
+//     }
+//     colorUnselected()
+// }
+// setTimeout(colorCircle, 1000)
 },{}],"src/burgerMenu.js":[function(require,module,exports) {
 "use strict";
 
@@ -30883,7 +31004,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61439" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56145" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

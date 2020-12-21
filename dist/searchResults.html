@@ -68,22 +68,67 @@
                 <div class="btn-filter-wrapper">
                     <a href="" class="btn-filter">Filters<i class="fas fa-sort-amount-down-alt"></i></a>
                 </div>
+
             </div>
             <div class="showfilter-wrapper">
                 <div id="clear-refinements" class="clear-refinements"></div>
+                <div id="current-refinements" class="current-refinements"></div>
+                <!-- <div id="searchbox-filter" class="searchbox-filter"></div> -->
+
+
                 <div class="left-panel">
-                    <div class="gender-wrapper">
+                    <div class="sideBarFilter">
+                        <ul>
+                            <li class="sideBarFilter-listItem gender">
+                                <p>Gender</p><i class="fas fa-chevron-right"></i>
+                            </li>
+                            <li class="sideBarFilter-listItem category">
+                                <p>Category</p><i class="fas fa-chevron-right"></i>
+                            </li>
+                            <li class="sideBarFilter-listItem colors">
+                                <p>Colors</p><i class="fas fa-chevron-right"></i>
+                            </li>
+                            <li class="sideBarFilter-listItem sizes">
+                                <p>Size</p><i class="fas fa-chevron-right"></i>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="gender-wrapper filter-item-wrapper">
+                        <div class="btn-backFilter">
+                            <div><i class="fas fa-chevron-left"></i>Filters</div>
+                        </div>
                         <h2>Gender</h2>
                         <div id="gender-list" class="gender-list"></div>
                     </div>
-                    <div class="category-wrapper">
+                    <div class="category-wrapper filter-item-wrapper">
+                        <div class="btn-backFilter">
+                            <div><i class="fas fa-chevron-left"></i>Filters</div>
+                        </div>
+                        <h2>Category</h2>
+                        <div id="category-list" class="category-list"></div>
+                    </div>
+                    <div class="color-wrapper filter-item-wrapper">
+                        <div class="btn-backFilter">
+                            <div><i class="fas fa-chevron-left"></i>Filters</div>
+                        </div>
+                        <h2>Colors</h2>
+                        <div class="hexColor-list" id="hexColor-list"></div>
+                    </div>
+                    <div class="size-wrapper filter-item-wrapper">
+                        <div class="btn-backFilter">
+                            <div><i class="fas fa-chevron-left"></i>Filters</div>
+                        </div>
+                        <h2>Sizes</h2>
+                        <div id="size-list" class="size-list"></div>
+                    </div>
+                    <!-- <div class="category-wrapper">
                         <h2>Category</h2>
                         <div id="brand-list" class="brand-list"></div>
                     </div>
                     <div class="color-wrapper">
                         <h2>Colors</h2>
                         <div id="color-list" class="color-list"></div>
-                    </div>
+                    </div> -->
                     <!-- <div class="color-wrapper">
                         <h2>Colors</h2>
                         <div id="hex-color-list" class="color-list"></div>
