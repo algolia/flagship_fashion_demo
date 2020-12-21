@@ -12,7 +12,9 @@
     position: absolute;
     background-color: rgba(255, 255, 255, 0.95);
     visibility: hidden;
-    width: 100vw;
+    right: 0;
+    width: 30vw;
+    height: 90vh;
     z-index: 1000;
     border: 1px solid rgba(133, 133, 133, 0.2);
     border-top: none;
@@ -20,7 +22,29 @@
     margin-bottom: 2rem;
 }
 
-.displayBlock{
+.sideBarFilter ul {
+    list-style: none;
+}
+.sideBarFilter ul li {
+    padding: 1rem 2rem;
+    border-top: 1px solid rgba(0, 0, 0, .2);
+    font-size: 1;
+    font-family: "Roboto";
+    color: black;
+    align-self: center;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    display: flex;
+    justify-content: space-between;
+}
+.sideBarFilter ul li:hover {
+    background-color: rgb(17, 17, 17);
+    color: white;
+    transition: 0.3s ease-in-out;
+}
+
+
+.fadeFilters{
     animation: fadeFilters 0.5s ease-in-out forwards;
 }
 
@@ -93,34 +117,63 @@
 }
 
 .left-panel{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    justify-content: center;
-    justify-items: center;
-    align-items: flex-start;
     padding: 2rem;
 }
-.left-panel div{
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
 
+ .category-wrapper, .gender-wrapper, .color-wrapper, .size-wrapper{
+    /* border-right: 1px solid rgba(0, 0, 0, .5); */
+    visibility: hidden;
+    transform: translateX(100%);
+    position: absolute;
+    top: 10rem;
 }
 
- .category-wrapper, .gender-wrapper{
-    border-right: 1px solid rgba(0, 0, 0, .5);
+.btn-backFilter{
+    /* padding: 0.6rem 2rem; */
+    width: 120px;
+    /* display: flex;
+    justify-content: space-between; */
+    border-radius: 0px !important;
+    background-color: transparent;
+    font-family: "Roboto";
+    font-style: italic;
+    font-weight: 300;
+    color: black !important;
+    opacity: 1;
+    align-self: center;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+    margin-bottom: 2rem;
 }
+
+.btn-backFilter:after {
+    margin-top: 0.3rem;
+    display:block;
+    content: '';
+    border-bottom: 1px solid rgba(0, 0, 0); 
+    transform: scaleX(1.1);  
+    transition: transform 0.3s ease-in-out;
+}
+
+.btn-backFilter:hover:after { 
+    transform: scaleX(0); 
+}
+
+.btn-backFilter i{
+    margin-right: 2rem;
+}
+
 
 .left-panel h2 {
     font-family: 'Castoro', serif;
     margin-bottom: 1rem;
-    margin: 1rem 4rem;
+    margin: 1rem 0;
     
 }
 
 .ais-RefinementList-list{
-    margin: 1rem 4rem;
+    margin: 1rem 0rem;
 }
 
 .ais-RefinementList-labelText{
@@ -142,25 +195,37 @@
 }
 
 
+.currentRefinment-filters{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
 
-.color-list .ais-RefinementList-list {
+
+.hexColor-list .ais-RefinementList-list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 1rem;
 }
-.color-list .ais-RefinementList-list .ais-RefinementList-label{
+.hexColor-list .ais-RefinementList-list .ais-RefinementList-item div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.hexColor-list .ais-RefinementList-list label{
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
-   
-}
-.color-list .ais-RefinementList-list .ais-RefinementList-label .ais-RefinementList-labelText{
     font-size: 0.8rem;
     margin: 0.2rem auto 0.1rem auto; 
+    color: black;
+    font-family: "Roboto";
+   
 }
 
-.ais-RefinementList-checkbox[type="color"] {
+
+.colorInput[type="color"] {
 	-webkit-appearance: none;
     border: none;
     border-radius: 50%;
@@ -168,34 +233,68 @@
     height: 32px;
     align-self: center;
 }
-.ais-RefinementList-checkbox[type="color"]::-webkit-color-swatch-wrapper {
+.colorInput[type="color"]::-webkit-color-swatch-wrapper {
     padding: 0;
 }
-.ais-RefinementList-checkbox[type="color"]::-webkit-color-swatch {
+.colorInput[type="color"]::-webkit-color-swatch {
     border: 1px solid rgba(0, 0, 0, .5) ;
     border-radius: 50%;
 }
 
+
+/* CURRENT REFINEMENT FILTERS  */
+
+.current-refinements li{
+    cursor: pointer;
+    padding: 0.5rem;
+    border: 1px solid rgba(8, 8, 8, 0.9);
+   list-style: none;
+border-radius: 0;
+   margin: 0.3rem;
+   font-family: 'Roboto';
+   font-size: 0.8rem;
+   background-color: rgb(219, 219, 219);
+   font-style: italic;
+   transition: all 0.3s ease-in-out;
+}
+.current-refinements li:hover {
+   background-color: rgb(255, 255, 255);
+   transform: scale(1.02);
+   transition: all 0.3s ease-in-out;  
+}
+
+.current-refinements  li  span {
+    color: black;
+    font-size: 0.8rem;
+}
+
+.btnCloseRefinements{
+    color: black;
+    border: none;
+    background: transparent;
+    margin-left: 0.4rem;
+}
+
 @keyframes fadeFilters {
     0%{
-        transform: translateY(-100%);
+        transform: translateX(100%);
         visibility: visible;
         opacity: 0.2;
     }
     100%{
-        transform: translateY(0%);
+        transform: translateX(0%);
         visibility: visible;
         opacity: 1;
     }
 }
 @keyframes fadeOutFilter {
     0%{
-        transform: translateY(0%);
+        transform: translateX(0%);
         visibility: visible;
         opacity: 1;
     }
     100%{
-        transform: translateY(-100%);
+        transform: translateX(100%);
         visibility: hidden;
         opacity: 0;
     }
