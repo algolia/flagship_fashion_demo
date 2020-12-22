@@ -1,6 +1,6 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
-import { searchBox, clearRefinements, refinementList, currentRefinements, stats, hits, pagination, voiceSearch, configure } from 'instantsearch.js/es/widgets'
+import { searchBox, clearRefinements, refinementList, currentRefinements, stats, hits, pagination, voiceSearch, configure, index } from 'instantsearch.js/es/widgets'
 import { connectRefinementList, connectQueryRules, connectCurrentRefinements, connectAutocomplete } from 'instantsearch.js/es/connectors';
 
 
@@ -141,6 +141,8 @@ export function searchResults() {
             widgetParams,
         } = renderOptions;
 
+
+
         if (isFirstRender) {
             // const input = document.createElement('input');
             const ul = document.createElement('ul');
@@ -279,10 +281,12 @@ export function searchResults() {
     // AUTOCOMPLETE
     // Helper for the render function
     const renderIndexListItem = ({ indexId, hits }) => {
-        return `
+        console.log(hits)
+        if (indexId === 'gstar_demo_test') {
+            return `
         <div class="wrapperList-product">
         ${hits.slice(0, 5).map((hit, hitIndex) =>
-            `         
+                `         
             <a href="./searchResults.html" >
             <div class="suggestions-product">
                 <img src="${hit.image_link}">
@@ -293,34 +297,81 @@ export function searchResults() {
             </div>
         </a>
               `
-        )
-                .join('')}
-                </div>
-        <div class="wrapperList-category">
-        ${hits.slice(0, 3).map((hit, hitIndex) =>
-                    `         
-                    <a href="./searchResults.html">
-                        <span>${hit.category}</span>
+            )
+                    .join('')}
+</div>
+    `}
+    }
+
+    const renderIndexListItemSuggested = ({ indexId, hits }) => {
+
+        if (indexId === 'gstar_demo_test_query_suggestions') {
+            return `
+    <div class="wrapperList-suggested" >
+        ${hits.slice(0, 5).map((hit, hitIndex) =>
+
+                `         
+                <a href="./searchResults.html">
+                    <span>${hit.query}</span>
+                </a>
+`
+            )
+                    .join('')
+                }
+    </div >   
+    <div class="wrapperList-category">
+        ${hits.slice(0, 6).map((hit, hitIndex) =>
+                    `   
+                        
+                    <a href = "./searchResults.html" >
+                    <span class="test">${hit.category}</span>
                     </a>
-  `
+        `
                 )
-                .join('')}
-        </div>
- `}
+                    .join('')
+                }
+         </div>
+    `}
+    }
+
+    function cleanCategory(category) {
+        console.log(category)
+        return category.map(i => {
+            return i
+        })
+
+    };
 
     // Create the render function
     const renderAutocomplete = (renderOptions, isFirstRender) => {
-        const { indices, currentRefinement, refine, widgetParams } = renderOptions;
+        const { indices, currentRefinement, refine, widgetParams, items } = renderOptions;
 
         if (isFirstRender) {
             const input = document.createElement('input');
+            input.classList.add('autocompleteInput')
             // const input = document.querySelector('#searchbox')
             const ul = document.createElement('ul');
             ul.classList.add('autoCompleteList')
             const listWrapper = document.createElement('div');
             listWrapper.classList.add('listWrapper')
+            // const autocompleteInput = document.querySelector('.autocomplete input')
 
+            // autocompleteInput.addEventListener('input', e => {
+
+            // })
+            input.addEventListener('focus', event => {
+                console.log(event)
+                let wrapper = document.querySelector('.listWrapper')
+                wrapper.style.display = "grid"
+            });
+
+            input.addEventListener('blur', event => {
+                console.log(event)
+                let wrapper = document.querySelector('.listWrapper')
+                wrapper.style.display = "none"
+            });
             input.addEventListener('input', event => {
+                console.log(event)
                 refine(event.currentTarget.value);
             });
 
@@ -330,12 +381,34 @@ export function searchResults() {
 
             ul.addEventListener('click', (event) => {
             });
-        }
 
+
+        }
         widgetParams.container.querySelector('input').value = currentRefinement;
         widgetParams.container.querySelector('.listWrapper').innerHTML = indices.map(renderIndexListItem).join('');
 
+
     };
+
+    const renderAutocompleteSuggested = (renderOptions, isFirstRender) => {
+        const { indices, currentRefinement, refine, widgetParams, hits } = renderOptions;
+
+        if (isFirstRender) {
+            const input = document.querySelector('.autocompleteInput')
+            input.addEventListener('input', event => {
+                console.log(event)
+                refine(event.currentTarget.value);
+            });
+        }
+
+        console.log(widgetParams.container.querySelector('.listWrapper'))
+        // const itemsSuggested = indices.map(renderIndexListItemSuggested).join('')
+        // console.log(renderIndexListItemSuggested)
+        widgetParams.container.querySelector('.listWrapper').insertAdjacentHTML('afterbegin', indices.map(renderIndexListItemSuggested).join(''))
+
+    };
+
+
 
     // 2. Create the custom widget
     const customRefinementList = connectRefinementList(
@@ -349,7 +422,11 @@ export function searchResults() {
     );
     const customAutocomplete = connectAutocomplete(
         renderAutocomplete
-    )
+    );
+    const customAutocompleteSuggested = connectAutocomplete(
+        renderAutocompleteSuggested
+    );
+
 
     // 3. Instantiate
     search.addWidgets([
@@ -367,9 +444,23 @@ export function searchResults() {
         }),
         customAutocomplete({
             container: document.querySelector('#autocomplete'),
-
         }),
+
     ]);
+
+    search.addWidgets([
+        index({ indexName: 'gstar_demo_test_query_suggestions' })
+            .addWidgets([
+                configure({
+                    hitsPerPage: 5,
+                }),
+                customAutocompleteSuggested({
+                    container: document.querySelector('#autocomplete'),
+                    attribute: ['keywords', "query"]
+                }),
+            ]),
+    ]);
+
 
     search.start();
 

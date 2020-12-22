@@ -30483,28 +30483,67 @@ function searchResults() {
   var renderIndexListItem = function renderIndexListItem(_ref) {
     var indexId = _ref.indexId,
         hits = _ref.hits;
-    return "\n        <div class=\"wrapperList-product\">\n        ".concat(hits.slice(0, 5).map(function (hit, hitIndex) {
-      return "         \n            <a href=\"./searchResults.html\" >\n            <div class=\"suggestions-product\">\n                <img src=\"".concat(hit.image_link, "\">\n                <div class=\"suggestions-product-info\">\n                    <span>").concat(hit.name, "</span>\n                    <p>$").concat(hit.price, "</p>\n                </div>\n            </div>\n        </a>\n              ");
-    }).join(''), "\n                </div>\n        <div class=\"wrapperList-category\">\n        ").concat(hits.slice(0, 3).map(function (hit, hitIndex) {
-      return "         \n                    <a href=\"./searchResults.html\">\n                        <span>".concat(hit.category, "</span>\n                    </a>\n  ");
-    }).join(''), "\n        </div>\n ");
-  }; // Create the render function
+    console.log(hits);
 
+    if (indexId === 'gstar_demo_test') {
+      return "\n        <div class=\"wrapperList-product\">\n        ".concat(hits.slice(0, 5).map(function (hit, hitIndex) {
+        return "         \n            <a href=\"./searchResults.html\" >\n            <div class=\"suggestions-product\">\n                <img src=\"".concat(hit.image_link, "\">\n                <div class=\"suggestions-product-info\">\n                    <span>").concat(hit.name, "</span>\n                    <p>$").concat(hit.price, "</p>\n                </div>\n            </div>\n        </a>\n              ");
+      }).join(''), "\n</div>\n    ");
+    }
+  };
+
+  var renderIndexListItemSuggested = function renderIndexListItemSuggested(_ref2) {
+    var indexId = _ref2.indexId,
+        hits = _ref2.hits;
+
+    if (indexId === 'gstar_demo_test_query_suggestions') {
+      return "\n    <div class=\"wrapperList-suggested\" >\n        ".concat(hits.slice(0, 5).map(function (hit, hitIndex) {
+        return "         \n                <a href=\"./searchResults.html\">\n                    <span>".concat(hit.query, "</span>\n                </a>\n");
+      }).join(''), "\n    </div >   \n    <div class=\"wrapperList-category\">\n        ").concat(hits.slice(0, 6).map(function (hit, hitIndex) {
+        return "   \n                        \n                    <a href = \"./searchResults.html\" >\n                    <span class=\"test\">".concat(hit.category, "</span>\n                    </a>\n        ");
+      }).join(''), "\n         </div>\n    ");
+    }
+  };
+
+  function cleanCategory(category) {
+    console.log(category);
+    return category.map(function (i) {
+      return i;
+    });
+  }
+
+  ; // Create the render function
 
   var renderAutocomplete = function renderAutocomplete(renderOptions, isFirstRender) {
     var indices = renderOptions.indices,
         currentRefinement = renderOptions.currentRefinement,
         refine = renderOptions.refine,
-        widgetParams = renderOptions.widgetParams;
+        widgetParams = renderOptions.widgetParams,
+        items = renderOptions.items;
 
     if (isFirstRender) {
-      var input = document.createElement('input'); // const input = document.querySelector('#searchbox')
+      var input = document.createElement('input');
+      input.classList.add('autocompleteInput'); // const input = document.querySelector('#searchbox')
 
       var ul = document.createElement('ul');
       ul.classList.add('autoCompleteList');
       var listWrapper = document.createElement('div');
-      listWrapper.classList.add('listWrapper');
+      listWrapper.classList.add('listWrapper'); // const autocompleteInput = document.querySelector('.autocomplete input')
+      // autocompleteInput.addEventListener('input', e => {
+      // })
+
+      input.addEventListener('focus', function (event) {
+        console.log(event);
+        var wrapper = document.querySelector('.listWrapper');
+        wrapper.style.display = "grid";
+      });
+      input.addEventListener('blur', function (event) {
+        console.log(event);
+        var wrapper = document.querySelector('.listWrapper');
+        wrapper.style.display = "none";
+      });
       input.addEventListener('input', function (event) {
+        console.log(event);
         refine(event.currentTarget.value);
       });
       widgetParams.container.appendChild(input);
@@ -30515,13 +30554,35 @@ function searchResults() {
 
     widgetParams.container.querySelector('input').value = currentRefinement;
     widgetParams.container.querySelector('.listWrapper').innerHTML = indices.map(renderIndexListItem).join('');
+  };
+
+  var renderAutocompleteSuggested = function renderAutocompleteSuggested(renderOptions, isFirstRender) {
+    var indices = renderOptions.indices,
+        currentRefinement = renderOptions.currentRefinement,
+        refine = renderOptions.refine,
+        widgetParams = renderOptions.widgetParams,
+        hits = renderOptions.hits;
+
+    if (isFirstRender) {
+      var input = document.querySelector('.autocompleteInput');
+      input.addEventListener('input', function (event) {
+        console.log(event);
+        refine(event.currentTarget.value);
+      });
+    }
+
+    console.log(widgetParams.container.querySelector('.listWrapper')); // const itemsSuggested = indices.map(renderIndexListItemSuggested).join('')
+    // console.log(renderIndexListItemSuggested)
+
+    widgetParams.container.querySelector('.listWrapper').insertAdjacentHTML('afterbegin', indices.map(renderIndexListItemSuggested).join(''));
   }; // 2. Create the custom widget
 
 
   var customRefinementList = (0, _connectors.connectRefinementList)(renderRefinementList);
   var customQueryRuleCustomData = (0, _connectors.connectQueryRules)(renderQueryRuleCustomData);
   var customCurrentRefinements = (0, _connectors.connectCurrentRefinements)(renderCurrentRefinements);
-  var customAutocomplete = (0, _connectors.connectAutocomplete)(renderAutocomplete); // 3. Instantiate
+  var customAutocomplete = (0, _connectors.connectAutocomplete)(renderAutocomplete);
+  var customAutocompleteSuggested = (0, _connectors.connectAutocomplete)(renderAutocompleteSuggested); // 3. Instantiate
 
   search.addWidgets([customRefinementList({
     container: document.querySelector('#refinement-list-SearchResult'),
@@ -30534,6 +30595,14 @@ function searchResults() {
   }), customAutocomplete({
     container: document.querySelector('#autocomplete')
   })]);
+  search.addWidgets([(0, _widgets.index)({
+    indexName: 'gstar_demo_test_query_suggestions'
+  }).addWidgets([(0, _widgets.configure)({
+    hitsPerPage: 5
+  }), customAutocompleteSuggested({
+    container: document.querySelector('#autocomplete'),
+    attribute: ['keywords', "query"]
+  })])]);
   search.start();
 }
 },{"instantsearch.js":"node_modules/instantsearch.js/es/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js"}],"src/SearchResult_JS/filterResults.js":[function(require,module,exports) {
@@ -31047,7 +31116,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60524" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49809" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
