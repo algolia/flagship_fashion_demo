@@ -34,6 +34,7 @@
     <!-- <link rel="stylesheet" href="./src/SearchResult_JS/css/searchboxHeader.css"> -->
 
 
+
 </head>
 
 <body>
@@ -52,10 +53,13 @@
                     </ul>
                 </div>
                 <div class="searchbar-wrapper">
-                    <div id="searchbox" class="ais-SearchBox-wrapper">
+                    <!-- <div id="searchbox" class="ais-SearchBox-wrapper">
+
+                    </div> -->
+                    <div id="autocomplete" class="autocomplete ais-SearchBox-wrapper">
+                        <i class="fas fa-search"></i>
                         <span id="voicesearch" class="voicesearch"></span>
                     </div>
-
                 </div>
                 <div class="burger">
                     <div class="line1"></div>
@@ -178,6 +182,12 @@
     <!-- for the default version -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch.umd.js"></script> -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.0/js/standalone/selectize.js"
+        integrity="sha512-B03hDxgZPMBobOrnBhFiKvf8XCO7IRNa26/WiQK9lU+grXd5WXVHq3togZ67YLcUnNdrtoBbn5bi0GhYd0ivCA=="
+        crossorigin="anonymous"></script>
     <script src="./src/SearchResult_JS/indexSearchResults.js"></script>
 </body>
 
