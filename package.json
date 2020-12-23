@@ -41,8 +41,18 @@
     "babel-polyfill": "^6.26.0",
     "instantsearch.js": "^4.9.1",
     "parcel-bundler": "^1.12.4",
-    "serve-static": "^1.14.1"
+    "serve-static": "^1.14.1",
+    "@algolia/autocomplete-js": "1.0.0-alpha.37",
+    "@algolia/autocomplete-plugin-algolia-insights": "1.0.0-alpha.37",
+    "@algolia/autocomplete-plugin-query-suggestions": "1.0.0-alpha.37",
+    "@algolia/autocomplete-plugin-recent-searches": "1.0.0-alpha.37",
+    "@algolia/autocomplete-preset-algolia": "1.0.0-alpha.37",
+    "@algolia/autocomplete-theme-classic": "1.0.0-alpha.37",
+    "search-insights": "1.6.3"
   },
+  "browserslist": [
+    "since 2017-06"
+  ],
   "repository": "git@github.com:algolia/flasgship_fashion_demo.git",
   "author": "Hugo Valla <hugo_valla@hotmail.fr>",
   "license": "MIT"

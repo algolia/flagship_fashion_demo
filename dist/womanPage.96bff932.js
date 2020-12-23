@@ -30286,24 +30286,27 @@ var _connectors = require("instantsearch.js/es/connectors");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirstRender) {
-  var _ref$widgetParams = _ref.widgetParams,
-      container = _ref$widgetParams.container,
-      title = _ref$widgetParams.title,
-      hits = _ref.hits;
+const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirstRender) {
+  let {
+    widgetParams: {
+      container,
+      title
+    },
+    hits
+  } = _ref;
 
   if (isFirstRender) {
     console.log(container);
-    var section = document.createElement('section');
+    const section = document.createElement('section');
     section.classList.add('section-carousel-winter');
     container.appendChild(section);
-    var divSection = document.createElement('div');
+    const divSection = document.createElement('div');
     divSection.classList.add('title-carousel-winter');
     section.appendChild(divSection);
-    var titleSection = document.createElement('h2');
+    const titleSection = document.createElement('h2');
     titleSection.innerText = title;
     divSection.appendChild(titleSection);
-    var btnSection = document.createElement('a');
+    const btnSection = document.createElement('a');
     btnSection.classList.add('btn-carousel-winter');
     btnSection.innerHTML = "See All";
     btnSection.href = "./index.html";
@@ -30313,22 +30316,20 @@ var carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirs
     //     `<h2>${title}</h2><a href="/searchResults.html" class="btn-carousel-winter">See All</a>`
     //   );
 
-    var ul = document.createElement('ul');
+    const ul = document.createElement('ul');
     ul.classList.add('carousel-list-container');
     section.appendChild(ul);
   }
 
-  container.querySelector('ul').innerHTML = hits.map(function (hit) {
-    return "\n        <li>\n          <div class=\"image-wrapper\">\n            <img src=\"".concat(hit.image_link, "\" alt=\"").concat(hit.name, "\">\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ");
-  }).join('');
+  container.querySelector('ul').innerHTML = hits.map(hit => "\n        <li>\n          <div class=\"image-wrapper\">\n            <img src=\"".concat(hit.image_link, "\" alt=\"").concat(hit.name, "\">\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ")).join('');
 });
 exports.carousel = carousel;
 
 function renderCarouselAllProduct() {
-  var searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-  var search = (0, _instantsearch.default)({
+  const searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+  const search = (0, _instantsearch.default)({
     indexName: 'gstar_demo_test',
-    searchClient: searchClient
+    searchClient
   });
   search.addWidgets([(0, _widgets.searchBox)({
     container: '#searchbox',
@@ -30360,21 +30361,21 @@ Object.defineProperty(exports, "__esModule", {
 exports.burgerMenu = burgerMenu;
 
 function burgerMenu() {
-  var navslide = function navslide() {
-    var burger = document.querySelector('.burger');
-    var nav = document.querySelector('.nav-list ul');
-    var navlinks = document.querySelectorAll('.nav-list ul li a');
-    var navlink = document.querySelectorAll('.nav-list ul li');
-    burger.addEventListener('click', function (e) {
+  const navslide = () => {
+    const burger = document.querySelector('.burger');
+    const nav = document.querySelector('.nav-list ul');
+    const navlinks = document.querySelectorAll('.nav-list ul li a');
+    const navlink = document.querySelectorAll('.nav-list ul li');
+    burger.addEventListener('click', e => {
       nav.classList.toggle("nav-active");
-      navlink.forEach(function (link, idx) {
+      navlink.forEach((link, idx) => {
         if (link.style.animation) {
           link.style.animation = "";
         } else {
           link.style.animation = "navLinksMove 0.5s ease forwards ".concat(idx / 5 + 0.2, "s");
         }
       });
-      navlinks.forEach(function (link, idx) {
+      navlinks.forEach((link, idx) => {
         if (link.style.animation) {
           link.style.animation = "";
         } else {
@@ -30410,31 +30411,29 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function GetDataCarousel() {
   // GET CREDENTIALS
-  var searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-  var search = (0, _instantsearch.default)({
+  const searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+  const search = (0, _instantsearch.default)({
     indexName: 'gstar_demo_test',
-    searchClient: searchClient
+    searchClient
   }); //GET THE CONFIG
 
   function getCarouselConfigs() {
     return searchClient.initIndex("gstar_demo_config_woman").search("", {
       attributesToHighlight: [],
       attributesToRetrieve: ["title", "indexName", "configure"]
-    }).then(function (res) {
-      return res.hits;
-    });
+    }).then(res => res.hits);
   } //WIDGET CREATION
 
 
-  var carouselWidgets = [];
+  let carouselWidgets = [];
 
   function createWidgets(carousels) {
-    var container = document.querySelector("#stacked-carousels");
+    const container = document.querySelector("#stacked-carousels");
     container.innerText = "";
-    return carousels.map(function (carouselConfig) {
-      var carouselContainer = document.createElement("div");
+    return carousels.map(carouselConfig => {
+      const carouselContainer = document.createElement("div");
       carouselContainer.className = "carousel";
-      var indexWidget = (0, _widgets.index)({
+      const indexWidget = (0, _widgets.index)({
         indexName: carouselConfig.indexName,
         indexId: carouselConfig.objectID
       });
@@ -30471,7 +30470,7 @@ function GetDataCarousel() {
   } // retrieve the carousel configuration once
 
 
-  getCarouselConfigs().then(function (carousels) {
+  getCarouselConfigs().then(carousels => {
     console.log(carousels);
     carouselWidgets = createWidgets(carousels);
     search.addWidgets(carouselWidgets);
@@ -30510,7 +30509,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49809" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65461" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

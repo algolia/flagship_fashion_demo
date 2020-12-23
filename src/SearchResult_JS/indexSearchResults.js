@@ -4,11 +4,13 @@ import { burgerMenu } from "../burgerMenu";
 // import { searchBar } from "../searchbarDropdown";
 import { relatedResultModal } from "./relatedResultModal";
 import { cardAnimation } from "./cardAnimations";
+import { autocompleteSearchResult } from "./autocomplete";
 
 
 searchResults()
 filterResult()
 burgerMenu()
+autocompleteSearchResult()
 // searchBar()
 // window.setInterval(relatedResultModal, 500);
 // window.setInterval(cardAnimation, 500);
