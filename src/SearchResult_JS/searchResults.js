@@ -2,6 +2,9 @@ import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
 import { searchBox, clearRefinements, refinementList, currentRefinements, stats, hits, pagination, voiceSearch, configure, index } from 'instantsearch.js/es/widgets'
 import { connectRefinementList, connectQueryRules, connectCurrentRefinements, connectAutocomplete } from 'instantsearch.js/es/connectors';
+import { autocompleteSearchResult } from "./autocomplete"
+
+
 
 
 export function searchResults() {
@@ -23,7 +26,7 @@ export function searchResults() {
         //     placeholder: 'Clothes, Sneakers...',
         // }),
         // searchBox({
-        //     container: '#searchbox-filter',
+        //     container: '#autocomplete',
         //     placeholder: 'Woman, size...',
         // }),
         clearRefinements({
@@ -280,133 +283,133 @@ export function searchResults() {
 
     // AUTOCOMPLETE
     // Helper for the render function
-    const renderIndexListItem = ({ indexId, hits }) => {
-        console.log(hits)
-        if (indexId === 'gstar_demo_test') {
-            return `
-        <div class="wrapperList-product">
-        ${hits.slice(0, 5).map((hit, hitIndex) =>
-                `         
-            <a href="./searchResults.html" >
-            <div class="suggestions-product">
-                <img src="${hit.image_link}">
-                <div class="suggestions-product-info">
-                    <span>${hit.name}</span>
-                    <p>$${hit.price}</p>
-                </div>
-            </div>
-        </a>
-              `
-            )
-                    .join('')}
-</div>
-    `}
-    }
+    //     const renderIndexListItem = ({ indexId, hits }) => {
+    //         console.log(hits)
+    //         if (indexId === 'gstar_demo_test') {
+    //             return `
+    //         <div class="wrapperList-product">
+    //         ${hits.slice(0, 5).map((hit, hitIndex) =>
+    //                 `         
+    //             <a href="./searchResults.html" >
+    //             <div class="suggestions-product">
+    //                 <img src="${hit.image_link}">
+    //                 <div class="suggestions-product-info">
+    //                     <span>${hit.name}</span>
+    //                     <p>$${hit.price}</p>
+    //                 </div>
+    //             </div>
+    //         </a>
+    //               `
+    //             )
+    //                     .join('')}
+    // </div>
+    //     `}
+    //     }
 
-    const renderIndexListItemSuggested = ({ indexId, hits }) => {
+    //     const renderIndexListItemSuggested = ({ indexId, hits }) => {
 
-        if (indexId === 'gstar_demo_test_query_suggestions') {
-            return `
-    <div class="wrapperList-suggested" >
-        ${hits.slice(0, 5).map((hit, hitIndex) =>
+    //         if (indexId === 'gstar_demo_test_query_suggestions') {
+    //             return `
+    //     <div class="wrapperList-suggested" >
+    //         ${hits.slice(0, 5).map((hit, hitIndex) =>
 
-                `         
-                <a href="./searchResults.html">
-                    <span>${hit.query}</span>
-                </a>
-`
-            )
-                    .join('')
-                }
-    </div >   
-    <div class="wrapperList-category">
-        ${hits.slice(0, 6).map((hit, hitIndex) =>
-                    `   
-                        
-                    <a href = "./searchResults.html" >
-                    <span class="test">${hit.category}</span>
-                    </a>
-        `
-                )
-                    .join('')
-                }
-         </div>
-    `}
-    }
+    //                 `         
+    //                 <a href="./searchResults.html">
+    //                     <span>${hit.query}</span>
+    //                 </a>
+    // `
+    //             )
+    //                     .join('')
+    //                 }
+    //     </div >   
+    //     <div class="wrapperList-category">
+    //         ${hits.slice(0, 6).map((hit, hitIndex) =>
+    //                     `   
 
-    function cleanCategory(category) {
-        console.log(category)
-        return category.map(i => {
-            return i
-        })
+    //                     <a href = "./searchResults.html" >
+    //                     <span class="test">${hit.category}</span>
+    //                     </a>
+    //         `
+    //                 )
+    //                     .join('')
+    //                 }
+    //          </div>
+    //     `}
+    //     }
 
-    };
+    //     function cleanCategory(category) {
+    //         console.log(category)
+    //         return category.map(i => {
+    //             return i
+    //         })
 
-    // Create the render function
-    const renderAutocomplete = (renderOptions, isFirstRender) => {
-        const { indices, currentRefinement, refine, widgetParams, items } = renderOptions;
+    //     };
 
-        if (isFirstRender) {
-            const input = document.createElement('input');
-            input.classList.add('autocompleteInput')
-            // const input = document.querySelector('#searchbox')
-            const ul = document.createElement('ul');
-            ul.classList.add('autoCompleteList')
-            const listWrapper = document.createElement('div');
-            listWrapper.classList.add('listWrapper')
-            // const autocompleteInput = document.querySelector('.autocomplete input')
+    //     // Create the render function
+    //     const renderAutocomplete = (renderOptions, isFirstRender) => {
+    //         const { indices, currentRefinement, refine, widgetParams, items } = renderOptions;
 
-            // autocompleteInput.addEventListener('input', e => {
+    //         if (isFirstRender) {
+    //             const input = document.createElement('input');
+    //             input.classList.add('autocompleteInput')
+    //             // const input = document.querySelector('#searchbox')
+    //             const ul = document.createElement('ul');
+    //             ul.classList.add('autoCompleteList')
+    //             const listWrapper = document.createElement('div');
+    //             listWrapper.classList.add('listWrapper')
+    //             // const autocompleteInput = document.querySelector('.autocomplete input')
 
-            // })
-            input.addEventListener('focus', event => {
-                console.log(event)
-                let wrapper = document.querySelector('.listWrapper')
-                wrapper.style.display = "grid"
-            });
+    //             // autocompleteInput.addEventListener('input', e => {
 
-            input.addEventListener('blur', event => {
-                console.log(event)
-                let wrapper = document.querySelector('.listWrapper')
-                wrapper.style.display = "none"
-            });
-            input.addEventListener('input', event => {
-                console.log(event)
-                refine(event.currentTarget.value);
-            });
+    //             // })
+    //             input.addEventListener('focus', event => {
+    //                 console.log(event)
+    //                 let wrapper = document.querySelector('.listWrapper')
+    //                 wrapper.style.display = "grid"
+    //             });
 
-            widgetParams.container.appendChild(input);
-            widgetParams.container.appendChild(listWrapper);
-            listWrapper.appendChild(ul)
+    //             input.addEventListener('blur', event => {
+    //                 console.log(event)
+    //                 let wrapper = document.querySelector('.listWrapper')
+    //                 wrapper.style.display = "none"
+    //             });
+    //             input.addEventListener('input', event => {
+    //                 console.log(event)
+    //                 refine(event.currentTarget.value);
+    //             });
 
-            ul.addEventListener('click', (event) => {
-            });
+    //             widgetParams.container.appendChild(input);
+    //             widgetParams.container.appendChild(listWrapper);
+    //             listWrapper.appendChild(ul)
 
-
-        }
-        widgetParams.container.querySelector('input').value = currentRefinement;
-        widgetParams.container.querySelector('.listWrapper').innerHTML = indices.map(renderIndexListItem).join('');
+    //             ul.addEventListener('click', (event) => {
+    //             });
 
 
-    };
+    //         }
+    //         widgetParams.container.querySelector('input').value = currentRefinement;
+    //         widgetParams.container.querySelector('.listWrapper').innerHTML = indices.map(renderIndexListItem).join('');
 
-    const renderAutocompleteSuggested = (renderOptions, isFirstRender) => {
-        const { indices, currentRefinement, refine, widgetParams, hits } = renderOptions;
 
-        if (isFirstRender) {
-            const input = document.querySelector('.autocompleteInput')
-            input.addEventListener('input', event => {
-                console.log(event)
-                refine(event.currentTarget.value);
-            });
-        }
+    //     };
 
-        console.log(widgetParams.container.querySelector('.listWrapper'))
-        // const itemsSuggested = indices.map(renderIndexListItemSuggested).join('')
-        // console.log(renderIndexListItemSuggested)
-        widgetParams.container.querySelector('.listWrapper').insertAdjacentHTML('afterbegin', indices.map(renderIndexListItemSuggested).join(''))
+    // const renderAutocompleteSuggested = (renderOptions, isFirstRender) => {
+    //     const { indices, currentRefinement, refine, widgetParams, hits } = renderOptions;
 
-    };
+    //     if (isFirstRender) {
+    //         const input = document.querySelector('.autocompleteInput')
+    //         input.addEventListener('input', event => {
+    //             console.log(event)
+    //             refine(event.currentTarget.value);
+    //         });
+    //     }
+
+    //     console.log(widgetParams.container.querySelector('.listWrapper'))
+    //     // const itemsSuggested = indices.map(renderIndexListItemSuggested).join('')
+    //     // console.log(renderIndexListItemSuggested)
+    //     widgetParams.container.querySelector('.listWrapper').insertAdjacentHTML('afterbegin', indices.map(renderIndexListItemSuggested).join(''))
+
+    // };
 
 
 
@@ -420,12 +423,12 @@ export function searchResults() {
     const customCurrentRefinements = connectCurrentRefinements(
         renderCurrentRefinements
     );
-    const customAutocomplete = connectAutocomplete(
-        renderAutocomplete
-    );
-    const customAutocompleteSuggested = connectAutocomplete(
-        renderAutocompleteSuggested
-    );
+    // const customAutocomplete = connectAutocomplete(
+    //     renderAutocomplete
+    // );
+    // const customAutocompleteSuggested = connectAutocomplete(
+    //     renderAutocompleteSuggested
+    // );
 
 
     // 3. Instantiate
@@ -442,27 +445,30 @@ export function searchResults() {
             container: document.querySelector('#current-refinements'),
 
         }),
-        customAutocomplete({
-            container: document.querySelector('#autocomplete'),
-        }),
+        // customAutocomplete({
+        //     container: document.querySelector('#autocomplete'),
+        // }),
 
     ]);
 
-    search.addWidgets([
-        index({ indexName: 'gstar_demo_test_query_suggestions' })
-            .addWidgets([
-                configure({
-                    hitsPerPage: 5,
-                }),
-                customAutocompleteSuggested({
-                    container: document.querySelector('#autocomplete'),
-                    attribute: ['keywords', "query"]
-                }),
-            ]),
-    ]);
+    // search.addWidgets([
+    //     index({ indexName: 'gstar_demo_test_query_suggestions' })
+    //         .addWidgets([
+    //             configure({
+    //                 hitsPerPage: 5,
+    //             }),
+    //             customAutocompleteSuggested({
+    //                 container: document.querySelector('#autocomplete'),
+    //                 attribute: ['keywords', "query"]
+    //             }),
+    //         ]),
+    // ]);
 
 
     search.start();
 
+
+
 }
+
 

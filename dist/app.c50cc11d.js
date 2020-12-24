@@ -465,4 +465,4 @@ module.exports="0.38.0";
 },{}],"vZyd":[function(require,module,exports) {
 "use strict";var e=require("instantsearch.js/es/connectors"),r=require("./glide"),a=require("./getCarousel"),u=require("./displayCarouselDetail"),o=require("./autocomplete"),s=require("./burgerMenu"),i=require("./searchbarDropdown"),t=require("./persona");(0,r.carouselGlideJS)(),(0,a.GetDataForCarousel)(),(0,u.carouselDetailed)(),(0,o.autoComplete)(),(0,s.burgerMenu)(),(0,i.searchBar)(),(0,t.togglePersona)();
 },{"instantsearch.js/es/connectors":"sVcA","./glide":"yeU6","./getCarousel":"lD4q","./displayCarouselDetail":"QNf5","./autocomplete":"QpCc","./burgerMenu":"flN2","./searchbarDropdown":"o6a0","./persona":"yvav"}]},{},["vZyd"], null)
-//# sourceMappingURL=app.c50cc11d.js.map
+//# sourceMappingURL=/app.c50cc11d.js.map

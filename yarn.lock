@@ -2,6 +2,64 @@
 # yarn lockfile v1
 
 
+"@algolia/autocomplete-core@1.0.0-alpha.37":
+  version "1.0.0-alpha.37"
+  resolved "https://registry.yarnpkg.com/@algolia/autocomplete-core/-/autocomplete-core-1.0.0-alpha.37.tgz#d41a6561b38761c4967ff7aa3e1d5d0aa3ceb31c"
+  integrity sha512-sgyhudj7GphoVpB91i01SYKQGuqe4ByYf+yzKXUBS2Vswhtzv25emOA8RB+rr51ogeKlzpGKopZgglQnVw/CYg==
+  dependencies:
+    "@algolia/autocomplete-shared" "1.0.0-alpha.37"
+
+"@algolia/autocomplete-js@1.0.0-alpha.37":
+  version "1.0.0-alpha.37"
+  resolved "https://registry.yarnpkg.com/@algolia/autocomplete-js/-/autocomplete-js-1.0.0-alpha.37.tgz#7e9fd2bb2c488771a696943c0797e76244fa5277"
+  integrity sha512-gwH1eoMCLWavKlYw/z1m9fnduEellpuB5dHe1TZT9OOrUcpa/T9+0AETIOLo2wlFvBDHNsq0QlZscPeNBt/QXQ==
+  dependencies:
+    "@algolia/autocomplete-core" "1.0.0-alpha.37"
+    "@algolia/autocomplete-preset-algolia" "1.0.0-alpha.37"
+    "@algolia/autocomplete-shared" "1.0.0-alpha.37"
+
+"@algolia/autocomplete-plugin-algolia-insights@1.0.0-alpha.37":
+  version "1.0.0-alpha.37"
+  resolved "https://registry.yarnpkg.com/@algolia/autocomplete-plugin-algolia-insights/-/autocomplete-plugin-algolia-insights-1.0.0-alpha.37.tgz#2e00df3f40e73bb902915ead37ed6e4f1e2e1c50"
+  integrity sha512-Qdjtq8vxkVm+iRRbGhNRf2TVc1LUiWkeKn/TagUW8NrFmAk4kpUeUQ/oe+aUe+DKpYkDkvTbk+vRgaIhQp/5nw==
+  dependencies:
+    "@algolia/autocomplete-core" "1.0.0-alpha.37"
+    "@algolia/autocomplete-shared" "1.0.0-alpha.37"
+
+"@algolia/autocomplete-plugin-query-suggestions@1.0.0-alpha.37":
+  version "1.0.0-alpha.37"
+  resolved "https://registry.yarnpkg.com/@algolia/autocomplete-plugin-query-suggestions/-/autocomplete-plugin-query-suggestions-1.0.0-alpha.37.tgz#ef3721467e517eeab8b7b40aa7990d1a17b9853c"
+  integrity sha512-aTBpAASEyA3AWs+UCMTs8bugQXMpmUxBK4ztxb7GN2L5ovMaeLh9WVZXh/I742WOR9Or3cNd2lwTl1rZkPCO/A==
+  dependencies:
+    "@algolia/autocomplete-core" "1.0.0-alpha.37"
+    "@algolia/autocomplete-js" "1.0.0-alpha.37"
+
+"@algolia/autocomplete-plugin-recent-searches@1.0.0-alpha.37":
+  version "1.0.0-alpha.37"
+  resolved "https://registry.yarnpkg.com/@algolia/autocomplete-plugin-recent-searches/-/autocomplete-plugin-recent-searches-1.0.0-alpha.37.tgz#229acd42f1f69e976b31c478df709431915d48f0"
+  integrity sha512-l1LVo1VciZ6E53R2U6dGa4bE0Mej2V+Roi7P+Cg/NqH5AoRWl+AyZLaJPquxMqj9x3vx7CF0OZSXJoet3hv75g==
+  dependencies:
+    "@algolia/autocomplete-core" "1.0.0-alpha.37"
+    "@algolia/autocomplete-js" "1.0.0-alpha.37"
+    "@algolia/autocomplete-shared" "1.0.0-alpha.37"
+
+"@algolia/autocomplete-preset-algolia@1.0.0-alpha.37":
+  version "1.0.0-alpha.37"
+  resolved "https://registry.yarnpkg.com/@algolia/autocomplete-preset-algolia/-/autocomplete-preset-algolia-1.0.0-alpha.37.tgz#8c8e8ccec13bdea6db72c9994329c63fe804ca58"
+  integrity sha512-983tVpmzU9zNbS135ZyEXqG3Rd2ECkfMYNvPjE7ltRG7QjhIKdG/jCzM+W+9mOPtasK5oQbJVh3IxaGOALYZ+Q==
+  dependencies:
+    "@algolia/autocomplete-shared" "1.0.0-alpha.37"
+
+"@algolia/autocomplete-shared@1.0.0-alpha.37":
+  version "1.0.0-alpha.37"
+  resolved "https://registry.yarnpkg.com/@algolia/autocomplete-shared/-/autocomplete-shared-1.0.0-alpha.37.tgz#07d8fc2bd983df195e39716c9b432fd9ec85533a"
+  integrity sha512-5FSPDoq+AFwgdFnUv5BksvE7apbpo6cQ0hozNQscjcCaNceH47HzBLE6FGXzQWtXHnYRaOLYKXMHbg8KpnADMA==
+
+"@algolia/autocomplete-theme-classic@1.0.0-alpha.37":
+  version "1.0.0-alpha.37"
+  resolved "https://registry.yarnpkg.com/@algolia/autocomplete-theme-classic/-/autocomplete-theme-classic-1.0.0-alpha.37.tgz#5987d2494d7525622fc6d24f6c3e10ea2bb3a940"
+  integrity sha512-CVV4YwSH0aLakJgAln178yJgb0HO7JpHG6hLxxNhcHPsJiRVN2JcjCdSkMPB6QFrjrYtcHvNdXJMahqgSWJNpw==
+
 "@algolia/cache-browser-local-storage@4.8.3":
   version "4.8.3"
   resolved "https://registry.yarnpkg.com/@algolia/cache-browser-local-storage/-/cache-browser-local-storage-4.8.3.tgz"
@@ -5393,6 +5451,11 @@ saxes@^3.1.9:
   integrity sha512-Ydydq3zC+WYDJK1+gRxRapLIED9PWeSuuS41wqyoRmzvhhh9nc+QQrVMKJYzJFULazeGhzSV0QleN2wD3boh2g==
   dependencies:
     xmlchars "^2.1.1"
+
+search-insights@1.6.3:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/search-insights/-/search-insights-1.6.3.tgz#0a9467615c4929dee42d0a599eb38961c2f6aaad"
+  integrity sha512-Tvqm+M5A7Udw4MgVMYsy1zRbO1f1wb92ZpexADVu01WLX9yCLHek71EpjPsLDSqkbDwlXI3KFjM+1Y+JFQHpsQ==
 
 "semver@2 || 3 || 4 || 5", semver@^5.4.1, semver@^5.5.0, semver@^5.5.1:
   version "5.7.1"

@@ -20449,7 +20449,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 // CAROUSEL IMAGES
 function carouselGlideJS() {
-  var carouselGlide = new _glideModular.default('.glide', {
+  const carouselGlide = new _glideModular.default('.glide', {
     type: 'carousel',
     animationDuration: 600,
     animationTimingFunc: 'linear',
@@ -20473,24 +20473,25 @@ var _connectors = require("instantsearch.js/es/connectors");
 // import { configure, hits, EXPERIMENTAL_configureRelatedItems } from 'instantsearch.js/es/widgets';
 // import instantsearch from 'instantsearch.js';
 // import algoliasearch from 'algoliasearch';
-var carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirstRender) {
-  var _ref$widgetParams = _ref.widgetParams,
-      container = _ref$widgetParams.container,
-      title = _ref$widgetParams.title,
-      hits = _ref.hits;
+const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirstRender) {
+  let {
+    widgetParams: {
+      container,
+      title
+    },
+    hits
+  } = _ref;
 
   if (isFirstRender) {
     console.log(title);
     console.log(container);
     container.insertAdjacentHTML('afterbegin', "<div class=\"title-carousel-winter\"><h2>".concat(title, "</h2><a href=\"/searchResults.html\" class=\"btn-carousel-winter\">See All</a></div>"));
-    var ul = document.createElement('ul');
+    const ul = document.createElement('ul');
     ul.classList.add('carousel-list-container');
     container.appendChild(ul);
   }
 
-  container.querySelector('ul').innerHTML = hits.map(function (hit) {
-    return "\n        <li>\n          <div class=\"image-wrapper\">\n            <img src=\"".concat(hit.image_link, "\" alt=\"").concat(hit.name, "\">\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ");
-  }).join('');
+  container.querySelector('ul').innerHTML = hits.map(hit => "\n        <li>\n          <div class=\"image-wrapper\">\n            <img src=\"".concat(hit.image_link, "\" alt=\"").concat(hit.name, "\">\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ")).join('');
 });
 exports.carousel = carousel;
 },{"instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js"}],"node_modules/instantsearch.js/es/widgets/index/index.js":[function(require,module,exports) {
@@ -33831,16 +33832,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function GetDataForCarousel() {
   // GET CREDENTIALS
-  var searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-  var search = (0, _instantsearch.default)({
+  const searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+  const search = (0, _instantsearch.default)({
     indexName: 'gstar_demo_test',
-    searchClient: searchClient
+    searchClient
   });
-  var userTokenSelector = document.getElementById("user-token-selector");
-  userTokenSelector.addEventListener("change", function () {
+  const userTokenSelector = document.getElementById("user-token-selector");
+  userTokenSelector.addEventListener("change", () => {
     userTokenSelector.disabled = true;
     search.removeWidgets(carouselWidgets);
-    getCarouselConfigs().then(function (carousels) {
+    getCarouselConfigs().then(carousels => {
       console.log(carousels);
       userTokenSelector.disabled = false;
       carouselWidgets = createWidgets(carousels);
@@ -33858,21 +33859,19 @@ function GetDataForCarousel() {
       facetFilters: ['userToken:' + getUserToken()],
       attributesToHighlight: [],
       attributesToRetrieve: ["title", "indexName", "configure"]
-    }).then(function (res) {
-      return res.hits;
-    });
+    }).then(res => res.hits);
   } //WIDGET CREATION
 
 
-  var carouselWidgets = [];
+  let carouselWidgets = [];
 
   function createWidgets(carousels) {
-    var container = document.querySelector("#stacked-carousels");
+    const container = document.querySelector("#stacked-carousels");
     container.innerText = "";
-    return carousels.map(function (carouselConfig) {
-      var carouselContainer = document.createElement("div");
+    return carousels.map(carouselConfig => {
+      const carouselContainer = document.createElement("div");
       carouselContainer.className = "carousel";
-      var indexWidget = (0, _widgets.index)({
+      const indexWidget = (0, _widgets.index)({
         indexName: carouselConfig.indexName,
         indexId: carouselConfig.objectID
       });
@@ -33914,7 +33913,7 @@ function GetDataForCarousel() {
   } // retrieve the carousel configuration once
 
 
-  getCarouselConfigs().then(function (carousels) {
+  getCarouselConfigs().then(carousels => {
     userTokenSelector.disabled = false;
     carouselWidgets = createWidgets(carousels);
     search.addWidgets(carouselWidgets);
@@ -33938,7 +33937,7 @@ var _widgets = require("instantsearch.js/es/widgets");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function carouselDetailed() {
-  var searchDetail = (0, _instantsearch.default)({
+  const searchDetail = (0, _instantsearch.default)({
     indexName: "Gstar_demo_carousel_detail",
     searchClient: (0, _algoliasearch.default)("HYDY1KWTWB", "28cf6d38411215e2eef188e635216508")
   });
@@ -33949,9 +33948,7 @@ function carouselDetailed() {
   }), (0, _widgets.hits)({
     container: '.carousel-container',
     templates: {
-      item: function item(hit) {
-        return "\n            \n               \n                <i class=\"fas fa-heart heart\"></i>\n      \n            <div class=\"image-wrapper\">\n              <img src=\"".concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"hit-img\" />\n            </div>\n            <div class=\"carousel-detailed-display-info\">\n            <div class=\"hit-name\">\n            ").concat(hit.category, "\n            </div>\n            <div class=\"hit-color\">\n            ").concat(hit.colourFilter, "\n            </div>\n            <div class=\"hit-description\">").concat(hit.description, "</div>\n            <div class=\"hit-rating-price\">\n              <div class=\"hit-price\">$").concat(hit.price, "</div>\n            </div>\n            </div>\n          \n        ");
-      }
+      item: hit => "\n            \n               \n                <i class=\"fas fa-heart heart\"></i>\n      \n            <div class=\"image-wrapper\">\n              <img src=\"".concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"hit-img\" />\n            </div>\n            <div class=\"carousel-detailed-display-info\">\n            <div class=\"hit-name\">\n            ").concat(hit.category, "\n            </div>\n            <div class=\"hit-color\">\n            ").concat(hit.colourFilter, "\n            </div>\n            <div class=\"hit-description\">").concat(hit.description, "</div>\n            <div class=\"hit-rating-price\">\n              <div class=\"hit-price\">$").concat(hit.price, "</div>\n            </div>\n            </div>\n          \n        ")
     }
   })]); // function activeHeart() {
   //     let heart = document.querySelector(".heart")
@@ -37883,9 +37880,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // import { autocomplete } from 'instantsearch.js/es/connectors';
 function autoComplete() {
-  var client = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-  var gstar = client.initIndex('gstar_demo_test');
-  var gstardetail = client.initIndex('Gstar_demo_carousel_detail');
+  const client = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+  const gstar = client.initIndex('gstar_demo_test');
+  const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
 
   function newHitsSource(index, params) {
     return function doSearch(query, cb) {
@@ -37905,10 +37902,14 @@ function autoComplete() {
     displayKey: 'name',
     templates: {
       header: '<div class="aa-suggestions-category">Product</div>',
-      suggestion: function suggestion(_ref) {
-        var _highlightResult = _ref._highlightResult;
+
+      suggestion(_ref) {
+        let {
+          _highlightResult
+        } = _ref;
         return " <a href=\"./searchResults.html\" >\n                                <div class=\"aa-suggestions-product\">\n                                    <img src=\"".concat(_highlightResult.image_link.value, "\">\n                                    <div class=\"aa-suggestions-product-info\">\n                                        <span>").concat(_highlightResult.name.value, "</span>\n                                        <p>$").concat(_highlightResult.price.value, "</p>\n                                    </div>\n                                </div>\n                            </a>\n                            ");
       }
+
     }
   }, {
     source: newHitsSource(gstardetail, {
@@ -37917,10 +37918,14 @@ function autoComplete() {
     displayKey: 'name',
     templates: {
       header: '<div class="aa-suggestions-category">Category</div>',
-      suggestion: function suggestion(_ref2) {
-        var _highlightResult = _ref2._highlightResult;
+
+      suggestion(_ref2) {
+        let {
+          _highlightResult
+        } = _ref2;
         return "\n                    <a href=\"./searchResults.html>\n                        <span>".concat(_highlightResult.category.value, "</span>\n                    </a>");
       }
+
     }
   }]).on('autocomplete:selected', function (event, suggestion, dataset, context) {
     console.log(event, suggestion, dataset, context);
@@ -37962,21 +37967,21 @@ Object.defineProperty(exports, "__esModule", {
 exports.burgerMenu = burgerMenu;
 
 function burgerMenu() {
-  var navslide = function navslide() {
-    var burger = document.querySelector('.burger');
-    var nav = document.querySelector('.nav-list ul');
-    var navlinks = document.querySelectorAll('.nav-list ul li a');
-    var navlink = document.querySelectorAll('.nav-list ul li');
-    burger.addEventListener('click', function (e) {
+  const navslide = () => {
+    const burger = document.querySelector('.burger');
+    const nav = document.querySelector('.nav-list ul');
+    const navlinks = document.querySelectorAll('.nav-list ul li a');
+    const navlink = document.querySelectorAll('.nav-list ul li');
+    burger.addEventListener('click', e => {
       nav.classList.toggle("nav-active");
-      navlink.forEach(function (link, idx) {
+      navlink.forEach((link, idx) => {
         if (link.style.animation) {
           link.style.animation = "";
         } else {
           link.style.animation = "navLinksMove 0.5s ease forwards ".concat(idx / 5 + 0.2, "s");
         }
       });
-      navlinks.forEach(function (link, idx) {
+      navlinks.forEach((link, idx) => {
         if (link.style.animation) {
           link.style.animation = "";
         } else {
@@ -37998,9 +38003,9 @@ Object.defineProperty(exports, "__esModule", {
 exports.searchBar = searchBar;
 
 function searchBar() {
-  var searchBarDropdown = document.querySelector('.aa-dropdown-menu');
-  var searchbar = document.querySelector('#aa-search-input');
-  searchbar.addEventListener("keyup", function (z) {
+  let searchBarDropdown = document.querySelector('.aa-dropdown-menu');
+  let searchbar = document.querySelector('#aa-search-input');
+  searchbar.addEventListener("keyup", z => {
     console.log(searchbar.value);
 
     if (searchbar.value === "") {
@@ -38019,10 +38024,10 @@ Object.defineProperty(exports, "__esModule", {
 exports.togglePersona = togglePersona;
 
 function togglePersona() {
-  var btnPersona = document.querySelector('.btnPersona');
-  var personaChoice = document.querySelector('.userPersonaSelector');
-  var closePersona = document.querySelector('.closePersona');
-  var labelPersona = document.querySelector('.labelUserPersonna');
+  const btnPersona = document.querySelector('.btnPersona');
+  const personaChoice = document.querySelector('.userPersonaSelector');
+  const closePersona = document.querySelector('.closePersona');
+  const labelPersona = document.querySelector('.labelUserPersonna');
   btnPersona.addEventListener('click', toggleModal);
   closePersona.addEventListener('click', toggleModal);
   labelPersona.addEventListener('click', toggleModal);
@@ -38155,7 +38160,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49809" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60774" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
