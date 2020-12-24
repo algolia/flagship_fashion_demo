@@ -131,8 +131,41 @@ export function autocompleteSearchResult() {
         },
         render({ root, sections, state }) {
             const index = searchClient.initIndex('gstar_demo_test');
+            const hitContainer = document.querySelector('#hits');
+            // const ul = document.createElement('ul')
+            // ul.classList.add('ais-Hits-list')
+            // hitContainer.appendChild(ul)
+            // console.log(ul)
             index.search(state.query).then((result) => {
-                console.log(result)
+                const hits = result.hits
+                hitContainer.innerHTML = hits.map(hit =>
+                    `
+                    <li class="ais-Hits-item">
+                    <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
+                        <div class="image-wrapper">
+                            <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                            <div class="hit-sizeFilter">
+                                <p>Sizes available: <span>${hit.sizeFilter}</span></p>
+                            </div>
+                        </div>
+                        <div class="hit-name">
+                            <div class="hit-infos">
+                                <div>${hit.name}</div>
+                                    
+                                <div class="colorWrapper">
+                                        <div>${hit.ColorCode}</div>
+                                        <div style="background: ${hit.color}" class="hit-colorsHex"></div>
+                                    </div>
+                                    
+                                    
+                                </div>
+                            <div class="hit-price">$${hit.price}</div>
+                            
+                        </div>
+                    </a>
+                </li>
+                    `
+                ).join('')
             })
             getQueryFromUser(state.query)
             root.append(...sections);

@@ -37052,8 +37052,14 @@ function autocompleteSearchResult() {
         state
       } = _ref5;
       const index = searchClient.initIndex('gstar_demo_test');
+      const hitContainer = document.querySelector('#hits'); // const ul = document.createElement('ul')
+      // ul.classList.add('ais-Hits-list')
+      // hitContainer.appendChild(ul)
+      // console.log(ul)
+
       index.search(state.query).then(result => {
-        console.log(result);
+        const hits = result.hits;
+        hitContainer.innerHTML = hits.map(hit => "\n                    <li class=\"ais-Hits-item\">\n                    <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                        <div class=\"image-wrapper\">\n                            <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                            <div class=\"hit-sizeFilter\">\n                                <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                            </div>\n                        </div>\n                        <div class=\"hit-name\">\n                            <div class=\"hit-infos\">\n                                <div>").concat(hit.name, "</div>\n                                    \n                                <div class=\"colorWrapper\">\n                                        <div>").concat(hit.ColorCode, "</div>\n                                        <div style=\"background: ").concat(hit.color, "\" class=\"hit-colorsHex\"></div>\n                                    </div>\n                                    \n                                    \n                                </div>\n                            <div class=\"hit-price\">$").concat(hit.price, "</div>\n                            \n                        </div>\n                    </a>\n                </li>\n                    ")).join('');
       });
       getQueryFromUser(state.query);
       root.append(...sections);
@@ -37943,7 +37949,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65461" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60774" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
