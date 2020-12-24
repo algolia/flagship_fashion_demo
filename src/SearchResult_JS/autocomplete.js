@@ -8,6 +8,10 @@ import { createLocalStorageRecentSearchesPlugin } from "@algolia/autocomplete-pl
 import algoliasearch from "algoliasearch";
 import searchResults from "./searchResults";
 import "@algolia/autocomplete-theme-classic";
+import { GetDataForCarousel } from '../getCarousel'
+import { carousel } from "../displayCarousel";
+import instantsearch from "instantsearch.js";
+import { configure, index, searchBox, pagination, refinementList, stats } from "instantsearch.js/es/widgets";
 
 export function autocompleteSearchResult() {
 
@@ -35,6 +39,7 @@ export function autocompleteSearchResult() {
         debug: true,
         openOnFocus: true,
         plugins: [recentSearchesPlugin, querySuggestionsPlugin],
+
         getSources({ query }) {
             if (!query) {
                 return [];
@@ -129,48 +134,15 @@ export function autocompleteSearchResult() {
                 ];
             });
         },
-        render({ root, sections, state }) {
-            const index = searchClient.initIndex('gstar_demo_test');
-            const hitContainer = document.querySelector('#hits');
-            // const ul = document.createElement('ul')
-            // ul.classList.add('ais-Hits-list')
-            // hitContainer.appendChild(ul)
-            // console.log(ul)
-            index.search(state.query).then((result) => {
-                const hits = result.hits
-                hitContainer.innerHTML = hits.map(hit =>
-                    `
-                    <li class="ais-Hits-item">
-                    <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
-                        <div class="image-wrapper">
-                            <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
-                            <div class="hit-sizeFilter">
-                                <p>Sizes available: <span>${hit.sizeFilter}</span></p>
-                            </div>
-                        </div>
-                        <div class="hit-name">
-                            <div class="hit-infos">
-                                <div>${hit.name}</div>
-                                    
-                                <div class="colorWrapper">
-                                        <div>${hit.ColorCode}</div>
-                                        <div style="background: ${hit.color}" class="hit-colorsHex"></div>
-                                    </div>
-                                    
-                                    
-                                </div>
-                            <div class="hit-price">$${hit.price}</div>
-                            
-                        </div>
-                    </a>
-                </li>
-                    `
-                ).join('')
-            })
+        onSubmit({ root, sections, state }) {
+
+            renderHits(root, sections, state)
+            // root.append(...sections);
             getQueryFromUser(state.query)
-            root.append(...sections);
         }
+
     });
+
 
     function headerTemplate({ title }) {
 
@@ -216,4 +188,161 @@ export function autocompleteSearchResult() {
     function getQueryFromUser(query) {
         return query
     }
+
+    function renderHits(root, sections, state) {
+        const index = searchClient.initIndex('gstar_demo_test');
+        const hitContainer = document.querySelector('#hits');
+        // const ul = document.createElement('ul')
+        // ul.classList.add('ais-Hits-list')
+        // hitContainer.appendChild(ul)
+        // console.log(ul)
+        index.search(state.query).then((result) => {
+
+            const hits = result.hits
+            console.log(hits)
+            if (hits.length != 0) {
+                hitContainer.innerHTML = hits.map(hit =>
+                    `
+                <li class="carousel-list-item">
+                <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
+                    <div class="image-wrapper">
+                        <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                        <div class="hit-sizeFilter">
+                            <p>Sizes available: <span>${hit.sizeFilter}</span></p>
+                        </div>
+                    </div>
+                    <div class="hit-name">
+                        <div class="hit-infos">
+                            <div>${hit.name}</div>
+                                
+                            <div class="colorWrapper">
+                                    <div>${hit.ColorCode}</div>
+                                    <div style="background: ${hit.color}" class="hit-colorsHex"></div>
+                                </div>
+                                
+                                
+                            </div>
+                        <div class="hit-price">$${hit.price}</div>
+                        
+                    </div>
+                </a>
+            </li>
+                `
+                ).join('')
+
+
+            } else {
+                noResult()
+            }
+        })
+    }
+
+    function noResult() {
+        let executed = false;
+        if (!executed) {
+            executed = true;
+            console.log(executed)
+
+            console.log('je suis dans no Result')
+            const hitContainer = document.querySelector('#hits');
+            const noResultCarousel = document.querySelector('#stacked-carousels')
+            hitContainer.style.display = 'none'
+            let noResults = document.createElement('div')
+            noResults.innerHTML = 'OUUPPSSIIIIII'
+            noResultCarousel.append(noResults)
+
+
+            const searchClient = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+
+            const search = instantsearch({
+                indexName: 'gstar_demo_test',
+                searchClient,
+            });
+
+            //GET THE CONFIG
+            function getCarouselConfigs() {
+                return searchClient
+                    .initIndex("gstar_demo_config")
+                    .search("", {
+                        attributesToHighlight: [],
+                        attributesToRetrieve: ["title", "indexName", "configure"],
+                    })
+                    .then((res) => res.hits);
+            }
+
+            //WIDGET CREATION
+            let carouselWidgets = [];
+            function createWidgets(carousels) {
+                const container = document.querySelector("#stacked-carousels");
+
+                container.innerText = "";
+
+                return carousels.map((carouselConfig) => {
+
+                    const carouselContainer = document.createElement("div");
+                    carouselContainer.className = "carousel";
+
+                    const indexWidget = index({
+                        indexName: carouselConfig.indexName,
+                        indexId: carouselConfig.objectID,
+                    });
+
+                    if (carouselConfig.configure) {
+                        console.log(carouselConfig.configure)
+                        indexWidget.addWidgets([
+                            configure({
+                                ...carouselConfig.configure,
+                                // userToken: getUserToken(),
+                            }),
+                        ]);
+                    }
+
+                    // const client = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+                    // const gstar = client.initIndex('gstar_demo_test');
+                    // const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
+
+                    indexWidget.addWidgets([
+                        carousel({
+                            title: carouselConfig.title,
+                            container: carouselContainer,
+                        }),
+                        // hits({
+                        //     container: '#hits',
+                        //     templates: carouselContainer,
+                        // }),
+                        // searchBox({
+                        //     container: 'searchbox',
+                        //     placeholder: 'Clothes, Sneakers...',
+                        // }),
+                        //    stats({
+                        //        container: '#stats',
+                        //    })
+
+
+                        // refinementList({
+                        //     container: '#brand-list',
+                        //     attribute: 'brand',
+                        // }),
+                        // pagination({
+                        //     container: '#pagination',
+                        // }),
+                    ]);
+
+                    container.appendChild(carouselContainer);
+                    return indexWidget;
+                });
+            }
+
+            // retrieve the carousel configuration once
+            getCarouselConfigs().then((carousels) => {
+                // userTokenSelector.disabled = false;
+                carouselWidgets = createWidgets(carousels);
+                search.addWidgets(carouselWidgets);
+                search.start();
+            });
+
+        }
+    }
+
 }
+

@@ -62,6 +62,29 @@ font-family: 'Castoro', serif;
     align-items: center;
 
 }
+
+
+.carousel-list-container{
+  flex-wrap: nowrap !important;
+    display: -webkit-box !important;
+    overflow-x: scroll !important;
+    padding: 2rem;
+    list-style-type: none;
+}
+
+.carousel-list-item{
+  min-height: 450px;
+  padding: 1.5rem;
+  margin: auto 1rem;
+  width: 380px;
+  background-color: white;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid rgba(240,240,239, 0.9);
+  transition: 0.2s ease-in-out;
+}
 /* .autocomplete input{
     
     background-color: rgb(246,245,243);
