@@ -8,8 +8,13 @@ import { createLocalStorageRecentSearchesPlugin } from "@algolia/autocomplete-pl
 import algoliasearch from "algoliasearch";
 import searchResults from "./searchResults";
 import "@algolia/autocomplete-theme-classic";
+import { GetDataForCarousel } from '../getCarousel'
+import { carousel } from "../displayCarousel";
+import instantsearch from "instantsearch.js";
+import { configure, index, searchBox, pagination, refinementList, stats } from "instantsearch.js/es/widgets";
 
 export function autocompleteSearchResult() {
+
 
     const appId = "HYDY1KWTWB";
     const apiKey = "28cf6d38411215e2eef188e635216508";
@@ -32,9 +37,10 @@ export function autocompleteSearchResult() {
 
     autocomplete({
         container: "#autocomplete",
-        debug: true,
+        // debug: true,
         openOnFocus: true,
         plugins: [recentSearchesPlugin, querySuggestionsPlugin],
+
         getSources({ query }) {
             if (!query) {
                 return [];
@@ -48,7 +54,8 @@ export function autocompleteSearchResult() {
                         indexName: "gstar_demo_test",
                         params: {
                             hitsPerPage: 3,
-                            attributesToSnippet: ["name:10"]
+                            attributesToSnippet: ["name:10"],
+                            enablePersonalization: true,
                         }
                     }
                 ]
@@ -61,7 +68,8 @@ export function autocompleteSearchResult() {
                             facetQuery: query,
                             highlightPreTag: "<mark>",
                             highlightPostTag: "</mark>",
-                            maxFacetHits: 5
+                            maxFacetHits: 5,
+                            enablePersonalization: true,
                         }
                     },
                     {
@@ -71,7 +79,8 @@ export function autocompleteSearchResult() {
                             facetQuery: query,
                             highlightPreTag: "<mark>",
                             highlightPostTag: "</mark>",
-                            maxFacetHits: 5
+                            maxFacetHits: 5,
+                            enablePersonalization: true,
                         }
                     }
                 ]);
@@ -129,48 +138,15 @@ export function autocompleteSearchResult() {
                 ];
             });
         },
-        render({ root, sections, state }) {
-            const index = searchClient.initIndex('gstar_demo_test');
-            const hitContainer = document.querySelector('#hits');
-            // const ul = document.createElement('ul')
-            // ul.classList.add('ais-Hits-list')
-            // hitContainer.appendChild(ul)
-            // console.log(ul)
-            index.search(state.query).then((result) => {
-                const hits = result.hits
-                hitContainer.innerHTML = hits.map(hit =>
-                    `
-                    <li class="ais-Hits-item">
-                    <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
-                        <div class="image-wrapper">
-                            <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
-                            <div class="hit-sizeFilter">
-                                <p>Sizes available: <span>${hit.sizeFilter}</span></p>
-                            </div>
-                        </div>
-                        <div class="hit-name">
-                            <div class="hit-infos">
-                                <div>${hit.name}</div>
-                                    
-                                <div class="colorWrapper">
-                                        <div>${hit.ColorCode}</div>
-                                        <div style="background: ${hit.color}" class="hit-colorsHex"></div>
-                                    </div>
-                                    
-                                    
-                                </div>
-                            <div class="hit-price">$${hit.price}</div>
-                            
-                        </div>
-                    </a>
-                </li>
-                    `
-                ).join('')
-            })
+        onSubmit({ root, sections, state }) {
+
+            renderHits(root, sections, state)
+            // root.append(...sections);
             getQueryFromUser(state.query)
-            root.append(...sections);
         }
+
     });
+
 
     function headerTemplate({ title }) {
 
@@ -179,6 +155,11 @@ export function autocompleteSearchResult() {
             <h3>${title}</h3>
         </div>
         ` ;
+    }
+
+    function statNbProduct({ stat }) {
+        let statNb = document.querySelector('.stats-searchResult')
+        statNb.innerHTML = `<p>lblblblblb ${stat}</p>`
     }
 
     function productTemplate({ image, title, description, price }) {
@@ -216,4 +197,222 @@ export function autocompleteSearchResult() {
     function getQueryFromUser(query) {
         return query
     }
+
+    function renderHits(root, sections, state) {
+        const index = searchClient.initIndex('gstar_demo_test');
+        const hitContainer = document.querySelector('#hits');
+        // const ul = document.createElement('ul')
+        // ul.classList.add('ais-Hits-list')
+        // hitContainer.appendChild(ul)
+        // console.log(ul)
+        index.search(state.query).then((result) => {
+
+            const hits = result.hits
+            console.log(hits)
+            if (hits.length != 0) {
+                displayResultOrNoResult(hits)
+                const pagination = document.querySelector('#pagination')
+                pagination.style.display = 'block'
+                hitContainer.innerHTML = hits.map(hit =>
+                    `
+                <li class="carousel-list-item">
+                <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
+                    <div class="image-wrapper">
+                        <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                        <div class="hit-sizeFilter">
+                            <p>Sizes available: <span>${hit.sizeFilter}</span></p>
+                        </div>
+                    </div>
+                    <div class="hit-name">
+                        <div class="hit-infos">
+                            <div>${hit.name}</div>
+                                
+                            <div class="colorWrapper">
+                                    <div>${hit.hexColorCode.split('//')[0]}</div>
+                                    <div style="background: ${hit.hexColorCode.split('//')[1]}" class="hit-colorsHex"></div>
+                                </div>
+                                
+                                
+                            </div>
+                        <div class="hit-price">$${hit.price}</div>
+                        
+                    </div>
+                </a>
+            </li>
+                `
+                ).join('')
+
+
+            } else {
+                noResult(hits)
+            }
+        })
+    }
+
+
+
+    function noResult(hits) {
+        let executed = false;
+        if (!executed) {
+            executed = true;
+
+            displayResultOrNoResult(hits)
+            const containerNoresult = document.querySelector('.container')
+            const noResults = document.querySelector('.noResultMessage')
+            const query = document.querySelector(".aa-InputWrapper input").value
+            const pagination = document.querySelector('#pagination')
+            pagination.style.display = 'none'
+
+            if (!noResults) {
+                let noResults = document.createElement('div')
+                noResults.innerHTML = ''
+                noResults.classList.add('noResultMessage')
+                noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
+            <p>Please check the spelling or try to remove filters</p>
+            <p>You can check our latest trends and collection bellow</p>`
+                containerNoresult.prepend(noResults)
+            } else {
+                noResults.innerHTML = ''
+                noResults.classList.add('noResultMessage')
+                noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
+            <p>Please check the spelling or try to remove filters</p>
+            <p>You can check our latest trends and collection bellow</p>`
+                containerNoresult.prepend(noResults)
+            }
+
+            const searchClient = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+
+            const search = instantsearch({
+                indexName: 'gstar_demo_test',
+                searchClient,
+            });
+
+
+            // const userTokenSelector = document.getElementById("user-token-selector");
+            // userTokenSelector.addEventListener("change", () => {
+            //     userTokenSelector.disabled = true;
+            //     search.removeWidgets(carouselWidgets);
+            //     getCarouselConfigs().then((carousels) => {
+            //         console.log(carousels)
+            //         userTokenSelector.disabled = false;
+            //         carouselWidgets = createWidgets(carousels);
+            //         search.addWidgets(carouselWidgets);
+            //     });
+            // });
+
+            function getUserToken() {
+                const getPersona = localStorage.getItem('personaValue')
+                console.log(getPersona)
+                return getPersona;
+            }
+
+            //GET THE CONFIG
+            function getCarouselConfigs() {
+                return searchClient
+                    .initIndex("gstar_demo_config")
+                    .search("", {
+                        facetFilters: ['userToken:' + getUserToken()],
+                        attributesToHighlight: [],
+                        attributesToRetrieve: ["title", "indexName", "configure"],
+                    })
+                    .then((res) => res.hits);
+            }
+
+            //WIDGET CREATION
+            let carouselWidgets = [];
+            function createWidgets(carousels) {
+                const container = document.querySelector("#stacked-carousels");
+
+                container.innerText = "";
+
+                return carousels.map((carouselConfig) => {
+
+                    const carouselContainer = document.createElement("div");
+                    carouselContainer.className = "carousel";
+
+                    const indexWidget = index({
+                        indexName: carouselConfig.indexName,
+                        indexId: carouselConfig.objectID,
+                    });
+
+                    if (carouselConfig.configure) {
+                        console.log(carouselConfig.configure)
+                        indexWidget.addWidgets([
+                            configure({
+                                ...carouselConfig.configure,
+                                userToken: getUserToken(),
+                            }),
+                        ]);
+                    }
+
+                    // const client = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+                    // const gstar = client.initIndex('gstar_demo_test');
+                    // const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
+
+                    indexWidget.addWidgets([
+                        carousel({
+                            title: carouselConfig.title,
+                            container: carouselContainer,
+                        }),
+                        // hits({
+                        //     container: '#hits',
+                        //     templates: carouselContainer,
+                        // }),
+                        // searchBox({
+                        //     container: 'searchbox',
+                        //     placeholder: 'Clothes, Sneakers...',
+                        // }),
+                        //    stats({
+                        //        container: '#stats',
+                        //    })
+
+
+                        // refinementList({
+                        //     container: '#brand-list',
+                        //     attribute: 'brand',
+                        // }),
+                        // pagination({
+                        //     container: '#pagination',
+                        // }),
+                    ]);
+
+                    container.appendChild(carouselContainer);
+                    return indexWidget;
+                });
+            }
+
+            // retrieve the carousel configuration once
+            getCarouselConfigs().then((carousels) => {
+                carouselWidgets = createWidgets(carousels);
+                search.addWidgets(carouselWidgets);
+                search.start();
+            });
+
+        }
+    }
+    function displayResultOrNoResult(hits) {
+        const hitContainer = document.querySelector('#hits');
+        const noResultCarousel = document.querySelector('#stacked-carousels')
+        const noResultContainer = document.querySelector('.container')
+        console.log(hits)
+        if (hits.length === 0) {
+            hitContainer.classList.remove('displayGrid')
+            hitContainer.classList.add('displayFalse')
+            noResultCarousel.classList.add('displayTrue')
+            noResultCarousel.classList.remove('displayFalse')
+            noResultContainer.classList.remove('displayFalse')
+            noResultContainer.classList.add('displayTrue')
+        } else {
+            hitContainer.classList.add('displayGrid')
+            hitContainer.classList.remove('displayFalse')
+            noResultCarousel.classList.remove('displayGrid')
+            noResultCarousel.classList.add('displayFalse')
+            noResultContainer.classList.add('displayFalse')
+            noResultContainer.classList.remove('displayTrue')
+        }
+
+
+    }
+
 }
+
