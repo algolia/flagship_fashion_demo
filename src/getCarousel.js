@@ -18,7 +18,6 @@ export function GetDataForCarousel() {
         userTokenSelector.disabled = true;
         search.removeWidgets(carouselWidgets);
         getCarouselConfigs().then((carousels) => {
-            console.log(carousels)
             userTokenSelector.disabled = false;
             carouselWidgets = createWidgets(carousels);
             search.addWidgets(carouselWidgets);
@@ -26,6 +25,7 @@ export function GetDataForCarousel() {
     });
 
     function getUserToken() {
+        localStorage.setItem('personaValue', userTokenSelector.value)
         return userTokenSelector.value;
     }
 

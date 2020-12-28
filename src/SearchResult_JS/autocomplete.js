@@ -15,6 +15,7 @@ import { configure, index, searchBox, pagination, refinementList, stats } from "
 
 export function autocompleteSearchResult() {
 
+
     const appId = "HYDY1KWTWB";
     const apiKey = "28cf6d38411215e2eef188e635216508";
     const searchClient = algoliasearch(appId, apiKey);
@@ -36,7 +37,7 @@ export function autocompleteSearchResult() {
 
     autocomplete({
         container: "#autocomplete",
-        debug: true,
+        // debug: true,
         openOnFocus: true,
         plugins: [recentSearchesPlugin, querySuggestionsPlugin],
 
@@ -53,7 +54,8 @@ export function autocompleteSearchResult() {
                         indexName: "gstar_demo_test",
                         params: {
                             hitsPerPage: 3,
-                            attributesToSnippet: ["name:10"]
+                            attributesToSnippet: ["name:10"],
+                            enablePersonalization: true,
                         }
                     }
                 ]
@@ -66,7 +68,8 @@ export function autocompleteSearchResult() {
                             facetQuery: query,
                             highlightPreTag: "<mark>",
                             highlightPostTag: "</mark>",
-                            maxFacetHits: 5
+                            maxFacetHits: 5,
+                            enablePersonalization: true,
                         }
                     },
                     {
@@ -76,7 +79,8 @@ export function autocompleteSearchResult() {
                             facetQuery: query,
                             highlightPreTag: "<mark>",
                             highlightPostTag: "</mark>",
-                            maxFacetHits: 5
+                            maxFacetHits: 5,
+                            enablePersonalization: true,
                         }
                     }
                 ]);
@@ -153,6 +157,11 @@ export function autocompleteSearchResult() {
         ` ;
     }
 
+    function statNbProduct({ stat }) {
+        let statNb = document.querySelector('.stats-searchResult')
+        statNb.innerHTML = `<p>lblblblblb ${stat}</p>`
+    }
+
     function productTemplate({ image, title, description, price }) {
         return `
       <div class="aa-ItemContent">
@@ -201,6 +210,9 @@ export function autocompleteSearchResult() {
             const hits = result.hits
             console.log(hits)
             if (hits.length != 0) {
+                displayResultOrNoResult(hits)
+                const pagination = document.querySelector('#pagination')
+                pagination.style.display = 'block'
                 hitContainer.innerHTML = hits.map(hit =>
                     `
                 <li class="carousel-list-item">
@@ -216,8 +228,8 @@ export function autocompleteSearchResult() {
                             <div>${hit.name}</div>
                                 
                             <div class="colorWrapper">
-                                    <div>${hit.ColorCode}</div>
-                                    <div style="background: ${hit.color}" class="hit-colorsHex"></div>
+                                    <div>${hit.hexColorCode.split('//')[0]}</div>
+                                    <div style="background: ${hit.hexColorCode.split('//')[1]}" class="hit-colorsHex"></div>
                                 </div>
                                 
                                 
@@ -232,25 +244,41 @@ export function autocompleteSearchResult() {
 
 
             } else {
-                noResult()
+                noResult(hits)
             }
         })
     }
 
-    function noResult() {
+
+
+    function noResult(hits) {
         let executed = false;
         if (!executed) {
             executed = true;
-            console.log(executed)
 
-            console.log('je suis dans no Result')
-            const hitContainer = document.querySelector('#hits');
-            const noResultCarousel = document.querySelector('#stacked-carousels')
-            hitContainer.style.display = 'none'
-            let noResults = document.createElement('div')
-            noResults.innerHTML = 'OUUPPSSIIIIII'
-            noResultCarousel.append(noResults)
+            displayResultOrNoResult(hits)
+            const containerNoresult = document.querySelector('.container')
+            const noResults = document.querySelector('.noResultMessage')
+            const query = document.querySelector(".aa-InputWrapper input").value
+            const pagination = document.querySelector('#pagination')
+            pagination.style.display = 'none'
 
+            if (!noResults) {
+                let noResults = document.createElement('div')
+                noResults.innerHTML = ''
+                noResults.classList.add('noResultMessage')
+                noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
+            <p>Please check the spelling or try to remove filters</p>
+            <p>You can check our latest trends and collection bellow</p>`
+                containerNoresult.prepend(noResults)
+            } else {
+                noResults.innerHTML = ''
+                noResults.classList.add('noResultMessage')
+                noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
+            <p>Please check the spelling or try to remove filters</p>
+            <p>You can check our latest trends and collection bellow</p>`
+                containerNoresult.prepend(noResults)
+            }
 
             const searchClient = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
 
@@ -259,11 +287,31 @@ export function autocompleteSearchResult() {
                 searchClient,
             });
 
+
+            // const userTokenSelector = document.getElementById("user-token-selector");
+            // userTokenSelector.addEventListener("change", () => {
+            //     userTokenSelector.disabled = true;
+            //     search.removeWidgets(carouselWidgets);
+            //     getCarouselConfigs().then((carousels) => {
+            //         console.log(carousels)
+            //         userTokenSelector.disabled = false;
+            //         carouselWidgets = createWidgets(carousels);
+            //         search.addWidgets(carouselWidgets);
+            //     });
+            // });
+
+            function getUserToken() {
+                const getPersona = localStorage.getItem('personaValue')
+                console.log(getPersona)
+                return getPersona;
+            }
+
             //GET THE CONFIG
             function getCarouselConfigs() {
                 return searchClient
                     .initIndex("gstar_demo_config")
                     .search("", {
+                        facetFilters: ['userToken:' + getUserToken()],
                         attributesToHighlight: [],
                         attributesToRetrieve: ["title", "indexName", "configure"],
                     })
@@ -292,7 +340,7 @@ export function autocompleteSearchResult() {
                         indexWidget.addWidgets([
                             configure({
                                 ...carouselConfig.configure,
-                                // userToken: getUserToken(),
+                                userToken: getUserToken(),
                             }),
                         ]);
                     }
@@ -335,13 +383,35 @@ export function autocompleteSearchResult() {
 
             // retrieve the carousel configuration once
             getCarouselConfigs().then((carousels) => {
-                // userTokenSelector.disabled = false;
                 carouselWidgets = createWidgets(carousels);
                 search.addWidgets(carouselWidgets);
                 search.start();
             });
 
         }
+    }
+    function displayResultOrNoResult(hits) {
+        const hitContainer = document.querySelector('#hits');
+        const noResultCarousel = document.querySelector('#stacked-carousels')
+        const noResultContainer = document.querySelector('.container')
+        console.log(hits)
+        if (hits.length === 0) {
+            hitContainer.classList.remove('displayGrid')
+            hitContainer.classList.add('displayFalse')
+            noResultCarousel.classList.add('displayTrue')
+            noResultCarousel.classList.remove('displayFalse')
+            noResultContainer.classList.remove('displayFalse')
+            noResultContainer.classList.add('displayTrue')
+        } else {
+            hitContainer.classList.add('displayGrid')
+            hitContainer.classList.remove('displayFalse')
+            noResultCarousel.classList.remove('displayGrid')
+            noResultCarousel.classList.add('displayFalse')
+            noResultContainer.classList.add('displayFalse')
+            noResultContainer.classList.remove('displayTrue')
+        }
+
+
     }
 
 }

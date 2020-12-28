@@ -36954,7 +36954,6 @@ function GetDataForCarousel() {
     userTokenSelector.disabled = true;
     search.removeWidgets(carouselWidgets);
     getCarouselConfigs().then(carousels => {
-      console.log(carousels);
       userTokenSelector.disabled = false;
       carouselWidgets = createWidgets(carousels);
       search.addWidgets(carouselWidgets);
@@ -36962,6 +36961,7 @@ function GetDataForCarousel() {
   });
 
   function getUserToken() {
+    localStorage.setItem('personaValue', userTokenSelector.value);
     return userTokenSelector.value;
   } //GET THE CONFIG
 
@@ -37090,7 +37090,7 @@ function autocompleteSearchResult() {
   });
   (0, _autocompleteJs.autocomplete)({
     container: "#autocomplete",
-    debug: true,
+    // debug: true,
     openOnFocus: true,
     plugins: [recentSearchesPlugin, querySuggestionsPlugin],
 
@@ -37110,7 +37110,8 @@ function autocompleteSearchResult() {
           indexName: "gstar_demo_test",
           params: {
             hitsPerPage: 3,
-            attributesToSnippet: ["name:10"]
+            attributesToSnippet: ["name:10"],
+            enablePersonalization: true
           }
         }]
       }).then(async (_ref2) => {
@@ -37122,7 +37123,8 @@ function autocompleteSearchResult() {
             facetQuery: query,
             highlightPreTag: "<mark>",
             highlightPostTag: "</mark>",
-            maxFacetHits: 5
+            maxFacetHits: 5,
+            enablePersonalization: true
           }
         }, {
           indexName: "gstar_demo_test",
@@ -37131,7 +37133,8 @@ function autocompleteSearchResult() {
             facetQuery: query,
             highlightPreTag: "<mark>",
             highlightPostTag: "</mark>",
-            maxFacetHits: 5
+            maxFacetHits: 5,
+            enablePersonalization: true
           }
         }]);
         return [{
@@ -37227,27 +37230,35 @@ function autocompleteSearchResult() {
     return "\n        <div class=\"aa-titleCategory\">\n            <h3>".concat(title, "</h3>\n        </div>\n        ");
   }
 
-  function productTemplate(_ref7) {
+  function statNbProduct(_ref7) {
+    let {
+      stat
+    } = _ref7;
+    let statNb = document.querySelector('.stats-searchResult');
+    statNb.innerHTML = "<p>lblblblblb ".concat(stat, "</p>");
+  }
+
+  function productTemplate(_ref8) {
     let {
       image,
       title,
       description,
       price
-    } = _ref7;
+    } = _ref8;
     return "\n      <div class=\"aa-ItemContent\">\n        <div class=\"aa-ItemImage\">\n          <img src=\"".concat(image, "\" alt=\"").concat(title, "\">\n        </div>\n        <div class=\"aa-ItemInfos\">\n        <div class=\"aa-ItemTitle\">").concat(title, "</div>\n        <div class=\"aa-ItemPrice\">$").concat(price, "</div>\n        </div>\n      </div>\n    ");
   }
 
-  function moreResultsTemplate(_ref8) {
-    let {
-      title
-    } = _ref8;
-    return "\n        <div class=\"aa-btnShowMore-wrapper\">\n            <a href=\"#\" class=\"aa-btnShowMore\">\n                ".concat(title, "\n            </a>\n      </div>\n    ");
-  }
-
-  function facetTemplate(_ref9) {
+  function moreResultsTemplate(_ref9) {
     let {
       title
     } = _ref9;
+    return "\n        <div class=\"aa-btnShowMore-wrapper\">\n            <a href=\"#\" class=\"aa-btnShowMore\">\n                ".concat(title, "\n            </a>\n      </div>\n    ");
+  }
+
+  function facetTemplate(_ref10) {
+    let {
+      title
+    } = _ref10;
     return "\n      <div class=\"aa-ItemContent\">\n        <div class=\"aa-ItemTitle\">".concat(title, "</div>\n      </div>\n    ");
   }
 
@@ -37267,34 +37278,67 @@ function autocompleteSearchResult() {
       console.log(hits);
 
       if (hits.length != 0) {
-        hitContainer.innerHTML = hits.map(hit => "\n                <li class=\"carousel-list-item\">\n                <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>").concat(hit.name, "</div>\n                                \n                            <div class=\"colorWrapper\">\n                                    <div>").concat(hit.ColorCode, "</div>\n                                    <div style=\"background: ").concat(hit.color, "\" class=\"hit-colorsHex\"></div>\n                                </div>\n                                \n                                \n                            </div>\n                        <div class=\"hit-price\">$").concat(hit.price, "</div>\n                        \n                    </div>\n                </a>\n            </li>\n                ")).join('');
+        displayResultOrNoResult(hits);
+        const pagination = document.querySelector('#pagination');
+        pagination.style.display = 'block';
+        hitContainer.innerHTML = hits.map(hit => "\n                <li class=\"carousel-list-item\">\n                <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>").concat(hit.name, "</div>\n                                \n                            <div class=\"colorWrapper\">\n                                    <div>").concat(hit.hexColorCode.split('//')[0], "</div>\n                                    <div style=\"background: ").concat(hit.hexColorCode.split('//')[1], "\" class=\"hit-colorsHex\"></div>\n                                </div>\n                                \n                                \n                            </div>\n                        <div class=\"hit-price\">$").concat(hit.price, "</div>\n                        \n                    </div>\n                </a>\n            </li>\n                ")).join('');
       } else {
-        noResult();
+        noResult(hits);
       }
     });
   }
 
-  function noResult() {
+  function noResult(hits) {
     let executed = false;
 
     if (!executed) {
       executed = true;
-      console.log(executed);
-      console.log('je suis dans no Result');
-      const hitContainer = document.querySelector('#hits');
-      const noResultCarousel = document.querySelector('#stacked-carousels');
-      hitContainer.style.display = 'none';
-      let noResults = document.createElement('div');
-      noResults.innerHTML = 'OUUPPSSIIIIII';
-      noResultCarousel.append(noResults);
+      displayResultOrNoResult(hits);
+      const containerNoresult = document.querySelector('.container');
+      const noResults = document.querySelector('.noResultMessage');
+      const query = document.querySelector(".aa-InputWrapper input").value;
+      const pagination = document.querySelector('#pagination');
+      pagination.style.display = 'none';
+
+      if (!noResults) {
+        let noResults = document.createElement('div');
+        noResults.innerHTML = '';
+        noResults.classList.add('noResultMessage');
+        noResults.innerHTML = "<p>Sorry no result for <span>".concat(query, "</span></p>\n            <p>Please check the spelling or try to remove filters</p>\n            <p>You can check our latest trends and collection bellow</p>");
+        containerNoresult.prepend(noResults);
+      } else {
+        noResults.innerHTML = '';
+        noResults.classList.add('noResultMessage');
+        noResults.innerHTML = "<p>Sorry no result for <span>".concat(query, "</span></p>\n            <p>Please check the spelling or try to remove filters</p>\n            <p>You can check our latest trends and collection bellow</p>");
+        containerNoresult.prepend(noResults);
+      }
+
       const searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
       const search = (0, _instantsearch.default)({
         indexName: 'gstar_demo_test',
         searchClient
-      }); //GET THE CONFIG
+      }); // const userTokenSelector = document.getElementById("user-token-selector");
+      // userTokenSelector.addEventListener("change", () => {
+      //     userTokenSelector.disabled = true;
+      //     search.removeWidgets(carouselWidgets);
+      //     getCarouselConfigs().then((carousels) => {
+      //         console.log(carousels)
+      //         userTokenSelector.disabled = false;
+      //         carouselWidgets = createWidgets(carousels);
+      //         search.addWidgets(carouselWidgets);
+      //     });
+      // });
+
+      function getUserToken() {
+        const getPersona = localStorage.getItem('personaValue');
+        console.log(getPersona);
+        return getPersona;
+      } //GET THE CONFIG
+
 
       function getCarouselConfigs() {
         return searchClient.initIndex("gstar_demo_config").search("", {
+          facetFilters: ['userToken:' + getUserToken()],
           attributesToHighlight: [],
           attributesToRetrieve: ["title", "indexName", "configure"]
         }).then(res => res.hits);
@@ -37316,7 +37360,9 @@ function autocompleteSearchResult() {
 
           if (carouselConfig.configure) {
             console.log(carouselConfig.configure);
-            indexWidget.addWidgets([(0, _widgets.configure)(_objectSpread({}, carouselConfig.configure))]);
+            indexWidget.addWidgets([(0, _widgets.configure)(_objectSpread(_objectSpread({}, carouselConfig.configure), {}, {
+              userToken: getUserToken()
+            }))]);
           } // const client = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
           // const gstar = client.initIndex('gstar_demo_test');
           // const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
@@ -37351,11 +37397,33 @@ function autocompleteSearchResult() {
 
 
       getCarouselConfigs().then(carousels => {
-        // userTokenSelector.disabled = false;
         carouselWidgets = createWidgets(carousels);
         search.addWidgets(carouselWidgets);
         search.start();
       });
+    }
+  }
+
+  function displayResultOrNoResult(hits) {
+    const hitContainer = document.querySelector('#hits');
+    const noResultCarousel = document.querySelector('#stacked-carousels');
+    const noResultContainer = document.querySelector('.container');
+    console.log(hits);
+
+    if (hits.length === 0) {
+      hitContainer.classList.remove('displayGrid');
+      hitContainer.classList.add('displayFalse');
+      noResultCarousel.classList.add('displayTrue');
+      noResultCarousel.classList.remove('displayFalse');
+      noResultContainer.classList.remove('displayFalse');
+      noResultContainer.classList.add('displayTrue');
+    } else {
+      hitContainer.classList.add('displayGrid');
+      hitContainer.classList.remove('displayFalse');
+      noResultCarousel.classList.remove('displayGrid');
+      noResultCarousel.classList.add('displayFalse');
+      noResultContainer.classList.add('displayFalse');
+      noResultContainer.classList.remove('displayTrue');
     }
   }
 }
@@ -38206,7 +38274,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53682" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60906" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

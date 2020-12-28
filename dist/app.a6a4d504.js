@@ -33842,7 +33842,6 @@ function GetDataForCarousel() {
     userTokenSelector.disabled = true;
     search.removeWidgets(carouselWidgets);
     getCarouselConfigs().then(carousels => {
-      console.log(carousels);
       userTokenSelector.disabled = false;
       carouselWidgets = createWidgets(carousels);
       search.addWidgets(carouselWidgets);
@@ -33850,6 +33849,7 @@ function GetDataForCarousel() {
   });
 
   function getUserToken() {
+    localStorage.setItem('personaValue', userTokenSelector.value);
     return userTokenSelector.value;
   } //GET THE CONFIG
 
@@ -38160,7 +38160,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53682" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60906" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
