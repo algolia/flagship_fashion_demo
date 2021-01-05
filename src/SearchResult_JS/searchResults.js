@@ -20,6 +20,7 @@ export function searchResults() {
         searchClient,
     });
 
+
     search.addWidgets([
         // searchBox({
         //     container: '#searchbox',

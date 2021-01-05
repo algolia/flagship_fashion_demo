@@ -11,7 +11,7 @@ import "@algolia/autocomplete-theme-classic";
 import { GetDataForCarousel } from '../getCarousel'
 import { carousel } from "../displayCarousel";
 import instantsearch from "instantsearch.js";
-import { configure, index, searchBox, pagination, refinementList, stats } from "instantsearch.js/es/widgets";
+import { configure, index, searchBox, voiceSearch, hits, pagination, refinementList, stats, clearRefinements } from "instantsearch.js/es/widgets";
 
 export function autocompleteSearchResult() {
 
@@ -200,15 +200,18 @@ export function autocompleteSearchResult() {
 
     function renderHits(root, sections, state) {
         const index = searchClient.initIndex('gstar_demo_test');
-        const hitContainer = document.querySelector('#hits');
-        // const ul = document.createElement('ul')
-        // ul.classList.add('ais-Hits-list')
-        // hitContainer.appendChild(ul)
-        // console.log(ul)
-        index.search(state.query).then((result) => {
+        const hitContainer = document.querySelector('#hitsResults');
+        console.log(state)
+
+        index.search(state.query, {
+            facetFilters: [
+                'genderFilter:men'
+            ]
+        }).then((result) => {
+
 
             const hits = result.hits
-            console.log(hits)
+            console.log(result)
             if (hits.length != 0) {
                 displayResultOrNoResult(hits)
                 const pagination = document.querySelector('#pagination')
@@ -391,7 +394,7 @@ export function autocompleteSearchResult() {
         }
     }
     function displayResultOrNoResult(hits) {
-        const hitContainer = document.querySelector('#hits');
+        const hitContainer = document.querySelector('#hitsResults');
         const noResultCarousel = document.querySelector('#stacked-carousels')
         const noResultContainer = document.querySelector('.container')
         console.log(hits)

@@ -37268,14 +37268,13 @@ function autocompleteSearchResult() {
 
   function renderHits(root, sections, state) {
     const index = searchClient.initIndex('gstar_demo_test');
-    const hitContainer = document.querySelector('#hits'); // const ul = document.createElement('ul')
-    // ul.classList.add('ais-Hits-list')
-    // hitContainer.appendChild(ul)
-    // console.log(ul)
-
-    index.search(state.query).then(result => {
+    const hitContainer = document.querySelector('#hitsResults');
+    console.log(state);
+    index.search(state.query, {
+      facetFilters: ['genderFilter:men']
+    }).then(result => {
       const hits = result.hits;
-      console.log(hits);
+      console.log(result);
 
       if (hits.length != 0) {
         displayResultOrNoResult(hits);
@@ -37405,7 +37404,7 @@ function autocompleteSearchResult() {
   }
 
   function displayResultOrNoResult(hits) {
-    const hitContainer = document.querySelector('#hits');
+    const hitContainer = document.querySelector('#hitsResults');
     const noResultCarousel = document.querySelector('#stacked-carousels');
     const noResultContainer = document.querySelector('.container');
     console.log(hits);
@@ -38274,7 +38273,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53291" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49922" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -145,6 +145,42 @@
     cursor: pointer;
     padding: 0.5rem;
     border: 1px solid rgba(8, 8, 8, 0.3);
+    z-index: 10;
+}
+
+
+
+@media screen and (max-width: 375px){
+    .modal-carousel--title h2 {
+        margin: 5rem 2rem 1rem 1rem;
+        font-size: 1.5rem;
+    }
+    .underline {
+        right: 30px;
+    }
+    .carousel-relatedItems .ais-Hits-item, .carousel-relatedItemsSecond .ais-Hits-item {
+        height: 350px;
+        width: 200px;
+        margin: auto 0.5rem;
+    }
+
+    .hit-name {
+        font-size: 0.8rem; 
+        text-align: center;
+    }
+    .hit-colors {
+        margin-top: 0.5rem;
+    }
+    
+    .result-img {
+        width: 80%;
+        margin-bottom: 2rem;
+    }
+    .carousel-relatedItems .ais-Hits-list {
+        width: 100%;
+        padding: 1rem;
+        
+    }
 }
 
 @keyframes fadeModal {

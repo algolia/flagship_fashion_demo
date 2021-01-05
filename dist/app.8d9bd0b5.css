@@ -478,12 +478,16 @@
   }
 
   .nav-list ul {
-  top: 5.6rem;
-  width: 60%;
-  }
+    top: 7.6rem;
+    width: 80%;
+}
 
   .ais-SearchBox-input::placeholder {
     font-size: 0.6rem;
+  }
+
+  .aa-ResetIcon{
+    margin-right: 1rem;
   }
 }  
 
@@ -887,9 +891,9 @@ body {
     object-position: 0px 0rem !important;
 }
 
-.nav-list ul {
-  top: 5.6rem;
-  width: 60%;
+  .nav-list ul {
+  top: 7.6rem;
+  width: 80%;
   }
 
   .aa-input-search::placeholder {
@@ -907,6 +911,12 @@ body {
  }
 }  
 
+@media screen and (max-width: 375px){
+    .nav-list ul {
+      top: 7.6rem;
+      width: 80%;
+  }
+}
 @media screen and (max-width: 361px){
   body {
     overflow-x: hidden !important;
