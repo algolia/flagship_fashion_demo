@@ -37887,16 +37887,39 @@ function searchResults() {
     function renderHits(root, sections, state) {
       const index = searchClient.initIndex('gstar_demo_test');
       const hitContainer = document.querySelector('#hitsResults');
-      console.log(state);
+      userQuery(state.query);
       index.search(state.query).then(result => {
         const hits = result.hits;
         console.log(result);
 
         if (hits.length != 0) {
+          renderHitsAutocomplete(result);
           displayResultOrNoResult(hits);
           const pagination = document.querySelector('#pagination');
-          pagination.style.display = 'block';
-          hitContainer.innerHTML = hits.map(hit => "\n                    <li class=\"carousel-list-item\">\n                    <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                        <div class=\"image-wrapper\">\n                            <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                            <div class=\"hit-sizeFilter\">\n                                <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                            </div>\n                        </div>\n                        <div class=\"hit-name\">\n                            <div class=\"hit-infos\">\n                                <div>").concat(hit.name, "</div>\n                                    \n                                <div class=\"colorWrapper\">\n                                        <div>").concat(hit.hexColorCode.split('//')[0], "</div>\n                                        <div style=\"background: ").concat(hit.hexColorCode.split('//')[1], "\" class=\"hit-colorsHex\"></div>\n                                    </div>\n                                    \n                                    \n                                </div>\n                            <div class=\"hit-price\">$").concat(hit.price, "</div>\n                            \n                        </div>\n                    </a>\n                </li>\n                    ")).join('');
+          pagination.style.display = 'block'; //     hitContainer.innerHTML = hits.map(hit =>
+          //         `
+          //     <li class="carousel-list-item">
+          //     <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
+          //         <div class="image-wrapper">
+          //             <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+          //             <div class="hit-sizeFilter">
+          //                 <p>Sizes available: <span>${hit.sizeFilter}</span></p>
+          //             </div>
+          //         </div>
+          //         <div class="hit-name">
+          //             <div class="hit-infos">
+          //                 <div>${hit.name}</div>
+          //                 <div class="colorWrapper">
+          //                         <div>${hit.hexColorCode.split('//')[0]}</div>
+          //                         <div style="background: ${hit.hexColorCode.split('//')[1]}" class="hit-colorsHex"></div>
+          //                     </div>
+          //                 </div>
+          //             <div class="hit-price">$${hit.price}</div>
+          //         </div>
+          //     </a>
+          // </li>
+          //     `
+          //     ).join('')
         } else {
           noResult(hits);
         }
@@ -37978,33 +38001,12 @@ function searchResults() {
               indexWidget.addWidgets([(0, _widgets.configure)(_objectSpread(_objectSpread({}, carouselConfig.configure), {}, {
                 userToken: getUserToken()
               }))]);
-            } // const client = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-            // const gstar = client.initIndex('gstar_demo_test');
-            // const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
-
+            }
 
             indexWidget.addWidgets([(0, _displayCarousel.carousel)({
               title: carouselConfig.title,
               container: carouselContainer
-            }) // hits({
-            //     container: '#hits',
-            //     templates: carouselContainer,
-            // }),
-            // searchBox({
-            //     container: 'searchbox',
-            //     placeholder: 'Clothes, Sneakers...',
-            // }),
-            //    stats({
-            //        container: '#stats',
-            //    })
-            // refinementList({
-            //     container: '#brand-list',
-            //     attribute: 'brand',
-            // }),
-            // pagination({
-            //     container: '#pagination',
-            // }),
-            ]);
+            })]);
             container.appendChild(carouselContainer);
             return indexWidget;
           });
@@ -38043,18 +38045,40 @@ function searchResults() {
     }
   }
 
-  const autocompleteSearchBox = createAutocompleteSearchBox(); // Create a virtual (renderless) searchbox
+  function renderHitsAutocomplete(result) {
+    const hits = result.hits;
+    console.log('je passe ici');
 
-  const virtualSearchBox = (0, _connectors.connectSearchBox)(() => {});
-  const virtualHierarchicalMenu = (0, _connectors.connectHierarchicalMenu)(() => {});
+    if (hits.length != 0) {
+      // displayResultOrNoResult(hits)
+      const pagination = document.querySelector('#pagination');
+      pagination.style.display = 'block';
+      const hitContainer = document.querySelector('#hitsResults');
+      hitContainer.innerHTML = hits.map(hit => "\n                    <li class=\"carousel-list-item\">\n                    <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                        <div class=\"image-wrapper\">\n                            <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                            <div class=\"hit-sizeFilter\">\n                                <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                            </div>\n                        </div>\n                        <div class=\"hit-name\">\n                            <div class=\"hit-infos\">\n                                <div>").concat(hit.name, "</div>\n                                    \n                                <div class=\"colorWrapper\">\n                                        <div>").concat(hit.hexColorCode.split('//')[0], "</div>\n                                        <div style=\"background: ").concat(hit.hexColorCode.split('//')[1], "\" class=\"hit-colorsHex\"></div>\n                                    </div>\n                                    \n                                    \n                                </div>\n                            <div class=\"hit-price\">$").concat(hit.price, "</div>\n                            \n                        </div>\n                    </a>\n                </li>\n                    ")).join('');
+    }
+  }
+
+  const autocompleteSearchBox = createAutocompleteSearchBox();
+  const customHits = (0, _connectors.connectHits)(renderHitsAutocomplete);
+  let searchQuery = '';
+
+  function userQuery(query) {
+    console.log(query);
+    searchQuery = query;
+    localStorage.setItem('query', query);
+    return searchQuery;
+  }
+
+  console.log(localStorage.getItem('query')); // Create a virtual (renderless) searchbox
+  // const virtualSearchBox = connectSearchBox(() => { });
+  // const virtualHierarchicalMenu = connectHierarchicalMenu(() => { });
+
+  console.log('toto');
   search.addWidgets([(0, _widgets.index)({
     indexName: 'gstar_demo_test'
-  }).addWidgets([// (1) You can add other Query Suggestions indices:
-  // index({
-  //   indexName: "additional_query_suggestions"
-  // }),
-  (0, _widgets.configure)({
-    hitsPerPage: 5
+  }).addWidgets([(0, _widgets.configure)({
+    hitsPerPage: 5,
+    query: localStorage.getItem('query')
   }), autocompleteSearchBox({
     container: '#autocomplete',
     placeholder: 'Search products'
@@ -38066,8 +38090,9 @@ function searchResults() {
     container: document.querySelector('#queryRuleCustomData')
   }), customCurrentRefinements({
     container: document.querySelector('#current-refinements')
-  })]), virtualSearchBox({}), virtualHierarchicalMenu({
-    attributes: ['genderFilter', 'category']
+  })]), (0, _widgets.configure)({
+    hitsPerPage: 20,
+    query: localStorage.getItem('query')
   }), (0, _widgets.clearRefinements)({
     container: '#clear-refinements'
   }), (0, _widgets.refinementList)({
@@ -38093,29 +38118,14 @@ function searchResults() {
   }), (0, _widgets.refinementList)({
     container: '#size-list',
     attribute: 'sizeFilter'
-  }), // refinementList({
-  //     container: '#hex-color-list',
-  //     attribute: 'hexColorCode',
-  // }),
-  (0, _widgets.stats)({
+  }), (0, _widgets.stats)({
     container: '#stats-searchResult'
   }), (0, _widgets.voiceSearch)({
     container: '#voicesearch',
     searchAsYouSpeak: true,
     language: 'en-US'
-  }), (0, _widgets.hits)({
-    container: '#hits',
-
-    transformItems(items) {
-      return items.map(item => _objectSpread(_objectSpread({}, item), {}, {
-        color: item.hexColorCode.split('//')[1],
-        ColorCode: item.hexColorCode.split('//')[0]
-      }));
-    },
-
-    templates: {
-      item: "\n                 <a href=\"{{url}}\" class=\"product-searchResult\" data-id=\"{{objectID}}\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"{{image_link}}\" align=\"left\" alt=\"{{name}}\" class=\"result-img\" />\n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>{{sizeFilter}}</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>{{#helpers.highlight}}{ \"attribute\": \"name\" }{{/helpers.highlight}}</div>\n                                \n                               <div class=\"colorWrapper\">\n                                    <div>{{ColorCode}}</div>\n                                    <div style=\"background: {{color}}\" class=\"hit-colorsHex\"></div>\n                                </div>\n                                \n                                \n                            </div>\n                        <div class=\"hit-price\">${{price}}</div>\n                        \n                    </div>\n                   \n                </a>\n                    \n              \n                "
-    }
+  }), customHits({
+    container: document.querySelector('#hits')
   }), (0, _widgets.pagination)({
     container: '#pagination'
   })]);
@@ -38631,7 +38641,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56727" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61365" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

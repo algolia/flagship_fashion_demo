@@ -1,7 +1,7 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
 import { searchBox, clearRefinements, refinementList, currentRefinements, stats, hits, pagination, voiceSearch, configure, index } from 'instantsearch.js/es/widgets'
-import { connectRefinementList, connectQueryRules, connectCurrentRefinements, connectAutocomplete, connectSearchBox, connectHierarchicalMenu } from 'instantsearch.js/es/connectors';
+import { connectRefinementList, connectQueryRules, connectCurrentRefinements, connectAutocomplete, connectSearchBox, connectHierarchicalMenu, connectHits } from 'instantsearch.js/es/connectors';
 import { autocompleteSearchResult } from "./autocomplete"
 
 import {
@@ -505,49 +505,47 @@ export function searchResults() {
         function getQueryFromUser(query) {
             return query
         }
-
         function renderHits(root, sections, state) {
             const index = searchClient.initIndex('gstar_demo_test');
             const hitContainer = document.querySelector('#hitsResults');
-            console.log(state)
+            userQuery(state.query)
 
             index.search(state.query).then((result) => {
-
-
                 const hits = result.hits
                 console.log(result)
                 if (hits.length != 0) {
+                    renderHitsAutocomplete(result)
                     displayResultOrNoResult(hits)
                     const pagination = document.querySelector('#pagination')
                     pagination.style.display = 'block'
-                    hitContainer.innerHTML = hits.map(hit =>
-                        `
-                    <li class="carousel-list-item">
-                    <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
-                        <div class="image-wrapper">
-                            <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
-                            <div class="hit-sizeFilter">
-                                <p>Sizes available: <span>${hit.sizeFilter}</span></p>
-                            </div>
-                        </div>
-                        <div class="hit-name">
-                            <div class="hit-infos">
-                                <div>${hit.name}</div>
-                                    
-                                <div class="colorWrapper">
-                                        <div>${hit.hexColorCode.split('//')[0]}</div>
-                                        <div style="background: ${hit.hexColorCode.split('//')[1]}" class="hit-colorsHex"></div>
-                                    </div>
-                                    
-                                    
-                                </div>
-                            <div class="hit-price">$${hit.price}</div>
-                            
-                        </div>
-                    </a>
-                </li>
-                    `
-                    ).join('')
+                    //     hitContainer.innerHTML = hits.map(hit =>
+                    //         `
+                    //     <li class="carousel-list-item">
+                    //     <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
+                    //         <div class="image-wrapper">
+                    //             <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                    //             <div class="hit-sizeFilter">
+                    //                 <p>Sizes available: <span>${hit.sizeFilter}</span></p>
+                    //             </div>
+                    //         </div>
+                    //         <div class="hit-name">
+                    //             <div class="hit-infos">
+                    //                 <div>${hit.name}</div>
+
+                    //                 <div class="colorWrapper">
+                    //                         <div>${hit.hexColorCode.split('//')[0]}</div>
+                    //                         <div style="background: ${hit.hexColorCode.split('//')[1]}" class="hit-colorsHex"></div>
+                    //                     </div>
+
+
+                    //                 </div>
+                    //             <div class="hit-price">$${hit.price}</div>
+
+                    //         </div>
+                    //     </a>
+                    // </li>
+                    //     `
+                    //     ).join('')
 
 
                 } else {
@@ -555,9 +553,6 @@ export function searchResults() {
                 }
             })
         }
-
-
-
         function noResult(hits) {
             let executed = false;
             if (!executed) {
@@ -652,35 +647,11 @@ export function searchResults() {
                             ]);
                         }
 
-                        // const client = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-                        // const gstar = client.initIndex('gstar_demo_test');
-                        // const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
-
                         indexWidget.addWidgets([
                             carousel({
                                 title: carouselConfig.title,
                                 container: carouselContainer,
                             }),
-                            // hits({
-                            //     container: '#hits',
-                            //     templates: carouselContainer,
-                            // }),
-                            // searchBox({
-                            //     container: 'searchbox',
-                            //     placeholder: 'Clothes, Sneakers...',
-                            // }),
-                            //    stats({
-                            //        container: '#stats',
-                            //    })
-
-
-                            // refinementList({
-                            //     container: '#brand-list',
-                            //     attribute: 'brand',
-                            // }),
-                            // pagination({
-                            //     container: '#pagination',
-                            // }),
                         ]);
 
                         container.appendChild(carouselContainer);
@@ -722,23 +693,69 @@ export function searchResults() {
         }
     }
 
+    function renderHitsAutocomplete(result) {
+
+        const hits = result.hits
+        console.log('je passe ici')
+        if (hits.length != 0) {
+            // displayResultOrNoResult(hits)
+            const pagination = document.querySelector('#pagination')
+            pagination.style.display = 'block';
+            const hitContainer = document.querySelector('#hitsResults');
+            hitContainer.innerHTML = hits.map(hit =>
+                `
+                    <li class="carousel-list-item">
+                    <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
+                        <div class="image-wrapper">
+                            <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                            <div class="hit-sizeFilter">
+                                <p>Sizes available: <span>${hit.sizeFilter}</span></p>
+                            </div>
+                        </div>
+                        <div class="hit-name">
+                            <div class="hit-infos">
+                                <div>${hit.name}</div>
+                                    
+                                <div class="colorWrapper">
+                                        <div>${hit.hexColorCode.split('//')[0]}</div>
+                                        <div style="background: ${hit.hexColorCode.split('//')[1]}" class="hit-colorsHex"></div>
+                                    </div>
+                                    
+                                    
+                                </div>
+                            <div class="hit-price">$${hit.price}</div>
+                            
+                        </div>
+                    </a>
+                </li>
+                    `
+            ).join('')
+
+
+        }
+    }
+
     const autocompleteSearchBox = createAutocompleteSearchBox();
-
+    const customHits = connectHits(renderHitsAutocomplete);
+    let searchQuery = ''
+    function userQuery(query) {
+        console.log(query)
+        searchQuery = query
+        localStorage.setItem('query', query);
+        return searchQuery
+    }
+    console.log(localStorage.getItem('query'))
     // Create a virtual (renderless) searchbox
-    const virtualSearchBox = connectSearchBox(() => { });
-    const virtualHierarchicalMenu = connectHierarchicalMenu(() => { });
-
-
+    // const virtualSearchBox = connectSearchBox(() => { });
+    // const virtualHierarchicalMenu = connectHierarchicalMenu(() => { });
+    console.log('toto')
     search.addWidgets([
         index({
             indexName: 'gstar_demo_test',
         }).addWidgets([
-            // (1) You can add other Query Suggestions indices:
-            // index({
-            //   indexName: "additional_query_suggestions"
-            // }),
             configure({
                 hitsPerPage: 5,
+                query: localStorage.getItem('query')
             }),
             autocompleteSearchBox({
                 container: '#autocomplete',
@@ -757,12 +774,9 @@ export function searchResults() {
 
             }),
         ]),
-        virtualSearchBox({}),
-        virtualHierarchicalMenu({
-            attributes: [
-                'genderFilter',
-                'category',
-            ],
+        configure({
+            hitsPerPage: 20,
+            query: localStorage.getItem('query')
         }),
         clearRefinements({
             container: '#clear-refinements',
@@ -799,12 +813,6 @@ export function searchResults() {
             attribute: 'sizeFilter',
 
         }),
-
-        // refinementList({
-        //     container: '#hex-color-list',
-        //     attribute: 'hexColorCode',
-
-        // }),
         stats({
             container: '#stats-searchResult',
         }),
@@ -813,49 +821,14 @@ export function searchResults() {
             searchAsYouSpeak: true,
             language: 'en-US',
         }),
-        hits({
-            container: '#hits',
-            transformItems(items) {
-                return items.map(item => ({
-                    ...item,
-                    color: item.hexColorCode.split('//')[1],
-                    ColorCode: item.hexColorCode.split('//')[0]
-                }));
-            },
-            templates: {
-                item: `
-                 <a href="{{url}}" class="product-searchResult" data-id="{{objectID}}">
-                    <div class="image-wrapper">
-                        <img src="{{image_link}}" align="left" alt="{{name}}" class="result-img" />
-                        <div class="hit-sizeFilter">
-                            <p>Sizes available: <span>{{sizeFilter}}</span></p>
-                        </div>
-                    </div>
-                    <div class="hit-name">
-                        <div class="hit-infos">
-                            <div>{{#helpers.highlight}}{ "attribute": "name" }{{/helpers.highlight}}</div>
-                                
-                               <div class="colorWrapper">
-                                    <div>{{ColorCode}}</div>
-                                    <div style="background: {{color}}" class="hit-colorsHex"></div>
-                                </div>
-                                
-                                
-                            </div>
-                        <div class="hit-price">\${{price}}</div>
-                        
-                    </div>
-                   
-                </a>
-                    
-              
-                `,
-            },
+        customHits({
+            container: document.querySelector('#hits'),
         }),
         pagination({
             container: '#pagination',
         }),
     ]);
+
 
     search.start();
 
