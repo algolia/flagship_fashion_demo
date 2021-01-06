@@ -1,10 +1,8 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
 import {
-  searchBox,
   clearRefinements,
   refinementList,
-  currentRefinements,
   stats,
   hits,
   pagination,
@@ -30,10 +28,7 @@ import {
 } from '@algolia/autocomplete-js';
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions';
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches';
-// import algoliasearch from "algoliasearch";
-// import searchResults from "./searchResults";
 import '@algolia/autocomplete-theme-classic';
-import { GetDataForCarousel } from '../getCarousel';
 import { carousel } from '../displayCarousel';
 
 export function searchResults() {
@@ -48,20 +43,9 @@ export function searchResults() {
   });
 
   const renderRefinementList = (renderOptions, isFirstRender) => {
-    const {
-      items,
-      isFromSearch,
-      refine,
-      createURL,
-      isShowingMore,
-      canToggleShowMore,
-      searchForItems,
-      toggleShowMore,
-      widgetParams,
-    } = renderOptions;
+    const { items, refine, createURL, widgetParams } = renderOptions;
 
     if (isFirstRender) {
-      // const input = document.createElement('input');
       const ul = document.createElement('ul');
       widgetParams.container.appendChild(ul);
     }
@@ -90,11 +74,6 @@ export function searchResults() {
         refine(event.currentTarget.dataset.value);
       });
     });
-
-    // const button = widgetParams.container.querySelector('button');
-
-    // // button.disabled = !canToggleShowMore;
-    // button.textContent = isShowingMore ? 'Show less' : 'Show more';
   };
 
   function isRefined(item) {
@@ -103,7 +82,6 @@ export function searchResults() {
     }
   }
 
-  // Create the render function
   const renderQueryRuleCustomData = (renderOptions, isFirstRender) => {
     const { items, widgetParams, refine } = renderOptions;
 
@@ -138,8 +116,6 @@ export function searchResults() {
             </div>
           `;
   };
-
-  // CURRENT REFINMENT
 
   const createDataAttribtues = refinement =>
     Object.keys(refinement)
@@ -184,7 +160,6 @@ export function searchResults() {
     });
   };
 
-  // 2. Create the custom widget
   const customRefinementList = connectRefinementList(renderRefinementList);
   const customQueryRuleCustomData = connectQueryRules(
     renderQueryRuleCustomData
@@ -192,14 +167,7 @@ export function searchResults() {
   const customCurrentRefinements = connectCurrentRefinements(
     renderCurrentRefinements
   );
-  // const customAutocomplete = connectAutocomplete(
-  //     renderAutocomplete
-  // );
-  // const customAutocompleteSuggested = connectAutocomplete(
-  //     renderAutocompleteSuggested
-  // );
 
-  // 3. Instantiate
   search.addWidgets([
     customRefinementList({
       container: document.querySelector('#refinement-list-SearchResult'),
@@ -212,9 +180,6 @@ export function searchResults() {
     customCurrentRefinements({
       container: document.querySelector('#current-refinements'),
     }),
-    // customAutocomplete({
-    //     container: document.querySelector('#autocomplete'),
-    // }),
   ]);
 
   function createAutocompleteSearchBox() {
@@ -241,12 +206,7 @@ export function searchResults() {
     const indicesRef = { current: [] };
 
     const renderAutocomplete = (renderOptions, isFirstRender) => {
-      const {
-        indices,
-        currentRefinement,
-        refine,
-        widgetParams,
-      } = renderOptions;
+      const { indices, refine } = renderOptions;
 
       // Store indices prop in indicesRef
       indicesRef.current = indices || [];
@@ -368,7 +328,6 @@ export function searchResults() {
       }
     };
 
-    // This function return an autocomplete instance wrapped in the InstantSearch autocomplete connector
     return connectAutocomplete(renderAutocomplete);
 
     function headerTemplate({ title }) {
@@ -624,9 +583,6 @@ export function searchResults() {
     }).addWidgets([
       configure({
         hitsPerPage: 5,
-        // query: search.renderState.autocomplete
-        //   ? search.renderState.autocomplete
-        //   : '',
       }),
       autocompleteSearchBox({
         container: '#autocomplete',
