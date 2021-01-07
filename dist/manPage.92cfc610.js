@@ -7567,7 +7567,337 @@ function escape(value) {
 
 var _default = escape;
 exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/utils/findIndex.js":[function(require,module,exports) {
+},{}],"node_modules/instantsearch.js/es/lib/utils/unescape.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = unescape;
+
+/**
+ * This implementation is taken from Lodash implementation.
+ * See: https://github.com/lodash/lodash/blob/4.17.11-npm/unescape.js
+ */
+// Used to map HTML entities to characters.
+var htmlEscapes = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'"
+}; // Used to match HTML entities and HTML characters.
+
+var regexEscapedHtml = /&(amp|quot|lt|gt|#39);/g;
+var regexHasEscapedHtml = RegExp(regexEscapedHtml.source);
+/**
+ * Converts the HTML entities "&", "<", ">", '"', and "'" in `string` to their
+ * characters.
+ */
+
+function unescape(value) {
+  return value && regexHasEscapedHtml.test(value) ? value.replace(regexEscapedHtml, function (character) {
+    return htmlEscapes[character];
+  }) : value;
+}
+},{}],"node_modules/instantsearch.js/es/lib/escape-highlight.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = escapeHits;
+exports.escapeFacets = escapeFacets;
+exports.TAG_REPLACEMENT = exports.TAG_PLACEHOLDER = void 0;
+
+var _utils = require("../lib/utils");
+
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+var TAG_PLACEHOLDER = {
+  highlightPreTag: '__ais-highlight__',
+  highlightPostTag: '__/ais-highlight__'
+};
+exports.TAG_PLACEHOLDER = TAG_PLACEHOLDER;
+var TAG_REPLACEMENT = {
+  highlightPreTag: '<mark>',
+  highlightPostTag: '</mark>'
+};
+exports.TAG_REPLACEMENT = TAG_REPLACEMENT;
+
+function replaceTagsAndEscape(value) {
+  return (0, _utils.escape)(value).replace(new RegExp(TAG_PLACEHOLDER.highlightPreTag, 'g'), TAG_REPLACEMENT.highlightPreTag).replace(new RegExp(TAG_PLACEHOLDER.highlightPostTag, 'g'), TAG_REPLACEMENT.highlightPostTag);
+}
+
+function recursiveEscape(input) {
+  if ((0, _utils.isPlainObject)(input) && typeof input.value !== 'string') {
+    return Object.keys(input).reduce(function (acc, key) {
+      return _objectSpread({}, acc, _defineProperty({}, key, recursiveEscape(input[key])));
+    }, {});
+  }
+
+  if (Array.isArray(input)) {
+    return input.map(recursiveEscape);
+  }
+
+  return _objectSpread({}, input, {
+    value: replaceTagsAndEscape(input.value)
+  });
+}
+
+function escapeHits(hits) {
+  if (hits.__escaped === undefined) {
+    // We don't override the value on hit because it will mutate the raw results
+    // instead we make a shallow copy and we assign the escaped values on it.
+    hits = hits.map(function (_ref) {
+      var hit = _extends({}, _ref);
+
+      if (hit._highlightResult) {
+        hit._highlightResult = recursiveEscape(hit._highlightResult);
+      }
+
+      if (hit._snippetResult) {
+        hit._snippetResult = recursiveEscape(hit._snippetResult);
+      }
+
+      return hit;
+    });
+    hits.__escaped = true;
+  }
+
+  return hits;
+}
+
+function escapeFacets(facetHits) {
+  return facetHits.map(function (h) {
+    return _objectSpread({}, h, {
+      highlighted: replaceTagsAndEscape(h.highlighted)
+    });
+  });
+}
+},{"../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/lib/utils/concatHighlightedParts.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = concatHighlightedParts;
+
+var _escapeHighlight = require("../escape-highlight");
+
+function concatHighlightedParts(parts) {
+  var highlightPreTag = _escapeHighlight.TAG_REPLACEMENT.highlightPreTag,
+      highlightPostTag = _escapeHighlight.TAG_REPLACEMENT.highlightPostTag;
+  return parts.map(function (part) {
+    return part.isHighlighted ? highlightPreTag + part.value + highlightPostTag : part.value;
+  }).join('');
+}
+},{"../escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js"}],"node_modules/instantsearch.js/es/lib/utils/getHighlightedParts.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = getHighlightedParts;
+
+var _escapeHighlight = require("../../lib/escape-highlight");
+
+function getHighlightedParts(highlightedValue) {
+  var highlightPostTag = _escapeHighlight.TAG_REPLACEMENT.highlightPostTag,
+      highlightPreTag = _escapeHighlight.TAG_REPLACEMENT.highlightPreTag;
+  var splitByPreTag = highlightedValue.split(highlightPreTag);
+  var firstValue = splitByPreTag.shift();
+  var elements = !firstValue ? [] : [{
+    value: firstValue,
+    isHighlighted: false
+  }];
+  splitByPreTag.forEach(function (split) {
+    var splitByPostTag = split.split(highlightPostTag);
+    elements.push({
+      value: splitByPostTag[0],
+      isHighlighted: true
+    });
+
+    if (splitByPostTag[1] !== '') {
+      elements.push({
+        value: splitByPostTag[1],
+        isHighlighted: false
+      });
+    }
+  });
+  return elements;
+}
+},{"../../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js"}],"node_modules/instantsearch.js/es/lib/utils/getHighlightFromSiblings.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = getHighlightFromSiblings;
+
+var _unescape = _interopRequireDefault(require("./unescape"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var hasAlphanumeric = new RegExp(/\w/i);
+
+function getHighlightFromSiblings(parts, i) {
+  var _parts, _parts2;
+
+  var current = parts[i];
+  var isNextHighlighted = ((_parts = parts[i + 1]) === null || _parts === void 0 ? void 0 : _parts.isHighlighted) || true;
+  var isPreviousHighlighted = ((_parts2 = parts[i - 1]) === null || _parts2 === void 0 ? void 0 : _parts2.isHighlighted) || true;
+
+  if (!hasAlphanumeric.test((0, _unescape.default)(current.value)) && isPreviousHighlighted === isNextHighlighted) {
+    return isPreviousHighlighted;
+  }
+
+  return current.isHighlighted;
+}
+},{"./unescape":"node_modules/instantsearch.js/es/lib/utils/unescape.js"}],"node_modules/instantsearch.js/es/lib/utils/reverseHighlightedParts.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = reverseHighlightedParts;
+
+var _getHighlightFromSiblings = _interopRequireDefault(require("./getHighlightFromSiblings"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function reverseHighlightedParts(parts) {
+  if (!parts.some(function (part) {
+    return part.isHighlighted;
+  })) {
+    return parts.map(function (part) {
+      return _objectSpread({}, part, {
+        isHighlighted: false
+      });
+    });
+  }
+
+  return parts.map(function (part, i) {
+    return _objectSpread({}, part, {
+      isHighlighted: !(0, _getHighlightFromSiblings.default)(parts, i)
+    });
+  });
+}
+},{"./getHighlightFromSiblings":"node_modules/instantsearch.js/es/lib/utils/getHighlightFromSiblings.js"}],"node_modules/instantsearch.js/es/lib/utils/findIndex.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8471,6 +8801,11 @@ var _exportNames = {
   range: true,
   isEqual: true,
   escape: true,
+  unescape: true,
+  concatHighlightedParts: true,
+  getHighlightedParts: true,
+  getHighlightFromSiblings: true,
+  reverseHighlightedParts: true,
   find: true,
   findIndex: true,
   mergeSearchParameters: true,
@@ -8620,6 +8955,36 @@ Object.defineProperty(exports, "escape", {
     return _escape.default;
   }
 });
+Object.defineProperty(exports, "unescape", {
+  enumerable: true,
+  get: function () {
+    return _unescape.default;
+  }
+});
+Object.defineProperty(exports, "concatHighlightedParts", {
+  enumerable: true,
+  get: function () {
+    return _concatHighlightedParts.default;
+  }
+});
+Object.defineProperty(exports, "getHighlightedParts", {
+  enumerable: true,
+  get: function () {
+    return _getHighlightedParts.default;
+  }
+});
+Object.defineProperty(exports, "getHighlightFromSiblings", {
+  enumerable: true,
+  get: function () {
+    return _getHighlightFromSiblings.default;
+  }
+});
+Object.defineProperty(exports, "reverseHighlightedParts", {
+  enumerable: true,
+  get: function () {
+    return _reverseHighlightedParts.default;
+  }
+});
 Object.defineProperty(exports, "find", {
   enumerable: true,
   get: function () {
@@ -8761,6 +9126,16 @@ var _isEqual = _interopRequireDefault(require("./isEqual"));
 
 var _escape = _interopRequireDefault(require("./escape"));
 
+var _unescape = _interopRequireDefault(require("./unescape"));
+
+var _concatHighlightedParts = _interopRequireDefault(require("./concatHighlightedParts"));
+
+var _getHighlightedParts = _interopRequireDefault(require("./getHighlightedParts"));
+
+var _getHighlightFromSiblings = _interopRequireDefault(require("./getHighlightFromSiblings"));
+
+var _reverseHighlightedParts = _interopRequireDefault(require("./reverseHighlightedParts"));
+
 var _find = _interopRequireDefault(require("./find"));
 
 var _findIndex = _interopRequireDefault(require("./findIndex"));
@@ -8816,7 +9191,7 @@ var _getAppIdAndApiKey = require("./getAppIdAndApiKey");
 var _convertNumericRefinementsToFilters = require("./convertNumericRefinementsToFilters");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./capitalize":"node_modules/instantsearch.js/es/lib/utils/capitalize.js","./defer":"node_modules/instantsearch.js/es/lib/utils/defer.js","./isDomElement":"node_modules/instantsearch.js/es/lib/utils/isDomElement.js","./getContainerNode":"node_modules/instantsearch.js/es/lib/utils/getContainerNode.js","./isSpecialClick":"node_modules/instantsearch.js/es/lib/utils/isSpecialClick.js","./prepareTemplateProps":"node_modules/instantsearch.js/es/lib/utils/prepareTemplateProps.js","./renderTemplate":"node_modules/instantsearch.js/es/lib/utils/renderTemplate.js","./getRefinements":"node_modules/instantsearch.js/es/lib/utils/getRefinements.js","./clearRefinements":"node_modules/instantsearch.js/es/lib/utils/clearRefinements.js","./escapeRefinement":"node_modules/instantsearch.js/es/lib/utils/escapeRefinement.js","./unescapeRefinement":"node_modules/instantsearch.js/es/lib/utils/unescapeRefinement.js","./checkRendering":"node_modules/instantsearch.js/es/lib/utils/checkRendering.js","./checkIndexUiState":"node_modules/instantsearch.js/es/lib/utils/checkIndexUiState.js","./getPropertyByPath":"node_modules/instantsearch.js/es/lib/utils/getPropertyByPath.js","./getObjectType":"node_modules/instantsearch.js/es/lib/utils/getObjectType.js","./noop":"node_modules/instantsearch.js/es/lib/utils/noop.js","./isFiniteNumber":"node_modules/instantsearch.js/es/lib/utils/isFiniteNumber.js","./isPlainObject":"node_modules/instantsearch.js/es/lib/utils/isPlainObject.js","./uniq":"node_modules/instantsearch.js/es/lib/utils/uniq.js","./range":"node_modules/instantsearch.js/es/lib/utils/range.js","./isEqual":"node_modules/instantsearch.js/es/lib/utils/isEqual.js","./escape":"node_modules/instantsearch.js/es/lib/utils/escape.js","./find":"node_modules/instantsearch.js/es/lib/utils/find.js","./findIndex":"node_modules/instantsearch.js/es/lib/utils/findIndex.js","./mergeSearchParameters":"node_modules/instantsearch.js/es/lib/utils/mergeSearchParameters.js","./resolveSearchParameters":"node_modules/instantsearch.js/es/lib/utils/resolveSearchParameters.js","./toArray":"node_modules/instantsearch.js/es/lib/utils/toArray.js","./logger":"node_modules/instantsearch.js/es/lib/utils/logger.js","./documentation":"node_modules/instantsearch.js/es/lib/utils/documentation.js","./geo-search":"node_modules/instantsearch.js/es/lib/utils/geo-search.js","./hits-absolute-position":"node_modules/instantsearch.js/es/lib/utils/hits-absolute-position.js","./hits-query-id":"node_modules/instantsearch.js/es/lib/utils/hits-query-id.js","./isFacetRefined":"node_modules/instantsearch.js/es/lib/utils/isFacetRefined.js","./createSendEventForFacet":"node_modules/instantsearch.js/es/lib/utils/createSendEventForFacet.js","./createSendEventForHits":"node_modules/instantsearch.js/es/lib/utils/createSendEventForHits.js","./getAppIdAndApiKey":"node_modules/instantsearch.js/es/lib/utils/getAppIdAndApiKey.js","./convertNumericRefinementsToFilters":"node_modules/instantsearch.js/es/lib/utils/convertNumericRefinementsToFilters.js"}],"node_modules/instantsearch.js/es/widgets/index/index.js":[function(require,module,exports) {
+},{"./capitalize":"node_modules/instantsearch.js/es/lib/utils/capitalize.js","./defer":"node_modules/instantsearch.js/es/lib/utils/defer.js","./isDomElement":"node_modules/instantsearch.js/es/lib/utils/isDomElement.js","./getContainerNode":"node_modules/instantsearch.js/es/lib/utils/getContainerNode.js","./isSpecialClick":"node_modules/instantsearch.js/es/lib/utils/isSpecialClick.js","./prepareTemplateProps":"node_modules/instantsearch.js/es/lib/utils/prepareTemplateProps.js","./renderTemplate":"node_modules/instantsearch.js/es/lib/utils/renderTemplate.js","./getRefinements":"node_modules/instantsearch.js/es/lib/utils/getRefinements.js","./clearRefinements":"node_modules/instantsearch.js/es/lib/utils/clearRefinements.js","./escapeRefinement":"node_modules/instantsearch.js/es/lib/utils/escapeRefinement.js","./unescapeRefinement":"node_modules/instantsearch.js/es/lib/utils/unescapeRefinement.js","./checkRendering":"node_modules/instantsearch.js/es/lib/utils/checkRendering.js","./checkIndexUiState":"node_modules/instantsearch.js/es/lib/utils/checkIndexUiState.js","./getPropertyByPath":"node_modules/instantsearch.js/es/lib/utils/getPropertyByPath.js","./getObjectType":"node_modules/instantsearch.js/es/lib/utils/getObjectType.js","./noop":"node_modules/instantsearch.js/es/lib/utils/noop.js","./isFiniteNumber":"node_modules/instantsearch.js/es/lib/utils/isFiniteNumber.js","./isPlainObject":"node_modules/instantsearch.js/es/lib/utils/isPlainObject.js","./uniq":"node_modules/instantsearch.js/es/lib/utils/uniq.js","./range":"node_modules/instantsearch.js/es/lib/utils/range.js","./isEqual":"node_modules/instantsearch.js/es/lib/utils/isEqual.js","./escape":"node_modules/instantsearch.js/es/lib/utils/escape.js","./unescape":"node_modules/instantsearch.js/es/lib/utils/unescape.js","./concatHighlightedParts":"node_modules/instantsearch.js/es/lib/utils/concatHighlightedParts.js","./getHighlightedParts":"node_modules/instantsearch.js/es/lib/utils/getHighlightedParts.js","./getHighlightFromSiblings":"node_modules/instantsearch.js/es/lib/utils/getHighlightFromSiblings.js","./reverseHighlightedParts":"node_modules/instantsearch.js/es/lib/utils/reverseHighlightedParts.js","./find":"node_modules/instantsearch.js/es/lib/utils/find.js","./findIndex":"node_modules/instantsearch.js/es/lib/utils/findIndex.js","./mergeSearchParameters":"node_modules/instantsearch.js/es/lib/utils/mergeSearchParameters.js","./resolveSearchParameters":"node_modules/instantsearch.js/es/lib/utils/resolveSearchParameters.js","./toArray":"node_modules/instantsearch.js/es/lib/utils/toArray.js","./logger":"node_modules/instantsearch.js/es/lib/utils/logger.js","./documentation":"node_modules/instantsearch.js/es/lib/utils/documentation.js","./geo-search":"node_modules/instantsearch.js/es/lib/utils/geo-search.js","./hits-absolute-position":"node_modules/instantsearch.js/es/lib/utils/hits-absolute-position.js","./hits-query-id":"node_modules/instantsearch.js/es/lib/utils/hits-query-id.js","./isFacetRefined":"node_modules/instantsearch.js/es/lib/utils/isFacetRefined.js","./createSendEventForFacet":"node_modules/instantsearch.js/es/lib/utils/createSendEventForFacet.js","./createSendEventForHits":"node_modules/instantsearch.js/es/lib/utils/createSendEventForHits.js","./getAppIdAndApiKey":"node_modules/instantsearch.js/es/lib/utils/getAppIdAndApiKey.js","./convertNumericRefinementsToFilters":"node_modules/instantsearch.js/es/lib/utils/convertNumericRefinementsToFilters.js"}],"node_modules/instantsearch.js/es/widgets/index/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8968,7 +9343,7 @@ function privateHelperSetState(helper, _ref) {
   }
 }
 
-function getLocalWidgetsState(widgets, widgetStateOptions) {
+function getLocalWidgetsUiState(widgets, widgetStateOptions) {
   var initialUiState = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   return widgets.filter(function (widget) {
     return !isIndexWidget(widget);
@@ -9028,13 +9403,6 @@ function resolveScopedResultsFromWidgets(widgets) {
   }, []);
 }
 
-function resolveScopedResultsFromIndex(widget) {
-  var widgetParent = widget.getParent(); // If the widget is the root, we consider itself as the only sibling.
-
-  var widgetSiblings = widgetParent ? widgetParent.getWidgets() : [widget];
-  return resolveScopedResultsFromWidgets(widgetSiblings);
-}
-
 var index = function index(props) {
   if (props === undefined || props.indexName === undefined) {
     throw new Error(withUsage('The `indexName` option is required.'));
@@ -9049,14 +9417,6 @@ var index = function index(props) {
   var localParent = null;
   var helper = null;
   var derivedHelper = null;
-
-  var createURL = function createURL(nextState) {
-    return localInstantSearchInstance._createURL(_defineProperty({}, indexId, getLocalWidgetsState(localWidgets, {
-      searchParameters: nextState,
-      helper: helper
-    })));
-  };
-
   return {
     $$type: 'ais.index',
     getIndexName: function getIndexName() {
@@ -9071,8 +9431,20 @@ var index = function index(props) {
     getResults: function getResults() {
       return derivedHelper && derivedHelper.lastResults;
     },
+    getScopedResults: function getScopedResults() {
+      var widgetParent = this.getParent(); // If the widget is the root, we consider itself as the only sibling.
+
+      var widgetSiblings = widgetParent ? widgetParent.getWidgets() : [this];
+      return resolveScopedResultsFromWidgets(widgetSiblings);
+    },
     getParent: function getParent() {
       return localParent;
+    },
+    createURL: function createURL(nextState) {
+      return localInstantSearchInstance._createURL(_defineProperty({}, indexId, getLocalWidgetsUiState(localWidgets, {
+        searchParameters: nextState,
+        helper: helper
+      })));
     },
     getWidgets: function getWidgets() {
       return localWidgets;
@@ -9113,7 +9485,7 @@ var index = function index(props) {
               state: helper.state,
               renderState: localInstantSearchInstance.renderState,
               templatesConfig: localInstantSearchInstance.templatesConfig,
-              createURL: createURL,
+              createURL: _this.createURL,
               scopedResults: [],
               searchMetadata: {
                 isSearchStalled: localInstantSearchInstance._isSearchStalled
@@ -9136,7 +9508,7 @@ var index = function index(props) {
               state: helper.state,
               renderState: localInstantSearchInstance.renderState,
               templatesConfig: localInstantSearchInstance.templatesConfig,
-              createURL: createURL,
+              createURL: _this.createURL,
               scopedResults: [],
               searchMetadata: {
                 isSearchStalled: localInstantSearchInstance._isSearchStalled
@@ -9173,7 +9545,7 @@ var index = function index(props) {
           });
           return next || state;
         }, helper.state);
-        localUiState = getLocalWidgetsState(localWidgets, {
+        localUiState = getLocalWidgetsUiState(localWidgets, {
           searchParameters: nextState,
           helper: helper
         });
@@ -9292,7 +9664,7 @@ var index = function index(props) {
             state: helper.state,
             renderState: instantSearchInstance.renderState,
             templatesConfig: instantSearchInstance.templatesConfig,
-            createURL: createURL,
+            createURL: _this2.createURL,
             scopedResults: [],
             searchMetadata: {
               isSearchStalled: instantSearchInstance._isSearchStalled
@@ -9317,7 +9689,7 @@ var index = function index(props) {
             state: helper.state,
             renderState: instantSearchInstance.renderState,
             templatesConfig: instantSearchInstance.templatesConfig,
-            createURL: createURL,
+            createURL: _this2.createURL,
             scopedResults: [],
             searchMetadata: {
               isSearchStalled: instantSearchInstance._isSearchStalled
@@ -9335,7 +9707,7 @@ var index = function index(props) {
         var state = event.state; // @ts-ignore _uiState comes from privateHelperSetState and thus isn't typed on the helper event
 
         var _uiState = event._uiState;
-        localUiState = getLocalWidgetsState(localWidgets, {
+        localUiState = getLocalWidgetsUiState(localWidgets, {
           searchParameters: state,
           helper: helper
         }, _uiState || {}); // We don't trigger an internal change when controlled because it
@@ -9362,11 +9734,11 @@ var index = function index(props) {
             parent: _this3,
             instantSearchInstance: instantSearchInstance,
             results: _this3.getResults(),
-            scopedResults: resolveScopedResultsFromIndex(_this3),
+            scopedResults: _this3.getScopedResults(),
             state: _this3.getResults()._state,
             renderState: instantSearchInstance.renderState,
             templatesConfig: instantSearchInstance.templatesConfig,
-            createURL: createURL,
+            createURL: _this3.createURL,
             searchMetadata: {
               isSearchStalled: instantSearchInstance._isSearchStalled
             }
@@ -9391,11 +9763,11 @@ var index = function index(props) {
             parent: _this3,
             instantSearchInstance: instantSearchInstance,
             results: _this3.getResults(),
-            scopedResults: resolveScopedResultsFromIndex(_this3),
+            scopedResults: _this3.getScopedResults(),
             state: _this3.getResults()._state,
             renderState: instantSearchInstance.renderState,
             templatesConfig: instantSearchInstance.templatesConfig,
-            createURL: createURL,
+            createURL: _this3.createURL,
             searchMetadata: {
               isSearchStalled: instantSearchInstance._isSearchStalled
             }
@@ -9442,7 +9814,7 @@ var index = function index(props) {
       });
     },
     refreshUiState: function refreshUiState() {
-      localUiState = getLocalWidgetsState(localWidgets, {
+      localUiState = getLocalWidgetsUiState(localWidgets, {
         searchParameters: this.getHelper().state,
         helper: this.getHelper()
       });
@@ -9467,149 +9839,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _default = '4.9.1';
+var _default = '4.10.0';
 exports.default = _default;
-},{}],"node_modules/instantsearch.js/es/lib/escape-highlight.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = escapeHits;
-exports.escapeFacets = escapeFacets;
-exports.TAG_REPLACEMENT = exports.TAG_PLACEHOLDER = void 0;
-
-var _utils = require("../lib/utils");
-
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-var TAG_PLACEHOLDER = {
-  highlightPreTag: '__ais-highlight__',
-  highlightPostTag: '__/ais-highlight__'
-};
-exports.TAG_PLACEHOLDER = TAG_PLACEHOLDER;
-var TAG_REPLACEMENT = {
-  highlightPreTag: '<mark>',
-  highlightPostTag: '</mark>'
-};
-exports.TAG_REPLACEMENT = TAG_REPLACEMENT;
-
-function replaceTagsAndEscape(value) {
-  return (0, _utils.escape)(value).replace(new RegExp(TAG_PLACEHOLDER.highlightPreTag, 'g'), TAG_REPLACEMENT.highlightPreTag).replace(new RegExp(TAG_PLACEHOLDER.highlightPostTag, 'g'), TAG_REPLACEMENT.highlightPostTag);
-}
-
-function recursiveEscape(input) {
-  if ((0, _utils.isPlainObject)(input) && typeof input.value !== 'string') {
-    return Object.keys(input).reduce(function (acc, key) {
-      return _objectSpread({}, acc, _defineProperty({}, key, recursiveEscape(input[key])));
-    }, {});
-  }
-
-  if (Array.isArray(input)) {
-    return input.map(recursiveEscape);
-  }
-
-  return _objectSpread({}, input, {
-    value: replaceTagsAndEscape(input.value)
-  });
-}
-
-function escapeHits(hits) {
-  if (hits.__escaped === undefined) {
-    // We don't override the value on hit because it will mutate the raw results
-    // instead we make a shallow copy and we assign the escaped values on it.
-    hits = hits.map(function (_ref) {
-      var hit = _extends({}, _ref);
-
-      if (hit._highlightResult) {
-        hit._highlightResult = recursiveEscape(hit._highlightResult);
-      }
-
-      if (hit._snippetResult) {
-        hit._snippetResult = recursiveEscape(hit._snippetResult);
-      }
-
-      return hit;
-    });
-    hits.__escaped = true;
-  }
-
-  return hits;
-}
-
-function escapeFacets(facetHits) {
-  return facetHits.map(function (h) {
-    return _objectSpread({}, h, {
-      highlighted: replaceTagsAndEscape(h.highlighted)
-    });
-  });
-}
-},{"../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js"}],"node_modules/instantsearch.js/es/lib/suit.js":[function(require,module,exports) {
+},{}],"node_modules/instantsearch.js/es/lib/suit.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9665,6 +9897,41 @@ function highlight(_ref) {
   }) + (cssClasses.highlighted ? " ".concat(cssClasses.highlighted) : '');
   return attributeValue.replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
 }
+},{"../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js","../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/helpers/reverseHighlight.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = reverseHighlight;
+
+var _utils = require("../lib/utils");
+
+var _escapeHighlight = require("../lib/escape-highlight");
+
+var _suit = require("../lib/suit");
+
+var suit = (0, _suit.component)('ReverseHighlight');
+
+function reverseHighlight(_ref) {
+  var attribute = _ref.attribute,
+      _ref$highlightedTagNa = _ref.highlightedTagName,
+      highlightedTagName = _ref$highlightedTagNa === void 0 ? 'mark' : _ref$highlightedTagNa,
+      hit = _ref.hit,
+      _ref$cssClasses = _ref.cssClasses,
+      cssClasses = _ref$cssClasses === void 0 ? {} : _ref$cssClasses;
+
+  var _ref2 = (0, _utils.getPropertyByPath)(hit._highlightResult, attribute) || {},
+      _ref2$value = _ref2.value,
+      attributeValue = _ref2$value === void 0 ? '' : _ref2$value; // cx is not used, since it would be bundled as a dependency for Vue & Angular
+
+
+  var className = suit({
+    descendantName: 'highlighted'
+  }) + (cssClasses.highlighted ? " ".concat(cssClasses.highlighted) : '');
+  var reverseHighlightedValue = (0, _utils.concatHighlightedParts)((0, _utils.reverseHighlightedParts)((0, _utils.getHighlightedParts)(attributeValue)));
+  return reverseHighlightedValue.replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
+}
 },{"../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js","../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/helpers/snippet.js":[function(require,module,exports) {
 "use strict";
 
@@ -9698,6 +9965,41 @@ function snippet(_ref) {
     descendantName: 'highlighted'
   }) + (cssClasses.highlighted ? " ".concat(cssClasses.highlighted) : '');
   return attributeValue.replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
+}
+},{"../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js","../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/helpers/reverseSnippet.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = reverseSnippet;
+
+var _utils = require("../lib/utils");
+
+var _escapeHighlight = require("../lib/escape-highlight");
+
+var _suit = require("../lib/suit");
+
+var suit = (0, _suit.component)('ReverseSnippet');
+
+function reverseSnippet(_ref) {
+  var attribute = _ref.attribute,
+      _ref$highlightedTagNa = _ref.highlightedTagName,
+      highlightedTagName = _ref$highlightedTagNa === void 0 ? 'mark' : _ref$highlightedTagNa,
+      hit = _ref.hit,
+      _ref$cssClasses = _ref.cssClasses,
+      cssClasses = _ref$cssClasses === void 0 ? {} : _ref$cssClasses;
+
+  var _ref2 = (0, _utils.getPropertyByPath)(hit._snippetResult, attribute) || {},
+      _ref2$value = _ref2.value,
+      attributeValue = _ref2$value === void 0 ? '' : _ref2$value; // cx is not used, since it would be bundled as a dependency for Vue & Angular
+
+
+  var className = suit({
+    descendantName: 'highlighted'
+  }) + (cssClasses.highlighted ? " ".concat(cssClasses.highlighted) : '');
+  var reverseHighlightedValue = (0, _utils.concatHighlightedParts)((0, _utils.reverseHighlightedParts)((0, _utils.getHighlightedParts)(attributeValue)));
+  return reverseHighlightedValue.replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
 }
 },{"../lib/utils":"node_modules/instantsearch.js/es/lib/utils/index.js","../lib/escape-highlight":"node_modules/instantsearch.js/es/lib/escape-highlight.js","../lib/suit":"node_modules/instantsearch.js/es/lib/suit.js"}],"node_modules/instantsearch.js/es/helpers/insights.js":[function(require,module,exports) {
 "use strict";
@@ -9833,7 +10135,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 var _exportNames = {
   highlight: true,
+  reverseHighlight: true,
   snippet: true,
+  reverseSnippet: true,
   insights: true,
   getInsightsAnonymousUserToken: true,
   getInsightsAnonymousUserTokenInternal: true
@@ -9844,10 +10148,22 @@ Object.defineProperty(exports, "highlight", {
     return _highlight.default;
   }
 });
+Object.defineProperty(exports, "reverseHighlight", {
+  enumerable: true,
+  get: function () {
+    return _reverseHighlight.default;
+  }
+});
 Object.defineProperty(exports, "snippet", {
   enumerable: true,
   get: function () {
     return _snippet.default;
+  }
+});
+Object.defineProperty(exports, "reverseSnippet", {
+  enumerable: true,
+  get: function () {
+    return _reverseSnippet.default;
   }
 });
 Object.defineProperty(exports, "insights", {
@@ -9883,6 +10199,20 @@ Object.keys(_highlight).forEach(function (key) {
   });
 });
 
+var _reverseHighlight = _interopRequireWildcard(require("./reverseHighlight"));
+
+Object.keys(_reverseHighlight).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _reverseHighlight[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _reverseHighlight[key];
+    }
+  });
+});
+
 var _snippet = _interopRequireWildcard(require("./snippet"));
 
 Object.keys(_snippet).forEach(function (key) {
@@ -9897,6 +10227,20 @@ Object.keys(_snippet).forEach(function (key) {
   });
 });
 
+var _reverseSnippet = _interopRequireWildcard(require("./reverseSnippet"));
+
+Object.keys(_reverseSnippet).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
+  if (key in exports && exports[key] === _reverseSnippet[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _reverseSnippet[key];
+    }
+  });
+});
+
 var _insights = _interopRequireDefault(require("./insights"));
 
 var _getInsightsAnonymousUserToken = _interopRequireWildcard(require("./get-insights-anonymous-user-token"));
@@ -9906,7 +10250,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-},{"./highlight":"node_modules/instantsearch.js/es/helpers/highlight.js","./snippet":"node_modules/instantsearch.js/es/helpers/snippet.js","./insights":"node_modules/instantsearch.js/es/helpers/insights.js","./get-insights-anonymous-user-token":"node_modules/instantsearch.js/es/helpers/get-insights-anonymous-user-token.js"}],"node_modules/instantsearch.js/es/lib/createHelpers.js":[function(require,module,exports) {
+},{"./highlight":"node_modules/instantsearch.js/es/helpers/highlight.js","./reverseHighlight":"node_modules/instantsearch.js/es/helpers/reverseHighlight.js","./snippet":"node_modules/instantsearch.js/es/helpers/snippet.js","./reverseSnippet":"node_modules/instantsearch.js/es/helpers/reverseSnippet.js","./insights":"node_modules/instantsearch.js/es/helpers/insights.js","./get-insights-anonymous-user-token":"node_modules/instantsearch.js/es/helpers/get-insights-anonymous-user-token.js"}],"node_modules/instantsearch.js/es/lib/createHelpers.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9981,6 +10325,16 @@ function hoganHelpers(_ref) {
         throw new Error("\nThe highlight helper expects a JSON object of the format:\n{ \"attribute\": \"name\", \"highlightedTagName\": \"mark\" }");
       }
     },
+    reverseHighlight: function reverseHighlight(options, render) {
+      try {
+        var reverseHighlightOptions = JSON.parse(options);
+        return render((0, _helpers.reverseHighlight)(_objectSpread({}, reverseHighlightOptions, {
+          hit: this
+        })));
+      } catch (error) {
+        throw new Error("\n  The reverseHighlight helper expects a JSON object of the format:\n  { \"attribute\": \"name\", \"highlightedTagName\": \"mark\" }");
+      }
+    },
     snippet: function snippet(options, render) {
       try {
         var snippetOptions = JSON.parse(options);
@@ -9989,6 +10343,16 @@ function hoganHelpers(_ref) {
         })));
       } catch (error) {
         throw new Error("\nThe snippet helper expects a JSON object of the format:\n{ \"attribute\": \"name\", \"highlightedTagName\": \"mark\" }");
+      }
+    },
+    reverseSnippet: function reverseSnippet(options, render) {
+      try {
+        var reverseSnippetOptions = JSON.parse(options);
+        return render((0, _helpers.reverseSnippet)(_objectSpread({}, reverseSnippetOptions, {
+          hit: this
+        })));
+      } catch (error) {
+        throw new Error("\n  The reverseSnippet helper expects a JSON object of the format:\n  { \"attribute\": \"name\", \"highlightedTagName\": \"mark\" }");
       }
     },
     insights: function insights(options, render) {
@@ -11992,7 +12356,9 @@ var instantsearch = function instantsearch(options) {
 
 instantsearch.version = _version.default;
 instantsearch.snippet = _helpers.snippet;
+instantsearch.reverseSnippet = _helpers.reverseSnippet;
 instantsearch.highlight = _helpers.highlight;
+instantsearch.reverseHighlight = _helpers.reverseHighlight;
 instantsearch.insights = _helpers.insights;
 instantsearch.getInsightsAnonymousUserToken = _helpers.getInsightsAnonymousUserToken;
 instantsearch.createInfiniteHitsSessionStorageCache = _infiniteHitsCache.createInfiniteHitsSessionStorageCache;
@@ -12027,8 +12393,7 @@ exports.createRef = y;
 exports.Component = d;
 exports.cloneElement = q;
 exports.createContext = B;
-exports.toChildArray = b;
-exports.__u = L;
+exports.toChildArray = x;
 exports.options = exports.isValidElement = void 0;
 var n,
     l,
@@ -12130,8 +12495,8 @@ function g() {
   for (var n; g.__r = u.length;) n = u.sort(function (n, l) {
     return n.__v.__b - l.__v.__b;
   }), u = [], n.some(function (n) {
-    var l, u, i, t, o, r, f;
-    n.__d && (r = (o = (l = n).__v).__e, (f = l.__P) && (u = [], (i = s({}, o)).__v = o.__v + 1, t = $(f, o, i, l.__n, void 0 !== f.ownerSVGElement, null != o.__h ? [r] : null, u, null == r ? _(o) : r, o.__h), j(u, o), t != r && w(o)));
+    var l, u, i, t, o, r;
+    n.__d && (o = (t = (l = n).__v).__e, (r = l.__P) && (u = [], (i = s({}, t)).__v = t.__v + 1, $(r, t, i, l.__n, void 0 !== r.ownerSVGElement, null != t.__h ? [o] : null, u, null == o ? _(t) : o, t.__h), j(u, t), t.__e != o && w(t)));
   });
 }
 
@@ -12142,38 +12507,46 @@ function m(n, l, u, i, t, o, r, c, s, v) {
       k,
       g,
       m,
-      b,
-      A = i && i.__k || e,
-      P = A.length;
+      x,
+      P = i && i.__k || e,
+      C = P.length;
 
-  for (s == f && (s = null != r ? r[0] : P ? _(i, 0) : null), u.__k = [], y = 0; y < l.length; y++) if (null != (k = u.__k[y] = null == (k = l[y]) || "boolean" == typeof k ? null : "string" == typeof k || "number" == typeof k ? h(null, k, null, null, k) : Array.isArray(k) ? h(p, {
+  for (s == f && (s = null != r ? r[0] : C ? _(i, 0) : null), u.__k = [], y = 0; y < l.length; y++) if (null != (k = u.__k[y] = null == (k = l[y]) || "boolean" == typeof k ? null : "string" == typeof k || "number" == typeof k ? h(null, k, null, null, k) : Array.isArray(k) ? h(p, {
     children: k
-  }, null, null, null) : null != k.__e || null != k.__c ? h(k.type, k.props, k.key, null, k.__v) : k)) {
-    if (k.__ = u, k.__b = u.__b + 1, null === (w = A[y]) || w && k.key == w.key && k.type === w.type) A[y] = void 0;else for (d = 0; d < P; d++) {
-      if ((w = A[d]) && k.key == w.key && k.type === w.type) {
-        A[d] = void 0;
+  }, null, null, null) : k.__b > 0 ? h(k.type, k.props, k.key, null, k.__v) : k)) {
+    if (k.__ = u, k.__b = u.__b + 1, null === (w = P[y]) || w && k.key == w.key && k.type === w.type) P[y] = void 0;else for (d = 0; d < C; d++) {
+      if ((w = P[d]) && k.key == w.key && k.type === w.type) {
+        P[d] = void 0;
         break;
       }
 
       w = null;
     }
-    g = $(n, k, w = w || f, t, o, r, c, s, v), (d = k.ref) && w.ref != d && (b || (b = []), w.ref && b.push(w.ref, null, k), b.push(d, k.__c || g, k)), null != g ? (null == m && (m = g), s = x(n, k, w, A, r, g, s), v || "option" != u.type ? "function" == typeof u.type && (u.__d = s) : n.value = "") : s && w.__e == s && s.parentNode != n && (s = _(w));
+    $(n, k, w = w || f, t, o, r, c, s, v), g = k.__e, (d = k.ref) && w.ref != d && (x || (x = []), w.ref && x.push(w.ref, null, k), x.push(d, k.__c || g, k)), null != g ? (null == m && (m = g), "function" == typeof k.type && null != k.__k && k.__k === w.__k ? k.__d = s = b(k, s, n) : s = A(n, k, w, P, r, g, s), v || "option" !== u.type ? "function" == typeof u.type && (u.__d = s) : n.value = "") : s && w.__e == s && s.parentNode != n && (s = _(w));
   }
 
   if (u.__e = m, null != r && "function" != typeof u.type) for (y = r.length; y--;) null != r[y] && a(r[y]);
 
-  for (y = P; y--;) null != A[y] && L(A[y], A[y]);
+  for (y = C; y--;) null != P[y] && ("function" == typeof u.type && null != P[y].__e && P[y].__e == u.__d && (u.__d = _(i, y + 1)), L(P[y], P[y]));
 
-  if (b) for (y = 0; y < b.length; y++) I(b[y], b[++y], b[++y]);
+  if (x) for (y = 0; y < x.length; y++) I(x[y], x[++y], x[++y]);
 }
 
-function b(n, l) {
+function b(n, l, u) {
+  var i, t;
+
+  for (i = 0; i < n.__k.length; i++) (t = n.__k[i]) && (t.__ = n, l = "function" == typeof t.type ? b(t, l, u) : A(u, t, t, n.__k, null, t.__e, l));
+
+  return l;
+}
+
+function x(n, l) {
   return l = l || [], null == n || "boolean" == typeof n || (Array.isArray(n) ? n.some(function (n) {
-    b(n, l);
+    x(n, l);
   }) : l.push(n)), l;
 }
 
-function x(n, l, u, i, t, o, r) {
+function A(n, l, u, i, t, o, r) {
   var f, e, c;
   if (void 0 !== l.__d) f = l.__d, l.__d = void 0;else if (t == u || o != r || null == o.parentNode) n: if (null == r || r.parentNode !== n) n.appendChild(o), f = null;else {
     for (e = r, c = 0; (e = e.nextSibling) && c < i.length; c += 2) if (e == o) break n;
@@ -12183,40 +12556,34 @@ function x(n, l, u, i, t, o, r) {
   return void 0 !== f ? f : o.nextSibling;
 }
 
-function A(n, l, u, i, t) {
+function P(n, l, u, i, t) {
   var o;
 
-  for (o in u) "children" === o || "key" === o || o in l || C(n, o, null, u[o], i);
+  for (o in u) "children" === o || "key" === o || o in l || z(n, o, null, u[o], i);
 
-  for (o in l) t && "function" != typeof l[o] || "children" === o || "key" === o || "value" === o || "checked" === o || u[o] === l[o] || C(n, o, l[o], u[o], i);
+  for (o in l) t && "function" != typeof l[o] || "children" === o || "key" === o || "value" === o || "checked" === o || u[o] === l[o] || z(n, o, l[o], u[o], i);
 }
 
-function P(n, l, u) {
+function C(n, l, u) {
   "-" === l[0] ? n.setProperty(l, u) : n[l] = null == u ? "" : "number" != typeof u || c.test(l) ? u : u + "px";
 }
 
-function C(n, l, u, i, t) {
+function z(n, l, u, i, t) {
   var o, r, f;
   if (t && "className" == l && (l = "class"), "style" === l) {
     if ("string" == typeof u) n.style.cssText = u;else {
-      if ("string" == typeof i && (n.style.cssText = i = ""), i) for (l in i) u && l in u || P(n.style, l, "");
-      if (u) for (l in u) i && u[l] === i[l] || P(n.style, l, u[l]);
+      if ("string" == typeof i && (n.style.cssText = i = ""), i) for (l in i) u && l in u || C(n.style, l, "");
+      if (u) for (l in u) i && u[l] === i[l] || C(n.style, l, u[l]);
     }
-  } else "o" === l[0] && "n" === l[1] ? (o = l !== (l = l.replace(/Capture$/, "")), (r = l.toLowerCase()) in n && (l = r), l = l.slice(2), n.l || (n.l = {}), n.l[l + o] = u, f = o ? N : z, u ? i || n.addEventListener(l, f, o) : n.removeEventListener(l, f, o)) : "list" !== l && "tagName" !== l && "form" !== l && "type" !== l && "size" !== l && "download" !== l && "href" !== l && !t && l in n ? n[l] = null == u ? "" : u : "function" != typeof u && "dangerouslySetInnerHTML" !== l && (l !== (l = l.replace(/xlink:?/, "")) ? null == u || !1 === u ? n.removeAttributeNS("http://www.w3.org/1999/xlink", l.toLowerCase()) : n.setAttributeNS("http://www.w3.org/1999/xlink", l.toLowerCase(), u) : null == u || !1 === u && !/^ar/.test(l) ? n.removeAttribute(l) : n.setAttribute(l, u));
-}
-
-function z(l) {
-  this.l[l.type + !1](n.event ? n.event(l) : l);
+  } else "o" === l[0] && "n" === l[1] ? (o = l !== (l = l.replace(/Capture$/, "")), (r = l.toLowerCase()) in n && (l = r), l = l.slice(2), n.l || (n.l = {}), n.l[l + o] = u, f = o ? T : N, u ? i || n.addEventListener(l, f, o) : n.removeEventListener(l, f, o)) : "list" !== l && "tagName" !== l && "form" !== l && "type" !== l && "size" !== l && "download" !== l && "href" !== l && !t && l in n ? n[l] = null == u ? "" : u : "function" != typeof u && "dangerouslySetInnerHTML" !== l && (l !== (l = l.replace(/xlink:?/, "")) ? null == u || !1 === u ? n.removeAttributeNS("http://www.w3.org/1999/xlink", l.toLowerCase()) : n.setAttributeNS("http://www.w3.org/1999/xlink", l.toLowerCase(), u) : null == u || !1 === u && !/^ar/.test(l) ? n.removeAttribute(l) : n.setAttribute(l, u));
 }
 
 function N(l) {
-  this.l[l.type + !0](n.event ? n.event(l) : l);
+  this.l[l.type + !1](n.event ? n.event(l) : l);
 }
 
-function T(n, l, u) {
-  var i, t;
-
-  for (i = 0; i < n.__k.length; i++) (t = n.__k[i]) && (t.__ = n, t.__e && ("function" == typeof t.type && t.__k.length > 1 && T(t, l, u), l = x(u, t, t, n.__k, null, t.__e, l), "function" == typeof n.type && (n.__d = l)));
+function T(l) {
+  this.l[l.type + !0](n.event ? n.event(l) : l);
 }
 
 function $(l, u, i, t, o, r, f, e, c) {
@@ -12240,7 +12607,7 @@ function $(l, u, i, t, o, r, f, e, c) {
     n: if ("function" == typeof P) {
       if (g = u.props, b = (a = P.contextType) && t[a.__c], x = a ? b ? b.props.value : a.__ : t, i.__c ? k = (v = u.__c = i.__c).__ = v.__E : ("prototype" in P && P.prototype.render ? u.__c = v = new P(g, x) : (u.__c = v = new d(g, x), v.constructor = P, v.render = M), b && b.sub(v), v.props = g, v.state || (v.state = {}), v.context = x, v.__n = t, h = v.__d = !0, v.__h = []), null == v.__s && (v.__s = v.state), null != P.getDerivedStateFromProps && (v.__s == v.state && (v.__s = s({}, v.__s)), s(v.__s, P.getDerivedStateFromProps(g, v.__s))), y = v.props, _ = v.state, h) null == P.getDerivedStateFromProps && null != v.componentWillMount && v.componentWillMount(), null != v.componentDidMount && v.__h.push(v.componentDidMount);else {
         if (null == P.getDerivedStateFromProps && g !== y && null != v.componentWillReceiveProps && v.componentWillReceiveProps(g, x), !v.__e && null != v.shouldComponentUpdate && !1 === v.shouldComponentUpdate(g, v.__s, x) || u.__v === i.__v) {
-          v.props = g, v.state = v.__s, u.__v !== i.__v && (v.__d = !1), v.__v = u, u.__e = i.__e, u.__k = i.__k, v.__h.length && f.push(v), T(u, e, l);
+          v.props = g, v.state = v.__s, u.__v !== i.__v && (v.__d = !1), v.__v = u, u.__e = i.__e, u.__k = i.__k, v.__h.length && f.push(v);
           break n;
         }
 
@@ -12248,15 +12615,13 @@ function $(l, u, i, t, o, r, f, e, c) {
           v.componentDidUpdate(y, _, w);
         });
       }
-      v.context = x, v.props = g, v.state = v.__s, (a = n.__r) && a(u), v.__d = !1, v.__v = u, v.__P = l, a = v.render(v.props, v.state, v.context), v.state = v.__s, null != v.getChildContext && (t = s(s({}, t), v.getChildContext())), h || null == v.getSnapshotBeforeUpdate || (w = v.getSnapshotBeforeUpdate(y, _)), A = null != a && a.type == p && null == a.key ? a.props.children : a, m(l, Array.isArray(A) ? A : [A], u, i, t, o, r, f, e, c), v.base = u.__e, u.__h = null, v.__h.length && f.push(v), k && (v.__E = v.__ = null), v.__e = !1;
+      v.context = x, v.props = g, v.state = v.__s, (a = n.__r) && a(u), v.__d = !1, v.__v = u, v.__P = l, a = v.render(v.props, v.state, v.context), v.state = v.__s, null != v.getChildContext && (t = s(s({}, t), v.getChildContext())), h || null == v.getSnapshotBeforeUpdate || (w = v.getSnapshotBeforeUpdate(y, _)), A = null != a && a.type === p && null == a.key ? a.props.children : a, m(l, Array.isArray(A) ? A : [A], u, i, t, o, r, f, e, c), v.base = u.__e, u.__h = null, v.__h.length && f.push(v), k && (v.__E = v.__ = null), v.__e = !1;
     } else null == r && u.__v === i.__v ? (u.__k = i.__k, u.__e = i.__e) : u.__e = H(i.__e, u, i, t, o, r, f, c);
 
     (a = n.diffed) && a(u);
   } catch (l) {
     u.__v = null, (c || null != r) && (u.__e = e, u.__h = !!c, r[r.indexOf(e)] = null), n.__e(l, u, i);
   }
-
-  return u.__e;
 }
 
 function j(l, u) {
@@ -12297,7 +12662,7 @@ function H(n, l, u, i, t, o, r, c) {
       (h || v) && (h && (v && h.__html == v.__html || h.__html === n.innerHTML) || (n.innerHTML = h && h.__html || ""));
     }
 
-    A(n, d, p, t, c), h ? l.__k = [] : (s = l.props.children, m(n, Array.isArray(s) ? s : [s], l, u, i, "foreignObject" !== l.type && t, o, r, f, c)), c || ("value" in d && void 0 !== (s = d.value) && (s !== n.value || "progress" === l.type && !s) && C(n, "value", s, p.value, !1), "checked" in d && void 0 !== (s = d.checked) && s !== n.checked && C(n, "checked", s, p.checked, !1));
+    P(n, d, p, t, c), h ? l.__k = [] : (s = l.props.children, m(n, Array.isArray(s) ? s : [s], l, u, i, "foreignObject" !== l.type && t, o, r, f, c)), c || ("value" in d && void 0 !== (s = d.value) && (s !== n.value || "progress" === l.type && !s) && z(n, "value", s, p.value, !1), "checked" in d && void 0 !== (s = d.checked) && s !== n.checked && z(n, "checked", s, p.checked, !1));
   }
   return n;
 }
@@ -12359,7 +12724,8 @@ function B(n, l) {
     Consumer: function (n, l) {
       return n.children(l);
     },
-    Provider: function (n, u, i) {
+    Provider: function (n) {
+      var u, i;
       return this.getChildContext || (u = [], (i = {})[l] = this, this.getChildContext = function () {
         return i;
       }, this.shouldComponentUpdate = function (n) {
@@ -30510,7 +30876,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53291" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50894" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

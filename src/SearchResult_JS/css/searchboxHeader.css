@@ -222,12 +222,16 @@
   }
 
   .nav-list ul {
-  top: 5.6rem;
-  width: 60%;
-  }
+    top: 7.6rem;
+    width: 80%;
+}
 
   .ais-SearchBox-input::placeholder {
     font-size: 0.6rem;
+  }
+
+  .aa-ResetIcon{
+    margin-right: 1rem;
   }
 }  
 

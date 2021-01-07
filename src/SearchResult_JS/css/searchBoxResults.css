@@ -152,6 +152,44 @@ align-items: center;
     animation: fadeOutSize 0.1s forwards;
 }
 
+.injectImg{
+    max-width: 60%;
+    max-height: 80%;
+    display: block;
+    padding: 1rem;
+    margin: 0 auto;
+    object-fit: scale-down;
+    filter: saturate(0.5);
+    transition: 0.2s ease-in-out;
+}
+
+.injectImg:hover{
+    transform: scale(1.1);
+    filter: saturate(0.8);
+    transition: 0.2s ease-in-out;
+}
+
+.btn-injection-content-wrapper{
+    margin: 1rem auto;
+}
+.btn-injection-content{
+    padding: 0.6rem 2rem;
+    border: 1px solid rgba(0, 0, 0, .5);
+    font-size: 1;
+    font-family: "Roboto";
+    color: black;
+    align-self: center;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-injection-content:hover {
+    background-color: rgb(17, 17, 17);
+    color: white;
+    transition: 0.3s ease-in-out;
+}
+
+
 @media screen and (max-width: 768px){
     body {
         overflow-x: hidden !important;
@@ -175,6 +213,8 @@ align-items: center;
     padding: 0.2rem 1rem;
 }
 }
+
+
 
 
 /* ANIMATION SIZE HOVER */

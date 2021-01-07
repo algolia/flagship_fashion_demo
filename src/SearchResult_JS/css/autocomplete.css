@@ -260,7 +260,7 @@ transition: 0.2s ease-in-out;
   }
  }
 
-@media screen and (max-width: 360px){
+@media screen and (max-width: 375px){
   .showfilter-wrapper{
       width: 100vw;
   }
@@ -268,8 +268,36 @@ transition: 0.2s ease-in-out;
     grid-template-columns: repeat(1, 1fr);
 }
 
+.ais-SearchBox-wrapper {
+  align-self: center;
+  width: 85%;
+  margin: 0 auto;
+  position: initial;
+
+}
+
+.refinement-list-SearchResult ul {
+  width: 100vw;
+}
+
 .carousel-list-item {
   margin: auto;
+}
+
+.carousel h2 {
+
+  font-size: 1rem;
+ 
+}
+
+.btn-carousel-winter {
+  padding: 0.6rem 1.5rem;
+ font-size: 0.8rem;
+}
+
+.carousel .carousel-list-container li {
+  min-height: 350px;
+  width: 250px;
 }
   
  }

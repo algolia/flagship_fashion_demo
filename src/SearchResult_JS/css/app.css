@@ -24,6 +24,10 @@ a{
     text-decoration: none;
 }
 
+ul, li {
+    list-style: none;
+  }
+
 .body-wrapper{
     overflow-x: hidden;
     position: relative
