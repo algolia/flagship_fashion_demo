@@ -48,6 +48,7 @@ export function relatedResultModal() {
 
         const observer = new MutationObserver(mutation => {
             if (mutation) {
+                console.log(mutation)
                 getObjectID()
             }
         });

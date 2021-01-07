@@ -22,6 +22,10 @@ body {
 
 }
 
+ul, li {
+  list-style: none;
+}
+
 .body-wrapper{
   overflow-x: hidden;
   position: relative
