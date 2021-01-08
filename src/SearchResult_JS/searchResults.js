@@ -675,15 +675,6 @@ export function searchResults() {
                  
                         <div class="image-wrapper">
                             <img class="injectImg" src="${hit.image}" alt="">
-                            <video controls width="250">
-                                <source src="${hit.video}"
-                                        type="video/webm">
-
-                                <source src="${hit.video}"
-                                        type="video/mp4">
-
-                                Sorry, your browser doesn't support embedded videos.
-                            </video>
                         </div>
                         <div class="btn-injection-content-wrapper">
                             <a class="btn-injection-content">Check it out</a>
