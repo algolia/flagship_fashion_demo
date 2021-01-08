@@ -30,7 +30,7 @@ import {
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions';
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches';
 import '@algolia/autocomplete-theme-classic';
-import { carousel } from '../displayCarousel';
+import { carousel } from '../Homepage/displayCarousel';
 
 export function searchResults() {
     const searchClient = algoliasearch(
@@ -71,7 +71,6 @@ export function searchResults() {
         [...widgetParams.container.querySelectorAll('a')].forEach(element => {
             element.addEventListener('click', event => {
                 event.preventDefault();
-                console.log(event.currentTarget.dataset.value);
                 refine(event.currentTarget.dataset.value);
             });
         });
@@ -86,17 +85,15 @@ export function searchResults() {
     const renderQueryRuleCustomData = (renderOptions, isFirstRender) => {
         const { items, widgetParams, refine } = renderOptions;
 
-        console.log(items)
-        console.log(widgetParams)
+
 
         const checkBanner = items.map(item => {
             return item.banner
         })
 
-        console.log(Array.isArray(checkBanner))
-        console.log(checkBanner.includes(undefined))
-
         if (!checkBanner.includes(undefined)) {
+            let banner = widgetParams.container
+            banner.style.display = "block"
             widgetParams.container.innerHTML = `
             <div class="banner-wrapper">
               ${items
@@ -319,6 +316,12 @@ export function searchResults() {
                     },
                     onSubmit({ root, sections, state }) {
                         refine(state.query);
+                        console.log(search.renderState)
+                        console.log(hits.length)
+                        if (hits.length === 0) {
+                            noResult(hits)
+                        }
+
                         // renderHits(root, sections, state);
                         // root.append(...sections);
                         // getQueryFromUser(state.query);
@@ -425,7 +428,7 @@ export function searchResults() {
 
                 function getUserToken() {
                     const getPersona = localStorage.getItem('personaValue');
-                    console.log(getPersona);
+
                     return getPersona;
                 }
 
@@ -458,7 +461,7 @@ export function searchResults() {
                         });
 
                         if (carouselConfig.configure) {
-                            console.log(carouselConfig.configure);
+
                             indexWidget.addWidgets([
                                 configure({
                                     ...carouselConfig.configure,
@@ -490,6 +493,7 @@ export function searchResults() {
 
         function displayResultOrNoResult(hits) {
             const hitContainer = document.querySelector('#hitsResults');
+            const hit = document.querySelector("#hits")
             const noResultCarousel = document.querySelector('#stacked-carousels');
             const noResultContainer = document.querySelector('.container');
             if (hits.length === 0) {
@@ -510,61 +514,66 @@ export function searchResults() {
         }
     }
 
-    function renderHitsAutocomplete(result) {
-        const hits = result.hits;
-        console.log(result);
-        if (hits.length != 0) {
-            // displayResultOrNoResult(hits)
-            const pagination = document.querySelector('#pagination');
-            pagination.style.display = 'block';
-            const hitContainer = document.querySelector('#hitsResults');
-            hitContainer.innerHTML = hits
-                .map(
-                    hit =>
-                        `
-                    <li class="carousel-list-item">
-                    <a href="${hit.url
-                        }" class="product-searchResult" data-id="${hit.objectID}">
-                        <div class="image-wrapper">
-                            <img src="${hit.image_link}" align="left" alt="${hit.name
-                        }" class="result-img" />
-                            <div class="hit-sizeFilter">
-                                <p>Sizes available: <span>${hit.sizeFilter
-                        }</span></p>
-                            </div>
-                        </div>
-                        <div class="hit-name">
-                            <div class="hit-infos">
-                                <div>${hit.name}</div>
-                                    
-                                <div class="colorWrapper">
-                                
-                
-                                        <div>${hit.hexColorCode ? hit.hexColorCode.split('//')[0] : ''
-                        }</div>
-                                        <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-                        }" class="hit-colorsHex"></div>
-                                    </div>
-                              
-                                    
-                                </div>
-                            <div class="hit-price">$${hit.price}</div>
-                            
-                        </div>
-                    </a>
-                </li>
-                    `
-                )
-                .join('');
-        }
-    }
+
+    // function renderHitsAutocomplete(result) {
+    //     const hits = result.hits;
+    //     console.log(hits.length)
+
+    //     if (hits.length != 0) {
+    //         // displayResultOrNoResult(hits)
+    //         const pagination = document.querySelector('#pagination');
+    //         pagination.style.display = 'block';
+    //         const hitContainer = document.querySelector('#hitsResults');
+    //         hitContainer.innerHTML = hits
+    //             .map(
+    //                 hit =>
+    //                     `
+    //                 <li class="carousel-list-item">
+    //                 <a href="${hit.url
+    //                     }" class="product-searchResult" data-id="${hit.objectID}">
+    //                     <div class="image-wrapper">
+    //                         <img src="${hit.image_link}" align="left" alt="${hit.name
+    //                     }" class="result-img" />
+    //                         <div class="hit-sizeFilter">
+    //                             <p>Sizes available: <span>${hit.sizeFilter
+    //                     }</span></p>
+    //                         </div>
+    //                     </div>
+    //                     <div class="hit-name">
+    //                         <div class="hit-infos">
+    //                             <div>${hit.name}</div>
+
+    //                             <div class="colorWrapper">
+
+
+    //                                     <div>${hit.hexColorCode ? hit.hexColorCode.split('//')[0] : ''
+    //                     }</div>
+    //                                     <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
+    //                     }" class="hit-colorsHex"></div>
+    //                                 </div>
+
+
+    //                             </div>
+    //                         <div class="hit-price">
+    //                             <p>$${hit.price}</p>
+    //                             <p>$${hit.newPrice ? hit.newPrice : hit.price}</p>
+    //                         </div>
+
+    //                     </div>
+    //                 </a>
+    //             </li>
+    //                 `
+    //             )
+    //             .join('');
+    //     }
+    // }
 
     const autocompleteSearchBox = createAutocompleteSearchBox();
-    const customHits = connectHits(renderHitsAutocomplete);
+    // const customHits = connectHits(renderHitsAutocomplete);
 
     const renderVirtualSearchBox = (renderOptions, isFirstRender) => {
         const { refine } = renderOptions;
-        console.log(search.renderState.gstar_demo_test.autocomplete.currentRefinement)
+
         refine(search.renderState.gstar_demo_test.autocomplete.currentRefinement);
     };
 
@@ -656,15 +665,18 @@ export function searchResults() {
                             <div>${hit.name}</div>
                                 
                             <div class="colorWrapper">
-                                    <div>${hit.hexColorCode.split('//')[0]
+                                    <div>${hit.hexColorCode ? hit.hexColorCode.split('//')[0] : ''
                     }</div>
-                                    <div style="background: ${hit.hexColorCode.split('//')[1]
+                                    <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
                     }" class="hit-colorsHex"></div>
                                 </div>
                                 
                                 
                             </div>
-                        <div class="hit-price">$${hit.price}</div>
+                            <div class="hit-price">
+                            <p>$${hit.price}</p>
+                            <p>$${hit.newPrice ? hit.newPrice : hit.price}</p>
+                        </div>
                         
                     </div>
                 </a>
@@ -683,7 +695,7 @@ export function searchResults() {
                   </li>
               `,
                 noResults: response => `
-                <div>No Results found for query <b>${response.query}</b></div>
+                
               `
             },
             afterItemRenderer: (element, hit, response) => {
@@ -704,9 +716,9 @@ export function searchResults() {
                 }
             }
         }),
-        customHits({
-            container: document.querySelector('#hits'),
-        }),
+        // customHits({
+        //     container: document.querySelector('#hits'),
+        // }),
         pagination({
             container: '#pagination',
         }),

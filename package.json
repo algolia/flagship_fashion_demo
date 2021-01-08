@@ -2,7 +2,7 @@
   "name": "flagship-fashion-demo",
   "version": "1.0.0",
   "private": true,
-  "main": "src/app.js",
+  "main": "src/Homepage/app.js",
   "engines": {
     "node": "14.15.1"
   },

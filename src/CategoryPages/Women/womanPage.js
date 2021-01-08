@@ -1,5 +1,5 @@
 import { carousel, renderCarouselAllProduct } from "./displayCarouselWomanPage";
-import { burgerMenu } from "../../burgerMenu";
+import { burgerMenu } from "../../Homepage/burgerMenu";
 import instantsearch from "instantsearch.js";
 import algoliasearch from "algoliasearch";
 import { configure, pagination, hits, stats, searchBox, connectHits, index } from 'instantsearch.js/es/widgets'

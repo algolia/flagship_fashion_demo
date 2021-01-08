@@ -37331,7 +37331,7 @@ module.exports = reloadCSS;
         module.hot.dispose(reloadCSS);
         module.hot.accept(reloadCSS);
       
-},{"_css_loader":"node_modules/parcel-bundler/src/builtins/css-loader.js"}],"src/displayCarousel.js":[function(require,module,exports) {
+},{"_css_loader":"node_modules/parcel-bundler/src/builtins/css-loader.js"}],"src/Homepage/displayCarousel.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37365,7 +37365,7 @@ const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFi
   container.querySelector('ul').innerHTML = hits.map(hit => "\n        <li>\n          <div class=\"image-wrapper\">\n            <img src=\"".concat(hit.image_link, "\" alt=\"").concat(hit.name, "\">\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ")).join('');
 });
 exports.carousel = carousel;
-},{"instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js"}],"src/getCarousel.js":[function(require,module,exports) {
+},{"instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js"}],"src/Homepage/getCarousel.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37479,7 +37479,7 @@ function GetDataForCarousel() {
     search.start();
   });
 } // search.start();
-},{"./displayCarousel":"src/displayCarousel.js","instantsearch.js":"node_modules/instantsearch.js/es/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js"}],"src/SearchResult_JS/autocomplete.js":[function(require,module,exports) {
+},{"./displayCarousel":"src/Homepage/displayCarousel.js","instantsearch.js":"node_modules/instantsearch.js/es/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js"}],"src/SearchResult_JS/autocomplete.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37499,9 +37499,9 @@ var _searchResults = _interopRequireDefault(require("./searchResults"));
 
 require("@algolia/autocomplete-theme-classic");
 
-var _getCarousel = require("../getCarousel");
+var _getCarousel = require("../Homepage/getCarousel");
 
-var _displayCarousel = require("../displayCarousel");
+var _displayCarousel = require("../Homepage/displayCarousel");
 
 var _instantsearch = _interopRequireDefault(require("instantsearch.js"));
 
@@ -37873,7 +37873,7 @@ function autocompleteSearchResult() {
     }
   }
 }
-},{"@algolia/autocomplete-js":"node_modules/@algolia/autocomplete-js/dist/esm/index.js","@algolia/autocomplete-plugin-query-suggestions":"node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js","@algolia/autocomplete-plugin-recent-searches":"node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","./searchResults":"src/SearchResult_JS/searchResults.js","@algolia/autocomplete-theme-classic":"node_modules/@algolia/autocomplete-theme-classic/dist/theme.css","../getCarousel":"src/getCarousel.js","../displayCarousel":"src/displayCarousel.js","instantsearch.js":"node_modules/instantsearch.js/es/index.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js"}],"src/SearchResult_JS/searchResults.js":[function(require,module,exports) {
+},{"@algolia/autocomplete-js":"node_modules/@algolia/autocomplete-js/dist/esm/index.js","@algolia/autocomplete-plugin-query-suggestions":"node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js","@algolia/autocomplete-plugin-recent-searches":"node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","./searchResults":"src/SearchResult_JS/searchResults.js","@algolia/autocomplete-theme-classic":"node_modules/@algolia/autocomplete-theme-classic/dist/theme.css","../Homepage/getCarousel":"src/Homepage/getCarousel.js","../Homepage/displayCarousel":"src/Homepage/displayCarousel.js","instantsearch.js":"node_modules/instantsearch.js/es/index.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js"}],"src/SearchResult_JS/searchResults.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37901,7 +37901,7 @@ var _autocompletePluginRecentSearches = require("@algolia/autocomplete-plugin-re
 
 require("@algolia/autocomplete-theme-classic");
 
-var _displayCarousel = require("../displayCarousel");
+var _displayCarousel = require("../Homepage/displayCarousel");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38436,7 +38436,7 @@ function searchResults() {
   })]);
   search.start();
 }
-},{"instantsearch.js":"node_modules/instantsearch.js/es/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","./hits-with-content/hits-with-content":"src/SearchResult_JS/hits-with-content/hits-with-content.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js","./autocomplete":"src/SearchResult_JS/autocomplete.js","@algolia/autocomplete-js":"node_modules/@algolia/autocomplete-js/dist/esm/index.js","@algolia/autocomplete-plugin-query-suggestions":"node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js","@algolia/autocomplete-plugin-recent-searches":"node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/index.js","@algolia/autocomplete-theme-classic":"node_modules/@algolia/autocomplete-theme-classic/dist/theme.css","../displayCarousel":"src/displayCarousel.js"}],"src/SearchResult_JS/filterResults.js":[function(require,module,exports) {
+},{"instantsearch.js":"node_modules/instantsearch.js/es/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","./hits-with-content/hits-with-content":"src/SearchResult_JS/hits-with-content/hits-with-content.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js","./autocomplete":"src/SearchResult_JS/autocomplete.js","@algolia/autocomplete-js":"node_modules/@algolia/autocomplete-js/dist/esm/index.js","@algolia/autocomplete-plugin-query-suggestions":"node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js","@algolia/autocomplete-plugin-recent-searches":"node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/index.js","@algolia/autocomplete-theme-classic":"node_modules/@algolia/autocomplete-theme-classic/dist/theme.css","../Homepage/displayCarousel":"src/Homepage/displayCarousel.js"}],"src/SearchResult_JS/filterResults.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38636,7 +38636,7 @@ function filterResult() {
 //     colorUnselected()
 // }
 // setTimeout(colorCircle, 1000)
-},{}],"src/burgerMenu.js":[function(require,module,exports) {
+},{}],"src/Homepage/burgerMenu.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38894,7 +38894,7 @@ var _searchResults = require("./searchResults");
 
 var _filterResults = require("./filterResults");
 
-var _burgerMenu = require("../burgerMenu");
+var _burgerMenu = require("../Homepage/burgerMenu");
 
 var _relatedResultModal = require("./relatedResultModal");
 
@@ -38921,7 +38921,7 @@ var checkExist = setInterval(function () {
 }, 500); // setTimeout(relatedResultModal, 1000)
 // setTimeout(cardAnimation, 1000)
 // relatedResultModal()
-},{"./searchResults":"src/SearchResult_JS/searchResults.js","./filterResults":"src/SearchResult_JS/filterResults.js","../burgerMenu":"src/burgerMenu.js","./relatedResultModal":"src/SearchResult_JS/relatedResultModal.js","./cardAnimations":"src/SearchResult_JS/cardAnimations.js","./autocomplete":"src/SearchResult_JS/autocomplete.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./searchResults":"src/SearchResult_JS/searchResults.js","./filterResults":"src/SearchResult_JS/filterResults.js","../Homepage/burgerMenu":"src/Homepage/burgerMenu.js","./relatedResultModal":"src/SearchResult_JS/relatedResultModal.js","./cardAnimations":"src/SearchResult_JS/cardAnimations.js","./autocomplete":"src/SearchResult_JS/autocomplete.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -38949,7 +38949,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57339" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59883" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
