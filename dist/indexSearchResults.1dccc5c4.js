@@ -38409,7 +38409,7 @@ function searchResults() {
     container: "#hits",
     templates: {
       item: hit => "\n                <li class=\"carousel-list-item\">\n                <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>").concat(hit.name, "</div>\n                                \n                            <div class=\"colorWrapper\">\n                                    <div>").concat(hit.hexColorCode.split('//')[0], "</div>\n                                    <div style=\"background: ").concat(hit.hexColorCode.split('//')[1], "\" class=\"hit-colorsHex\"></div>\n                                </div>\n                                \n                                \n                            </div>\n                        <div class=\"hit-price\">$").concat(hit.price, "</div>\n                        \n                    </div>\n                </a>\n            </li>\n                "),
-      injectedItem: hit => "\n                 <li class=\"carousel-list-item\">\n                 \n                        <div class=\"image-wrapper\">\n                            <img class=\"injectImg\" src=\"".concat(hit.image, "\" alt=\"\">\n                            <video controls width=\"250\">\n                                <source src=\"").concat(hit.video, "\"\n                                        type=\"video/webm\">\n\n                                <source src=\"").concat(hit.video, "\"\n                                        type=\"video/mp4\">\n\n                                Sorry, your browser doesn't support embedded videos.\n                            </video>\n                        </div>\n                        <div class=\"btn-injection-content-wrapper\">\n                            <a class=\"btn-injection-content\">Check it out</a>\n                        </div>\n                   \n                  </li>\n              "),
+      injectedItem: hit => "\n                 <li class=\"carousel-list-item\">\n                 \n                        <div class=\"image-wrapper\">\n                            <img class=\"injectImg\" src=\"".concat(hit.image, "\" alt=\"\">\n                        </div>\n                        <div class=\"btn-injection-content-wrapper\">\n                            <a class=\"btn-injection-content\">Check it out</a>\n                        </div>\n                   \n                  </li>\n              "),
       noResults: response => "\n                <div>No Results found for query <b>".concat(response.query, "</b></div>\n              ")
     },
     afterItemRenderer: (element, hit, response) => {
@@ -38739,13 +38739,15 @@ function relatedResultModal() {
   const getObjectID = () => {
     let productSearchResult = document.querySelectorAll('.product-searchResult');
     productSearchResult.forEach(item => {
-      index.getObject(item.dataset.id).then(object => {
-        item.addEventListener('click', e => {
-          e.preventDefault();
-          displayrelateditems(object);
-          displayModal();
+      if (item.dataset.id !== 'undefined') {
+        index.getObject(item.dataset.id).then(object => {
+          item.addEventListener('click', e => {
+            e.preventDefault();
+            displayrelateditems(object);
+            displayModal();
+          });
         });
-      });
+      }
     });
   };
 
@@ -38947,7 +38949,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50894" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57339" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

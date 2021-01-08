@@ -64,15 +64,17 @@ export function relatedResultModal() {
 
         let productSearchResult = document.querySelectorAll('.product-searchResult');
         productSearchResult.forEach((item) => {
-            index.getObject(item.dataset.id).then(object => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault()
-                    displayrelateditems(object);
-                    displayModal()
+            if (item.dataset.id !== 'undefined') {
+                index.getObject(item.dataset.id).then(object => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault()
+                        displayrelateditems(object);
+                        displayModal()
+                    })
+
+
                 })
-
-
-            })
+            }
         })
     }
     getObjectID()
