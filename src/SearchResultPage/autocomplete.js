@@ -8,8 +8,8 @@ import { createLocalStorageRecentSearchesPlugin } from "@algolia/autocomplete-pl
 import algoliasearch from "algoliasearch";
 import searchResults from "./searchResults";
 import "@algolia/autocomplete-theme-classic";
-import { GetDataForCarousel } from '../getCarousel'
-import { carousel } from "../displayCarousel";
+import { GetDataForCarousel } from '../Homepage/getCarousel'
+import { carousel } from "../Homepage/displayCarousel";
 import instantsearch from "instantsearch.js";
 import { configure, index, searchBox, voiceSearch, hits, pagination, refinementList, stats, clearRefinements } from "instantsearch.js/es/widgets";
 

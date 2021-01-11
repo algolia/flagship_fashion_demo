@@ -30,7 +30,7 @@ import {
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions';
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches';
 import '@algolia/autocomplete-theme-classic';
-import { carousel } from '../displayCarousel';
+import { carousel } from '../Homepage/displayCarousel';
 
 export function searchResults() {
     const searchClient = algoliasearch(
@@ -71,7 +71,6 @@ export function searchResults() {
         [...widgetParams.container.querySelectorAll('a')].forEach(element => {
             element.addEventListener('click', event => {
                 event.preventDefault();
-                console.log(event.currentTarget.dataset.value);
                 refine(event.currentTarget.dataset.value);
             });
         });
@@ -86,17 +85,15 @@ export function searchResults() {
     const renderQueryRuleCustomData = (renderOptions, isFirstRender) => {
         const { items, widgetParams, refine } = renderOptions;
 
-        console.log(items)
-        console.log(widgetParams)
+
 
         const checkBanner = items.map(item => {
             return item.banner
         })
 
-        console.log(Array.isArray(checkBanner))
-        console.log(checkBanner.includes(undefined))
-
         if (!checkBanner.includes(undefined)) {
+            let banner = widgetParams.container
+            banner.style.display = "block"
             widgetParams.container.innerHTML = `
             <div class="banner-wrapper">
               ${items
@@ -319,9 +316,14 @@ export function searchResults() {
                     },
                     onSubmit({ root, sections, state }) {
                         refine(state.query);
-                        // renderHits(root, sections, state);
-                        // root.append(...sections);
-                        // getQueryFromUser(state.query);
+                        // console.log(search.renderState.gstar_demo_test.stats.nbHits)
+                        // console.log(hits.length)
+                        // console.log(hits)
+                        const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
+                        if (noResultHits === 0) {
+                            const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
+                            noResult(noResultHits)
+                        }
                     },
                 });
                 // During subsequent renders, refresh the autocomplete instance
@@ -372,127 +374,128 @@ export function searchResults() {
         `;
         }
 
-        function noResult(hits) {
-            let executed = false;
-            if (!executed) {
-                executed = true;
+        function noResult(noResultHits) {
+            // let executed = false;
+            // if (!executed) {
+            //     executed = true;
 
-                displayResultOrNoResult(hits);
-                const containerNoresult = document.querySelector('.container');
-                const noResults = document.querySelector('.noResultMessage');
-                const query = document.querySelector('.aa-InputWrapper input').value;
-                const pagination = document.querySelector('#pagination');
-                pagination.style.display = 'none';
+            displayResultOrNoResult(noResultHits);
+            const containerNoresult = document.querySelector('.container');
+            const noResults = document.querySelector('.noResultMessage');
+            const query = document.querySelector('.aa-InputWrapper input').value;
+            const pagination = document.querySelector('#pagination');
+            pagination.style.display = 'none';
 
-                if (!noResults) {
-                    let noResults = document.createElement('div');
-                    noResults.innerHTML = '';
-                    noResults.classList.add('noResultMessage');
-                    noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
+            if (!noResults) {
+                let noResults = document.createElement('div');
+                noResults.innerHTML = '';
+                noResults.classList.add('noResultMessage');
+                noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
                 <p>Please check the spelling or try to remove filters</p>
                 <p>You can check our latest trends and collection bellow</p>`;
-                    containerNoresult.prepend(noResults);
-                } else {
-                    noResults.innerHTML = '';
-                    noResults.classList.add('noResultMessage');
-                    noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
+                containerNoresult.prepend(noResults);
+            } else {
+                noResults.innerHTML = '';
+                noResults.classList.add('noResultMessage');
+                noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
                 <p>Please check the spelling or try to remove filters</p>
                 <p>You can check our latest trends and collection bellow</p>`;
-                    containerNoresult.prepend(noResults);
-                }
+                containerNoresult.prepend(noResults);
+            }
 
-                const searchClient = algoliasearch(
-                    'HYDY1KWTWB',
-                    '28cf6d38411215e2eef188e635216508'
-                );
+            const searchClient = algoliasearch(
+                'HYDY1KWTWB',
+                '28cf6d38411215e2eef188e635216508'
+            );
 
-                const search = instantsearch({
-                    indexName: 'gstar_demo_test',
-                    searchClient,
-                });
+            const search = instantsearch({
+                indexName: 'gstar_demo_test',
+                searchClient,
+            });
 
-                // const userTokenSelector = document.getElementById("user-token-selector");
-                // userTokenSelector.addEventListener("change", () => {
-                //     userTokenSelector.disabled = true;
-                //     search.removeWidgets(carouselWidgets);
-                //     getCarouselConfigs().then((carousels) => {
-                //         console.log(carousels)
-                //         userTokenSelector.disabled = false;
-                //         carouselWidgets = createWidgets(carousels);
-                //         search.addWidgets(carouselWidgets);
-                //     });
-                // });
+            // const userTokenSelector = document.getElementById("user-token-selector");
+            // userTokenSelector.addEventListener("change", () => {
+            //     userTokenSelector.disabled = true;
+            //     search.removeWidgets(carouselWidgets);
+            //     getCarouselConfigs().then((carousels) => {
+            //         console.log(carousels)
+            //         userTokenSelector.disabled = false;
+            //         carouselWidgets = createWidgets(carousels);
+            //         search.addWidgets(carouselWidgets);
+            //     });
+            // });
 
-                function getUserToken() {
-                    const getPersona = localStorage.getItem('personaValue');
-                    console.log(getPersona);
-                    return getPersona;
-                }
+            function getUserToken() {
+                const getPersona = localStorage.getItem('personaValue');
 
-                //GET THE CONFIG
-                function getCarouselConfigs() {
-                    return searchClient
-                        .initIndex('gstar_demo_config')
-                        .search('', {
-                            facetFilters: ['userToken:' + getUserToken()],
-                            attributesToHighlight: [],
-                            attributesToRetrieve: ['title', 'indexName', 'configure'],
-                        })
-                        .then(res => res.hits);
-                }
+                return getPersona;
+            }
 
-                //WIDGET CREATION
-                let carouselWidgets = [];
-                function createWidgets(carousels) {
-                    const container = document.querySelector('#stacked-carousels');
+            //GET THE CONFIG
+            function getCarouselConfigs() {
+                return searchClient
+                    .initIndex('gstar_demo_config')
+                    .search('', {
+                        facetFilters: ['userToken:' + getUserToken()],
+                        attributesToHighlight: [],
+                        attributesToRetrieve: ['title', 'indexName', 'configure'],
+                    })
+                    .then(res => res.hits);
+            }
 
-                    container.innerText = '';
+            //WIDGET CREATION
+            let carouselWidgets = [];
+            function createWidgets(carousels) {
+                const container = document.querySelector('#stacked-carousels');
 
-                    return carousels.map(carouselConfig => {
-                        const carouselContainer = document.createElement('div');
-                        carouselContainer.className = 'carousel';
+                container.innerText = '';
 
-                        const indexWidget = index({
-                            indexName: carouselConfig.indexName,
-                            indexId: carouselConfig.objectID,
-                        });
+                return carousels.map(carouselConfig => {
+                    const carouselContainer = document.createElement('div');
+                    carouselContainer.className = 'carousel';
 
-                        if (carouselConfig.configure) {
-                            console.log(carouselConfig.configure);
-                            indexWidget.addWidgets([
-                                configure({
-                                    ...carouselConfig.configure,
-                                    userToken: getUserToken(),
-                                }),
-                            ]);
-                        }
+                    const indexWidget = index({
+                        indexName: carouselConfig.indexName,
+                        indexId: carouselConfig.objectID,
+                    });
+
+                    if (carouselConfig.configure) {
 
                         indexWidget.addWidgets([
-                            carousel({
-                                title: carouselConfig.title,
-                                container: carouselContainer,
+                            configure({
+                                ...carouselConfig.configure,
+                                userToken: getUserToken(),
                             }),
                         ]);
+                    }
 
-                        container.appendChild(carouselContainer);
-                        return indexWidget;
-                    });
-                }
+                    indexWidget.addWidgets([
+                        carousel({
+                            title: carouselConfig.title,
+                            container: carouselContainer,
+                        }),
+                    ]);
 
-                // retrieve the carousel configuration once
-                getCarouselConfigs().then(carousels => {
-                    carouselWidgets = createWidgets(carousels);
-                    search.addWidgets(carouselWidgets);
-                    search.start();
+                    container.appendChild(carouselContainer);
+                    return indexWidget;
                 });
             }
+
+            // retrieve the carousel configuration once
+            getCarouselConfigs().then(carousels => {
+                carouselWidgets = createWidgets(carousels);
+                search.addWidgets(carouselWidgets);
+                search.start();
+            });
+            // }
         }
 
-        function displayResultOrNoResult(hits) {
+        function displayResultOrNoResult(noResultHits) {
             const hitContainer = document.querySelector('#hitsResults');
+            const hit = document.querySelector("#hits")
             const noResultCarousel = document.querySelector('#stacked-carousels');
             const noResultContainer = document.querySelector('.container');
-            if (hits.length === 0) {
+            if (noResultHits === 0) {
                 hitContainer.classList.remove('displayGrid');
                 hitContainer.classList.add('displayFalse');
                 noResultCarousel.classList.add('displayTrue');
@@ -510,61 +513,124 @@ export function searchResults() {
         }
     }
 
-    function renderHitsAutocomplete(result) {
-        const hits = result.hits;
-        console.log(result);
-        if (hits.length != 0) {
-            // displayResultOrNoResult(hits)
-            const pagination = document.querySelector('#pagination');
-            pagination.style.display = 'block';
-            const hitContainer = document.querySelector('#hitsResults');
-            hitContainer.innerHTML = hits
-                .map(
-                    hit =>
-                        `
-                    <li class="carousel-list-item">
-                    <a href="${hit.url
-                        }" class="product-searchResult" data-id="${hit.objectID}">
-                        <div class="image-wrapper">
-                            <img src="${hit.image_link}" align="left" alt="${hit.name
-                        }" class="result-img" />
-                            <div class="hit-sizeFilter">
-                                <p>Sizes available: <span>${hit.sizeFilter
-                        }</span></p>
-                            </div>
-                        </div>
-                        <div class="hit-name">
-                            <div class="hit-infos">
-                                <div>${hit.name}</div>
-                                    
-                                <div class="colorWrapper">
-                                
-                
-                                        <div>${hit.hexColorCode ? hit.hexColorCode.split('//')[0] : ''
-                        }</div>
-                                        <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-                        }" class="hit-colorsHex"></div>
-                                    </div>
-                              
-                                    
-                                </div>
-                            <div class="hit-price">$${hit.price}</div>
-                            
-                        </div>
-                    </a>
-                </li>
-                    `
-                )
-                .join('');
+    function displayPrice(hit) {
+        if (hit.newPrice) {
+            return `<p class="cross-price">$${hit.price}</p>
+                    <p>$${hit.newPrice}</p>`
+        } else {
+            return `<p>$${hit.price}</p>`
         }
     }
 
+    function displayBadge(hit) {
+        if (hit.badge) {
+
+            let discount = (1 - (hit.newPrice / hit.price)) * 100
+            discount = Math.floor(parseInt(discount, 10))
+
+            //CASE 1
+            let i;
+            for (i = 0; i < hit.badge.length; i++) {
+                console.log(hit.badge[i])
+                if (hit.badge[i] === "eco") {
+                    return `<div class="badge badgeEco"><p>${hit.badge[i]}</p></div>`;
+                } else if (hit.badge[i] === "off") {
+                    return `<div class="badge badgeOff>${discount}% ${hit.badge[i]}</div>`
+                } else { console.log("I'm in hellse") }
+                // switch (hit.badge[i]) {
+                //     case "eco":
+                //         console.log(i)
+                //         return `<div class="badge badgeEco"><p>${i}</p></div>`;
+                //         break;
+                //     case "off":
+                //         console.log(discount, "-", i)
+                //         return `<div class="badge badgeOff>${discount}% ${i}</div>`
+                //         break;
+                //     default:
+                //         console.log('problem with badge')
+                // }
+            }
+
+            //CASE 2
+            // hit.badge.map(i => {
+            //     switch (i) {
+            //         case i = "eco":
+            //             console.log(i)
+            //             return `<div class="badge badgeEco"><p>${i}</p></div>`;
+            //             break;
+            //         case i = "off":
+            //             console.log(discount, "-", i)
+            //             return `<div class="badge badgeOff>${discount}% ${i}</div>`
+            //             break;
+            //         default:
+            //             console.log('problem with badge')
+            //     }
+            // })
+
+        }
+    }
+
+
+
+    // function renderHitsAutocomplete(result) {
+    //     const hits = result.hits;
+    //     console.log(hits.length)
+
+    //     if (hits.length != 0) {
+    //         // displayResultOrNoResult(hits)
+    //         const pagination = document.querySelector('#pagination');
+    //         pagination.style.display = 'block';
+    //         const hitContainer = document.querySelector('#hitsResults');
+    //         hitContainer.innerHTML = hits
+    //             .map(
+    //                 hit =>
+    //                     `
+    //                 <li class="carousel-list-item">
+    //                 <a href="${hit.url
+    //                     }" class="product-searchResult" data-id="${hit.objectID}">
+    //                     <div class="image-wrapper">
+    //                         <img src="${hit.image_link}" align="left" alt="${hit.name
+    //                     }" class="result-img" />
+    //                         <div class="hit-sizeFilter">
+    //                             <p>Sizes available: <span>${hit.sizeFilter
+    //                     }</span></p>
+    //                         </div>
+    //                     </div>
+    //                     <div class="hit-name">
+    //                         <div class="hit-infos">
+    //                             <div>${hit.name}</div>
+
+    //                             <div class="colorWrapper">
+
+
+    //                                     <div>${hit.hexColorCode ? hit.hexColorCode.split('//')[0] : ''
+    //                     }</div>
+    //                                     <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
+    //                     }" class="hit-colorsHex"></div>
+    //                                 </div>
+
+
+    //                             </div>
+    //                         <div class="hit-price">
+    //                             <p>$${hit.price}</p>
+    //                             <p>$${hit.newPrice ? hit.newPrice : hit.price}</p>
+    //                         </div>
+
+    //                     </div>
+    //                 </a>
+    //             </li>
+    //                 `
+    //             )
+    //             .join('');
+    //     }
+    // }
+
     const autocompleteSearchBox = createAutocompleteSearchBox();
-    const customHits = connectHits(renderHitsAutocomplete);
+    // const customHits = connectHits(renderHitsAutocomplete);
 
     const renderVirtualSearchBox = (renderOptions, isFirstRender) => {
         const { refine } = renderOptions;
-        console.log(search.renderState.gstar_demo_test.autocomplete.currentRefinement)
+
         refine(search.renderState.gstar_demo_test.autocomplete.currentRefinement);
     };
 
@@ -641,6 +707,7 @@ export function searchResults() {
             templates: {
                 item: hit => `
                 <li class="carousel-list-item">
+                <div>${displayBadge(hit)}</div>
                 <a href="${hit.url
                     }" class="product-searchResult" data-id="${hit.objectID}">
                     <div class="image-wrapper">
@@ -656,15 +723,17 @@ export function searchResults() {
                             <div>${hit.name}</div>
                                 
                             <div class="colorWrapper">
-                                    <div>${hit.hexColorCode.split('//')[0]
+                                    <div>${hit.hexColorCode ? hit.hexColorCode.split('//')[0] : ''
                     }</div>
-                                    <div style="background: ${hit.hexColorCode.split('//')[1]
+                                    <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
                     }" class="hit-colorsHex"></div>
                                 </div>
                                 
                                 
                             </div>
-                        <div class="hit-price">$${hit.price}</div>
+                            <div class="hit-price">
+                            ${displayPrice(hit)}
+                        </div>
                         
                     </div>
                 </a>
@@ -683,7 +752,7 @@ export function searchResults() {
                   </li>
               `,
                 noResults: response => `
-                <div>No Results found for query <b>${response.query}</b></div>
+                
               `
             },
             afterItemRenderer: (element, hit, response) => {
@@ -704,9 +773,9 @@ export function searchResults() {
                 }
             }
         }),
-        customHits({
-            container: document.querySelector('#hits'),
-        }),
+        // customHits({
+        //     container: document.querySelector('#hits'),
+        // }),
         pagination({
             container: '#pagination',
         }),
@@ -715,3 +784,4 @@ export function searchResults() {
 
     search.start();
 }
+

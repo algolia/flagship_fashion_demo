@@ -26,9 +26,10 @@ export function relatedResultModal() {
     // detects when the user is actively typing
     searchInput.addEventListener('keypress', handleKeyPress);
     // triggers a check to see if the user is actually done typing
-    searchInput.addEventListener('keyup', handleKeyUp);
+    searchInput.addEventListener('change', handleKeyUp);
 
     function handleKeyUp(e) {
+        console.log('toto')
         window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
         if (e) {
             timer = window.setTimeout(() => {

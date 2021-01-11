@@ -30718,7 +30718,7 @@ function renderCarouselAllProduct() {
 }
 
 ;
-},{"instantsearch.js":"node_modules/instantsearch.js/es/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js"}],"src/burgerMenu.js":[function(require,module,exports) {
+},{"instantsearch.js":"node_modules/instantsearch.js/es/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"node_modules/instantsearch.js/es/connectors/index.js"}],"src/Homepage/burgerMenu.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30759,7 +30759,7 @@ function burgerMenu() {
 
 var _displayCarouselWomanPage = require("./displayCarouselWomanPage");
 
-var _burgerMenu = require("../../burgerMenu");
+var _burgerMenu = require("../../Homepage/burgerMenu");
 
 var _instantsearch = _interopRequireDefault(require("instantsearch.js"));
 
@@ -30847,7 +30847,7 @@ function GetDataCarousel() {
 GetDataCarousel();
 (0, _burgerMenu.burgerMenu)();
 (0, _displayCarouselWomanPage.renderCarouselAllProduct)(); // search.start();
-},{"./displayCarouselWomanPage":"src/CategoryPages/Women/displayCarouselWomanPage.js","../../burgerMenu":"src/burgerMenu.js","instantsearch.js":"node_modules/instantsearch.js/es/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./displayCarouselWomanPage":"src/CategoryPages/Women/displayCarouselWomanPage.js","../../Homepage/burgerMenu":"src/Homepage/burgerMenu.js","instantsearch.js":"node_modules/instantsearch.js/es/index.js","algoliasearch":"node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"node_modules/instantsearch.js/es/widgets/index.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -30875,7 +30875,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57339" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58581" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
