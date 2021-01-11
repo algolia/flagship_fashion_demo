@@ -658,6 +658,12 @@ align-items: center;
     right: 1rem;
 }
 
+.cross-price{
+    text-decoration: line-through;
+    font-size: 0.8rem;
+    color: #c7c7c7;
+}
+
 .hit-description{
     color: black;
     font-family: 'Roboto';

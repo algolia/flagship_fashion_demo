@@ -316,15 +316,14 @@ export function searchResults() {
                     },
                     onSubmit({ root, sections, state }) {
                         refine(state.query);
-                        console.log(search.renderState)
-                        console.log(hits.length)
-                        if (hits.length === 0) {
-                            noResult(hits)
+                        // console.log(search.renderState.gstar_demo_test.stats.nbHits)
+                        // console.log(hits.length)
+                        // console.log(hits)
+                        const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
+                        if (noResultHits === 0) {
+                            const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
+                            noResult(noResultHits)
                         }
-
-                        // renderHits(root, sections, state);
-                        // root.append(...sections);
-                        // getQueryFromUser(state.query);
                     },
                 });
                 // During subsequent renders, refresh the autocomplete instance
@@ -375,128 +374,128 @@ export function searchResults() {
         `;
         }
 
-        function noResult(hits) {
-            let executed = false;
-            if (!executed) {
-                executed = true;
+        function noResult(noResultHits) {
+            // let executed = false;
+            // if (!executed) {
+            //     executed = true;
 
-                displayResultOrNoResult(hits);
-                const containerNoresult = document.querySelector('.container');
-                const noResults = document.querySelector('.noResultMessage');
-                const query = document.querySelector('.aa-InputWrapper input').value;
-                const pagination = document.querySelector('#pagination');
-                pagination.style.display = 'none';
+            displayResultOrNoResult(noResultHits);
+            const containerNoresult = document.querySelector('.container');
+            const noResults = document.querySelector('.noResultMessage');
+            const query = document.querySelector('.aa-InputWrapper input').value;
+            const pagination = document.querySelector('#pagination');
+            pagination.style.display = 'none';
 
-                if (!noResults) {
-                    let noResults = document.createElement('div');
-                    noResults.innerHTML = '';
-                    noResults.classList.add('noResultMessage');
-                    noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
+            if (!noResults) {
+                let noResults = document.createElement('div');
+                noResults.innerHTML = '';
+                noResults.classList.add('noResultMessage');
+                noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
                 <p>Please check the spelling or try to remove filters</p>
                 <p>You can check our latest trends and collection bellow</p>`;
-                    containerNoresult.prepend(noResults);
-                } else {
-                    noResults.innerHTML = '';
-                    noResults.classList.add('noResultMessage');
-                    noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
+                containerNoresult.prepend(noResults);
+            } else {
+                noResults.innerHTML = '';
+                noResults.classList.add('noResultMessage');
+                noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
                 <p>Please check the spelling or try to remove filters</p>
                 <p>You can check our latest trends and collection bellow</p>`;
-                    containerNoresult.prepend(noResults);
-                }
+                containerNoresult.prepend(noResults);
+            }
 
-                const searchClient = algoliasearch(
-                    'HYDY1KWTWB',
-                    '28cf6d38411215e2eef188e635216508'
-                );
+            const searchClient = algoliasearch(
+                'HYDY1KWTWB',
+                '28cf6d38411215e2eef188e635216508'
+            );
 
-                const search = instantsearch({
-                    indexName: 'gstar_demo_test',
-                    searchClient,
-                });
+            const search = instantsearch({
+                indexName: 'gstar_demo_test',
+                searchClient,
+            });
 
-                // const userTokenSelector = document.getElementById("user-token-selector");
-                // userTokenSelector.addEventListener("change", () => {
-                //     userTokenSelector.disabled = true;
-                //     search.removeWidgets(carouselWidgets);
-                //     getCarouselConfigs().then((carousels) => {
-                //         console.log(carousels)
-                //         userTokenSelector.disabled = false;
-                //         carouselWidgets = createWidgets(carousels);
-                //         search.addWidgets(carouselWidgets);
-                //     });
-                // });
+            // const userTokenSelector = document.getElementById("user-token-selector");
+            // userTokenSelector.addEventListener("change", () => {
+            //     userTokenSelector.disabled = true;
+            //     search.removeWidgets(carouselWidgets);
+            //     getCarouselConfigs().then((carousels) => {
+            //         console.log(carousels)
+            //         userTokenSelector.disabled = false;
+            //         carouselWidgets = createWidgets(carousels);
+            //         search.addWidgets(carouselWidgets);
+            //     });
+            // });
 
-                function getUserToken() {
-                    const getPersona = localStorage.getItem('personaValue');
+            function getUserToken() {
+                const getPersona = localStorage.getItem('personaValue');
 
-                    return getPersona;
-                }
+                return getPersona;
+            }
 
-                //GET THE CONFIG
-                function getCarouselConfigs() {
-                    return searchClient
-                        .initIndex('gstar_demo_config')
-                        .search('', {
-                            facetFilters: ['userToken:' + getUserToken()],
-                            attributesToHighlight: [],
-                            attributesToRetrieve: ['title', 'indexName', 'configure'],
-                        })
-                        .then(res => res.hits);
-                }
+            //GET THE CONFIG
+            function getCarouselConfigs() {
+                return searchClient
+                    .initIndex('gstar_demo_config')
+                    .search('', {
+                        facetFilters: ['userToken:' + getUserToken()],
+                        attributesToHighlight: [],
+                        attributesToRetrieve: ['title', 'indexName', 'configure'],
+                    })
+                    .then(res => res.hits);
+            }
 
-                //WIDGET CREATION
-                let carouselWidgets = [];
-                function createWidgets(carousels) {
-                    const container = document.querySelector('#stacked-carousels');
+            //WIDGET CREATION
+            let carouselWidgets = [];
+            function createWidgets(carousels) {
+                const container = document.querySelector('#stacked-carousels');
 
-                    container.innerText = '';
+                container.innerText = '';
 
-                    return carousels.map(carouselConfig => {
-                        const carouselContainer = document.createElement('div');
-                        carouselContainer.className = 'carousel';
+                return carousels.map(carouselConfig => {
+                    const carouselContainer = document.createElement('div');
+                    carouselContainer.className = 'carousel';
 
-                        const indexWidget = index({
-                            indexName: carouselConfig.indexName,
-                            indexId: carouselConfig.objectID,
-                        });
+                    const indexWidget = index({
+                        indexName: carouselConfig.indexName,
+                        indexId: carouselConfig.objectID,
+                    });
 
-                        if (carouselConfig.configure) {
-
-                            indexWidget.addWidgets([
-                                configure({
-                                    ...carouselConfig.configure,
-                                    userToken: getUserToken(),
-                                }),
-                            ]);
-                        }
+                    if (carouselConfig.configure) {
 
                         indexWidget.addWidgets([
-                            carousel({
-                                title: carouselConfig.title,
-                                container: carouselContainer,
+                            configure({
+                                ...carouselConfig.configure,
+                                userToken: getUserToken(),
                             }),
                         ]);
+                    }
 
-                        container.appendChild(carouselContainer);
-                        return indexWidget;
-                    });
-                }
+                    indexWidget.addWidgets([
+                        carousel({
+                            title: carouselConfig.title,
+                            container: carouselContainer,
+                        }),
+                    ]);
 
-                // retrieve the carousel configuration once
-                getCarouselConfigs().then(carousels => {
-                    carouselWidgets = createWidgets(carousels);
-                    search.addWidgets(carouselWidgets);
-                    search.start();
+                    container.appendChild(carouselContainer);
+                    return indexWidget;
                 });
             }
+
+            // retrieve the carousel configuration once
+            getCarouselConfigs().then(carousels => {
+                carouselWidgets = createWidgets(carousels);
+                search.addWidgets(carouselWidgets);
+                search.start();
+            });
+            // }
         }
 
-        function displayResultOrNoResult(hits) {
+        function displayResultOrNoResult(noResultHits) {
             const hitContainer = document.querySelector('#hitsResults');
             const hit = document.querySelector("#hits")
             const noResultCarousel = document.querySelector('#stacked-carousels');
             const noResultContainer = document.querySelector('.container');
-            if (hits.length === 0) {
+            if (noResultHits === 0) {
                 hitContainer.classList.remove('displayGrid');
                 hitContainer.classList.add('displayFalse');
                 noResultCarousel.classList.add('displayTrue');
@@ -513,6 +512,64 @@ export function searchResults() {
             }
         }
     }
+
+    function displayPrice(hit) {
+        if (hit.newPrice) {
+            return `<p class="cross-price">$${hit.price}</p>
+                    <p>$${hit.newPrice}</p>`
+        } else {
+            return `<p>$${hit.price}</p>`
+        }
+    }
+
+    function displayBadge(hit) {
+        if (hit.badge) {
+
+            let discount = (1 - (hit.newPrice / hit.price)) * 100
+            discount = Math.floor(parseInt(discount, 10))
+
+            //CASE 1
+            let i;
+            for (i = 0; i < hit.badge.length; i++) {
+                console.log(hit.badge[i])
+                if (hit.badge[i] === "eco") {
+                    return `<div class="badge badgeEco"><p>${hit.badge[i]}</p></div>`;
+                } else if (hit.badge[i] === "off") {
+                    return `<div class="badge badgeOff>${discount}% ${hit.badge[i]}</div>`
+                } else { console.log("I'm in hellse") }
+                // switch (hit.badge[i]) {
+                //     case "eco":
+                //         console.log(i)
+                //         return `<div class="badge badgeEco"><p>${i}</p></div>`;
+                //         break;
+                //     case "off":
+                //         console.log(discount, "-", i)
+                //         return `<div class="badge badgeOff>${discount}% ${i}</div>`
+                //         break;
+                //     default:
+                //         console.log('problem with badge')
+                // }
+            }
+
+            //CASE 2
+            // hit.badge.map(i => {
+            //     switch (i) {
+            //         case i = "eco":
+            //             console.log(i)
+            //             return `<div class="badge badgeEco"><p>${i}</p></div>`;
+            //             break;
+            //         case i = "off":
+            //             console.log(discount, "-", i)
+            //             return `<div class="badge badgeOff>${discount}% ${i}</div>`
+            //             break;
+            //         default:
+            //             console.log('problem with badge')
+            //     }
+            // })
+
+        }
+    }
+
 
 
     // function renderHitsAutocomplete(result) {
@@ -650,6 +707,7 @@ export function searchResults() {
             templates: {
                 item: hit => `
                 <li class="carousel-list-item">
+                <div>${displayBadge(hit)}</div>
                 <a href="${hit.url
                     }" class="product-searchResult" data-id="${hit.objectID}">
                     <div class="image-wrapper">
@@ -674,8 +732,7 @@ export function searchResults() {
                                 
                             </div>
                             <div class="hit-price">
-                            <p>$${hit.price}</p>
-                            <p>$${hit.newPrice ? hit.newPrice : hit.price}</p>
+                            ${displayPrice(hit)}
                         </div>
                         
                     </div>
@@ -727,3 +784,4 @@ export function searchResults() {
 
     search.start();
 }
+
