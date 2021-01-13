@@ -522,53 +522,33 @@ export function searchResults() {
         }
     }
 
-    function displayBadge(hit) {
-        if (hit.badge) {
-
-            let discount = (1 - (hit.newPrice / hit.price)) * 100
-            discount = Math.floor(parseInt(discount, 10))
-
-            //CASE 1
-            let i;
-            for (i = 0; i < hit.badge.length; i++) {
-                console.log(hit.badge[i])
-                if (hit.badge[i] === "eco") {
-                    return `<div class="badge badgeEco"><p>${hit.badge[i]}</p></div>`;
-                } else if (hit.badge[i] === "off") {
-                    return `<div class="badge badgeOff>${discount}% ${hit.badge[i]}</div>`
-                } else { console.log("I'm in hellse") }
-                // switch (hit.badge[i]) {
-                //     case "eco":
-                //         console.log(i)
-                //         return `<div class="badge badgeEco"><p>${i}</p></div>`;
-                //         break;
-                //     case "off":
-                //         console.log(discount, "-", i)
-                //         return `<div class="badge badgeOff>${discount}% ${i}</div>`
-                //         break;
-                //     default:
-                //         console.log('problem with badge')
-                // }
-            }
-
-            //CASE 2
-            // hit.badge.map(i => {
-            //     switch (i) {
-            //         case i = "eco":
-            //             console.log(i)
-            //             return `<div class="badge badgeEco"><p>${i}</p></div>`;
-            //             break;
-            //         case i = "off":
-            //             console.log(discount, "-", i)
-            //             return `<div class="badge badgeOff>${discount}% ${i}</div>`
-            //             break;
-            //         default:
-            //             console.log('problem with badge')
-            //     }
-            // })
-
+    function displayEcoBadge(hit) {
+        if (hit.badges) {
+            let eco = hit.badges.eco
+            if (eco) {
+                return `<div class="badge badgeEco"><p>Eco</p></div>`
+            } else { return `` }
+        } else {
+            return ``
         }
     }
+
+    function displayOffBadge(hit) {
+        if (hit.badges) {
+            let off = hit.badges.off
+            if (off) {
+                let discount = (1 - (hit.newPrice / hit.price)) * 100
+                discount = Math.floor(parseInt(discount, 10))
+                console.log(discount)
+                return `<div class="badge badgeOff">${discount}% Off</div>`
+            } else {
+                return ``
+            }
+        } else {
+            return ``
+        }
+    }
+
 
 
 
@@ -707,12 +687,16 @@ export function searchResults() {
             templates: {
                 item: hit => `
                 <li class="carousel-list-item">
-                <div>${displayBadge(hit)}</div>
+               
                 <a href="${hit.url
                     }" class="product-searchResult" data-id="${hit.objectID}">
                     <div class="image-wrapper">
                         <img src="${hit.image_link}" align="left" alt="${hit.name
                     }" class="result-img" />
+                    <div class="badgeWrapper">
+                        <div>${displayEcoBadge(hit)}</div>
+                        <div>${displayOffBadge(hit)}</div>
+                    </div>
                         <div class="hit-sizeFilter">
                             <p>Sizes available: <span>${hit.sizeFilter
                     }</span></p>

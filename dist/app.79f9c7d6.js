@@ -38342,51 +38342,34 @@ function searchResults() {
     }
   }
 
-  function displayBadge(hit) {
-    if (hit.badge) {
-      let discount = (1 - hit.newPrice / hit.price) * 100;
-      discount = Math.floor(parseInt(discount, 10)); //CASE 1
+  function displayEcoBadge(hit) {
+    if (hit.badges) {
+      let eco = hit.badges.eco;
 
-      let i;
+      if (eco) {
+        return "<div class=\"badge badgeEco\"><p>Eco</p></div>";
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
+  }
 
-      for (i = 0; i < hit.badge.length; i++) {
-        console.log(hit.badge[i]);
+  function displayOffBadge(hit) {
+    if (hit.badges) {
+      let off = hit.badges.off;
 
-        if (hit.badge[i] === "eco") {
-          return "<div class=\"badge badgeEco\"><p>".concat(hit.badge[i], "</p></div>");
-        } else if (hit.badge[i] === "off") {
-          return "<div class=\"badge badgeOff>".concat(discount, "% ").concat(hit.badge[i], "</div>");
-        } else {
-          console.log("I'm in hellse");
-        } // switch (hit.badge[i]) {
-        //     case "eco":
-        //         console.log(i)
-        //         return `<div class="badge badgeEco"><p>${i}</p></div>`;
-        //         break;
-        //     case "off":
-        //         console.log(discount, "-", i)
-        //         return `<div class="badge badgeOff>${discount}% ${i}</div>`
-        //         break;
-        //     default:
-        //         console.log('problem with badge')
-        // }
-
-      } //CASE 2
-      // hit.badge.map(i => {
-      //     switch (i) {
-      //         case i = "eco":
-      //             console.log(i)
-      //             return `<div class="badge badgeEco"><p>${i}</p></div>`;
-      //             break;
-      //         case i = "off":
-      //             console.log(discount, "-", i)
-      //             return `<div class="badge badgeOff>${discount}% ${i}</div>`
-      //             break;
-      //         default:
-      //             console.log('problem with badge')
-      //     }
-      // })
-
+      if (off) {
+        let discount = (1 - hit.newPrice / hit.price) * 100;
+        discount = Math.floor(parseInt(discount, 10));
+        console.log(discount);
+        return "<div class=\"badge badgeOff\">".concat(discount, "% Off</div>");
+      } else {
+        return "";
+      }
+    } else {
+      return "";
     }
   } // function renderHitsAutocomplete(result) {
   //     const hits = result.hits;
@@ -38495,7 +38478,7 @@ function searchResults() {
   }), new _hitsWithContent.default({
     container: "#hits",
     templates: {
-      item: hit => "\n                <li class=\"carousel-list-item\">\n                <div>".concat(displayBadge(hit), "</div>\n                <a href=\"").concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>").concat(hit.name, "</div>\n                                \n                            <div class=\"colorWrapper\">\n                                    <div>").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[0] : '', "</div>\n                                    <div style=\"background: ").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[1] : '', "\" class=\"hit-colorsHex\"></div>\n                                </div>\n                                \n                                \n                            </div>\n                            <div class=\"hit-price\">\n                            ").concat(displayPrice(hit), "\n                        </div>\n                        \n                    </div>\n                </a>\n            </li>\n                "),
+      item: hit => "\n                <li class=\"carousel-list-item\">\n               \n                <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                    <div class=\"badgeWrapper\">\n                        <div>").concat(displayEcoBadge(hit), "</div>\n                        <div>").concat(displayOffBadge(hit), "</div>\n                    </div>\n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>").concat(hit.name, "</div>\n                                \n                            <div class=\"colorWrapper\">\n                                    <div>").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[0] : '', "</div>\n                                    <div style=\"background: ").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[1] : '', "\" class=\"hit-colorsHex\"></div>\n                                </div>\n                                \n                                \n                            </div>\n                            <div class=\"hit-price\">\n                            ").concat(displayPrice(hit), "\n                        </div>\n                        \n                    </div>\n                </a>\n            </li>\n                "),
       injectedItem: hit => "\n                 <li class=\"carousel-list-item\">\n                 \n                        <div class=\"image-wrapper\">\n                            <img class=\"injectImg\" src=\"".concat(hit.image, "\" alt=\"\">\n                        </div>\n                        <div class=\"btn-injection-content-wrapper\">\n                            <a class=\"btn-injection-content\">Check it out</a>\n                        </div>\n                   \n                  </li>\n              "),
       noResults: response => "\n                \n              "
     },
@@ -38959,16 +38942,20 @@ function cardAnimation() {
   }
 
   function sizeAnimation() {
-    let cardProduct = document.querySelectorAll('.ais-Hits-item');
+    let cardProduct = document.querySelectorAll('.carousel-list-item');
     cardProduct.forEach(product => {
       let sizeInfo = product.querySelector('.hit-sizeFilter');
+      let badges = product.querySelector('.badgeWrapper');
       product.addEventListener('mouseenter', e => {
+        console.log(e);
         sizeInfo.classList.remove('fadeOutSize');
         sizeInfo.classList.add('fadeInSize');
+        badges.classList.add('scaleDown');
       });
       product.addEventListener('mouseleave', e => {
         sizeInfo.classList.add('fadeOutSize');
         sizeInfo.classList.remove('fadeInSize');
+        badges.classList.remove('scaleDown');
       });
     });
   }
@@ -39032,7 +39019,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58581" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51742" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
