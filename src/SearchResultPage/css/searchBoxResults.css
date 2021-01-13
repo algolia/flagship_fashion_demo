@@ -193,6 +193,44 @@ align-items: center;
     background-color: rgb(17, 17, 17);
     color: white;
     transition: 0.3s ease-in-out;
+    
+}
+
+.badgeWrapper{
+    position: absolute;
+    right: 8rem;
+    top: 0.5rem;
+    width: 15%;
+    transition: transform 0.2s ease-in-out;
+}
+
+
+
+.badge{
+    color: black;
+    font-family: 'Roboto';
+    font-weight: bold;
+    border-radius: 1px;
+    padding: 0.2rem;
+    margin-bottom: 0.2rem;
+    font-size: 0.8rem;
+    justify-content: center;
+    display: flex;
+}
+
+.badgeOff{
+    background-color: rgba(179, 30, 30, 0.6);
+
+   
+   
+}
+.badgeEco{
+    background-color: rgba(1, 158, 1, 0.6);
+}
+
+.scaleDown{
+    transform: scale(0.9);
+    transition: transform 0.2s ease-in-out;
 }
 
 
