@@ -32,31 +32,6 @@ ul, li {
 }
 
 
-/* .searchbox{
-align-self: center;
-position: absolute;
-width: 60%;
-right: 5rem;
-} */
-
-/* .ais-SearchBox-input{
-  background-color:rgb(246,245,243);
-  border: none;
-  padding: 0.6rem;
-  padding-left: 2rem;
-  border-radius: 5px;
-} */
-/* 
-.ais-SearchBox-input::placeholder {
-  color: grey;
-  font-family: 'Roboto', sans-serif;
-  font-weight: 100;
-  font-style: italic;
-  letter-spacing: .1rem;
-  padding-left: 2rem;
-  font-size: 0.8rem;
-} */
-
 /* CAROUSEL IMAGE GLIDEJS */
 .glide__slides{
   padding: 0;
