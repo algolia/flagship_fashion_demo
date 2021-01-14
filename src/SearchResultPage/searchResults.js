@@ -640,16 +640,16 @@ export function searchResults() {
             templates: {
                 item: hit => `
                 <li class="carousel-list-item">
-               
+                <div class="badgeWrapper">
+                        <div>${displayEcoBadge(hit)}</div>
+                        <div>${displayOffBadge(hit)}</div>
+                    </div>
                 <a href="${hit.url
                     }" class="product-searchResult" data-id="${hit.objectID}">
                     <div class="image-wrapper">
                         <img src="${hit.image_link}" align="left" alt="${hit.name
                     }" class="result-img" />
-                    <div class="badgeWrapper">
-                        <div>${displayEcoBadge(hit)}</div>
-                        <div>${displayOffBadge(hit)}</div>
-                    </div>
+                   
                         <div class="hit-sizeFilter">
                             <p>Sizes available: <span>${hit.sizeFilter
                     }</span></p>
