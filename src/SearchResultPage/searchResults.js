@@ -167,19 +167,7 @@ export function searchResults() {
         renderCurrentRefinements
     );
 
-    // search.addWidgets([
-    //     customRefinementList({
-    //         container: document.querySelector('#refinement-list-SearchResult'),
-    //         attribute: 'keywords',
-    //         showMoreLimit: 10,
-    //     }),
-    //     customQueryRuleCustomData({
-    //         container: document.querySelector('#queryRuleCustomData'),
-    //     }),
-    //     customCurrentRefinements({
-    //         container: document.querySelector('#current-refinements'),
-    //     }),
-    // ]);
+
 
     function createAutocompleteSearchBox() {
         const appId = 'HYDY1KWTWB';
@@ -203,6 +191,7 @@ export function searchResults() {
         const autocompleteRef = { current: null };
         // Use indicesRef to track which index (or indices) to query using autocomplete
         const indicesRef = { current: [] };
+
 
         const renderAutocomplete = (renderOptions, isFirstRender) => {
             const { indices, refine } = renderOptions;
@@ -315,15 +304,14 @@ export function searchResults() {
                         });
                     },
                     onSubmit({ root, sections, state }) {
-                        refine(state.query);
-                        // console.log(search.renderState.gstar_demo_test.stats.nbHits)
-                        // console.log(hits.length)
-                        // console.log(hits)
-                        const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
-                        if (noResultHits === 0) {
-                            const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
-                            noResult(noResultHits)
+                        const stateCollection = state.collections[3].items.length
+                        if (stateCollection === 0) {
+                            noResult(stateCollection)
+                        } else {
+                            refine(state.query);
+                            displayResultOrNoResult(stateCollection)
                         }
+
                     },
                 });
                 // During subsequent renders, refresh the autocomplete instance
@@ -374,128 +362,133 @@ export function searchResults() {
         `;
         }
 
-        function noResult(noResultHits) {
-            // let executed = false;
-            // if (!executed) {
-            //     executed = true;
+        function noResult(stateCollection) {
+            let executed = false;
+            if (!executed) {
+                executed = true;
+                console.log('je suis dans no reesult')
+                displayResultOrNoResult(stateCollection);
+                const containerNoresult = document.querySelector('.container');
+                const noResults = document.querySelector('.noResultMessage');
+                const query = document.querySelector('.aa-InputWrapper input').value;
+                const pagination = document.querySelector('#pagination');
+                pagination.style.display = 'none';
 
-            displayResultOrNoResult(noResultHits);
-            const containerNoresult = document.querySelector('.container');
-            const noResults = document.querySelector('.noResultMessage');
-            const query = document.querySelector('.aa-InputWrapper input').value;
-            const pagination = document.querySelector('#pagination');
-            pagination.style.display = 'none';
-
-            if (!noResults) {
-                let noResults = document.createElement('div');
-                noResults.innerHTML = '';
-                noResults.classList.add('noResultMessage');
-                noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
+                if (!noResults) {
+                    let noResults = document.createElement('div');
+                    noResults.innerHTML = '';
+                    noResults.classList.add('noResultMessage');
+                    noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
                 <p>Please check the spelling or try to remove filters</p>
                 <p>You can check our latest trends and collection bellow</p>`;
-                containerNoresult.prepend(noResults);
-            } else {
-                noResults.innerHTML = '';
-                noResults.classList.add('noResultMessage');
-                noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
+                    containerNoresult.prepend(noResults);
+                } else {
+                    noResults.innerHTML = '';
+                    noResults.classList.add('noResultMessage');
+                    noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
                 <p>Please check the spelling or try to remove filters</p>
                 <p>You can check our latest trends and collection bellow</p>`;
-                containerNoresult.prepend(noResults);
-            }
+                    containerNoresult.prepend(noResults);
+                }
 
-            const searchClient = algoliasearch(
-                'HYDY1KWTWB',
-                '28cf6d38411215e2eef188e635216508'
-            );
+                const searchClient = algoliasearch(
+                    'HYDY1KWTWB',
+                    '28cf6d38411215e2eef188e635216508'
+                );
 
-            const search = instantsearch({
-                indexName: 'gstar_demo_test',
-                searchClient,
-            });
+                const search = instantsearch({
+                    indexName: 'gstar_demo_test',
+                    searchClient,
+                });
 
-            // const userTokenSelector = document.getElementById("user-token-selector");
-            // userTokenSelector.addEventListener("change", () => {
-            //     userTokenSelector.disabled = true;
-            //     search.removeWidgets(carouselWidgets);
-            //     getCarouselConfigs().then((carousels) => {
-            //         console.log(carousels)
-            //         userTokenSelector.disabled = false;
-            //         carouselWidgets = createWidgets(carousels);
-            //         search.addWidgets(carouselWidgets);
-            //     });
-            // });
+                // const userTokenSelector = document.getElementById("user-token-selector");
+                // userTokenSelector.addEventListener("change", () => {
+                //     userTokenSelector.disabled = true;
+                //     search.removeWidgets(carouselWidgets);
+                //     getCarouselConfigs().then((carousels) => {
+                //         console.log(carousels)
+                //         userTokenSelector.disabled = false;
+                //         carouselWidgets = createWidgets(carousels);
+                //         search.addWidgets(carouselWidgets);
+                //     });
+                // });
 
-            function getUserToken() {
-                const getPersona = localStorage.getItem('personaValue');
+                function getUserToken() {
+                    const getPersona = localStorage.getItem('personaValue');
 
-                return getPersona;
-            }
+                    return getPersona;
+                }
 
-            //GET THE CONFIG
-            function getCarouselConfigs() {
-                return searchClient
-                    .initIndex('gstar_demo_config')
-                    .search('', {
-                        facetFilters: ['userToken:' + getUserToken()],
-                        attributesToHighlight: [],
-                        attributesToRetrieve: ['title', 'indexName', 'configure'],
-                    })
-                    .then(res => res.hits);
-            }
+                //GET THE CONFIG
+                function getCarouselConfigs() {
+                    return searchClient
+                        .initIndex('gstar_demo_config')
+                        .search('', {
+                            facetFilters: ['userToken:' + getUserToken()],
+                            attributesToHighlight: [],
+                            attributesToRetrieve: ['title', 'indexName', 'configure'],
+                        })
+                        .then(res => res.hits);
+                }
 
-            //WIDGET CREATION
-            let carouselWidgets = [];
-            function createWidgets(carousels) {
-                const container = document.querySelector('#stacked-carousels');
+                //WIDGET CREATION
+                let carouselWidgets = [];
+                function createWidgets(carousels) {
+                    const container = document.querySelector('#stacked-carousels');
 
-                container.innerText = '';
+                    container.innerText = '';
 
-                return carousels.map(carouselConfig => {
-                    const carouselContainer = document.createElement('div');
-                    carouselContainer.className = 'carousel';
+                    return carousels.map(carouselConfig => {
+                        const carouselContainer = document.createElement('div');
+                        carouselContainer.className = 'carousel';
 
-                    const indexWidget = index({
-                        indexName: carouselConfig.indexName,
-                        indexId: carouselConfig.objectID,
-                    });
+                        const indexWidget = index({
+                            indexName: carouselConfig.indexName,
+                            indexId: carouselConfig.objectID,
+                        });
 
-                    if (carouselConfig.configure) {
+                        if (carouselConfig.configure) {
+
+                            indexWidget.addWidgets([
+                                configure({
+                                    ...carouselConfig.configure,
+                                    userToken: getUserToken(),
+                                }),
+                            ]);
+                        }
 
                         indexWidget.addWidgets([
-                            configure({
-                                ...carouselConfig.configure,
-                                userToken: getUserToken(),
+                            carousel({
+                                title: carouselConfig.title,
+                                container: carouselContainer,
                             }),
                         ]);
-                    }
 
-                    indexWidget.addWidgets([
-                        carousel({
-                            title: carouselConfig.title,
-                            container: carouselContainer,
-                        }),
-                    ]);
+                        container.appendChild(carouselContainer);
+                        return indexWidget;
+                    });
+                }
 
-                    container.appendChild(carouselContainer);
-                    return indexWidget;
+                // retrieve the carousel configuration once
+                getCarouselConfigs().then(carousels => {
+                    carouselWidgets = createWidgets(carousels);
+                    search.addWidgets(carouselWidgets);
+                    search.start();
                 });
             }
-
-            // retrieve the carousel configuration once
-            getCarouselConfigs().then(carousels => {
-                carouselWidgets = createWidgets(carousels);
-                search.addWidgets(carouselWidgets);
-                search.start();
-            });
-            // }
         }
 
-        function displayResultOrNoResult(noResultHits) {
+        function displayResultOrNoResult(stateCollection) {
+            console.log(stateCollection)
             const hitContainer = document.querySelector('#hitsResults');
             const hit = document.querySelector("#hits")
             const noResultCarousel = document.querySelector('#stacked-carousels');
             const noResultContainer = document.querySelector('.container');
-            if (noResultHits === 0) {
+            const pagination = document.querySelector('#pagination');
+
+            if (stateCollection === 0) {
+                hit.classList.add('displayFalse');
+                hit.classList.remove('displayGrid');
                 hitContainer.classList.remove('displayGrid');
                 hitContainer.classList.add('displayFalse');
                 noResultCarousel.classList.add('displayTrue');
@@ -505,10 +498,13 @@ export function searchResults() {
             } else {
                 hitContainer.classList.add('displayGrid');
                 hitContainer.classList.remove('displayFalse');
+                hit.classList.add('displayGrid');
+                hit.classList.remove('displayFalse');
                 noResultCarousel.classList.remove('displayGrid');
                 noResultCarousel.classList.add('displayFalse');
                 noResultContainer.classList.add('displayFalse');
                 noResultContainer.classList.remove('displayTrue');
+                pagination.style.display = 'block';
             }
         }
     }
@@ -539,7 +535,6 @@ export function searchResults() {
             if (off) {
                 let discount = (1 - (hit.newPrice / hit.price)) * 100
                 discount = Math.floor(parseInt(discount, 10))
-                console.log(discount)
                 return `<div class="badge badgeOff">${discount}% Off</div>`
             } else {
                 return ``
@@ -552,67 +547,24 @@ export function searchResults() {
 
 
 
-    // function renderHitsAutocomplete(result) {
-    //     const hits = result.hits;
-    //     console.log(hits.length)
-
-    //     if (hits.length != 0) {
-    //         // displayResultOrNoResult(hits)
-    //         const pagination = document.querySelector('#pagination');
-    //         pagination.style.display = 'block';
-    //         const hitContainer = document.querySelector('#hitsResults');
-    //         hitContainer.innerHTML = hits
-    //             .map(
-    //                 hit =>
-    //                     `
-    //                 <li class="carousel-list-item">
-    //                 <a href="${hit.url
-    //                     }" class="product-searchResult" data-id="${hit.objectID}">
-    //                     <div class="image-wrapper">
-    //                         <img src="${hit.image_link}" align="left" alt="${hit.name
-    //                     }" class="result-img" />
-    //                         <div class="hit-sizeFilter">
-    //                             <p>Sizes available: <span>${hit.sizeFilter
-    //                     }</span></p>
-    //                         </div>
-    //                     </div>
-    //                     <div class="hit-name">
-    //                         <div class="hit-infos">
-    //                             <div>${hit.name}</div>
-
-    //                             <div class="colorWrapper">
-
-
-    //                                     <div>${hit.hexColorCode ? hit.hexColorCode.split('//')[0] : ''
-    //                     }</div>
-    //                                     <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-    //                     }" class="hit-colorsHex"></div>
-    //                                 </div>
-
-
-    //                             </div>
-    //                         <div class="hit-price">
-    //                             <p>$${hit.price}</p>
-    //                             <p>$${hit.newPrice ? hit.newPrice : hit.price}</p>
-    //                         </div>
-
-    //                     </div>
-    //                 </a>
-    //             </li>
-    //                 `
-    //             )
-    //             .join('');
-    //     }
-    // }
-
     const autocompleteSearchBox = createAutocompleteSearchBox();
     // const customHits = connectHits(renderHitsAutocomplete);
 
     const renderVirtualSearchBox = (renderOptions, isFirstRender) => {
         const { refine } = renderOptions;
-
+        // console.log(refine)
+        // const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
+        // console.log(noResultHits)
+        // if (isFirstRender) {
+        // }
         refine(search.renderState.gstar_demo_test.autocomplete.currentRefinement);
+        // const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
+
+
     };
+
+    console.log('I am out of renderVirtualSearchBox ')
+
 
     const virtualSearchBox = connectSearchBox(renderVirtualSearchBox);
 
@@ -640,6 +592,7 @@ export function searchResults() {
                 container: document.querySelector('#current-refinements'),
             }),
         ]),
+        virtualSearchBox({ container: '#virtualSearch' }),
         clearRefinements({
             container: '#clear-refinements',
         }),
@@ -739,23 +692,25 @@ export function searchResults() {
                 
               `
             },
-            afterItemRenderer: (element, hit, response) => {
-                const button = element.querySelector("button");
+            // afterItemRenderer: (element, hit, response) => {
+            //     const button = element.querySelector("button");
+            //     console.log(button)
+            //     if (button) {
+            //         button.addEventListener("click", event => {
 
-                if (button) {
-                    button.addEventListener("click", event => {
-                        event.stopPropagation();
+            //             console.log(event)
+            //             event.stopPropagation();
 
-                        // aa("clickedObjectIDsAfterSearch", {
-                        //   eventName: "product_clicked",
-                        //   index: "atis-prods",
-                        //   queryID: response.queryID,
-                        //   objectIDs: [hit.objectID],
-                        //   positions: [hit.__position]
-                        // });
-                    });
-                }
-            }
+            //             // aa("clickedObjectIDsAfterSearch", {
+            //             //   eventName: "product_clicked",
+            //             //   index: "atis-prods",
+            //             //   queryID: response.queryID,
+            //             //   objectIDs: [hit.objectID],
+            //             //   positions: [hit.__position]
+            //             // });
+            //         });
+            //     }
+            // }
         }),
         // customHits({
         //     container: document.querySelector('#hits'),
@@ -763,7 +718,7 @@ export function searchResults() {
         pagination({
             container: '#pagination',
         }),
-        virtualSearchBox({ container: '#virtualSearch' }),
+
     ]);
 
     search.start();

@@ -18,7 +18,6 @@ export function cardAnimation() {
             let sizeInfo = product.querySelector('.hit-sizeFilter')
             let badges = product.querySelector('.badgeWrapper')
             product.addEventListener('mouseenter', (e) => {
-                console.log(e)
                 sizeInfo.classList.remove('fadeOutSize')
                 sizeInfo.classList.add('fadeInSize')
                 badges.classList.add('scaleDown')

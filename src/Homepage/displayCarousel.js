@@ -11,8 +11,6 @@ export const carousel = connectHits(function renderCarousel(
   isFirstRender
 ) {
   if (isFirstRender) {
-    console.log(title)
-    console.log(container);
     container.insertAdjacentHTML('afterbegin',
       `<div class="title-carousel-winter"><h2>${title}</h2><a href="/searchResults.html" class="btn-carousel-winter">See All</a></div>`)
     const ul = document.createElement('ul');
