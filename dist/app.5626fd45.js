@@ -20718,8 +20718,6 @@ const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFi
   } = _ref;
 
   if (isFirstRender) {
-    console.log(title);
-    console.log(container);
     container.insertAdjacentHTML('afterbegin', "<div class=\"title-carousel-winter\"><h2>".concat(title, "</h2><a href=\"/searchResults.html\" class=\"btn-carousel-winter\">See All</a></div>"));
     const ul = document.createElement('ul');
     ul.classList.add('carousel-list-container');
@@ -38526,7 +38524,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62183" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50218" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
