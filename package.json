@@ -12,7 +12,7 @@
     "build": "parcel build html/*",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "predeploy": "rm -rf dist && parcel build index.html searchResults.html categoryPageMan.html categoryPageWoman.html  --public-url ./",
+    "predeploy": "rm -rf dist && parcel build html/*  --public-url ./",
     "deploy": "gh-pages -d dist"
   },
   "type": "module",
