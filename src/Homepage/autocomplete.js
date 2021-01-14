@@ -19,6 +19,7 @@ export function autoComplete() {
                     console.error(err);
                     cb([]);
                 });
+            console.log(query)
         };
     }
 
@@ -30,7 +31,7 @@ export function autoComplete() {
             templates: {
                 header: '<div class="aa-suggestions-category">Product</div>',
                 suggestion({ _highlightResult }) {
-                    return ` <a href="./searchResults.html" >
+                    return ` <a>
                                 <div class="aa-suggestions-product">
                                     <img src="${_highlightResult.image_link.value}">
                                     <div class="aa-suggestions-product-info">
@@ -57,7 +58,8 @@ export function autoComplete() {
             }
         }
     ]).on('autocomplete:selected', function (event, suggestion, dataset, context) {
-        console.log(event, suggestion, dataset, context);
+        localStorage.setItem('userQuery', suggestion.name);
+        window.location.href = "./searchResults.html"
     });
 }
 

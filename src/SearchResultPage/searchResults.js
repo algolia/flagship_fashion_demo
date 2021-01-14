@@ -31,6 +31,7 @@ import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches';
 import '@algolia/autocomplete-theme-classic';
 import { carousel } from '../Homepage/displayCarousel';
+import { getLocalStorage } from '@algolia/autocomplete-plugin-recent-searches/dist/esm/usecases/localStorage';
 
 export function searchResults() {
     const searchClient = algoliasearch(
@@ -564,6 +565,7 @@ export function searchResults() {
     };
 
     console.log('I am out of renderVirtualSearchBox ')
+    console.log(localStorage.getItem('userQuery'))
 
 
     const virtualSearchBox = connectSearchBox(renderVirtualSearchBox);
@@ -572,6 +574,7 @@ export function searchResults() {
     search.addWidgets([
         index({
             indexName: 'gstar_demo_test',
+
         }).addWidgets([
             configure({
                 hitsPerPage: 5,
@@ -592,6 +595,9 @@ export function searchResults() {
                 container: document.querySelector('#current-refinements'),
             }),
         ]),
+        configure({
+            query: localStorage.getItem('userQuery') ? localStorage.getItem('userQuery') : ``,
+        }),
         virtualSearchBox({ container: '#virtualSearch' }),
         clearRefinements({
             container: '#clear-refinements',

@@ -38256,6 +38256,7 @@ function autoComplete() {
         console.error(err);
         cb([]);
       });
+      console.log(query);
     };
   }
 
@@ -38271,7 +38272,7 @@ function autoComplete() {
         let {
           _highlightResult
         } = _ref;
-        return " <a href=\"./searchResults.html\" >\n                                <div class=\"aa-suggestions-product\">\n                                    <img src=\"".concat(_highlightResult.image_link.value, "\">\n                                    <div class=\"aa-suggestions-product-info\">\n                                        <span>").concat(_highlightResult.name.value, "</span>\n                                        <p>$").concat(_highlightResult.price.value, "</p>\n                                    </div>\n                                </div>\n                            </a>\n                            ");
+        return " <a>\n                                <div class=\"aa-suggestions-product\">\n                                    <img src=\"".concat(_highlightResult.image_link.value, "\">\n                                    <div class=\"aa-suggestions-product-info\">\n                                        <span>").concat(_highlightResult.name.value, "</span>\n                                        <p>$").concat(_highlightResult.price.value, "</p>\n                                    </div>\n                                </div>\n                            </a>\n                            ");
       }
 
     }
@@ -38292,7 +38293,8 @@ function autoComplete() {
 
     }
   }]).on('autocomplete:selected', function (event, suggestion, dataset, context) {
-    console.log(event, suggestion, dataset, context);
+    localStorage.setItem('userQuery', suggestion.name);
+    window.location.href = "./searchResults.html";
   });
 } // var client = algoliasearch('YourApplicationID', 'YourSearchOnlyAPIKey');
 // var index = client.initIndex('YourIndex');
@@ -38524,7 +38526,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56958" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65445" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
