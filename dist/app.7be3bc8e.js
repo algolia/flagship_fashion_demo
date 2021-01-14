@@ -37901,6 +37901,8 @@ require("@algolia/autocomplete-theme-classic");
 
 var _displayCarousel = require("../Homepage/displayCarousel");
 
+var _localStorage = require("@algolia/autocomplete-plugin-recent-searches/dist/esm/usecases/localStorage");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -38381,6 +38383,7 @@ function searchResults() {
   };
 
   console.log('I am out of renderVirtualSearchBox ');
+  console.log(localStorage.getItem('userQuery'));
   const virtualSearchBox = (0, _connectors.connectSearchBox)(renderVirtualSearchBox); // const virtualHierarchicalMenu = connectHierarchicalMenu(() => { });
 
   search.addWidgets([(0, _widgets.index)({
@@ -38398,7 +38401,9 @@ function searchResults() {
     container: document.querySelector('#banner')
   }), customCurrentRefinements({
     container: document.querySelector('#current-refinements')
-  })]), virtualSearchBox({
+  })]), (0, _widgets.configure)({
+    query: localStorage.getItem('userQuery') ? localStorage.getItem('userQuery') : ""
+  }), virtualSearchBox({
     container: '#virtualSearch'
   }), (0, _widgets.clearRefinements)({
     container: '#clear-refinements'
@@ -38463,7 +38468,7 @@ function searchResults() {
   })]);
   search.start();
 }
-},{"instantsearch.js":"../node_modules/instantsearch.js/es/index.js","algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","./hits-with-content/hits-with-content":"../src/SearchResultPage/hits-with-content/hits-with-content.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","./autocomplete":"../src/SearchResultPage/autocomplete.js","@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-js/dist/esm/index.js","@algolia/autocomplete-plugin-query-suggestions":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js","@algolia/autocomplete-plugin-recent-searches":"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/index.js","@algolia/autocomplete-theme-classic":"../node_modules/@algolia/autocomplete-theme-classic/dist/theme.css","../Homepage/displayCarousel":"../src/Homepage/displayCarousel.js"}],"../src/SearchResultPage/filterResults.js":[function(require,module,exports) {
+},{"instantsearch.js":"../node_modules/instantsearch.js/es/index.js","algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","./hits-with-content/hits-with-content":"../src/SearchResultPage/hits-with-content/hits-with-content.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","./autocomplete":"../src/SearchResultPage/autocomplete.js","@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-js/dist/esm/index.js","@algolia/autocomplete-plugin-query-suggestions":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js","@algolia/autocomplete-plugin-recent-searches":"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/index.js","@algolia/autocomplete-theme-classic":"../node_modules/@algolia/autocomplete-theme-classic/dist/theme.css","../Homepage/displayCarousel":"../src/Homepage/displayCarousel.js","@algolia/autocomplete-plugin-recent-searches/dist/esm/usecases/localStorage":"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/usecases/localStorage/index.js"}],"../src/SearchResultPage/filterResults.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38974,7 +38979,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56958" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65445" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
