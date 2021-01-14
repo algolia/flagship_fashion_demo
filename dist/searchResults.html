@@ -1,1 +1,187 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="theme-color" content="#000000"><link rel="manifest" href="__/manifest.webmanifest"><link rel="icon shortcut" href="favicon.9cf5b00f.png"><link rel="preconnect" href="https://fonts.gstatic.com"><link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet"><link rel="preconnect" href="https://fonts.gstatic.com"><link href="https://fonts.googleapis.com/css2?family=Castoro&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin=""><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css"><link rel="stylesheet" href="glide.core.min.d3f1668d.css"><link rel="stylesheet" href="glide.theme.min.0b32c4ce.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css"><link rel="stylesheet" href="app.751ea408.css"><link rel="stylesheet" href="app.fc3c44fd.css"></head><body> <div class="body-wrapper"> <header class="header"> <nav class="nav-wrapper"> <div class="nav-logo"> <a href="index.html"><img src="brand_logo.a13958eb.png" alt="Brand logo"></a> </div> <div class="nav-list"> <ul> <li><a href="searchResults.html">CATALOGUE</a></li> <li><a href="categoryPageWoman.html">WOMEN</a></li> <li><a href="categoryPageMan.html">MEN</a></li> <li><a href="">MAGAZINE</a></li> </ul> </div> <div class="searchbar-wrapper">  <div id="autocomplete" class="ais-SearchBox-wrapper autocomplete"> <span id="voicesearch" class="voicesearch"></span> </div> </div> <div class="burger"> <div class="line1"></div> <div class="line2"></div> <div class="line3"></div> </div> </nav> </header> <div class="ais-InstantSearch"> <div id="refinement-list-SearchResult" class="refinement-list-SearchResult"></div> <div id="banner"></div> <div class="filters-wrapper"> <div id="stats-searchResult" class="stats-searchResult"></div> <div class="btn-filter-wrapper"> <a href="" class="btn-filter">Filters<i class="fa-sort-amount-down-alt fas"></i></a> </div> </div> <div class="showfilter-wrapper"> <div id="clear-refinements" class="clear-refinements"></div> <div id="current-refinements" class="current-refinements"></div>  <div class="left-panel"> <div class="sideBarFilter"> <ul> <li class="gender sideBarFilter-listItem"> <p>Gender</p><i class="fa-chevron-right fas"></i> </li> <li class="category sideBarFilter-listItem"> <p>Category</p><i class="fa-chevron-right fas"></i> </li> <li class="colors sideBarFilter-listItem"> <p>Colors</p><i class="fa-chevron-right fas"></i> </li> <li class="sideBarFilter-listItem sizes"> <p>Size</p><i class="fa-chevron-right fas"></i> </li> </ul> </div> <div class="filter-item-wrapper gender-wrapper"> <div class="btn-backFilter"> <div><i class="fa-chevron-left fas"></i>Filters</div> </div> <h2>Gender</h2> <div id="gender-list" class="gender-list"></div> </div> <div class="category-wrapper filter-item-wrapper"> <div class="btn-backFilter"> <div><i class="fa-chevron-left fas"></i>Filters</div> </div> <h2>Category</h2> <div id="category-list" class="category-list"></div> </div> <div class="color-wrapper filter-item-wrapper"> <div class="btn-backFilter"> <div><i class="fa-chevron-left fas"></i>Filters</div> </div> <h2>Colors</h2> <div class="hexColor-list" id="hexColor-list"></div> </div> <div class="filter-item-wrapper size-wrapper"> <div class="btn-backFilter"> <div><i class="fa-chevron-left fas"></i>Filters</div> </div> <h2>Sizes</h2> <div id="size-list" class="size-list"></div> </div> <div class="color-wrapper"> <h2>Colors</h2> <div id="color-list" class="color-list"></div> </div>  </div> </div> <div class="virtualSearch" id="virtualSearch"></div> <div class="right-panel"> <div id="hex-color-list"></div> <div id="hits" class="displayGrid hitsAutocomplete"></div> <div id="hitsResults" class="displayGrid hitsAutocomplete"></div> <div class="container"> <div id="stacked-carousels"></div> </div> <div id="colorHex"></div> <div id="pagination"></div> <div class="modal-relatedItems--wrapper"> <div class="modal-relatedItems"> <div class="modal-relatedItems--closeBtn">X</div> <div class="modal-carousel--wraper"> <div class="modal-carousel--title"> <h2>In the same Category</h2> <div class="underline"></div> </div> <div id="carousel-relatedItems" class="carousel-relatedItems"></div> </div> <div class="modal-carousel--wraper"> <div class="modal-carousel--title"> <h2>You Might also like</h2> <div class="underline"></div> </div> <div id="carousel-relatedItemsSecond" class="carousel-relatedItemsSecond"></div> </div> </div> </div> </div> </div> </div>     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin=""></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.0/js/standalone/selectize.js" integrity="sha512-B03hDxgZPMBobOrnBhFiKvf8XCO7IRNa26/WiQK9lU+grXd5WXVHq3togZ67YLcUnNdrtoBbn5bi0GhYd0ivCA==" crossorigin=""></script> <script src="app.02ef6300.js"></script> </body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+
+
+    <link rel="manifest" href="/__/manifest.webmanifest">
+    <link rel="shortcut icon" href="/favicon.115cad8f.png">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Castoro&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css">
+
+    <!-- Required Core Stylesheet GLIDE.JS  -->
+    <link rel="stylesheet" href="/glide.core.min.6db1f6b7.css">
+
+    <!-- Optional Theme Stylesheet GLIDE.JS -->
+    <link rel="stylesheet" href="/glide.theme.min.f1c02742.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css">
+
+    <link rel="stylesheet" href="/app.24d4b4d7.css">
+    <!-- <link rel="stylesheet" href="./src/SearchResult_JS/css/searchboxHeader.css"> -->
+
+
+
+<script src="/app.24d4b4d7.js"></script><link rel="stylesheet" href="/app.7be3bc8e.css"></head>
+
+<body>
+    <div class="body-wrapper">
+        <header class="header">
+            <nav class="nav-wrapper">
+                <div class="nav-logo">
+                    <a href="/index.html"><img src="/brand_logo.2111d810.png" alt="Brand logo"></a>
+                </div>
+                <div class="nav-list">
+                    <ul>
+                        <li><a href="/searchResults.html">CATALOGUE</a></li>
+                        <li><a href="/categoryPageWoman.html">WOMEN</a></li>
+                        <li><a href="/categoryPageMan.html">MEN</a></li>
+                        <li><a href="">MAGAZINE</a></li>
+                    </ul>
+                </div>
+                <div class="searchbar-wrapper">
+                    <!-- <div id="searchbox" class="ais-SearchBox-wrapper">
+                    </div> -->
+                    <div id="autocomplete" class="autocomplete ais-SearchBox-wrapper">
+                        <span id="voicesearch" class="voicesearch"></span>
+                    </div>
+                </div>
+                <div class="burger">
+                    <div class="line1"></div>
+                    <div class="line2"></div>
+                    <div class="line3"></div>
+                </div>
+            </nav>
+        </header>
+
+        <div class="ais-InstantSearch">
+            <div id="refinement-list-SearchResult" class="refinement-list-SearchResult"></div>
+            <div id="banner"></div>
+            <div class="filters-wrapper">
+                <div id="stats-searchResult" class="stats-searchResult"></div>
+                <div class="btn-filter-wrapper">
+                    <a href="" class="btn-filter">Filters<i class="fas fa-sort-amount-down-alt"></i></a>
+                </div>
+
+            </div>
+            <div class="showfilter-wrapper">
+                <div id="clear-refinements" class="clear-refinements"></div>
+                <div id="current-refinements" class="current-refinements"></div>
+                <!-- <div id="searchbox-filter" class="searchbox-filter"></div> -->
+
+
+                <div class="left-panel">
+                    <div class="sideBarFilter">
+                        <ul>
+                            <li class="sideBarFilter-listItem gender">
+                                <p>Gender</p><i class="fas fa-chevron-right"></i>
+                            </li>
+                            <li class="sideBarFilter-listItem category">
+                                <p>Category</p><i class="fas fa-chevron-right"></i>
+                            </li>
+                            <li class="sideBarFilter-listItem colors">
+                                <p>Colors</p><i class="fas fa-chevron-right"></i>
+                            </li>
+                            <li class="sideBarFilter-listItem sizes">
+                                <p>Size</p><i class="fas fa-chevron-right"></i>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="gender-wrapper filter-item-wrapper">
+                        <div class="btn-backFilter">
+                            <div><i class="fas fa-chevron-left"></i>Filters</div>
+                        </div>
+                        <h2>Gender</h2>
+                        <div id="gender-list" class="gender-list"></div>
+                    </div>
+                    <div class="category-wrapper filter-item-wrapper">
+                        <div class="btn-backFilter">
+                            <div><i class="fas fa-chevron-left"></i>Filters</div>
+                        </div>
+                        <h2>Category</h2>
+                        <div id="category-list" class="category-list"></div>
+                    </div>
+                    <div class="color-wrapper filter-item-wrapper">
+                        <div class="btn-backFilter">
+                            <div><i class="fas fa-chevron-left"></i>Filters</div>
+                        </div>
+                        <h2>Colors</h2>
+                        <div class="hexColor-list" id="hexColor-list"></div>
+                    </div>
+                    <div class="size-wrapper filter-item-wrapper">
+                        <div class="btn-backFilter">
+                            <div><i class="fas fa-chevron-left"></i>Filters</div>
+                        </div>
+                        <h2>Sizes</h2>
+                        <div id="size-list" class="size-list"></div>
+                    </div>
+                    <div class="color-wrapper">
+                        <h2>Colors</h2>
+                        <div id="color-list" class="color-list"></div>
+                    </div>
+                    <!-- <div class="color-wrapper">
+                        <h2>Colors</h2>
+                        <div id="hex-color-list" class="color-list"></div>
+                    </div> -->
+                </div>
+            </div>
+
+            <div class="virtualSearch" id="virtualSearch"></div>
+
+            <div class="right-panel">
+
+                <div id="hex-color-list"></div>
+                <div id="hits" class="hitsAutocomplete displayGrid"></div>
+                <div id="hitsResults" class="hitsAutocomplete displayGrid"></div>
+                <div class="container">
+                    <div id="stacked-carousels"></div>
+                </div>
+
+                <div id="colorHex"></div>
+                <div id="pagination"></div>
+
+                <div class="modal-relatedItems--wrapper">
+                    <div class="modal-relatedItems">
+                        <div class="modal-relatedItems--closeBtn">X</div>
+                        <div class="modal-carousel--wraper">
+                            <div class="modal-carousel--title">
+                                <h2>In the same Category</h2>
+                                <div class="underline"></div>
+                            </div>
+                            <div id="carousel-relatedItems" class="carousel-relatedItems"></div>
+
+                        </div>
+                        <div class="modal-carousel--wraper">
+                            <div class="modal-carousel--title">
+                                <h2>You Might also like</h2>
+                                <div class="underline"></div>
+                            </div>
+                            <div id="carousel-relatedItemsSecond" class="carousel-relatedItemsSecond"></div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/algoliasearch/3.32.0/algoliasearchLite.min.js"></script> -->
+    <!-- for the default version -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch.umd.js"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.0/js/standalone/selectize.js" integrity="sha512-B03hDxgZPMBobOrnBhFiKvf8XCO7IRNa26/WiQK9lU+grXd5WXVHq3togZ67YLcUnNdrtoBbn5bi0GhYd0ivCA==" crossorigin="anonymous"></script>
+    <script src="/app.7be3bc8e.js"></script>
+</body>
+
+</html>
