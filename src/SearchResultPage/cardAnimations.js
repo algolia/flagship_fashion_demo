@@ -18,16 +18,25 @@ export function cardAnimation() {
             let sizeInfo = product.querySelector('.hit-sizeFilter')
             let badges = product.querySelector('.badgeWrapper')
             product.addEventListener('mouseenter', (e) => {
-                sizeInfo.classList.remove('fadeOutSize')
-                sizeInfo.classList.add('fadeInSize')
-                badges.classList.add('scaleDown')
+                if (sizeInfo) {
+                    sizeInfo.classList.remove('fadeOutSize')
+                    sizeInfo.classList.add('fadeInSize')
+                }
+                if (badges) {
+                    badges.classList.add('scaleDown')
+                }
+
 
 
             })
             product.addEventListener('mouseleave', (e) => {
-                sizeInfo.classList.add('fadeOutSize')
-                sizeInfo.classList.remove('fadeInSize')
-                badges.classList.remove('scaleDown')
+                if (sizeInfo) {
+                    sizeInfo.classList.add('fadeOutSize')
+                    sizeInfo.classList.remove('fadeInSize')
+                }
+                if (badges) {
+                    badges.classList.remove('scaleDown')
+                }
             })
         })
     }
