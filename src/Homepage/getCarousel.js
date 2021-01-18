@@ -278,7 +278,7 @@ export function GetDataForCarousel() {
                     onSubmit({ root, sections, state }) {
                         console.log('success')
                         refine(state.query);
-                        window.location.href = `/flagship_fashion_demo/searchResults.html?gstar_demo_test%5Bquery%5D=${state.query}`
+                        window.location.href = `./searchResults.html?gstar_demo_test%5Bquery%5D=${state.query}`
 
                     },
                 });
@@ -301,7 +301,7 @@ export function GetDataForCarousel() {
         function productTemplate({ image, title, description, price, query }) {
             return `
             <div class="aa-ItemContent">
-                <a href="/flagship_fashion_demo/searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-ItemLink">
+                <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-ItemLink">
                     <div class="aa-ItemImage">
                         <img src="${image}" alt="${title}">
                     </div>
@@ -318,7 +318,7 @@ export function GetDataForCarousel() {
             console.log(query)
             return `
             <div class="aa-btnShowMore-wrapper">
-                <a href="./flagship_fashion_demo/searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-btnShowMore">
+                <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-btnShowMore">
                     ${title}
                 </a>
           </div>
@@ -329,7 +329,7 @@ export function GetDataForCarousel() {
             console.log(title)
             return `
           <div class="aa-ItemContentCategory">
-            <a href="/flagship_fashion_demo/searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-ItemLinkCategory">
+            <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-ItemLinkCategory">
                 <div class="aa-ItemTitle">${title}</div>
             </a>
           </div>
