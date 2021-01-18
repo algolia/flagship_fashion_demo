@@ -15,7 +15,6 @@ burgerMenu()
 
 var checkExist = setInterval(function () {
     if (document.readyState != 'loading') {
-        console.log("Exists!");
         relatedResultModal()
         cardAnimation()
         clearInterval(checkExist);

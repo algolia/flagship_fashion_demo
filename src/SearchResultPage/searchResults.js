@@ -42,7 +42,9 @@ export function searchResults() {
     const search = instantsearch({
         indexName: 'gstar_demo_test',
         searchClient,
+        routing: true
     });
+
 
     const renderRefinementList = (renderOptions, isFirstRender) => {
         const { items, refine, createURL, widgetParams } = renderOptions;
@@ -402,18 +404,6 @@ export function searchResults() {
                     searchClient,
                 });
 
-                // const userTokenSelector = document.getElementById("user-token-selector");
-                // userTokenSelector.addEventListener("change", () => {
-                //     userTokenSelector.disabled = true;
-                //     search.removeWidgets(carouselWidgets);
-                //     getCarouselConfigs().then((carousels) => {
-                //         console.log(carousels)
-                //         userTokenSelector.disabled = false;
-                //         carouselWidgets = createWidgets(carousels);
-                //         search.addWidgets(carouselWidgets);
-                //     });
-                // });
-
                 function getUserToken() {
                     const getPersona = localStorage.getItem('personaValue');
 
@@ -545,6 +535,137 @@ export function searchResults() {
         }
     }
 
+    function noResult(hits, query) {
+        let executed = false;
+        if (!executed) {
+            executed = true;
+
+            displayResultOrNoResult(hits);
+            const containerNoresult = document.querySelector('.container');
+            const noResults = document.querySelector('.noResultMessage');
+            const pagination = document.querySelector('#pagination');
+            pagination.style.display = 'none';
+
+            if (!noResults) {
+                let noResults = document.createElement('div');
+                noResults.innerHTML = '';
+                noResults.classList.add('noResultMessage');
+                noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
+            <p>Please check the spelling or try to remove filters</p>
+            <p>You can check our latest trends and collection bellow</p>`;
+                containerNoresult.prepend(noResults);
+            } else {
+                noResults.innerHTML = '';
+                noResults.classList.add('noResultMessage');
+                noResults.innerHTML = `<p>Sorry no result for <span>${query}</span></p>
+            <p>Please check the spelling or try to remove filters</p>
+            <p>You can check our latest trends and collection bellow</p>`;
+                containerNoresult.prepend(noResults);
+            }
+
+            const searchClient = algoliasearch(
+                'HYDY1KWTWB',
+                '28cf6d38411215e2eef188e635216508'
+            );
+
+            const search = instantsearch({
+                indexName: 'gstar_demo_test',
+                searchClient,
+            });
+
+            function getUserToken() {
+                const getPersona = localStorage.getItem('personaValue');
+
+                return getPersona;
+            }
+
+            //GET THE CONFIG
+            function getCarouselConfigs() {
+                return searchClient
+                    .initIndex('gstar_demo_config')
+                    .search('', {
+                        facetFilters: ['userToken:' + getUserToken()],
+                        attributesToHighlight: [],
+                        attributesToRetrieve: ['title', 'indexName', 'configure'],
+                    })
+                    .then(res => res.hits);
+            }
+
+            //WIDGET CREATION
+            let carouselWidgets = [];
+            function createWidgets(carousels) {
+                const container = document.querySelector('#stacked-carousels');
+
+                container.innerText = '';
+
+                return carousels.map(carouselConfig => {
+                    const carouselContainer = document.createElement('div');
+                    carouselContainer.className = 'carousel';
+
+                    const indexWidget = index({
+                        indexName: carouselConfig.indexName,
+                        indexId: carouselConfig.objectID,
+                    });
+
+                    if (carouselConfig.configure) {
+
+                        indexWidget.addWidgets([
+                            configure({
+                                ...carouselConfig.configure,
+                                userToken: getUserToken(),
+                            }),
+                        ]);
+                    }
+
+                    indexWidget.addWidgets([
+                        carousel({
+                            title: carouselConfig.title,
+                            container: carouselContainer,
+                        }),
+                    ]);
+
+                    container.appendChild(carouselContainer);
+                    return indexWidget;
+                });
+            }
+
+            // retrieve the carousel configuration once
+            getCarouselConfigs().then(carousels => {
+                carouselWidgets = createWidgets(carousels);
+                search.addWidgets(carouselWidgets);
+                search.start();
+            });
+        }
+    }
+
+    function displayResultOrNoResult(hits) {
+        const hitContainer = document.querySelector('#hitsResults');
+        const hit = document.querySelector("#hits")
+        const noResultCarousel = document.querySelector('#stacked-carousels');
+        const noResultContainer = document.querySelector('.container');
+        const pagination = document.querySelector('#pagination');
+
+        if (hits === 0) {
+            hit.classList.add('displayFalse');
+            hit.classList.remove('displayGrid');
+            hitContainer.classList.remove('displayGrid');
+            hitContainer.classList.add('displayFalse');
+            noResultCarousel.classList.add('displayTrue');
+            noResultCarousel.classList.remove('displayFalse');
+            noResultContainer.classList.remove('displayFalse');
+            noResultContainer.classList.add('displayTrue');
+        } else {
+            hitContainer.classList.add('displayGrid');
+            hitContainer.classList.remove('displayFalse');
+            hit.classList.add('displayGrid');
+            hit.classList.remove('displayFalse');
+            noResultCarousel.classList.remove('displayGrid');
+            noResultCarousel.classList.add('displayFalse');
+            noResultContainer.classList.add('displayFalse');
+            noResultContainer.classList.remove('displayTrue');
+            pagination.style.display = 'block';
+        }
+    }
 
 
 
@@ -563,9 +684,6 @@ export function searchResults() {
 
 
     };
-
-    console.log('I am out of renderVirtualSearchBox ')
-    console.log(localStorage.getItem('userQuery'))
 
 
     const virtualSearchBox = connectSearchBox(renderVirtualSearchBox);
@@ -594,6 +712,19 @@ export function searchResults() {
             customCurrentRefinements({
                 container: document.querySelector('#current-refinements'),
             }),
+            {
+                init(opts) {
+
+                }
+            },
+            {
+                render(options) {
+                    const results = options.results;
+                    if (results.nbHits === 0) {
+                        noResult(results.nbHits, results.query)
+                    }
+                }
+            }
         ]),
         configure({
             query: localStorage.getItem('userQuery') ? localStorage.getItem('userQuery') : ``,
