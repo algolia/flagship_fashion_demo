@@ -1,5 +1,21 @@
 /* AUTOCOMPLETE */
 
+.aa-Input{
+  z-index: 10;
+}
+
+.aa-PanelLayout {
+  background-color: #fff;
+  border: 1px solid hsla(0,0%,58.8%,.16);
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(35,38,59,.05), 0 8px 16px -4px rgba(35,38,59,.25);
+  margin-top: 5px;
+  z-index: 99;
+  position: relative;
+}
+
+
+
 .aa-titleCategory{
 display: flex;
 margin: 1rem auto;

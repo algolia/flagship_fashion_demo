@@ -549,6 +549,105 @@
             transform: translateX(0px);
        }
    }
+/* AUTOCOMPLETE */
+a{
+    text-decoration: none;
+}
+
+.aa-PanelLayout {
+    background-color: #fff;
+    border: 1px solid hsla(0,0%,58.8%,.16);
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(35,38,59,.05), 0 8px 16px -4px rgba(35,38,59,.25);
+    margin-top: 5px;
+    z-index: 99;
+    position: relative;
+  }
+.aa-titleCategory{
+    display: flex;
+    margin: 1rem auto;
+    padding: 0.5rem 1rem;
+    font-family: 'Castoro', serif;
+}
+
+.ais-SearchBox-wrapper {
+    align-self: center;
+    position: absolute;
+    width: 60%;
+    right: 5rem;
+}
+
+.aa-ItemLink{
+    display: flex;
+    position: relative;
+    padding: 1rem;
+    font-size: 0.8rem;
+    font-family: "Roboto"
+}
+
+.aa-ItemTitle{
+    color: black;
+}
+    
+.aa-ItemContent{
+    display: flex;
+    border-bottom: 1px solid rgba(133, 133, 133, 0.2);
+    position: relative;
+    padding: 1rem;
+    font-size: 0.8rem;
+    font-family: "Roboto";
+}
+
+.aa-ItemContentCategory{
+    display: flex;
+    border-bottom: 1px solid rgba(133, 133, 133, 0.2);
+    color: black;
+    width: 100%;
+    text-decoration: none;
+    position: relative;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    font-family: "Roboto";
+}
+
+
+.aa-ItemImage img{
+    padding: 0.3rem;
+    margin-right: 1rem;
+    border-radius: 5px;
+    width: 70px;
+    filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
+    object-fit: contain;
+}
+
+.aa-ItemInfos{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    place-content: center;
+    color: black;
+}
+.aa-btnShowMore-wrapper{
+    display: flex;
+    justify-content: center;
+    place-content: center;
+}
+.aa-btnShowMore{
+    padding: 0.6rem 1rem;
+    border: 1px solid rgba(0, 0, 0, .5);
+    font-size: 0.8rem;
+    font-family: "Roboto";
+    color: black;
+    align-self: center;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    margin: 1rem;
+}
+.aa-btnShowMore:hover{
+    background-color: rgb(17, 17, 17);
+    color: white;
+    transition: 0.3s ease-in-out;
+}
 
 /* GENERAL STYLE */
 

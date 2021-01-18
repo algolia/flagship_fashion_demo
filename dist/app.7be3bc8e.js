@@ -37379,6 +37379,16 @@ var _algoliasearch = _interopRequireDefault(require("algoliasearch"));
 
 var _widgets = require("instantsearch.js/es/widgets");
 
+var _connectors = require("instantsearch.js/es/connectors");
+
+var _autocompleteJs = require("@algolia/autocomplete-js");
+
+var _autocompletePluginQuerySuggestions = require("@algolia/autocomplete-plugin-query-suggestions");
+
+var _autocompletePluginRecentSearches = require("@algolia/autocomplete-plugin-recent-searches");
+
+require("@algolia/autocomplete-theme-classic");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -37392,8 +37402,16 @@ function GetDataForCarousel() {
   const searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
   const search = (0, _instantsearch.default)({
     indexName: 'gstar_demo_test',
-    searchClient
+    searchClient,
+    routing: true
   });
+  const autocompleteSearchBox = createAutocompleteSearchBox();
+  search.addWidgets([(0, _widgets.index)({
+    indexName: 'gstar_demo_test'
+  }).addWidgets([autocompleteSearchBox({
+    container: '#autocomplete',
+    placeholder: 'Search products'
+  })])]);
   const userTokenSelector = document.getElementById("user-token-selector");
   userTokenSelector.addEventListener("change", () => {
     userTokenSelector.disabled = true;
@@ -37476,8 +37494,226 @@ function GetDataForCarousel() {
     search.addWidgets(carouselWidgets);
     search.start();
   });
+
+  function createAutocompleteSearchBox() {
+    const appId = 'HYDY1KWTWB';
+    const apiKey = '28cf6d38411215e2eef188e635216508';
+    const searchClient = (0, _algoliasearch.default)(appId, apiKey);
+    const recentSearchesPlugin = (0, _autocompletePluginRecentSearches.createLocalStorageRecentSearchesPlugin)({
+      key: 'search',
+      limit: 3
+    });
+    const querySuggestionsPlugin = (0, _autocompletePluginQuerySuggestions.createQuerySuggestionsPlugin)({
+      searchClient,
+      indexName: 'gstar_demo_test_query_suggestions',
+
+      getSearchParams() {
+        return recentSearchesPlugin.data.getAlgoliaSearchParams({
+          hitsPerPage: 3
+        });
+      }
+
+    }); // Use autocompleteRef to track the current autocomplete instance
+
+    const autocompleteRef = {
+      current: null
+    }; // Use indicesRef to track which index (or indices) to query using autocomplete
+
+    const indicesRef = {
+      current: []
+    };
+
+    const renderAutocomplete = (renderOptions, isFirstRender) => {
+      const {
+        indices,
+        refine
+      } = renderOptions; // Store indices prop in indicesRef
+
+      indicesRef.current = indices || []; // Instantiate autocomplete instance during the first render
+
+      if (isFirstRender) {
+        autocompleteRef.current = (0, _autocompleteJs.autocomplete)({
+          container: '#autocomplete',
+          // debug: true,
+          openOnFocus: true,
+          plugins: [recentSearchesPlugin, querySuggestionsPlugin],
+
+          getSources(_ref) {
+            let {
+              query
+            } = _ref;
+
+            if (!query) {
+              return [];
+            }
+
+            return (0, _autocompleteJs.getAlgoliaResults)({
+              searchClient,
+              queries: [{
+                query,
+                indexName: 'gstar_demo_test',
+                params: {
+                  hitsPerPage: 3,
+                  attributesToSnippet: ['name:10'],
+                  enablePersonalization: true
+                }
+              }]
+            }).then(async (_ref2) => {
+              let [products] = _ref2;
+              const [categories] = await searchClient.searchForFacetValues([{
+                indexName: 'gstar_demo_test',
+                params: {
+                  facetName: 'name',
+                  facetQuery: query,
+                  highlightPreTag: '<mark>',
+                  highlightPostTag: '</mark>',
+                  maxFacetHits: 5,
+                  enablePersonalization: true
+                }
+              }, {
+                indexName: 'gstar_demo_test',
+                params: {
+                  facetName: 'category',
+                  facetQuery: query,
+                  highlightPreTag: '<mark>',
+                  highlightPostTag: '</mark>',
+                  maxFacetHits: 5,
+                  enablePersonalization: true
+                }
+              }]);
+              return [{
+                getItems() {
+                  return products.hits;
+                },
+
+                templates: {
+                  header() {
+                    return headerTemplate({
+                      title: 'Products'
+                    });
+                  },
+
+                  item(_ref3) {
+                    let {
+                      item
+                    } = _ref3;
+                    return productTemplate({
+                      image: item.image_link,
+                      title: (0, _autocompleteJs.snippetHit)({
+                        hit: item,
+                        attribute: 'name'
+                      }),
+                      description: item.description,
+                      price: item.price,
+                      query: products.query
+                    });
+                  },
+
+                  footer() {
+                    return moreResultsTemplate({
+                      title: "See all products (".concat(products.nbHits, ")"),
+                      query: products.query
+                    });
+                  }
+
+                }
+              }, // {
+              //     getItems() {
+              //         return brands.facetHits;
+              //     },
+              //     templates: {
+              //         header() {
+              //             return headerTemplate({ title: "Brands" });
+              //         },
+              //         item({ item }) {
+              //             return facetTemplate({ title: item.highlighted });
+              //         }
+              //     }
+              // },
+              {
+                getItems() {
+                  return categories.facetHits;
+                },
+
+                templates: {
+                  header() {
+                    return headerTemplate({
+                      title: 'Categories'
+                    });
+                  },
+
+                  item(_ref4) {
+                    let {
+                      item
+                    } = _ref4;
+                    return facetTemplate({
+                      title: item.highlighted,
+                      query: products.query
+                    });
+                  }
+
+                }
+              }];
+            });
+          },
+
+          onSubmit(_ref5) {
+            let {
+              root,
+              sections,
+              state
+            } = _ref5;
+            console.log('success');
+            refine(state.query);
+            window.location.href = "/searchResults.html?gstar_demo_test%5Bquery%5D=".concat(state.query);
+          }
+
+        }); // During subsequent renders, refresh the autocomplete instance
+      } else if (autocompleteRef.current) {
+        autocompleteRef.current.refresh();
+      }
+    };
+
+    return (0, _connectors.connectAutocomplete)(renderAutocomplete);
+
+    function headerTemplate(_ref6) {
+      let {
+        title
+      } = _ref6;
+      return "\n            <div class=\"aa-titleCategory\">\n                <h3>".concat(title, "</h3>\n            </div>\n            ");
+    }
+
+    function productTemplate(_ref7) {
+      let {
+        image,
+        title,
+        description,
+        price,
+        query
+      } = _ref7;
+      return "\n            <div class=\"aa-ItemContent\">\n                <a href=\"/searchResults.html?gstar_demo_test%5Bquery%5D=".concat(query, "\" class=\"aa-ItemLink\">\n                    <div class=\"aa-ItemImage\">\n                        <img src=\"").concat(image, "\" alt=\"").concat(title, "\">\n                    </div>\n                    <div class=\"aa-ItemInfos\">\n                        <div class=\"aa-ItemTitle\">").concat(title, "</div>\n                        <div class=\"aa-ItemPrice\">$").concat(price, "</div>\n                    </div>\n                </a>\n            </div>\n        ");
+    }
+
+    function moreResultsTemplate(_ref8) {
+      let {
+        title,
+        query
+      } = _ref8;
+      console.log(query);
+      return "\n            <div class=\"aa-btnShowMore-wrapper\">\n                <a href=\"./searchResults.html?gstar_demo_test%5Bquery%5D=".concat(query, "\" class=\"aa-btnShowMore\">\n                    ").concat(title, "\n                </a>\n          </div>\n        ");
+    }
+
+    function facetTemplate(_ref9) {
+      let {
+        title,
+        query
+      } = _ref9;
+      console.log(title);
+      return "\n          <div class=\"aa-ItemContentCategory\">\n            <a href=\"/searchResults.html?gstar_demo_test%5Bquery%5D=".concat(query, "\" class=\"aa-ItemLinkCategory\">\n                <div class=\"aa-ItemTitle\">").concat(title, "</div>\n            </a>\n          </div>\n        ");
+    }
+  }
 } // search.start();
-},{"./displayCarousel":"../src/Homepage/displayCarousel.js","instantsearch.js":"../node_modules/instantsearch.js/es/index.js","algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js"}],"../src/SearchResultPage/autocomplete.js":[function(require,module,exports) {
+},{"./displayCarousel":"../src/Homepage/displayCarousel.js","instantsearch.js":"../node_modules/instantsearch.js/es/index.js","algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-js/dist/esm/index.js","@algolia/autocomplete-plugin-query-suggestions":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js","@algolia/autocomplete-plugin-recent-searches":"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/index.js","@algolia/autocomplete-theme-classic":"../node_modules/@algolia/autocomplete-theme-classic/dist/theme.css"}],"../src/SearchResultPage/autocomplete.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -37915,7 +38151,8 @@ function searchResults() {
   const searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
   const search = (0, _instantsearch.default)({
     indexName: 'gstar_demo_test',
-    searchClient
+    searchClient,
+    routing: true
   });
 
   const renderRefinementList = (renderOptions, isFirstRender) => {
@@ -38235,17 +38472,7 @@ function searchResults() {
         const search = (0, _instantsearch.default)({
           indexName: 'gstar_demo_test',
           searchClient
-        }); // const userTokenSelector = document.getElementById("user-token-selector");
-        // userTokenSelector.addEventListener("change", () => {
-        //     userTokenSelector.disabled = true;
-        //     search.removeWidgets(carouselWidgets);
-        //     getCarouselConfigs().then((carousels) => {
-        //         console.log(carousels)
-        //         userTokenSelector.disabled = false;
-        //         carouselWidgets = createWidgets(carousels);
-        //         search.addWidgets(carouselWidgets);
-        //     });
-        // });
+        });
 
         function getUserToken() {
           const getPersona = localStorage.getItem('personaValue');
@@ -38368,6 +38595,117 @@ function searchResults() {
     }
   }
 
+  function noResult(hits, query) {
+    let executed = false;
+
+    if (!executed) {
+      executed = true;
+      displayResultOrNoResult(hits);
+      const containerNoresult = document.querySelector('.container');
+      const noResults = document.querySelector('.noResultMessage');
+      const pagination = document.querySelector('#pagination');
+      pagination.style.display = 'none';
+
+      if (!noResults) {
+        let noResults = document.createElement('div');
+        noResults.innerHTML = '';
+        noResults.classList.add('noResultMessage');
+        noResults.innerHTML = "<p>Sorry no result for <span>".concat(query, "</span></p>\n            <p>Please check the spelling or try to remove filters</p>\n            <p>You can check our latest trends and collection bellow</p>");
+        containerNoresult.prepend(noResults);
+      } else {
+        noResults.innerHTML = '';
+        noResults.classList.add('noResultMessage');
+        noResults.innerHTML = "<p>Sorry no result for <span>".concat(query, "</span></p>\n            <p>Please check the spelling or try to remove filters</p>\n            <p>You can check our latest trends and collection bellow</p>");
+        containerNoresult.prepend(noResults);
+      }
+
+      const searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+      const search = (0, _instantsearch.default)({
+        indexName: 'gstar_demo_test',
+        searchClient
+      });
+
+      function getUserToken() {
+        const getPersona = localStorage.getItem('personaValue');
+        return getPersona;
+      } //GET THE CONFIG
+
+
+      function getCarouselConfigs() {
+        return searchClient.initIndex('gstar_demo_config').search('', {
+          facetFilters: ['userToken:' + getUserToken()],
+          attributesToHighlight: [],
+          attributesToRetrieve: ['title', 'indexName', 'configure']
+        }).then(res => res.hits);
+      } //WIDGET CREATION
+
+
+      let carouselWidgets = [];
+
+      function createWidgets(carousels) {
+        const container = document.querySelector('#stacked-carousels');
+        container.innerText = '';
+        return carousels.map(carouselConfig => {
+          const carouselContainer = document.createElement('div');
+          carouselContainer.className = 'carousel';
+          const indexWidget = (0, _widgets.index)({
+            indexName: carouselConfig.indexName,
+            indexId: carouselConfig.objectID
+          });
+
+          if (carouselConfig.configure) {
+            indexWidget.addWidgets([(0, _widgets.configure)(_objectSpread(_objectSpread({}, carouselConfig.configure), {}, {
+              userToken: getUserToken()
+            }))]);
+          }
+
+          indexWidget.addWidgets([(0, _displayCarousel.carousel)({
+            title: carouselConfig.title,
+            container: carouselContainer
+          })]);
+          container.appendChild(carouselContainer);
+          return indexWidget;
+        });
+      } // retrieve the carousel configuration once
+
+
+      getCarouselConfigs().then(carousels => {
+        carouselWidgets = createWidgets(carousels);
+        search.addWidgets(carouselWidgets);
+        search.start();
+      });
+    }
+  }
+
+  function displayResultOrNoResult(hits) {
+    const hitContainer = document.querySelector('#hitsResults');
+    const hit = document.querySelector("#hits");
+    const noResultCarousel = document.querySelector('#stacked-carousels');
+    const noResultContainer = document.querySelector('.container');
+    const pagination = document.querySelector('#pagination');
+
+    if (hits === 0) {
+      hit.classList.add('displayFalse');
+      hit.classList.remove('displayGrid');
+      hitContainer.classList.remove('displayGrid');
+      hitContainer.classList.add('displayFalse');
+      noResultCarousel.classList.add('displayTrue');
+      noResultCarousel.classList.remove('displayFalse');
+      noResultContainer.classList.remove('displayFalse');
+      noResultContainer.classList.add('displayTrue');
+    } else {
+      hitContainer.classList.add('displayGrid');
+      hitContainer.classList.remove('displayFalse');
+      hit.classList.add('displayGrid');
+      hit.classList.remove('displayFalse');
+      noResultCarousel.classList.remove('displayGrid');
+      noResultCarousel.classList.add('displayFalse');
+      noResultContainer.classList.add('displayFalse');
+      noResultContainer.classList.remove('displayTrue');
+      pagination.style.display = 'block';
+    }
+  }
+
   const autocompleteSearchBox = createAutocompleteSearchBox(); // const customHits = connectHits(renderHitsAutocomplete);
 
   const renderVirtualSearchBox = (renderOptions, isFirstRender) => {
@@ -38382,8 +38720,6 @@ function searchResults() {
     refine(search.renderState.gstar_demo_test.autocomplete.currentRefinement); // const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
   };
 
-  console.log('I am out of renderVirtualSearchBox ');
-  console.log(localStorage.getItem('userQuery'));
   const virtualSearchBox = (0, _connectors.connectSearchBox)(renderVirtualSearchBox); // const virtualHierarchicalMenu = connectHierarchicalMenu(() => { });
 
   search.addWidgets([(0, _widgets.index)({
@@ -38401,7 +38737,19 @@ function searchResults() {
     container: document.querySelector('#banner')
   }), customCurrentRefinements({
     container: document.querySelector('#current-refinements')
-  })]), (0, _widgets.configure)({
+  }), {
+    init(opts) {}
+
+  }, {
+    render(options) {
+      const results = options.results;
+
+      if (results.nbHits === 0) {
+        noResult(results.nbHits, results.query);
+      }
+    }
+
+  }]), (0, _widgets.configure)({
     query: localStorage.getItem('userQuery') ? localStorage.getItem('userQuery') : ""
   }), virtualSearchBox({
     container: '#virtualSearch'
@@ -38945,7 +39293,6 @@ var _cardAnimations = require("./cardAnimations");
 
 var checkExist = setInterval(function () {
   if (document.readyState != 'loading') {
-    console.log("Exists!");
     (0, _relatedResultModal.relatedResultModal)();
     (0, _cardAnimations.cardAnimation)();
     clearInterval(checkExist);
@@ -38979,7 +39326,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65445" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54664" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
