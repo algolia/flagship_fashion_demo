@@ -38751,7 +38751,37 @@ function searchResults() {
 
   }]), (0, _widgets.configure)({
     query: localStorage.getItem('userQuery') ? localStorage.getItem('userQuery') : ""
-  }), virtualSearchBox({
+  }), {
+    init() {
+      const container = document.querySelector('#smart-sort-banner');
+      container.innerHTML = "\n                <div class=\"ais-SmartSortBanner\">\n                  <p class=\"ais-SmartSortBanner-description\"></p>\n                  <p class=\"ais-SmartSortBanner-button\"></p>\n                </div>\n              ";
+    },
+
+    render(options) {
+      const container = document.querySelector('#smart-sort-banner');
+      const isSmartSortResult = options.results._rawResults.length > 0 && typeof options.results._rawResults[0].nbSortedHits === 'number';
+      console.log(isSmartSortResult);
+      container.classList.toggle('ais-SmartSortBanner--hidden', !isSmartSortResult);
+
+      if (!isSmartSortResult) {
+        return;
+      }
+
+      const {
+        relevancyStrictness
+      } = options.state;
+      const showingRelevantResults = typeof relevancyStrictness === 'undefined' || relevancyStrictness === 100;
+      const button = container.querySelector('.ais-SmartSortBanner-button');
+
+      button.onclick = () => {
+        options.helper.setQueryParameter('relevancyStrictness', showingRelevantResults ? 0 : 100).search();
+      };
+
+      button.textContent = showingRelevantResults ? 'Show all results' : 'Show more relevant results';
+      container.querySelector('.ais-SmartSortBanner-description').textContent = showingRelevantResults ? 'We removed some search results to show you the most relevants ones.' : 'Currently showing all results.';
+    }
+
+  }, virtualSearchBox({
     container: '#virtualSearch'
   }), (0, _widgets.clearRefinements)({
     container: '#clear-refinements'
@@ -38786,6 +38816,9 @@ function searchResults() {
     }, {
       value: "gstar_demo_test_asc_price",
       label: 'Sort by ascending price'
+    }, {
+      value: "gstar_demo_test_asc_price_smart_sort",
+      label: 'smart sort - Lowest price'
     }, {
       value: "gstar_demo_test_desc_price",
       label: 'Sort by descending price'
@@ -39366,7 +39399,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55490" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49422" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -731,6 +731,58 @@ export function searchResults() {
         configure({
             query: localStorage.getItem('userQuery') ? localStorage.getItem('userQuery') : ``,
         }),
+        {
+            init() {
+                const container = document.querySelector('#smart-sort-banner');
+                container.innerHTML = `
+                <div class="ais-SmartSortBanner">
+                  <p class="ais-SmartSortBanner-description"></p>
+                  <p class="ais-SmartSortBanner-button"></p>
+                </div>
+              `;
+            },
+
+            render(options) {
+                const container = document.querySelector('#smart-sort-banner');
+
+                const isSmartSortResult =
+                    options.results._rawResults.length > 0 &&
+                    typeof options.results._rawResults[0].nbSortedHits === 'number';
+                console.log(isSmartSortResult)
+                container.classList.toggle(
+                    'ais-SmartSortBanner--hidden',
+                    !isSmartSortResult
+                );
+
+                if (!isSmartSortResult) {
+                    return;
+                }
+
+                const { relevancyStrictness } = options.state;
+                const showingRelevantResults =
+                    typeof relevancyStrictness === 'undefined' ||
+                    relevancyStrictness === 100;
+
+                const button = container.querySelector('.ais-SmartSortBanner-button');
+                button.onclick = () => {
+                    options.helper
+                        .setQueryParameter(
+                            'relevancyStrictness',
+                            showingRelevantResults ? 0 : 100
+                        )
+                        .search();
+                };
+                button.textContent = showingRelevantResults
+                    ? 'Show all results'
+                    : 'Show more relevant results';
+
+                container.querySelector(
+                    '.ais-SmartSortBanner-description'
+                ).textContent = showingRelevantResults
+                        ? 'We removed some search results to show you the most relevants ones.'
+                        : 'Currently showing all results.';
+            },
+        },
         virtualSearchBox({ container: '#virtualSearch' }),
         clearRefinements({
             container: '#clear-refinements',
@@ -776,6 +828,10 @@ export function searchResults() {
                 {
                     value: `gstar_demo_test_asc_price`,
                     label: 'Sort by ascending price',
+                },
+                {
+                    value: `gstar_demo_test_asc_price_smart_sort`,
+                    label: 'smart sort - Lowest price',
                 },
                 {
                     value: `gstar_demo_test_desc_price`,

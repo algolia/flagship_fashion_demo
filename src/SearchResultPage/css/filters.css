@@ -23,6 +23,12 @@
     margin-bottom: 2rem;
 }
 
+.filters-item-side{
+    width: 20%;
+    display: flex;
+    justify-content: center;
+}
+
 .sideBarFilter ul {
     list-style: none;
 }
@@ -250,6 +256,33 @@
     border-radius: 50%;
 }
 
+/* SORT BY SMART SORT */
+.ais-SmartSortBanner--hidden {
+    display: none;
+  }
+
+.ais-SmartSortBanner{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    color: black;
+    font-family: 'Roboto';
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.ais-SmartSortBanner-description{
+    font-size: 0.8rem;
+    
+}
+
+.ais-SmartSortBanner-button{
+  text-decoration: underline;
+  font-style: italic;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
 
 /* RANGE SLIDER PRICE */
 
