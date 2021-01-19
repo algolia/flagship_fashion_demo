@@ -38778,6 +38778,18 @@ function searchResults() {
   }), (0, _widgets.refinementList)({
     container: '#size-list',
     attribute: 'sizeFilter'
+  }), (0, _widgets.sortBy)({
+    container: '#sort-by',
+    items: [{
+      value: 'gstar_demo_test',
+      label: 'Most relevant'
+    }, {
+      value: "gstar_demo_test_asc_price",
+      label: 'Sort by ascending price'
+    }, {
+      value: "gstar_demo_test_desc_price",
+      label: 'Sort by descending price'
+    }]
   }), (0, _widgets.stats)({
     container: '#stats-searchResult'
   }), (0, _widgets.voiceSearch)({
@@ -39336,7 +39348,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56018" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53098" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

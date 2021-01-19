@@ -262,6 +262,7 @@ body {
 .filters-wrapper{
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 1rem 2rem;
     border: 1px solid rgba(133, 133, 133, 0.2);
     width: 100vw;
@@ -818,6 +819,21 @@ align-items: center;
     transition: transform 0.2s ease-in-out;
 }
 
+
+/* SELECT SORT-BY */
+
+.ais-SortBy-select{
+ 
+    padding: 0.6rem 3rem 0.6rem 1rem;
+    border: 1px solid rgba(0, 0, 0, .5);
+    font-size: 1rem;
+    font-family: "Roboto";
+    color: black;
+    align-self: center;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border-radius: 0;
+}
 
 @media screen and (max-width: 1400px){
  

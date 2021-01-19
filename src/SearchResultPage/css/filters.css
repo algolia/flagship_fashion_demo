@@ -1,6 +1,7 @@
 .filters-wrapper{
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 1rem 2rem;
     border: 1px solid rgba(133, 133, 133, 0.2);
     width: 100vw;

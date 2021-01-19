@@ -235,6 +235,21 @@ align-items: center;
 }
 
 
+/* SELECT SORT-BY */
+
+.ais-SortBy-select{
+ 
+    padding: 0.6rem 3rem 0.6rem 1rem;
+    border: 1px solid rgba(0, 0, 0, .5);
+    font-size: 1rem;
+    font-family: "Roboto";
+    color: black;
+    align-self: center;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border-radius: 0;
+}
+
 @media screen and (max-width: 1400px){
  
     .badgeWrapper{

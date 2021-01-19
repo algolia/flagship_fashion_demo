@@ -5,6 +5,7 @@ import {
     clearRefinements,
     refinementList,
     stats,
+    sortBy,
     hits,
     pagination,
     voiceSearch,
@@ -763,6 +764,23 @@ export function searchResults() {
         refinementList({
             container: '#size-list',
             attribute: 'sizeFilter',
+        }),
+        sortBy({
+            container: '#sort-by',
+            items: [
+                {
+                    value: 'gstar_demo_test',
+                    label: 'Most relevant',
+                },
+                {
+                    value: `gstar_demo_test_asc_price`,
+                    label: 'Sort by ascending price',
+                },
+                {
+                    value: `gstar_demo_test_desc_price`,
+                    label: 'Sort by descending price',
+                },
+            ],
         }),
         stats({
             container: '#stats-searchResult',
