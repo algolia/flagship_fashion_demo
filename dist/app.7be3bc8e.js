@@ -38790,6 +38790,11 @@ function searchResults() {
       value: "gstar_demo_test_desc_price",
       label: 'Sort by descending price'
     }]
+  }), (0, _widgets.rangeSlider)({
+    container: '#price-list',
+    attribute: 'price',
+    tooltips: true,
+    pips: true
   }), (0, _widgets.stats)({
     container: '#stats-searchResult'
   }), (0, _widgets.voiceSearch)({
@@ -38845,6 +38850,8 @@ function filterResult() {
   let categoryBtn = document.querySelector('.category');
   let colorFilter = document.querySelector('.color-wrapper');
   let colorBtn = document.querySelector('.colors');
+  let priceFilter = document.querySelector('.price-wrapper');
+  let priceBtn = document.querySelector('.prices');
   let sizeFilter = document.querySelector('.size-wrapper');
   let sizeBtn = document.querySelector('.sizes');
   let sideBarFilters = document.querySelector('.sideBarFilter');
@@ -38854,7 +38861,8 @@ function filterResult() {
   genderBtn.addEventListener('click', fadeFiltersGender);
   categoryBtn.addEventListener('click', fadeFiltersCategory);
   colorBtn.addEventListener('click', fadeFiltersColor);
-  sizeBtn.addEventListener('click', fadeFiltersSize); // btnBackToFilter.addEventListener('click', backToFilters)
+  sizeBtn.addEventListener('click', fadeFiltersSize);
+  priceBtn.addEventListener('click', fadeFiltersPrice); // btnBackToFilter.addEventListener('click', backToFilters)
 
   btnBackToFilter.forEach(btn => {
     btn.addEventListener('click', backToFilters);
@@ -38894,7 +38902,6 @@ function filterResult() {
       genderFilter.classList.remove('fadeOutFilter');
       sideBarFilters.classList.add('fadeOutFilter');
       genderFilter.classList.add('fadeFilters');
-      console.log(sideBarFilters);
     }
   }
 
@@ -38909,7 +38916,6 @@ function filterResult() {
       categoryFilter.classList.remove('fadeOutFilter');
       sideBarFilters.classList.add('fadeOutFilter');
       categoryFilter.classList.add('fadeFilters');
-      console.log(sideBarFilters);
     }
   }
 
@@ -38924,7 +38930,6 @@ function filterResult() {
       colorFilter.classList.remove('fadeOutFilter');
       sideBarFilters.classList.add('fadeOutFilter');
       colorFilter.classList.add('fadeFilters');
-      console.log(sideBarFilters);
     }
   }
 
@@ -38939,7 +38944,20 @@ function filterResult() {
       sizeFilter.classList.remove('fadeOutFilter');
       sideBarFilters.classList.add('fadeOutFilter');
       sizeFilter.classList.add('fadeFilters');
-      console.log(sideBarFilters);
+    }
+  }
+
+  function fadeFiltersPrice(e) {
+    e.preventDefault();
+
+    if (priceFilter.classList.contains('fadeFilters')) {
+      priceFilter.classList.remove('fadeFilters');
+      priceFilter.classList.add('fadeOutFilter');
+      sideBarFilters.classList.remove('fadeFilters');
+    } else {
+      priceFilter.classList.remove('fadeOutFilter');
+      sideBarFilters.classList.add('fadeOutFilter');
+      priceFilter.classList.add('fadeFilters');
     }
   }
 } // function colorCircle() {
@@ -39348,7 +39366,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53098" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55490" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
