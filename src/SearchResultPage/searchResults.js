@@ -8,6 +8,7 @@ import {
     sortBy,
     hits,
     pagination,
+    rangeSlider,
     voiceSearch,
     configure,
     index,
@@ -781,6 +782,12 @@ export function searchResults() {
                     label: 'Sort by descending price',
                 },
             ],
+        }),
+        rangeSlider({
+            container: '#price-list',
+            attribute: 'price',
+            tooltips: true,
+            pips: true
         }),
         stats({
             container: '#stats-searchResult',

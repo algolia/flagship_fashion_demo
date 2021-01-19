@@ -382,12 +382,20 @@ body {
     padding: 2rem;
 }
 
- .category-wrapper, .gender-wrapper, .color-wrapper, .size-wrapper{
+ .category-wrapper, .gender-wrapper, .color-wrapper, .size-wrapper, .price-wrapper{
     /* border-right: 1px solid rgba(0, 0, 0, .5); */
     visibility: hidden;
     transform: translateX(100%);
     position: absolute;
     top: 10rem;
+}
+
+.price-wrapper{
+    width: 60%;
+}
+
+.price-list{
+    margin-top: 4rem;
 }
 
 .btn-backFilter{
@@ -503,6 +511,31 @@ body {
     border-radius: 50%;
 }
 
+
+/* RANGE SLIDER PRICE */
+
+.ais-RangeSlider .rheostat-marker {
+    display: none;
+}
+
+.ais-RangeSlider .rheostat-background {
+    border-color: rgb(233, 233, 233);
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+/* .ais-RangeSlider .rheostat-progress {
+    background-color: black;
+} */
+
+.ais-RangeSlider .rheostat-handle {
+    border-color: #000000;
+}
+.rheostat-tooltip{
+    font-family: 'Roboto';
+    font-style: italic;
+    font-size: 0.6rem;
+    color: black;
+}
 
 /* CURRENT REFINEMENT FILTERS  */
 

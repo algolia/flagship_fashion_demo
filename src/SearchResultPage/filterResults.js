@@ -7,6 +7,8 @@ export function filterResult() {
     let categoryBtn = document.querySelector('.category')
     let colorFilter = document.querySelector('.color-wrapper')
     let colorBtn = document.querySelector('.colors')
+    let priceFilter = document.querySelector('.price-wrapper')
+    let priceBtn = document.querySelector('.prices')
     let sizeFilter = document.querySelector('.size-wrapper')
     let sizeBtn = document.querySelector('.sizes')
     let sideBarFilters = document.querySelector('.sideBarFilter')
@@ -19,6 +21,7 @@ export function filterResult() {
     categoryBtn.addEventListener('click', fadeFiltersCategory)
     colorBtn.addEventListener('click', fadeFiltersColor)
     sizeBtn.addEventListener('click', fadeFiltersSize)
+    priceBtn.addEventListener('click', fadeFiltersPrice)
     // btnBackToFilter.addEventListener('click', backToFilters)
 
 
@@ -61,7 +64,7 @@ export function filterResult() {
             genderFilter.classList.remove('fadeOutFilter')
             sideBarFilters.classList.add('fadeOutFilter')
             genderFilter.classList.add('fadeFilters')
-            console.log(sideBarFilters)
+
 
         }
     }
@@ -76,7 +79,7 @@ export function filterResult() {
             categoryFilter.classList.remove('fadeOutFilter')
             sideBarFilters.classList.add('fadeOutFilter')
             categoryFilter.classList.add('fadeFilters')
-            console.log(sideBarFilters)
+
 
         }
     }
@@ -91,7 +94,7 @@ export function filterResult() {
             colorFilter.classList.remove('fadeOutFilter')
             sideBarFilters.classList.add('fadeOutFilter')
             colorFilter.classList.add('fadeFilters')
-            console.log(sideBarFilters)
+
 
         }
     }
@@ -106,7 +109,22 @@ export function filterResult() {
             sizeFilter.classList.remove('fadeOutFilter')
             sideBarFilters.classList.add('fadeOutFilter')
             sizeFilter.classList.add('fadeFilters')
-            console.log(sideBarFilters)
+
+
+        }
+    }
+    function fadeFiltersPrice(e) {
+        e.preventDefault()
+        if (priceFilter.classList.contains('fadeFilters')) {
+            priceFilter.classList.remove('fadeFilters')
+            priceFilter.classList.add('fadeOutFilter')
+            sideBarFilters.classList.remove('fadeFilters')
+
+        } else {
+            priceFilter.classList.remove('fadeOutFilter')
+            sideBarFilters.classList.add('fadeOutFilter')
+            priceFilter.classList.add('fadeFilters')
+
 
         }
     }
