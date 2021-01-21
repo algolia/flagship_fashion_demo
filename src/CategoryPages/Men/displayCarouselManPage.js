@@ -1,4 +1,3 @@
-// import { configure, hits, EXPERIMENTAL_configureRelatedItems } from 'instantsearch.js/es/widgets';
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
 import { configure, pagination, hits, stats, searchBox } from 'instantsearch.js/es/widgets'
@@ -9,7 +8,6 @@ export const carousel = connectHits(function renderCarousel(
   isFirstRender
 ) {
   if (isFirstRender) {
-    console.log(container);
     const section = document.createElement('section');
     section.classList.add('section-carousel-winter');
     container.appendChild(section);
@@ -24,15 +22,6 @@ export const carousel = connectHits(function renderCarousel(
     btnSection.innerHTML = "See All"
     btnSection.href = "./index.html"
     divSection.appendChild(btnSection)
-
-
-    // document
-    //   .querySelector('.title-carousel-winter').insertAdjacentHTML(
-    //     'afterbegin',
-    //     `<h2>${title}</h2><a href="/searchResults.html" class="btn-carousel-winter">See All</a>`
-    //   );
-
-
     const ul = document.createElement('ul');
     ul.classList.add('carousel-list-container');
     section.appendChild(ul);

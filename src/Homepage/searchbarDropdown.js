@@ -3,7 +3,6 @@ export function searchBar() {
     let searchbar = document.querySelector('#aa-search-input')
 
     searchbar.addEventListener("keyup", (z) => {
-        console.log(searchbar.value)
         if (searchbar.value === "") {
             searchBarDropdown.style.opacity = 0
         } else {

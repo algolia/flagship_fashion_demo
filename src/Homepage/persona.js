@@ -8,8 +8,6 @@ export function togglePersona() {
     closePersona.addEventListener('click', toggleModal)
     labelPersona.addEventListener('click', toggleModal)
 
-
-
     function toggleModal(e) {
         e.preventDefault()
         if (personaChoice.classList.contains('personaFadeIn')) {

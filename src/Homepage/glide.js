@@ -9,8 +9,5 @@ export function carouselGlideJS() {
         autoplay: 8000,
         hoverpause: true,
     })
-
-
     carouselGlide.mount({ Autoplay })
-
 }

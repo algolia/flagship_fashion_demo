@@ -1,13 +1,16 @@
+  
+  .body-wrapper{
+    overflow-x: hidden;
+    position: relative;
+  }
+  
+  /* CAROUSEL */
 
 .container {
     max-width: 90%;
     margin: 0 auto;
     padding: 1rem;
     overflow-x: hidden;
-  }
-  
-  .carousel section {
-  
   }
   
   .carousel h2 {
@@ -58,7 +61,6 @@
   
   .carousel .carousel-list-container::-webkit-scrollbar:horizontal {
     height: 4px;
-  
   }
   
   .carousel .carousel-list-container::-webkit-scrollbar-thumb {
@@ -136,8 +138,6 @@
   }
 
   /* MAN PAGE RESULT */
-
-
 
 .ais-Hits-list{
   width: 90vw;
@@ -231,31 +231,33 @@
       background-color: rgb(240, 240, 239);
   }
   
+
+
+  /* MEDIA QUERIES / BREAKPOINT */
+
   @media screen and (max-width: 768px){
-      body {
-          overflow-x: hidden !important;
-      }
-      .ais-Hits-list{
-          grid-template-columns: repeat(2, 1fr);
-      }
-     }
-     @media screen and (max-width: 560px){
-      body {
+    body {
+      overflow-x: hidden !important;
+    }
+    .ais-Hits-list{
+      grid-template-columns: repeat(2, 1fr);
+    }
+}
+  @media screen and (max-width: 560px){
+    body {
         overflow-x: hidden !important;
     }
     .ais-Hits-list{
-      grid-template-columns: repeat(1, 1fr);
-  }
-  
-  .ais-Stats-text{
-      font-size: 0.8rem;
-  }
-  .btn-filter {
-      padding: 0.2rem 1rem;
-  }
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .ais-Stats-text{
+        font-size: 0.8rem;
+    }
+    .btn-filter {
+        padding: 0.2rem 1rem;
+    }
   }
 .header {
-  /* max-width: 1200px ; */
   margin: 0 auto;
  }
  
@@ -387,7 +389,7 @@
 
 
 
-
+/* MEDIA QUERIES / BREAKPOINTS */
 
 @media screen and (max-width: 1024px){
 
@@ -497,6 +499,8 @@ body {
 }
 }
 
+/* ANIMATIONS */
+
  @keyframes navlinksFade {
      from {
          display: none;
@@ -517,11 +521,9 @@ body {
  }
 /* HEADER & SEARCHBAR */
 
-
-.header {
-    /* max-width: 1200px ; */
-    margin: 0 auto;
-   }
+  .header {
+      margin: 0 auto;
+    }
    
    .header a {
      color: #fff;
@@ -769,10 +771,10 @@ body {
        transform: rotate(45deg) translate(-5px, -6px);
    }
 
-   
+
+   /* MEDIA QUERIES / BREAKPOINT */
 
    @media screen and (max-width: 1024px){
-
     .searchbar-wrapper{
      width: 100%;
      justify-self: center;
@@ -922,6 +924,9 @@ body {
     overflow-x: hidden !important;
 }
 }
+
+
+/* ANIMATIONS */
   
    @keyframes navlinksFade {
        from {
@@ -941,6 +946,27 @@ body {
             transform: translateX(0px);
        }
    }
+.ais-Pagination{
+    margin: 2rem;
+}
+
+.ais-Pagination-item{
+    border: none;
+}
+
+.ais-Pagination-link{
+    border: none;
+    color: black;
+    font-family: 'Castoro', serif;
+    font-size: 0.8rem;
+}
+
+.ais-Pagination-item--selected .ais-Pagination-link{
+    color: white;
+    background-color: black;
+    border-radius: 2px;
+}
+
 
 
 

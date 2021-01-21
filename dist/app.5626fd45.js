@@ -117,7 +117,3512 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"../node_modules/instantsearch.js/es/lib/utils/capitalize.js":[function(require,module,exports) {
+})({"../node_modules/@glidejs/glide/dist/glide.modular.esm.js":[function(require,module,exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Swipe = swipe;
+exports.Images = images;
+exports.Anchors = anchors;
+exports.Controls = controls;
+exports.Keyboard = keyboard;
+exports.Autoplay = autoplay;
+exports.Breakpoints = breakpoints;
+exports.default = void 0;
+
+/*!
+ * Glide.js v3.4.1
+ * (c) 2013-2019 Jędrzej Chałubek <jedrzej.chalubek@gmail.com> (http://jedrzejchalubek.com/)
+ * Released under the MIT License.
+ */
+var defaults = {
+  /**
+   * Type of the movement.
+   *
+   * Available types:
+   * `slider` - Rewinds slider to the start/end when it reaches the first or last slide.
+   * `carousel` - Changes slides without starting over when it reaches the first or last slide.
+   *
+   * @type {String}
+   */
+  type: 'slider',
+
+  /**
+   * Start at specific slide number defined with zero-based index.
+   *
+   * @type {Number}
+   */
+  startAt: 0,
+
+  /**
+   * A number of slides visible on the single viewport.
+   *
+   * @type {Number}
+   */
+  perView: 1,
+
+  /**
+   * Focus currently active slide at a specified position in the track.
+   *
+   * Available inputs:
+   * `center` - Current slide will be always focused at the center of a track.
+   * `0,1,2,3...` - Current slide will be focused on the specified zero-based index.
+   *
+   * @type {String|Number}
+   */
+  focusAt: 0,
+
+  /**
+   * A size of the gap added between slides.
+   *
+   * @type {Number}
+   */
+  gap: 10,
+
+  /**
+   * Change slides after a specified interval. Use `false` for turning off autoplay.
+   *
+   * @type {Number|Boolean}
+   */
+  autoplay: false,
+
+  /**
+   * Stop autoplay on mouseover event.
+   *
+   * @type {Boolean}
+   */
+  hoverpause: true,
+
+  /**
+   * Allow for changing slides with left and right keyboard arrows.
+   *
+   * @type {Boolean}
+   */
+  keyboard: true,
+
+  /**
+   * Stop running `perView` number of slides from the end. Use this
+   * option if you don't want to have an empty space after
+   * a slider. Works only with `slider` type and a
+   * non-centered `focusAt` setting.
+   *
+   * @type {Boolean}
+   */
+  bound: false,
+
+  /**
+   * Minimal swipe distance needed to change the slide. Use `false` for turning off a swiping.
+   *
+   * @type {Number|Boolean}
+   */
+  swipeThreshold: 80,
+
+  /**
+   * Minimal mouse drag distance needed to change the slide. Use `false` for turning off a dragging.
+   *
+   * @type {Number|Boolean}
+   */
+  dragThreshold: 120,
+
+  /**
+   * A maximum number of slides to which movement will be made on swiping or dragging. Use `false` for unlimited.
+   *
+   * @type {Number|Boolean}
+   */
+  perTouch: false,
+
+  /**
+   * Moving distance ratio of the slides on a swiping and dragging.
+   *
+   * @type {Number}
+   */
+  touchRatio: 0.5,
+
+  /**
+   * Angle required to activate slides moving on swiping or dragging.
+   *
+   * @type {Number}
+   */
+  touchAngle: 45,
+
+  /**
+   * Duration of the animation in milliseconds.
+   *
+   * @type {Number}
+   */
+  animationDuration: 400,
+
+  /**
+   * Allows looping the `slider` type. Slider will rewind to the first/last slide when it's at the start/end.
+   *
+   * @type {Boolean}
+   */
+  rewind: true,
+
+  /**
+   * Duration of the rewinding animation of the `slider` type in milliseconds.
+   *
+   * @type {Number}
+   */
+  rewindDuration: 800,
+
+  /**
+   * Easing function for the animation.
+   *
+   * @type {String}
+   */
+  animationTimingFunc: 'cubic-bezier(.165, .840, .440, 1)',
+
+  /**
+   * Throttle costly events at most once per every wait milliseconds.
+   *
+   * @type {Number}
+   */
+  throttle: 10,
+
+  /**
+   * Moving direction mode.
+   *
+   * Available inputs:
+   * - 'ltr' - left to right movement,
+   * - 'rtl' - right to left movement.
+   *
+   * @type {String}
+   */
+  direction: 'ltr',
+
+  /**
+   * The distance value of the next and previous viewports which
+   * have to peek in the current view. Accepts number and
+   * pixels as a string. Left and right peeking can be
+   * set up separately with a directions object.
+   *
+   * For example:
+   * `100` - Peek 100px on the both sides.
+   * { before: 100, after: 50 }` - Peek 100px on the left side and 50px on the right side.
+   *
+   * @type {Number|String|Object}
+   */
+  peek: 0,
+
+  /**
+   * Collection of options applied at specified media breakpoints.
+   * For example: display two slides per view under 800px.
+   * `{
+   *   '800px': {
+   *     perView: 2
+   *   }
+   * }`
+   */
+  breakpoints: {},
+
+  /**
+   * Collection of internally used HTML classes.
+   *
+   * @todo Refactor `slider` and `carousel` properties to single `type: { slider: '', carousel: '' }` object
+   * @type {Object}
+   */
+  classes: {
+    direction: {
+      ltr: 'glide--ltr',
+      rtl: 'glide--rtl'
+    },
+    slider: 'glide--slider',
+    carousel: 'glide--carousel',
+    swipeable: 'glide--swipeable',
+    dragging: 'glide--dragging',
+    cloneSlide: 'glide__slide--clone',
+    activeNav: 'glide__bullet--active',
+    activeSlide: 'glide__slide--active',
+    disabledArrow: 'glide__arrow--disabled'
+  }
+};
+/**
+ * Outputs warning message to the bowser console.
+ *
+ * @param  {String} msg
+ * @return {Void}
+ */
+
+function warn(msg) {
+  console.error("[Glide warn]: " + msg);
+}
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  return typeof obj;
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
+var get = function get(object, property, receiver) {
+  if (object === null) object = Function.prototype;
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent === null) {
+      return undefined;
+    } else {
+      return get(parent, property, receiver);
+    }
+  } else if ("value" in desc) {
+    return desc.value;
+  } else {
+    var getter = desc.get;
+
+    if (getter === undefined) {
+      return undefined;
+    }
+
+    return getter.call(receiver);
+  }
+};
+
+var inherits = function (subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+};
+
+var possibleConstructorReturn = function (self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return call && (typeof call === "object" || typeof call === "function") ? call : self;
+};
+/**
+ * Converts value entered as number
+ * or string to integer value.
+ *
+ * @param {String} value
+ * @returns {Number}
+ */
+
+
+function toInt(value) {
+  return parseInt(value);
+}
+/**
+ * Converts value entered as number
+ * or string to flat value.
+ *
+ * @param {String} value
+ * @returns {Number}
+ */
+
+
+function toFloat(value) {
+  return parseFloat(value);
+}
+/**
+ * Indicates whether the specified value is a string.
+ *
+ * @param  {*}   value
+ * @return {Boolean}
+ */
+
+
+function isString(value) {
+  return typeof value === 'string';
+}
+/**
+ * Indicates whether the specified value is an object.
+ *
+ * @param  {*} value
+ * @return {Boolean}
+ *
+ * @see https://github.com/jashkenas/underscore
+ */
+
+
+function isObject(value) {
+  var type = typeof value === 'undefined' ? 'undefined' : _typeof(value);
+  return type === 'function' || type === 'object' && !!value; // eslint-disable-line no-mixed-operators
+}
+/**
+ * Indicates whether the specified value is a number.
+ *
+ * @param  {*} value
+ * @return {Boolean}
+ */
+
+
+function isNumber(value) {
+  return typeof value === 'number';
+}
+/**
+ * Indicates whether the specified value is a function.
+ *
+ * @param  {*} value
+ * @return {Boolean}
+ */
+
+
+function isFunction(value) {
+  return typeof value === 'function';
+}
+/**
+ * Indicates whether the specified value is undefined.
+ *
+ * @param  {*} value
+ * @return {Boolean}
+ */
+
+
+function isUndefined(value) {
+  return typeof value === 'undefined';
+}
+/**
+ * Indicates whether the specified value is an array.
+ *
+ * @param  {*} value
+ * @return {Boolean}
+ */
+
+
+function isArray(value) {
+  return value.constructor === Array;
+}
+/**
+ * Creates and initializes specified collection of extensions.
+ * Each extension receives access to instance of glide and rest of components.
+ *
+ * @param {Object} glide
+ * @param {Object} extensions
+ *
+ * @returns {Object}
+ */
+
+
+function mount(glide, extensions, events) {
+  var components = {};
+
+  for (var name in extensions) {
+    if (isFunction(extensions[name])) {
+      components[name] = extensions[name](glide, components, events);
+    } else {
+      warn('Extension must be a function');
+    }
+  }
+
+  for (var _name in components) {
+    if (isFunction(components[_name].mount)) {
+      components[_name].mount();
+    }
+  }
+
+  return components;
+}
+/**
+ * Defines getter and setter property on the specified object.
+ *
+ * @param  {Object} obj         Object where property has to be defined.
+ * @param  {String} prop        Name of the defined property.
+ * @param  {Object} definition  Get and set definitions for the property.
+ * @return {Void}
+ */
+
+
+function define(obj, prop, definition) {
+  Object.defineProperty(obj, prop, definition);
+}
+/**
+ * Sorts aphabetically object keys.
+ *
+ * @param  {Object} obj
+ * @return {Object}
+ */
+
+
+function sortKeys(obj) {
+  return Object.keys(obj).sort().reduce(function (r, k) {
+    r[k] = obj[k];
+    return r[k], r;
+  }, {});
+}
+/**
+ * Merges passed settings object with default options.
+ *
+ * @param  {Object} defaults
+ * @param  {Object} settings
+ * @return {Object}
+ */
+
+
+function mergeOptions(defaults, settings) {
+  var options = _extends({}, defaults, settings); // `Object.assign` do not deeply merge objects, so we
+  // have to do it manually for every nested object
+  // in options. Although it does not look smart,
+  // it's smaller and faster than some fancy
+  // merging deep-merge algorithm script.
+
+
+  if (settings.hasOwnProperty('classes')) {
+    options.classes = _extends({}, defaults.classes, settings.classes);
+
+    if (settings.classes.hasOwnProperty('direction')) {
+      options.classes.direction = _extends({}, defaults.classes.direction, settings.classes.direction);
+    }
+  }
+
+  if (settings.hasOwnProperty('breakpoints')) {
+    options.breakpoints = _extends({}, defaults.breakpoints, settings.breakpoints);
+  }
+
+  return options;
+}
+
+var EventsBus = function () {
+  /**
+   * Construct a EventBus instance.
+   *
+   * @param {Object} events
+   */
+  function EventsBus() {
+    var events = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    classCallCheck(this, EventsBus);
+    this.events = events;
+    this.hop = events.hasOwnProperty;
+  }
+  /**
+   * Adds listener to the specifed event.
+   *
+   * @param {String|Array} event
+   * @param {Function} handler
+   */
+
+
+  createClass(EventsBus, [{
+    key: 'on',
+    value: function on(event, handler) {
+      if (isArray(event)) {
+        for (var i = 0; i < event.length; i++) {
+          this.on(event[i], handler);
+        }
+      } // Create the event's object if not yet created
+
+
+      if (!this.hop.call(this.events, event)) {
+        this.events[event] = [];
+      } // Add the handler to queue
+
+
+      var index = this.events[event].push(handler) - 1; // Provide handle back for removal of event
+
+      return {
+        remove: function remove() {
+          delete this.events[event][index];
+        }
+      };
+    }
+    /**
+     * Runs registered handlers for specified event.
+     *
+     * @param {String|Array} event
+     * @param {Object=} context
+     */
+
+  }, {
+    key: 'emit',
+    value: function emit(event, context) {
+      if (isArray(event)) {
+        for (var i = 0; i < event.length; i++) {
+          this.emit(event[i], context);
+        }
+      } // If the event doesn't exist, or there's no handlers in queue, just leave
+
+
+      if (!this.hop.call(this.events, event)) {
+        return;
+      } // Cycle through events queue, fire!
+
+
+      this.events[event].forEach(function (item) {
+        item(context || {});
+      });
+    }
+  }]);
+  return EventsBus;
+}();
+
+var Glide = function () {
+  /**
+   * Construct glide.
+   *
+   * @param  {String} selector
+   * @param  {Object} options
+   */
+  function Glide(selector) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    classCallCheck(this, Glide);
+    this._c = {};
+    this._t = [];
+    this._e = new EventsBus();
+    this.disabled = false;
+    this.selector = selector;
+    this.settings = mergeOptions(defaults, options);
+    this.index = this.settings.startAt;
+  }
+  /**
+   * Initializes glide.
+   *
+   * @param {Object} extensions Collection of extensions to initialize.
+   * @return {Glide}
+   */
+
+
+  createClass(Glide, [{
+    key: 'mount',
+    value: function mount$$1() {
+      var extensions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      this._e.emit('mount.before');
+
+      if (isObject(extensions)) {
+        this._c = mount(this, extensions, this._e);
+      } else {
+        warn('You need to provide a object on `mount()`');
+      }
+
+      this._e.emit('mount.after');
+
+      return this;
+    }
+    /**
+     * Collects an instance `translate` transformers.
+     *
+     * @param  {Array} transformers Collection of transformers.
+     * @return {Void}
+     */
+
+  }, {
+    key: 'mutate',
+    value: function mutate() {
+      var transformers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+      if (isArray(transformers)) {
+        this._t = transformers;
+      } else {
+        warn('You need to provide a array on `mutate()`');
+      }
+
+      return this;
+    }
+    /**
+     * Updates glide with specified settings.
+     *
+     * @param {Object} settings
+     * @return {Glide}
+     */
+
+  }, {
+    key: 'update',
+    value: function update() {
+      var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      this.settings = mergeOptions(this.settings, settings);
+
+      if (settings.hasOwnProperty('startAt')) {
+        this.index = settings.startAt;
+      }
+
+      this._e.emit('update');
+
+      return this;
+    }
+    /**
+     * Change slide with specified pattern. A pattern must be in the special format:
+     * `>` - Move one forward
+     * `<` - Move one backward
+     * `={i}` - Go to {i} zero-based slide (eq. '=1', will go to second slide)
+     * `>>` - Rewinds to end (last slide)
+     * `<<` - Rewinds to start (first slide)
+     *
+     * @param {String} pattern
+     * @return {Glide}
+     */
+
+  }, {
+    key: 'go',
+    value: function go(pattern) {
+      this._c.Run.make(pattern);
+
+      return this;
+    }
+    /**
+     * Move track by specified distance.
+     *
+     * @param {String} distance
+     * @return {Glide}
+     */
+
+  }, {
+    key: 'move',
+    value: function move(distance) {
+      this._c.Transition.disable();
+
+      this._c.Move.make(distance);
+
+      return this;
+    }
+    /**
+     * Destroy instance and revert all changes done by this._c.
+     *
+     * @return {Glide}
+     */
+
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      this._e.emit('destroy');
+
+      return this;
+    }
+    /**
+     * Start instance autoplaying.
+     *
+     * @param {Boolean|Number} interval Run autoplaying with passed interval regardless of `autoplay` settings
+     * @return {Glide}
+     */
+
+  }, {
+    key: 'play',
+    value: function play() {
+      var interval = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      if (interval) {
+        this.settings.autoplay = interval;
+      }
+
+      this._e.emit('play');
+
+      return this;
+    }
+    /**
+     * Stop instance autoplaying.
+     *
+     * @return {Glide}
+     */
+
+  }, {
+    key: 'pause',
+    value: function pause() {
+      this._e.emit('pause');
+
+      return this;
+    }
+    /**
+     * Sets glide into a idle status.
+     *
+     * @return {Glide}
+     */
+
+  }, {
+    key: 'disable',
+    value: function disable() {
+      this.disabled = true;
+      return this;
+    }
+    /**
+     * Sets glide into a active status.
+     *
+     * @return {Glide}
+     */
+
+  }, {
+    key: 'enable',
+    value: function enable() {
+      this.disabled = false;
+      return this;
+    }
+    /**
+     * Adds cuutom event listener with handler.
+     *
+     * @param  {String|Array} event
+     * @param  {Function} handler
+     * @return {Glide}
+     */
+
+  }, {
+    key: 'on',
+    value: function on(event, handler) {
+      this._e.on(event, handler);
+
+      return this;
+    }
+    /**
+     * Checks if glide is a precised type.
+     *
+     * @param  {String} name
+     * @return {Boolean}
+     */
+
+  }, {
+    key: 'isType',
+    value: function isType(name) {
+      return this.settings.type === name;
+    }
+    /**
+     * Gets value of the core options.
+     *
+     * @return {Object}
+     */
+
+  }, {
+    key: 'settings',
+    get: function get$$1() {
+      return this._o;
+    }
+    /**
+     * Sets value of the core options.
+     *
+     * @param  {Object} o
+     * @return {Void}
+     */
+    ,
+    set: function set$$1(o) {
+      if (isObject(o)) {
+        this._o = o;
+      } else {
+        warn('Options must be an `object` instance.');
+      }
+    }
+    /**
+     * Gets current index of the slider.
+     *
+     * @return {Object}
+     */
+
+  }, {
+    key: 'index',
+    get: function get$$1() {
+      return this._i;
+    }
+    /**
+     * Sets current index a slider.
+     *
+     * @return {Object}
+     */
+    ,
+    set: function set$$1(i) {
+      this._i = toInt(i);
+    }
+    /**
+     * Gets type name of the slider.
+     *
+     * @return {String}
+     */
+
+  }, {
+    key: 'type',
+    get: function get$$1() {
+      return this.settings.type;
+    }
+    /**
+     * Gets value of the idle status.
+     *
+     * @return {Boolean}
+     */
+
+  }, {
+    key: 'disabled',
+    get: function get$$1() {
+      return this._d;
+    }
+    /**
+     * Sets value of the idle status.
+     *
+     * @return {Boolean}
+     */
+    ,
+    set: function set$$1(status) {
+      this._d = !!status;
+    }
+  }]);
+  return Glide;
+}();
+
+function Run(Glide, Components, Events) {
+  var Run = {
+    /**
+     * Initializes autorunning of the glide.
+     *
+     * @return {Void}
+     */
+    mount: function mount() {
+      this._o = false;
+    },
+
+    /**
+     * Makes glides running based on the passed moving schema.
+     *
+     * @param {String} move
+     */
+    make: function make(move) {
+      var _this = this;
+
+      if (!Glide.disabled) {
+        Glide.disable();
+        this.move = move;
+        Events.emit('run.before', this.move);
+        this.calculate();
+        Events.emit('run', this.move);
+        Components.Transition.after(function () {
+          if (_this.isStart()) {
+            Events.emit('run.start', _this.move);
+          }
+
+          if (_this.isEnd()) {
+            Events.emit('run.end', _this.move);
+          }
+
+          if (_this.isOffset('<') || _this.isOffset('>')) {
+            _this._o = false;
+            Events.emit('run.offset', _this.move);
+          }
+
+          Events.emit('run.after', _this.move);
+          Glide.enable();
+        });
+      }
+    },
+
+    /**
+     * Calculates current index based on defined move.
+     *
+     * @return {Void}
+     */
+    calculate: function calculate() {
+      var move = this.move,
+          length = this.length;
+      var steps = move.steps,
+          direction = move.direction;
+      var countableSteps = isNumber(toInt(steps)) && toInt(steps) !== 0;
+
+      switch (direction) {
+        case '>':
+          if (steps === '>') {
+            Glide.index = length;
+          } else if (this.isEnd()) {
+            if (!(Glide.isType('slider') && !Glide.settings.rewind)) {
+              this._o = true;
+              Glide.index = 0;
+            }
+          } else if (countableSteps) {
+            Glide.index += Math.min(length - Glide.index, -toInt(steps));
+          } else {
+            Glide.index++;
+          }
+
+          break;
+
+        case '<':
+          if (steps === '<') {
+            Glide.index = 0;
+          } else if (this.isStart()) {
+            if (!(Glide.isType('slider') && !Glide.settings.rewind)) {
+              this._o = true;
+              Glide.index = length;
+            }
+          } else if (countableSteps) {
+            Glide.index -= Math.min(Glide.index, toInt(steps));
+          } else {
+            Glide.index--;
+          }
+
+          break;
+
+        case '=':
+          Glide.index = steps;
+          break;
+
+        default:
+          warn('Invalid direction pattern [' + direction + steps + '] has been used');
+          break;
+      }
+    },
+
+    /**
+     * Checks if we are on the first slide.
+     *
+     * @return {Boolean}
+     */
+    isStart: function isStart() {
+      return Glide.index === 0;
+    },
+
+    /**
+     * Checks if we are on the last slide.
+     *
+     * @return {Boolean}
+     */
+    isEnd: function isEnd() {
+      return Glide.index === this.length;
+    },
+
+    /**
+     * Checks if we are making a offset run.
+     *
+     * @param {String} direction
+     * @return {Boolean}
+     */
+    isOffset: function isOffset(direction) {
+      return this._o && this.move.direction === direction;
+    }
+  };
+  define(Run, 'move', {
+    /**
+     * Gets value of the move schema.
+     *
+     * @returns {Object}
+     */
+    get: function get() {
+      return this._m;
+    },
+
+    /**
+     * Sets value of the move schema.
+     *
+     * @returns {Object}
+     */
+    set: function set(value) {
+      var step = value.substr(1);
+      this._m = {
+        direction: value.substr(0, 1),
+        steps: step ? toInt(step) ? toInt(step) : step : 0
+      };
+    }
+  });
+  define(Run, 'length', {
+    /**
+     * Gets value of the running distance based
+     * on zero-indexing number of slides.
+     *
+     * @return {Number}
+     */
+    get: function get() {
+      var settings = Glide.settings;
+      var length = Components.Html.slides.length; // If the `bound` option is acitve, a maximum running distance should be
+      // reduced by `perView` and `focusAt` settings. Running distance
+      // should end before creating an empty space after instance.
+
+      if (Glide.isType('slider') && settings.focusAt !== 'center' && settings.bound) {
+        return length - 1 - (toInt(settings.perView) - 1) + toInt(settings.focusAt);
+      }
+
+      return length - 1;
+    }
+  });
+  define(Run, 'offset', {
+    /**
+     * Gets status of the offsetting flag.
+     *
+     * @return {Boolean}
+     */
+    get: function get() {
+      return this._o;
+    }
+  });
+  return Run;
+}
+/**
+ * Returns a current time.
+ *
+ * @return {Number}
+ */
+
+
+function now() {
+  return new Date().getTime();
+}
+/**
+ * Returns a function, that, when invoked, will only be triggered
+ * at most once during a given window of time.
+ *
+ * @param {Function} func
+ * @param {Number} wait
+ * @param {Object=} options
+ * @return {Function}
+ *
+ * @see https://github.com/jashkenas/underscore
+ */
+
+
+function throttle(func, wait, options) {
+  var timeout = void 0,
+      context = void 0,
+      args = void 0,
+      result = void 0;
+  var previous = 0;
+  if (!options) options = {};
+
+  var later = function later() {
+    previous = options.leading === false ? 0 : now();
+    timeout = null;
+    result = func.apply(context, args);
+    if (!timeout) context = args = null;
+  };
+
+  var throttled = function throttled() {
+    var at = now();
+    if (!previous && options.leading === false) previous = at;
+    var remaining = wait - (at - previous);
+    context = this;
+    args = arguments;
+
+    if (remaining <= 0 || remaining > wait) {
+      if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+
+      previous = at;
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
+    } else if (!timeout && options.trailing !== false) {
+      timeout = setTimeout(later, remaining);
+    }
+
+    return result;
+  };
+
+  throttled.cancel = function () {
+    clearTimeout(timeout);
+    previous = 0;
+    timeout = context = args = null;
+  };
+
+  return throttled;
+}
+
+var MARGIN_TYPE = {
+  ltr: ['marginLeft', 'marginRight'],
+  rtl: ['marginRight', 'marginLeft']
+};
+
+function Gaps(Glide, Components, Events) {
+  var Gaps = {
+    /**
+     * Applies gaps between slides. First and last
+     * slides do not receive it's edge margins.
+     *
+     * @param {HTMLCollection} slides
+     * @return {Void}
+     */
+    apply: function apply(slides) {
+      for (var i = 0, len = slides.length; i < len; i++) {
+        var style = slides[i].style;
+        var direction = Components.Direction.value;
+
+        if (i !== 0) {
+          style[MARGIN_TYPE[direction][0]] = this.value / 2 + 'px';
+        } else {
+          style[MARGIN_TYPE[direction][0]] = '';
+        }
+
+        if (i !== slides.length - 1) {
+          style[MARGIN_TYPE[direction][1]] = this.value / 2 + 'px';
+        } else {
+          style[MARGIN_TYPE[direction][1]] = '';
+        }
+      }
+    },
+
+    /**
+     * Removes gaps from the slides.
+     *
+     * @param {HTMLCollection} slides
+     * @returns {Void}
+    */
+    remove: function remove(slides) {
+      for (var i = 0, len = slides.length; i < len; i++) {
+        var style = slides[i].style;
+        style.marginLeft = '';
+        style.marginRight = '';
+      }
+    }
+  };
+  define(Gaps, 'value', {
+    /**
+     * Gets value of the gap.
+     *
+     * @returns {Number}
+     */
+    get: function get() {
+      return toInt(Glide.settings.gap);
+    }
+  });
+  define(Gaps, 'grow', {
+    /**
+     * Gets additional dimentions value caused by gaps.
+     * Used to increase width of the slides wrapper.
+     *
+     * @returns {Number}
+     */
+    get: function get() {
+      return Gaps.value * (Components.Sizes.length - 1);
+    }
+  });
+  define(Gaps, 'reductor', {
+    /**
+     * Gets reduction value caused by gaps.
+     * Used to subtract width of the slides.
+     *
+     * @returns {Number}
+     */
+    get: function get() {
+      var perView = Glide.settings.perView;
+      return Gaps.value * (perView - 1) / perView;
+    }
+  });
+  /**
+   * Apply calculated gaps:
+   * - after building, so slides (including clones) will receive proper margins
+   * - on updating via API, to recalculate gaps with new options
+   */
+
+  Events.on(['build.after', 'update'], throttle(function () {
+    Gaps.apply(Components.Html.wrapper.children);
+  }, 30));
+  /**
+   * Remove gaps:
+   * - on destroying to bring markup to its inital state
+   */
+
+  Events.on('destroy', function () {
+    Gaps.remove(Components.Html.wrapper.children);
+  });
+  return Gaps;
+}
+/**
+ * Finds siblings nodes of the passed node.
+ *
+ * @param  {Element} node
+ * @return {Array}
+ */
+
+
+function siblings(node) {
+  if (node && node.parentNode) {
+    var n = node.parentNode.firstChild;
+    var matched = [];
+
+    for (; n; n = n.nextSibling) {
+      if (n.nodeType === 1 && n !== node) {
+        matched.push(n);
+      }
+    }
+
+    return matched;
+  }
+
+  return [];
+}
+/**
+ * Checks if passed node exist and is a valid element.
+ *
+ * @param  {Element} node
+ * @return {Boolean}
+ */
+
+
+function exist(node) {
+  if (node && node instanceof window.HTMLElement) {
+    return true;
+  }
+
+  return false;
+}
+
+var TRACK_SELECTOR = '[data-glide-el="track"]';
+
+function Html(Glide, Components) {
+  var Html = {
+    /**
+     * Setup slider HTML nodes.
+     *
+     * @param {Glide} glide
+     */
+    mount: function mount() {
+      this.root = Glide.selector;
+      this.track = this.root.querySelector(TRACK_SELECTOR);
+      this.slides = Array.prototype.slice.call(this.wrapper.children).filter(function (slide) {
+        return !slide.classList.contains(Glide.settings.classes.cloneSlide);
+      });
+    }
+  };
+  define(Html, 'root', {
+    /**
+     * Gets node of the glide main element.
+     *
+     * @return {Object}
+     */
+    get: function get() {
+      return Html._r;
+    },
+
+    /**
+     * Sets node of the glide main element.
+     *
+     * @return {Object}
+     */
+    set: function set(r) {
+      if (isString(r)) {
+        r = document.querySelector(r);
+      }
+
+      if (exist(r)) {
+        Html._r = r;
+      } else {
+        warn('Root element must be a existing Html node');
+      }
+    }
+  });
+  define(Html, 'track', {
+    /**
+     * Gets node of the glide track with slides.
+     *
+     * @return {Object}
+     */
+    get: function get() {
+      return Html._t;
+    },
+
+    /**
+     * Sets node of the glide track with slides.
+     *
+     * @return {Object}
+     */
+    set: function set(t) {
+      if (exist(t)) {
+        Html._t = t;
+      } else {
+        warn('Could not find track element. Please use ' + TRACK_SELECTOR + ' attribute.');
+      }
+    }
+  });
+  define(Html, 'wrapper', {
+    /**
+     * Gets node of the slides wrapper.
+     *
+     * @return {Object}
+     */
+    get: function get() {
+      return Html.track.children[0];
+    }
+  });
+  return Html;
+}
+
+function Peek(Glide, Components, Events) {
+  var Peek = {
+    /**
+     * Setups how much to peek based on settings.
+     *
+     * @return {Void}
+     */
+    mount: function mount() {
+      this.value = Glide.settings.peek;
+    }
+  };
+  define(Peek, 'value', {
+    /**
+     * Gets value of the peek.
+     *
+     * @returns {Number|Object}
+     */
+    get: function get() {
+      return Peek._v;
+    },
+
+    /**
+     * Sets value of the peek.
+     *
+     * @param {Number|Object} value
+     * @return {Void}
+     */
+    set: function set(value) {
+      if (isObject(value)) {
+        value.before = toInt(value.before);
+        value.after = toInt(value.after);
+      } else {
+        value = toInt(value);
+      }
+
+      Peek._v = value;
+    }
+  });
+  define(Peek, 'reductor', {
+    /**
+     * Gets reduction value caused by peek.
+     *
+     * @returns {Number}
+     */
+    get: function get() {
+      var value = Peek.value;
+      var perView = Glide.settings.perView;
+
+      if (isObject(value)) {
+        return value.before / perView + value.after / perView;
+      }
+
+      return value * 2 / perView;
+    }
+  });
+  /**
+   * Recalculate peeking sizes on:
+   * - when resizing window to update to proper percents
+   */
+
+  Events.on(['resize', 'update'], function () {
+    Peek.mount();
+  });
+  return Peek;
+}
+
+function Move(Glide, Components, Events) {
+  var Move = {
+    /**
+     * Constructs move component.
+     *
+     * @returns {Void}
+     */
+    mount: function mount() {
+      this._o = 0;
+    },
+
+    /**
+     * Calculates a movement value based on passed offset and currently active index.
+     *
+     * @param  {Number} offset
+     * @return {Void}
+     */
+    make: function make() {
+      var _this = this;
+
+      var offset = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      this.offset = offset;
+      Events.emit('move', {
+        movement: this.value
+      });
+      Components.Transition.after(function () {
+        Events.emit('move.after', {
+          movement: _this.value
+        });
+      });
+    }
+  };
+  define(Move, 'offset', {
+    /**
+     * Gets an offset value used to modify current translate.
+     *
+     * @return {Object}
+     */
+    get: function get() {
+      return Move._o;
+    },
+
+    /**
+     * Sets an offset value used to modify current translate.
+     *
+     * @return {Object}
+     */
+    set: function set(value) {
+      Move._o = !isUndefined(value) ? toInt(value) : 0;
+    }
+  });
+  define(Move, 'translate', {
+    /**
+     * Gets a raw movement value.
+     *
+     * @return {Number}
+     */
+    get: function get() {
+      return Components.Sizes.slideWidth * Glide.index;
+    }
+  });
+  define(Move, 'value', {
+    /**
+     * Gets an actual movement value corrected by offset.
+     *
+     * @return {Number}
+     */
+    get: function get() {
+      var offset = this.offset;
+      var translate = this.translate;
+
+      if (Components.Direction.is('rtl')) {
+        return translate + offset;
+      }
+
+      return translate - offset;
+    }
+  });
+  /**
+   * Make movement to proper slide on:
+   * - before build, so glide will start at `startAt` index
+   * - on each standard run to move to newly calculated index
+   */
+
+  Events.on(['build.before', 'run'], function () {
+    Move.make();
+  });
+  return Move;
+}
+
+function Sizes(Glide, Components, Events) {
+  var Sizes = {
+    /**
+     * Setups dimentions of slides.
+     *
+     * @return {Void}
+     */
+    setupSlides: function setupSlides() {
+      var width = this.slideWidth + 'px';
+      var slides = Components.Html.slides;
+
+      for (var i = 0; i < slides.length; i++) {
+        slides[i].style.width = width;
+      }
+    },
+
+    /**
+     * Setups dimentions of slides wrapper.
+     *
+     * @return {Void}
+     */
+    setupWrapper: function setupWrapper(dimention) {
+      Components.Html.wrapper.style.width = this.wrapperSize + 'px';
+    },
+
+    /**
+     * Removes applied styles from HTML elements.
+     *
+     * @returns {Void}
+     */
+    remove: function remove() {
+      var slides = Components.Html.slides;
+
+      for (var i = 0; i < slides.length; i++) {
+        slides[i].style.width = '';
+      }
+
+      Components.Html.wrapper.style.width = '';
+    }
+  };
+  define(Sizes, 'length', {
+    /**
+     * Gets count number of the slides.
+     *
+     * @return {Number}
+     */
+    get: function get() {
+      return Components.Html.slides.length;
+    }
+  });
+  define(Sizes, 'width', {
+    /**
+     * Gets width value of the glide.
+     *
+     * @return {Number}
+     */
+    get: function get() {
+      return Components.Html.root.offsetWidth;
+    }
+  });
+  define(Sizes, 'wrapperSize', {
+    /**
+     * Gets size of the slides wrapper.
+     *
+     * @return {Number}
+     */
+    get: function get() {
+      return Sizes.slideWidth * Sizes.length + Components.Gaps.grow + Components.Clones.grow;
+    }
+  });
+  define(Sizes, 'slideWidth', {
+    /**
+     * Gets width value of the single slide.
+     *
+     * @return {Number}
+     */
+    get: function get() {
+      return Sizes.width / Glide.settings.perView - Components.Peek.reductor - Components.Gaps.reductor;
+    }
+  });
+  /**
+   * Apply calculated glide's dimensions:
+   * - before building, so other dimentions (e.g. translate) will be calculated propertly
+   * - when resizing window to recalculate sildes dimensions
+   * - on updating via API, to calculate dimensions based on new options
+   */
+
+  Events.on(['build.before', 'resize', 'update'], function () {
+    Sizes.setupSlides();
+    Sizes.setupWrapper();
+  });
+  /**
+   * Remove calculated glide's dimensions:
+   * - on destoting to bring markup to its inital state
+   */
+
+  Events.on('destroy', function () {
+    Sizes.remove();
+  });
+  return Sizes;
+}
+
+function Build(Glide, Components, Events) {
+  var Build = {
+    /**
+     * Init glide building. Adds classes, sets
+     * dimensions and setups initial state.
+     *
+     * @return {Void}
+     */
+    mount: function mount() {
+      Events.emit('build.before');
+      this.typeClass();
+      this.activeClass();
+      Events.emit('build.after');
+    },
+
+    /**
+     * Adds `type` class to the glide element.
+     *
+     * @return {Void}
+     */
+    typeClass: function typeClass() {
+      Components.Html.root.classList.add(Glide.settings.classes[Glide.settings.type]);
+    },
+
+    /**
+     * Sets active class to current slide.
+     *
+     * @return {Void}
+     */
+    activeClass: function activeClass() {
+      var classes = Glide.settings.classes;
+      var slide = Components.Html.slides[Glide.index];
+
+      if (slide) {
+        slide.classList.add(classes.activeSlide);
+        siblings(slide).forEach(function (sibling) {
+          sibling.classList.remove(classes.activeSlide);
+        });
+      }
+    },
+
+    /**
+     * Removes HTML classes applied at building.
+     *
+     * @return {Void}
+     */
+    removeClasses: function removeClasses() {
+      var classes = Glide.settings.classes;
+      Components.Html.root.classList.remove(classes[Glide.settings.type]);
+      Components.Html.slides.forEach(function (sibling) {
+        sibling.classList.remove(classes.activeSlide);
+      });
+    }
+  };
+  /**
+   * Clear building classes:
+   * - on destroying to bring HTML to its initial state
+   * - on updating to remove classes before remounting component
+   */
+
+  Events.on(['destroy', 'update'], function () {
+    Build.removeClasses();
+  });
+  /**
+   * Remount component:
+   * - on resizing of the window to calculate new dimentions
+   * - on updating settings via API
+   */
+
+  Events.on(['resize', 'update'], function () {
+    Build.mount();
+  });
+  /**
+   * Swap active class of current slide:
+   * - after each move to the new index
+   */
+
+  Events.on('move.after', function () {
+    Build.activeClass();
+  });
+  return Build;
+}
+
+function Clones(Glide, Components, Events) {
+  var Clones = {
+    /**
+     * Create pattern map and collect slides to be cloned.
+     */
+    mount: function mount() {
+      this.items = [];
+
+      if (Glide.isType('carousel')) {
+        this.items = this.collect();
+      }
+    },
+
+    /**
+     * Collect clones with pattern.
+     *
+     * @return {Void}
+     */
+    collect: function collect() {
+      var items = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+      var slides = Components.Html.slides;
+      var _Glide$settings = Glide.settings,
+          perView = _Glide$settings.perView,
+          classes = _Glide$settings.classes;
+      var peekIncrementer = +!!Glide.settings.peek;
+      var part = perView + peekIncrementer;
+      var start = slides.slice(0, part);
+      var end = slides.slice(-part);
+
+      for (var r = 0; r < Math.max(1, Math.floor(perView / slides.length)); r++) {
+        for (var i = 0; i < start.length; i++) {
+          var clone = start[i].cloneNode(true);
+          clone.classList.add(classes.cloneSlide);
+          items.push(clone);
+        }
+
+        for (var _i = 0; _i < end.length; _i++) {
+          var _clone = end[_i].cloneNode(true);
+
+          _clone.classList.add(classes.cloneSlide);
+
+          items.unshift(_clone);
+        }
+      }
+
+      return items;
+    },
+
+    /**
+     * Append cloned slides with generated pattern.
+     *
+     * @return {Void}
+     */
+    append: function append() {
+      var items = this.items;
+      var _Components$Html = Components.Html,
+          wrapper = _Components$Html.wrapper,
+          slides = _Components$Html.slides;
+      var half = Math.floor(items.length / 2);
+      var prepend = items.slice(0, half).reverse();
+      var append = items.slice(half, items.length);
+      var width = Components.Sizes.slideWidth + 'px';
+
+      for (var i = 0; i < append.length; i++) {
+        wrapper.appendChild(append[i]);
+      }
+
+      for (var _i2 = 0; _i2 < prepend.length; _i2++) {
+        wrapper.insertBefore(prepend[_i2], slides[0]);
+      }
+
+      for (var _i3 = 0; _i3 < items.length; _i3++) {
+        items[_i3].style.width = width;
+      }
+    },
+
+    /**
+     * Remove all cloned slides.
+     *
+     * @return {Void}
+     */
+    remove: function remove() {
+      var items = this.items;
+
+      for (var i = 0; i < items.length; i++) {
+        Components.Html.wrapper.removeChild(items[i]);
+      }
+    }
+  };
+  define(Clones, 'grow', {
+    /**
+     * Gets additional dimentions value caused by clones.
+     *
+     * @return {Number}
+     */
+    get: function get() {
+      return (Components.Sizes.slideWidth + Components.Gaps.value) * Clones.items.length;
+    }
+  });
+  /**
+   * Append additional slide's clones:
+   * - while glide's type is `carousel`
+   */
+
+  Events.on('update', function () {
+    Clones.remove();
+    Clones.mount();
+    Clones.append();
+  });
+  /**
+   * Append additional slide's clones:
+   * - while glide's type is `carousel`
+   */
+
+  Events.on('build.before', function () {
+    if (Glide.isType('carousel')) {
+      Clones.append();
+    }
+  });
+  /**
+   * Remove clones HTMLElements:
+   * - on destroying, to bring HTML to its initial state
+   */
+
+  Events.on('destroy', function () {
+    Clones.remove();
+  });
+  return Clones;
+}
+
+var EventsBinder = function () {
+  /**
+   * Construct a EventsBinder instance.
+   */
+  function EventsBinder() {
+    var listeners = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    classCallCheck(this, EventsBinder);
+    this.listeners = listeners;
+  }
+  /**
+   * Adds events listeners to arrows HTML elements.
+   *
+   * @param  {String|Array} events
+   * @param  {Element|Window|Document} el
+   * @param  {Function} closure
+   * @param  {Boolean|Object} capture
+   * @return {Void}
+   */
+
+
+  createClass(EventsBinder, [{
+    key: 'on',
+    value: function on(events, el, closure) {
+      var capture = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+      if (isString(events)) {
+        events = [events];
+      }
+
+      for (var i = 0; i < events.length; i++) {
+        this.listeners[events[i]] = closure;
+        el.addEventListener(events[i], this.listeners[events[i]], capture);
+      }
+    }
+    /**
+     * Removes event listeners from arrows HTML elements.
+     *
+     * @param  {String|Array} events
+     * @param  {Element|Window|Document} el
+     * @param  {Boolean|Object} capture
+     * @return {Void}
+     */
+
+  }, {
+    key: 'off',
+    value: function off(events, el) {
+      var capture = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+      if (isString(events)) {
+        events = [events];
+      }
+
+      for (var i = 0; i < events.length; i++) {
+        el.removeEventListener(events[i], this.listeners[events[i]], capture);
+      }
+    }
+    /**
+     * Destroy collected listeners.
+     *
+     * @returns {Void}
+     */
+
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      delete this.listeners;
+    }
+  }]);
+  return EventsBinder;
+}();
+
+function Resize(Glide, Components, Events) {
+  /**
+   * Instance of the binder for DOM Events.
+   *
+   * @type {EventsBinder}
+   */
+  var Binder = new EventsBinder();
+  var Resize = {
+    /**
+     * Initializes window bindings.
+     */
+    mount: function mount() {
+      this.bind();
+    },
+
+    /**
+     * Binds `rezsize` listener to the window.
+     * It's a costly event, so we are debouncing it.
+     *
+     * @return {Void}
+     */
+    bind: function bind() {
+      Binder.on('resize', window, throttle(function () {
+        Events.emit('resize');
+      }, Glide.settings.throttle));
+    },
+
+    /**
+     * Unbinds listeners from the window.
+     *
+     * @return {Void}
+     */
+    unbind: function unbind() {
+      Binder.off('resize', window);
+    }
+  };
+  /**
+   * Remove bindings from window:
+   * - on destroying, to remove added EventListener
+   */
+
+  Events.on('destroy', function () {
+    Resize.unbind();
+    Binder.destroy();
+  });
+  return Resize;
+}
+
+var VALID_DIRECTIONS = ['ltr', 'rtl'];
+var FLIPED_MOVEMENTS = {
+  '>': '<',
+  '<': '>',
+  '=': '='
+};
+
+function Direction(Glide, Components, Events) {
+  var Direction = {
+    /**
+     * Setups gap value based on settings.
+     *
+     * @return {Void}
+     */
+    mount: function mount() {
+      this.value = Glide.settings.direction;
+    },
+
+    /**
+     * Resolves pattern based on direction value
+     *
+     * @param {String} pattern
+     * @returns {String}
+     */
+    resolve: function resolve(pattern) {
+      var token = pattern.slice(0, 1);
+
+      if (this.is('rtl')) {
+        return pattern.split(token).join(FLIPED_MOVEMENTS[token]);
+      }
+
+      return pattern;
+    },
+
+    /**
+     * Checks value of direction mode.
+     *
+     * @param {String} direction
+     * @returns {Boolean}
+     */
+    is: function is(direction) {
+      return this.value === direction;
+    },
+
+    /**
+     * Applies direction class to the root HTML element.
+     *
+     * @return {Void}
+     */
+    addClass: function addClass() {
+      Components.Html.root.classList.add(Glide.settings.classes.direction[this.value]);
+    },
+
+    /**
+     * Removes direction class from the root HTML element.
+     *
+     * @return {Void}
+     */
+    removeClass: function removeClass() {
+      Components.Html.root.classList.remove(Glide.settings.classes.direction[this.value]);
+    }
+  };
+  define(Direction, 'value', {
+    /**
+     * Gets value of the direction.
+     *
+     * @returns {Number}
+     */
+    get: function get() {
+      return Direction._v;
+    },
+
+    /**
+     * Sets value of the direction.
+     *
+     * @param {String} value
+     * @return {Void}
+     */
+    set: function set(value) {
+      if (VALID_DIRECTIONS.indexOf(value) > -1) {
+        Direction._v = value;
+      } else {
+        warn('Direction value must be `ltr` or `rtl`');
+      }
+    }
+  });
+  /**
+   * Clear direction class:
+   * - on destroy to bring HTML to its initial state
+   * - on update to remove class before reappling bellow
+   */
+
+  Events.on(['destroy', 'update'], function () {
+    Direction.removeClass();
+  });
+  /**
+   * Remount component:
+   * - on update to reflect changes in direction value
+   */
+
+  Events.on('update', function () {
+    Direction.mount();
+  });
+  /**
+   * Apply direction class:
+   * - before building to apply class for the first time
+   * - on updating to reapply direction class that may changed
+   */
+
+  Events.on(['build.before', 'update'], function () {
+    Direction.addClass();
+  });
+  return Direction;
+}
+/**
+ * Reflects value of glide movement.
+ *
+ * @param  {Object} Glide
+ * @param  {Object} Components
+ * @return {Object}
+ */
+
+
+function Rtl(Glide, Components) {
+  return {
+    /**
+     * Negates the passed translate if glide is in RTL option.
+     *
+     * @param  {Number} translate
+     * @return {Number}
+     */
+    modify: function modify(translate) {
+      if (Components.Direction.is('rtl')) {
+        return -translate;
+      }
+
+      return translate;
+    }
+  };
+}
+/**
+ * Updates glide movement with a `gap` settings.
+ *
+ * @param  {Object} Glide
+ * @param  {Object} Components
+ * @return {Object}
+ */
+
+
+function Gap(Glide, Components) {
+  return {
+    /**
+     * Modifies passed translate value with number in the `gap` settings.
+     *
+     * @param  {Number} translate
+     * @return {Number}
+     */
+    modify: function modify(translate) {
+      return translate + Components.Gaps.value * Glide.index;
+    }
+  };
+}
+/**
+ * Updates glide movement with width of additional clones width.
+ *
+ * @param  {Object} Glide
+ * @param  {Object} Components
+ * @return {Object}
+ */
+
+
+function Grow(Glide, Components) {
+  return {
+    /**
+     * Adds to the passed translate width of the half of clones.
+     *
+     * @param  {Number} translate
+     * @return {Number}
+     */
+    modify: function modify(translate) {
+      return translate + Components.Clones.grow / 2;
+    }
+  };
+}
+/**
+ * Updates glide movement with a `peek` settings.
+ *
+ * @param  {Object} Glide
+ * @param  {Object} Components
+ * @return {Object}
+ */
+
+
+function Peeking(Glide, Components) {
+  return {
+    /**
+     * Modifies passed translate value with a `peek` setting.
+     *
+     * @param  {Number} translate
+     * @return {Number}
+     */
+    modify: function modify(translate) {
+      if (Glide.settings.focusAt >= 0) {
+        var peek = Components.Peek.value;
+
+        if (isObject(peek)) {
+          return translate - peek.before;
+        }
+
+        return translate - peek;
+      }
+
+      return translate;
+    }
+  };
+}
+/**
+ * Updates glide movement with a `focusAt` settings.
+ *
+ * @param  {Object} Glide
+ * @param  {Object} Components
+ * @return {Object}
+ */
+
+
+function Focusing(Glide, Components) {
+  return {
+    /**
+     * Modifies passed translate value with index in the `focusAt` setting.
+     *
+     * @param  {Number} translate
+     * @return {Number}
+     */
+    modify: function modify(translate) {
+      var gap = Components.Gaps.value;
+      var width = Components.Sizes.width;
+      var focusAt = Glide.settings.focusAt;
+      var slideWidth = Components.Sizes.slideWidth;
+
+      if (focusAt === 'center') {
+        return translate - (width / 2 - slideWidth / 2);
+      }
+
+      return translate - slideWidth * focusAt - gap * focusAt;
+    }
+  };
+}
+/**
+ * Applies diffrent transformers on translate value.
+ *
+ * @param  {Object} Glide
+ * @param  {Object} Components
+ * @return {Object}
+ */
+
+
+function mutator(Glide, Components, Events) {
+  /**
+   * Merge instance transformers with collection of default transformers.
+   * It's important that the Rtl component be last on the list,
+   * so it reflects all previous transformations.
+   *
+   * @type {Array}
+   */
+  var TRANSFORMERS = [Gap, Grow, Peeking, Focusing].concat(Glide._t, [Rtl]);
+  return {
+    /**
+     * Piplines translate value with registered transformers.
+     *
+     * @param  {Number} translate
+     * @return {Number}
+     */
+    mutate: function mutate(translate) {
+      for (var i = 0; i < TRANSFORMERS.length; i++) {
+        var transformer = TRANSFORMERS[i];
+
+        if (isFunction(transformer) && isFunction(transformer().modify)) {
+          translate = transformer(Glide, Components, Events).modify(translate);
+        } else {
+          warn('Transformer should be a function that returns an object with `modify()` method');
+        }
+      }
+
+      return translate;
+    }
+  };
+}
+
+function Translate(Glide, Components, Events) {
+  var Translate = {
+    /**
+     * Sets value of translate on HTML element.
+     *
+     * @param {Number} value
+     * @return {Void}
+     */
+    set: function set(value) {
+      var transform = mutator(Glide, Components).mutate(value);
+      Components.Html.wrapper.style.transform = 'translate3d(' + -1 * transform + 'px, 0px, 0px)';
+    },
+
+    /**
+     * Removes value of translate from HTML element.
+     *
+     * @return {Void}
+     */
+    remove: function remove() {
+      Components.Html.wrapper.style.transform = '';
+    }
+  };
+  /**
+   * Set new translate value:
+   * - on move to reflect index change
+   * - on updating via API to reflect possible changes in options
+   */
+
+  Events.on('move', function (context) {
+    var gap = Components.Gaps.value;
+    var length = Components.Sizes.length;
+    var width = Components.Sizes.slideWidth;
+
+    if (Glide.isType('carousel') && Components.Run.isOffset('<')) {
+      Components.Transition.after(function () {
+        Events.emit('translate.jump');
+        Translate.set(width * (length - 1));
+      });
+      return Translate.set(-width - gap * length);
+    }
+
+    if (Glide.isType('carousel') && Components.Run.isOffset('>')) {
+      Components.Transition.after(function () {
+        Events.emit('translate.jump');
+        Translate.set(0);
+      });
+      return Translate.set(width * length + gap * length);
+    }
+
+    return Translate.set(context.movement);
+  });
+  /**
+   * Remove translate:
+   * - on destroying to bring markup to its inital state
+   */
+
+  Events.on('destroy', function () {
+    Translate.remove();
+  });
+  return Translate;
+}
+
+function Transition(Glide, Components, Events) {
+  /**
+   * Holds inactivity status of transition.
+   * When true transition is not applied.
+   *
+   * @type {Boolean}
+   */
+  var disabled = false;
+  var Transition = {
+    /**
+     * Composes string of the CSS transition.
+     *
+     * @param {String} property
+     * @return {String}
+     */
+    compose: function compose(property) {
+      var settings = Glide.settings;
+
+      if (!disabled) {
+        return property + ' ' + this.duration + 'ms ' + settings.animationTimingFunc;
+      }
+
+      return property + ' 0ms ' + settings.animationTimingFunc;
+    },
+
+    /**
+     * Sets value of transition on HTML element.
+     *
+     * @param {String=} property
+     * @return {Void}
+     */
+    set: function set() {
+      var property = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'transform';
+      Components.Html.wrapper.style.transition = this.compose(property);
+    },
+
+    /**
+     * Removes value of transition from HTML element.
+     *
+     * @return {Void}
+     */
+    remove: function remove() {
+      Components.Html.wrapper.style.transition = '';
+    },
+
+    /**
+     * Runs callback after animation.
+     *
+     * @param  {Function} callback
+     * @return {Void}
+     */
+    after: function after(callback) {
+      setTimeout(function () {
+        callback();
+      }, this.duration);
+    },
+
+    /**
+     * Enable transition.
+     *
+     * @return {Void}
+     */
+    enable: function enable() {
+      disabled = false;
+      this.set();
+    },
+
+    /**
+     * Disable transition.
+     *
+     * @return {Void}
+     */
+    disable: function disable() {
+      disabled = true;
+      this.set();
+    }
+  };
+  define(Transition, 'duration', {
+    /**
+     * Gets duration of the transition based
+     * on currently running animation type.
+     *
+     * @return {Number}
+     */
+    get: function get() {
+      var settings = Glide.settings;
+
+      if (Glide.isType('slider') && Components.Run.offset) {
+        return settings.rewindDuration;
+      }
+
+      return settings.animationDuration;
+    }
+  });
+  /**
+   * Set transition `style` value:
+   * - on each moving, because it may be cleared by offset move
+   */
+
+  Events.on('move', function () {
+    Transition.set();
+  });
+  /**
+   * Disable transition:
+   * - before initial build to avoid transitioning from `0` to `startAt` index
+   * - while resizing window and recalculating dimentions
+   * - on jumping from offset transition at start and end edges in `carousel` type
+   */
+
+  Events.on(['build.before', 'resize', 'translate.jump'], function () {
+    Transition.disable();
+  });
+  /**
+   * Enable transition:
+   * - on each running, because it may be disabled by offset move
+   */
+
+  Events.on('run', function () {
+    Transition.enable();
+  });
+  /**
+   * Remove transition:
+   * - on destroying to bring markup to its inital state
+   */
+
+  Events.on('destroy', function () {
+    Transition.remove();
+  });
+  return Transition;
+}
+/**
+ * Test via a getter in the options object to see
+ * if the passive property is accessed.
+ *
+ * @see https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
+ */
+
+
+var supportsPassive = false;
+
+try {
+  var opts = Object.defineProperty({}, 'passive', {
+    get: function get() {
+      supportsPassive = true;
+    }
+  });
+  window.addEventListener('testPassive', null, opts);
+  window.removeEventListener('testPassive', null, opts);
+} catch (e) {}
+
+var supportsPassive$1 = supportsPassive;
+var START_EVENTS = ['touchstart', 'mousedown'];
+var MOVE_EVENTS = ['touchmove', 'mousemove'];
+var END_EVENTS = ['touchend', 'touchcancel', 'mouseup', 'mouseleave'];
+var MOUSE_EVENTS = ['mousedown', 'mousemove', 'mouseup', 'mouseleave'];
+
+function swipe(Glide, Components, Events) {
+  /**
+   * Instance of the binder for DOM Events.
+   *
+   * @type {EventsBinder}
+   */
+  var Binder = new EventsBinder();
+  var swipeSin = 0;
+  var swipeStartX = 0;
+  var swipeStartY = 0;
+  var disabled = false;
+  var capture = supportsPassive$1 ? {
+    passive: true
+  } : false;
+  var Swipe = {
+    /**
+     * Initializes swipe bindings.
+     *
+     * @return {Void}
+     */
+    mount: function mount() {
+      this.bindSwipeStart();
+    },
+
+    /**
+     * Handler for `swipestart` event. Calculates entry points of the user's tap.
+     *
+     * @param {Object} event
+     * @return {Void}
+     */
+    start: function start(event) {
+      if (!disabled && !Glide.disabled) {
+        this.disable();
+        var swipe = this.touches(event);
+        swipeSin = null;
+        swipeStartX = toInt(swipe.pageX);
+        swipeStartY = toInt(swipe.pageY);
+        this.bindSwipeMove();
+        this.bindSwipeEnd();
+        Events.emit('swipe.start');
+      }
+    },
+
+    /**
+     * Handler for `swipemove` event. Calculates user's tap angle and distance.
+     *
+     * @param {Object} event
+     */
+    move: function move(event) {
+      if (!Glide.disabled) {
+        var _Glide$settings = Glide.settings,
+            touchAngle = _Glide$settings.touchAngle,
+            touchRatio = _Glide$settings.touchRatio,
+            classes = _Glide$settings.classes;
+        var swipe = this.touches(event);
+        var subExSx = toInt(swipe.pageX) - swipeStartX;
+        var subEySy = toInt(swipe.pageY) - swipeStartY;
+        var powEX = Math.abs(subExSx << 2);
+        var powEY = Math.abs(subEySy << 2);
+        var swipeHypotenuse = Math.sqrt(powEX + powEY);
+        var swipeCathetus = Math.sqrt(powEY);
+        swipeSin = Math.asin(swipeCathetus / swipeHypotenuse);
+
+        if (swipeSin * 180 / Math.PI < touchAngle) {
+          event.stopPropagation();
+          Components.Move.make(subExSx * toFloat(touchRatio));
+          Components.Html.root.classList.add(classes.dragging);
+          Events.emit('swipe.move');
+        } else {
+          return false;
+        }
+      }
+    },
+
+    /**
+     * Handler for `swipeend` event. Finitializes user's tap and decides about glide move.
+     *
+     * @param {Object} event
+     * @return {Void}
+     */
+    end: function end(event) {
+      if (!Glide.disabled) {
+        var settings = Glide.settings;
+        var swipe = this.touches(event);
+        var threshold = this.threshold(event);
+        var swipeDistance = swipe.pageX - swipeStartX;
+        var swipeDeg = swipeSin * 180 / Math.PI;
+        var steps = Math.round(swipeDistance / Components.Sizes.slideWidth);
+        this.enable();
+
+        if (swipeDistance > threshold && swipeDeg < settings.touchAngle) {
+          // While swipe is positive and greater than threshold move backward.
+          if (settings.perTouch) {
+            steps = Math.min(steps, toInt(settings.perTouch));
+          }
+
+          if (Components.Direction.is('rtl')) {
+            steps = -steps;
+          }
+
+          Components.Run.make(Components.Direction.resolve('<' + steps));
+        } else if (swipeDistance < -threshold && swipeDeg < settings.touchAngle) {
+          // While swipe is negative and lower than negative threshold move forward.
+          if (settings.perTouch) {
+            steps = Math.max(steps, -toInt(settings.perTouch));
+          }
+
+          if (Components.Direction.is('rtl')) {
+            steps = -steps;
+          }
+
+          Components.Run.make(Components.Direction.resolve('>' + steps));
+        } else {
+          // While swipe don't reach distance apply previous transform.
+          Components.Move.make();
+        }
+
+        Components.Html.root.classList.remove(settings.classes.dragging);
+        this.unbindSwipeMove();
+        this.unbindSwipeEnd();
+        Events.emit('swipe.end');
+      }
+    },
+
+    /**
+     * Binds swipe's starting event.
+     *
+     * @return {Void}
+     */
+    bindSwipeStart: function bindSwipeStart() {
+      var _this = this;
+
+      var settings = Glide.settings;
+
+      if (settings.swipeThreshold) {
+        Binder.on(START_EVENTS[0], Components.Html.wrapper, function (event) {
+          _this.start(event);
+        }, capture);
+      }
+
+      if (settings.dragThreshold) {
+        Binder.on(START_EVENTS[1], Components.Html.wrapper, function (event) {
+          _this.start(event);
+        }, capture);
+      }
+    },
+
+    /**
+     * Unbinds swipe's starting event.
+     *
+     * @return {Void}
+     */
+    unbindSwipeStart: function unbindSwipeStart() {
+      Binder.off(START_EVENTS[0], Components.Html.wrapper, capture);
+      Binder.off(START_EVENTS[1], Components.Html.wrapper, capture);
+    },
+
+    /**
+     * Binds swipe's moving event.
+     *
+     * @return {Void}
+     */
+    bindSwipeMove: function bindSwipeMove() {
+      var _this2 = this;
+
+      Binder.on(MOVE_EVENTS, Components.Html.wrapper, throttle(function (event) {
+        _this2.move(event);
+      }, Glide.settings.throttle), capture);
+    },
+
+    /**
+     * Unbinds swipe's moving event.
+     *
+     * @return {Void}
+     */
+    unbindSwipeMove: function unbindSwipeMove() {
+      Binder.off(MOVE_EVENTS, Components.Html.wrapper, capture);
+    },
+
+    /**
+     * Binds swipe's ending event.
+     *
+     * @return {Void}
+     */
+    bindSwipeEnd: function bindSwipeEnd() {
+      var _this3 = this;
+
+      Binder.on(END_EVENTS, Components.Html.wrapper, function (event) {
+        _this3.end(event);
+      });
+    },
+
+    /**
+     * Unbinds swipe's ending event.
+     *
+     * @return {Void}
+     */
+    unbindSwipeEnd: function unbindSwipeEnd() {
+      Binder.off(END_EVENTS, Components.Html.wrapper);
+    },
+
+    /**
+     * Normalizes event touches points accorting to different types.
+     *
+     * @param {Object} event
+     */
+    touches: function touches(event) {
+      if (MOUSE_EVENTS.indexOf(event.type) > -1) {
+        return event;
+      }
+
+      return event.touches[0] || event.changedTouches[0];
+    },
+
+    /**
+     * Gets value of minimum swipe distance settings based on event type.
+     *
+     * @return {Number}
+     */
+    threshold: function threshold(event) {
+      var settings = Glide.settings;
+
+      if (MOUSE_EVENTS.indexOf(event.type) > -1) {
+        return settings.dragThreshold;
+      }
+
+      return settings.swipeThreshold;
+    },
+
+    /**
+     * Enables swipe event.
+     *
+     * @return {self}
+     */
+    enable: function enable() {
+      disabled = false;
+      Components.Transition.enable();
+      return this;
+    },
+
+    /**
+     * Disables swipe event.
+     *
+     * @return {self}
+     */
+    disable: function disable() {
+      disabled = true;
+      Components.Transition.disable();
+      return this;
+    }
+  };
+  /**
+   * Add component class:
+   * - after initial building
+   */
+
+  Events.on('build.after', function () {
+    Components.Html.root.classList.add(Glide.settings.classes.swipeable);
+  });
+  /**
+   * Remove swiping bindings:
+   * - on destroying, to remove added EventListeners
+   */
+
+  Events.on('destroy', function () {
+    Swipe.unbindSwipeStart();
+    Swipe.unbindSwipeMove();
+    Swipe.unbindSwipeEnd();
+    Binder.destroy();
+  });
+  return Swipe;
+}
+
+function images(Glide, Components, Events) {
+  /**
+   * Instance of the binder for DOM Events.
+   *
+   * @type {EventsBinder}
+   */
+  var Binder = new EventsBinder();
+  var Images = {
+    /**
+     * Binds listener to glide wrapper.
+     *
+     * @return {Void}
+     */
+    mount: function mount() {
+      this.bind();
+    },
+
+    /**
+     * Binds `dragstart` event on wrapper to prevent dragging images.
+     *
+     * @return {Void}
+     */
+    bind: function bind() {
+      Binder.on('dragstart', Components.Html.wrapper, this.dragstart);
+    },
+
+    /**
+     * Unbinds `dragstart` event on wrapper.
+     *
+     * @return {Void}
+     */
+    unbind: function unbind() {
+      Binder.off('dragstart', Components.Html.wrapper);
+    },
+
+    /**
+     * Event handler. Prevents dragging.
+     *
+     * @return {Void}
+     */
+    dragstart: function dragstart(event) {
+      event.preventDefault();
+    }
+  };
+  /**
+   * Remove bindings from images:
+   * - on destroying, to remove added EventListeners
+   */
+
+  Events.on('destroy', function () {
+    Images.unbind();
+    Binder.destroy();
+  });
+  return Images;
+}
+
+function anchors(Glide, Components, Events) {
+  /**
+   * Instance of the binder for DOM Events.
+   *
+   * @type {EventsBinder}
+   */
+  var Binder = new EventsBinder();
+  /**
+   * Holds detaching status of anchors.
+   * Prevents detaching of already detached anchors.
+   *
+   * @private
+   * @type {Boolean}
+   */
+
+  var detached = false;
+  /**
+   * Holds preventing status of anchors.
+   * If `true` redirection after click will be disabled.
+   *
+   * @private
+   * @type {Boolean}
+   */
+
+  var prevented = false;
+  var Anchors = {
+    /**
+     * Setups a initial state of anchors component.
+     *
+     * @returns {Void}
+     */
+    mount: function mount() {
+      /**
+       * Holds collection of anchors elements.
+       *
+       * @private
+       * @type {HTMLCollection}
+       */
+      this._a = Components.Html.wrapper.querySelectorAll('a');
+      this.bind();
+    },
+
+    /**
+     * Binds events to anchors inside a track.
+     *
+     * @return {Void}
+     */
+    bind: function bind() {
+      Binder.on('click', Components.Html.wrapper, this.click);
+    },
+
+    /**
+     * Unbinds events attached to anchors inside a track.
+     *
+     * @return {Void}
+     */
+    unbind: function unbind() {
+      Binder.off('click', Components.Html.wrapper);
+    },
+
+    /**
+     * Handler for click event. Prevents clicks when glide is in `prevent` status.
+     *
+     * @param  {Object} event
+     * @return {Void}
+     */
+    click: function click(event) {
+      if (prevented) {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+    },
+
+    /**
+     * Detaches anchors click event inside glide.
+     *
+     * @return {self}
+     */
+    detach: function detach() {
+      prevented = true;
+
+      if (!detached) {
+        for (var i = 0; i < this.items.length; i++) {
+          this.items[i].draggable = false;
+          this.items[i].setAttribute('data-href', this.items[i].getAttribute('href'));
+          this.items[i].removeAttribute('href');
+        }
+
+        detached = true;
+      }
+
+      return this;
+    },
+
+    /**
+     * Attaches anchors click events inside glide.
+     *
+     * @return {self}
+     */
+    attach: function attach() {
+      prevented = false;
+
+      if (detached) {
+        for (var i = 0; i < this.items.length; i++) {
+          this.items[i].draggable = true;
+          this.items[i].setAttribute('href', this.items[i].getAttribute('data-href'));
+        }
+
+        detached = false;
+      }
+
+      return this;
+    }
+  };
+  define(Anchors, 'items', {
+    /**
+     * Gets collection of the arrows HTML elements.
+     *
+     * @return {HTMLElement[]}
+     */
+    get: function get() {
+      return Anchors._a;
+    }
+  });
+  /**
+   * Detach anchors inside slides:
+   * - on swiping, so they won't redirect to its `href` attributes
+   */
+
+  Events.on('swipe.move', function () {
+    Anchors.detach();
+  });
+  /**
+   * Attach anchors inside slides:
+   * - after swiping and transitions ends, so they can redirect after click again
+   */
+
+  Events.on('swipe.end', function () {
+    Components.Transition.after(function () {
+      Anchors.attach();
+    });
+  });
+  /**
+   * Unbind anchors inside slides:
+   * - on destroying, to bring anchors to its initial state
+   */
+
+  Events.on('destroy', function () {
+    Anchors.attach();
+    Anchors.unbind();
+    Binder.destroy();
+  });
+  return Anchors;
+}
+
+var NAV_SELECTOR = '[data-glide-el="controls[nav]"]';
+var CONTROLS_SELECTOR = '[data-glide-el^="controls"]';
+
+function controls(Glide, Components, Events) {
+  /**
+   * Instance of the binder for DOM Events.
+   *
+   * @type {EventsBinder}
+   */
+  var Binder = new EventsBinder();
+  var capture = supportsPassive$1 ? {
+    passive: true
+  } : false;
+  var Controls = {
+    /**
+     * Inits arrows. Binds events listeners
+     * to the arrows HTML elements.
+     *
+     * @return {Void}
+     */
+    mount: function mount() {
+      /**
+       * Collection of navigation HTML elements.
+       *
+       * @private
+       * @type {HTMLCollection}
+       */
+      this._n = Components.Html.root.querySelectorAll(NAV_SELECTOR);
+      /**
+       * Collection of controls HTML elements.
+       *
+       * @private
+       * @type {HTMLCollection}
+       */
+
+      this._c = Components.Html.root.querySelectorAll(CONTROLS_SELECTOR);
+      this.addBindings();
+    },
+
+    /**
+     * Sets active class to current slide.
+     *
+     * @return {Void}
+     */
+    setActive: function setActive() {
+      for (var i = 0; i < this._n.length; i++) {
+        this.addClass(this._n[i].children);
+      }
+    },
+
+    /**
+     * Removes active class to current slide.
+     *
+     * @return {Void}
+     */
+    removeActive: function removeActive() {
+      for (var i = 0; i < this._n.length; i++) {
+        this.removeClass(this._n[i].children);
+      }
+    },
+
+    /**
+     * Toggles active class on items inside navigation.
+     *
+     * @param  {HTMLElement} controls
+     * @return {Void}
+     */
+    addClass: function addClass(controls) {
+      var settings = Glide.settings;
+      var item = controls[Glide.index];
+
+      if (item) {
+        item.classList.add(settings.classes.activeNav);
+        siblings(item).forEach(function (sibling) {
+          sibling.classList.remove(settings.classes.activeNav);
+        });
+      }
+    },
+
+    /**
+     * Removes active class from active control.
+     *
+     * @param  {HTMLElement} controls
+     * @return {Void}
+     */
+    removeClass: function removeClass(controls) {
+      var item = controls[Glide.index];
+
+      if (item) {
+        item.classList.remove(Glide.settings.classes.activeNav);
+      }
+    },
+
+    /**
+     * Adds handles to the each group of controls.
+     *
+     * @return {Void}
+     */
+    addBindings: function addBindings() {
+      for (var i = 0; i < this._c.length; i++) {
+        this.bind(this._c[i].children);
+      }
+    },
+
+    /**
+     * Removes handles from the each group of controls.
+     *
+     * @return {Void}
+     */
+    removeBindings: function removeBindings() {
+      for (var i = 0; i < this._c.length; i++) {
+        this.unbind(this._c[i].children);
+      }
+    },
+
+    /**
+     * Binds events to arrows HTML elements.
+     *
+     * @param {HTMLCollection} elements
+     * @return {Void}
+     */
+    bind: function bind(elements) {
+      for (var i = 0; i < elements.length; i++) {
+        Binder.on('click', elements[i], this.click);
+        Binder.on('touchstart', elements[i], this.click, capture);
+      }
+    },
+
+    /**
+     * Unbinds events binded to the arrows HTML elements.
+     *
+     * @param {HTMLCollection} elements
+     * @return {Void}
+     */
+    unbind: function unbind(elements) {
+      for (var i = 0; i < elements.length; i++) {
+        Binder.off(['click', 'touchstart'], elements[i]);
+      }
+    },
+
+    /**
+     * Handles `click` event on the arrows HTML elements.
+     * Moves slider in driection precised in
+     * `data-glide-dir` attribute.
+     *
+     * @param {Object} event
+     * @return {Void}
+     */
+    click: function click(event) {
+      event.preventDefault();
+      Components.Run.make(Components.Direction.resolve(event.currentTarget.getAttribute('data-glide-dir')));
+    }
+  };
+  define(Controls, 'items', {
+    /**
+     * Gets collection of the controls HTML elements.
+     *
+     * @return {HTMLElement[]}
+     */
+    get: function get() {
+      return Controls._c;
+    }
+  });
+  /**
+   * Swap active class of current navigation item:
+   * - after mounting to set it to initial index
+   * - after each move to the new index
+   */
+
+  Events.on(['mount.after', 'move.after'], function () {
+    Controls.setActive();
+  });
+  /**
+   * Remove bindings and HTML Classes:
+   * - on destroying, to bring markup to its initial state
+   */
+
+  Events.on('destroy', function () {
+    Controls.removeBindings();
+    Controls.removeActive();
+    Binder.destroy();
+  });
+  return Controls;
+}
+
+function keyboard(Glide, Components, Events) {
+  /**
+   * Instance of the binder for DOM Events.
+   *
+   * @type {EventsBinder}
+   */
+  var Binder = new EventsBinder();
+  var Keyboard = {
+    /**
+     * Binds keyboard events on component mount.
+     *
+     * @return {Void}
+     */
+    mount: function mount() {
+      if (Glide.settings.keyboard) {
+        this.bind();
+      }
+    },
+
+    /**
+     * Adds keyboard press events.
+     *
+     * @return {Void}
+     */
+    bind: function bind() {
+      Binder.on('keyup', document, this.press);
+    },
+
+    /**
+     * Removes keyboard press events.
+     *
+     * @return {Void}
+     */
+    unbind: function unbind() {
+      Binder.off('keyup', document);
+    },
+
+    /**
+     * Handles keyboard's arrows press and moving glide foward and backward.
+     *
+     * @param  {Object} event
+     * @return {Void}
+     */
+    press: function press(event) {
+      if (event.keyCode === 39) {
+        Components.Run.make(Components.Direction.resolve('>'));
+      }
+
+      if (event.keyCode === 37) {
+        Components.Run.make(Components.Direction.resolve('<'));
+      }
+    }
+  };
+  /**
+   * Remove bindings from keyboard:
+   * - on destroying to remove added events
+   * - on updating to remove events before remounting
+   */
+
+  Events.on(['destroy', 'update'], function () {
+    Keyboard.unbind();
+  });
+  /**
+   * Remount component
+   * - on updating to reflect potential changes in settings
+   */
+
+  Events.on('update', function () {
+    Keyboard.mount();
+  });
+  /**
+   * Destroy binder:
+   * - on destroying to remove listeners
+   */
+
+  Events.on('destroy', function () {
+    Binder.destroy();
+  });
+  return Keyboard;
+}
+
+function autoplay(Glide, Components, Events) {
+  /**
+   * Instance of the binder for DOM Events.
+   *
+   * @type {EventsBinder}
+   */
+  var Binder = new EventsBinder();
+  var Autoplay = {
+    /**
+     * Initializes autoplaying and events.
+     *
+     * @return {Void}
+     */
+    mount: function mount() {
+      this.start();
+
+      if (Glide.settings.hoverpause) {
+        this.bind();
+      }
+    },
+
+    /**
+     * Starts autoplaying in configured interval.
+     *
+     * @param {Boolean|Number} force Run autoplaying with passed interval regardless of `autoplay` settings
+     * @return {Void}
+     */
+    start: function start() {
+      var _this = this;
+
+      if (Glide.settings.autoplay) {
+        if (isUndefined(this._i)) {
+          this._i = setInterval(function () {
+            _this.stop();
+
+            Components.Run.make('>');
+
+            _this.start();
+          }, this.time);
+        }
+      }
+    },
+
+    /**
+     * Stops autorunning of the glide.
+     *
+     * @return {Void}
+     */
+    stop: function stop() {
+      this._i = clearInterval(this._i);
+    },
+
+    /**
+     * Stops autoplaying while mouse is over glide's area.
+     *
+     * @return {Void}
+     */
+    bind: function bind() {
+      var _this2 = this;
+
+      Binder.on('mouseover', Components.Html.root, function () {
+        _this2.stop();
+      });
+      Binder.on('mouseout', Components.Html.root, function () {
+        _this2.start();
+      });
+    },
+
+    /**
+     * Unbind mouseover events.
+     *
+     * @returns {Void}
+     */
+    unbind: function unbind() {
+      Binder.off(['mouseover', 'mouseout'], Components.Html.root);
+    }
+  };
+  define(Autoplay, 'time', {
+    /**
+     * Gets time period value for the autoplay interval. Prioritizes
+     * times in `data-glide-autoplay` attrubutes over options.
+     *
+     * @return {Number}
+     */
+    get: function get() {
+      var autoplay = Components.Html.slides[Glide.index].getAttribute('data-glide-autoplay');
+
+      if (autoplay) {
+        return toInt(autoplay);
+      }
+
+      return toInt(Glide.settings.autoplay);
+    }
+  });
+  /**
+   * Stop autoplaying and unbind events:
+   * - on destroying, to clear defined interval
+   * - on updating via API to reset interval that may changed
+   */
+
+  Events.on(['destroy', 'update'], function () {
+    Autoplay.unbind();
+  });
+  /**
+   * Stop autoplaying:
+   * - before each run, to restart autoplaying
+   * - on pausing via API
+   * - on destroying, to clear defined interval
+   * - while starting a swipe
+   * - on updating via API to reset interval that may changed
+   */
+
+  Events.on(['run.before', 'pause', 'destroy', 'swipe.start', 'update'], function () {
+    Autoplay.stop();
+  });
+  /**
+   * Start autoplaying:
+   * - after each run, to restart autoplaying
+   * - on playing via API
+   * - while ending a swipe
+   */
+
+  Events.on(['run.after', 'play', 'swipe.end'], function () {
+    Autoplay.start();
+  });
+  /**
+   * Remount autoplaying:
+   * - on updating via API to reset interval that may changed
+   */
+
+  Events.on('update', function () {
+    Autoplay.mount();
+  });
+  /**
+   * Destroy a binder:
+   * - on destroying glide instance to clearup listeners
+   */
+
+  Events.on('destroy', function () {
+    Binder.destroy();
+  });
+  return Autoplay;
+}
+/**
+ * Sorts keys of breakpoint object so they will be ordered from lower to bigger.
+ *
+ * @param {Object} points
+ * @returns {Object}
+ */
+
+
+function sortBreakpoints(points) {
+  if (isObject(points)) {
+    return sortKeys(points);
+  } else {
+    warn('Breakpoints option must be an object');
+  }
+
+  return {};
+}
+
+function breakpoints(Glide, Components, Events) {
+  /**
+   * Instance of the binder for DOM Events.
+   *
+   * @type {EventsBinder}
+   */
+  var Binder = new EventsBinder();
+  /**
+   * Holds reference to settings.
+   *
+   * @type {Object}
+   */
+
+  var settings = Glide.settings;
+  /**
+   * Holds reference to breakpoints object in settings. Sorts breakpoints
+   * from smaller to larger. It is required in order to proper
+   * matching currently active breakpoint settings.
+   *
+   * @type {Object}
+   */
+
+  var points = sortBreakpoints(settings.breakpoints);
+  /**
+   * Cache initial settings before overwritting.
+   *
+   * @type {Object}
+   */
+
+  var defaults = _extends({}, settings);
+
+  var Breakpoints = {
+    /**
+     * Matches settings for currectly matching media breakpoint.
+     *
+     * @param {Object} points
+     * @returns {Object}
+     */
+    match: function match(points) {
+      if (typeof window.matchMedia !== 'undefined') {
+        for (var point in points) {
+          if (points.hasOwnProperty(point)) {
+            if (window.matchMedia('(max-width: ' + point + 'px)').matches) {
+              return points[point];
+            }
+          }
+        }
+      }
+
+      return defaults;
+    }
+  };
+  /**
+   * Overwrite instance settings with currently matching breakpoint settings.
+   * This happens right after component initialization.
+   */
+
+  _extends(settings, Breakpoints.match(points));
+  /**
+   * Update glide with settings of matched brekpoint:
+   * - window resize to update slider
+   */
+
+
+  Binder.on('resize', window, throttle(function () {
+    Glide.settings = mergeOptions(settings, Breakpoints.match(points));
+  }, Glide.settings.throttle));
+  /**
+   * Resort and update default settings:
+   * - on reinit via API, so breakpoint matching will be performed with options
+   */
+
+  Events.on('update', function () {
+    points = sortBreakpoints(points);
+    defaults = _extends({}, settings);
+  });
+  /**
+   * Unbind resize listener:
+   * - on destroying, to bring markup to its initial state
+   */
+
+  Events.on('destroy', function () {
+    Binder.off('resize', window);
+  });
+  return Breakpoints;
+}
+
+var COMPONENTS = {
+  Html: Html,
+  Translate: Translate,
+  Transition: Transition,
+  Direction: Direction,
+  Peek: Peek,
+  Sizes: Sizes,
+  Gaps: Gaps,
+  Move: Move,
+  Clones: Clones,
+  Resize: Resize,
+  Build: Build,
+  Run: Run
+};
+
+var Glide$1 = function (_Core) {
+  inherits(Glide$$1, _Core);
+
+  function Glide$$1() {
+    classCallCheck(this, Glide$$1);
+    return possibleConstructorReturn(this, (Glide$$1.__proto__ || Object.getPrototypeOf(Glide$$1)).apply(this, arguments));
+  }
+
+  createClass(Glide$$1, [{
+    key: 'mount',
+    value: function mount() {
+      var extensions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      return get(Glide$$1.prototype.__proto__ || Object.getPrototypeOf(Glide$$1.prototype), 'mount', this).call(this, _extends({}, COMPONENTS, extensions));
+    }
+  }]);
+  return Glide$$1;
+}(Glide);
+
+var _default = Glide$1;
+exports.default = _default;
+},{}],"../src/Homepage/glide.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.carouselGlideJS = carouselGlideJS;
+
+var _glideModular = _interopRequireWildcard(require("@glidejs/glide/dist/glide.modular.esm"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+// CAROUSEL IMAGES
+function carouselGlideJS() {
+  const carouselGlide = new _glideModular.default('.glide', {
+    type: 'carousel',
+    animationDuration: 600,
+    animationTimingFunc: 'linear',
+    autoplay: 8000,
+    hoverpause: true
+  });
+  carouselGlide.mount({
+    Autoplay: _glideModular.Autoplay
+  });
+}
+},{"@glidejs/glide/dist/glide.modular.esm":"../node_modules/@glidejs/glide/dist/glide.modular.esm.js"}],"../node_modules/instantsearch.js/es/lib/utils/capitalize.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17190,3512 +20695,7 @@ var _connectQueryRules = _interopRequireDefault(require("./query-rules/connectQu
 var _connectVoiceSearch = _interopRequireDefault(require("./voice-search/connectVoiceSearch"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./clear-refinements/connectClearRefinements":"../node_modules/instantsearch.js/es/connectors/clear-refinements/connectClearRefinements.js","./current-refinements/connectCurrentRefinements":"../node_modules/instantsearch.js/es/connectors/current-refinements/connectCurrentRefinements.js","./hierarchical-menu/connectHierarchicalMenu":"../node_modules/instantsearch.js/es/connectors/hierarchical-menu/connectHierarchicalMenu.js","./hits/connectHits":"../node_modules/instantsearch.js/es/connectors/hits/connectHits.js","./hits/connectHitsWithInsights":"../node_modules/instantsearch.js/es/connectors/hits/connectHitsWithInsights.js","./hits-per-page/connectHitsPerPage":"../node_modules/instantsearch.js/es/connectors/hits-per-page/connectHitsPerPage.js","./infinite-hits/connectInfiniteHits":"../node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHits.js","./infinite-hits/connectInfiniteHitsWithInsights":"../node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHitsWithInsights.js","./menu/connectMenu":"../node_modules/instantsearch.js/es/connectors/menu/connectMenu.js","./numeric-menu/connectNumericMenu":"../node_modules/instantsearch.js/es/connectors/numeric-menu/connectNumericMenu.js","./pagination/connectPagination":"../node_modules/instantsearch.js/es/connectors/pagination/connectPagination.js","./range/connectRange":"../node_modules/instantsearch.js/es/connectors/range/connectRange.js","./refinement-list/connectRefinementList":"../node_modules/instantsearch.js/es/connectors/refinement-list/connectRefinementList.js","./search-box/connectSearchBox":"../node_modules/instantsearch.js/es/connectors/search-box/connectSearchBox.js","./sort-by/connectSortBy":"../node_modules/instantsearch.js/es/connectors/sort-by/connectSortBy.js","./rating-menu/connectRatingMenu":"../node_modules/instantsearch.js/es/connectors/rating-menu/connectRatingMenu.js","./stats/connectStats":"../node_modules/instantsearch.js/es/connectors/stats/connectStats.js","./toggle-refinement/connectToggleRefinement":"../node_modules/instantsearch.js/es/connectors/toggle-refinement/connectToggleRefinement.js","./breadcrumb/connectBreadcrumb":"../node_modules/instantsearch.js/es/connectors/breadcrumb/connectBreadcrumb.js","./geo-search/connectGeoSearch":"../node_modules/instantsearch.js/es/connectors/geo-search/connectGeoSearch.js","./powered-by/connectPoweredBy":"../node_modules/instantsearch.js/es/connectors/powered-by/connectPoweredBy.js","./configure/connectConfigure":"../node_modules/instantsearch.js/es/connectors/configure/connectConfigure.js","./configure-related-items/connectConfigureRelatedItems":"../node_modules/instantsearch.js/es/connectors/configure-related-items/connectConfigureRelatedItems.js","./autocomplete/connectAutocomplete":"../node_modules/instantsearch.js/es/connectors/autocomplete/connectAutocomplete.js","./query-rules/connectQueryRules":"../node_modules/instantsearch.js/es/connectors/query-rules/connectQueryRules.js","./voice-search/connectVoiceSearch":"../node_modules/instantsearch.js/es/connectors/voice-search/connectVoiceSearch.js"}],"../node_modules/@glidejs/glide/dist/glide.modular.esm.js":[function(require,module,exports) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Swipe = swipe;
-exports.Images = images;
-exports.Anchors = anchors;
-exports.Controls = controls;
-exports.Keyboard = keyboard;
-exports.Autoplay = autoplay;
-exports.Breakpoints = breakpoints;
-exports.default = void 0;
-
-/*!
- * Glide.js v3.4.1
- * (c) 2013-2019 Jędrzej Chałubek <jedrzej.chalubek@gmail.com> (http://jedrzejchalubek.com/)
- * Released under the MIT License.
- */
-var defaults = {
-  /**
-   * Type of the movement.
-   *
-   * Available types:
-   * `slider` - Rewinds slider to the start/end when it reaches the first or last slide.
-   * `carousel` - Changes slides without starting over when it reaches the first or last slide.
-   *
-   * @type {String}
-   */
-  type: 'slider',
-
-  /**
-   * Start at specific slide number defined with zero-based index.
-   *
-   * @type {Number}
-   */
-  startAt: 0,
-
-  /**
-   * A number of slides visible on the single viewport.
-   *
-   * @type {Number}
-   */
-  perView: 1,
-
-  /**
-   * Focus currently active slide at a specified position in the track.
-   *
-   * Available inputs:
-   * `center` - Current slide will be always focused at the center of a track.
-   * `0,1,2,3...` - Current slide will be focused on the specified zero-based index.
-   *
-   * @type {String|Number}
-   */
-  focusAt: 0,
-
-  /**
-   * A size of the gap added between slides.
-   *
-   * @type {Number}
-   */
-  gap: 10,
-
-  /**
-   * Change slides after a specified interval. Use `false` for turning off autoplay.
-   *
-   * @type {Number|Boolean}
-   */
-  autoplay: false,
-
-  /**
-   * Stop autoplay on mouseover event.
-   *
-   * @type {Boolean}
-   */
-  hoverpause: true,
-
-  /**
-   * Allow for changing slides with left and right keyboard arrows.
-   *
-   * @type {Boolean}
-   */
-  keyboard: true,
-
-  /**
-   * Stop running `perView` number of slides from the end. Use this
-   * option if you don't want to have an empty space after
-   * a slider. Works only with `slider` type and a
-   * non-centered `focusAt` setting.
-   *
-   * @type {Boolean}
-   */
-  bound: false,
-
-  /**
-   * Minimal swipe distance needed to change the slide. Use `false` for turning off a swiping.
-   *
-   * @type {Number|Boolean}
-   */
-  swipeThreshold: 80,
-
-  /**
-   * Minimal mouse drag distance needed to change the slide. Use `false` for turning off a dragging.
-   *
-   * @type {Number|Boolean}
-   */
-  dragThreshold: 120,
-
-  /**
-   * A maximum number of slides to which movement will be made on swiping or dragging. Use `false` for unlimited.
-   *
-   * @type {Number|Boolean}
-   */
-  perTouch: false,
-
-  /**
-   * Moving distance ratio of the slides on a swiping and dragging.
-   *
-   * @type {Number}
-   */
-  touchRatio: 0.5,
-
-  /**
-   * Angle required to activate slides moving on swiping or dragging.
-   *
-   * @type {Number}
-   */
-  touchAngle: 45,
-
-  /**
-   * Duration of the animation in milliseconds.
-   *
-   * @type {Number}
-   */
-  animationDuration: 400,
-
-  /**
-   * Allows looping the `slider` type. Slider will rewind to the first/last slide when it's at the start/end.
-   *
-   * @type {Boolean}
-   */
-  rewind: true,
-
-  /**
-   * Duration of the rewinding animation of the `slider` type in milliseconds.
-   *
-   * @type {Number}
-   */
-  rewindDuration: 800,
-
-  /**
-   * Easing function for the animation.
-   *
-   * @type {String}
-   */
-  animationTimingFunc: 'cubic-bezier(.165, .840, .440, 1)',
-
-  /**
-   * Throttle costly events at most once per every wait milliseconds.
-   *
-   * @type {Number}
-   */
-  throttle: 10,
-
-  /**
-   * Moving direction mode.
-   *
-   * Available inputs:
-   * - 'ltr' - left to right movement,
-   * - 'rtl' - right to left movement.
-   *
-   * @type {String}
-   */
-  direction: 'ltr',
-
-  /**
-   * The distance value of the next and previous viewports which
-   * have to peek in the current view. Accepts number and
-   * pixels as a string. Left and right peeking can be
-   * set up separately with a directions object.
-   *
-   * For example:
-   * `100` - Peek 100px on the both sides.
-   * { before: 100, after: 50 }` - Peek 100px on the left side and 50px on the right side.
-   *
-   * @type {Number|String|Object}
-   */
-  peek: 0,
-
-  /**
-   * Collection of options applied at specified media breakpoints.
-   * For example: display two slides per view under 800px.
-   * `{
-   *   '800px': {
-   *     perView: 2
-   *   }
-   * }`
-   */
-  breakpoints: {},
-
-  /**
-   * Collection of internally used HTML classes.
-   *
-   * @todo Refactor `slider` and `carousel` properties to single `type: { slider: '', carousel: '' }` object
-   * @type {Object}
-   */
-  classes: {
-    direction: {
-      ltr: 'glide--ltr',
-      rtl: 'glide--rtl'
-    },
-    slider: 'glide--slider',
-    carousel: 'glide--carousel',
-    swipeable: 'glide--swipeable',
-    dragging: 'glide--dragging',
-    cloneSlide: 'glide__slide--clone',
-    activeNav: 'glide__bullet--active',
-    activeSlide: 'glide__slide--active',
-    disabledArrow: 'glide__arrow--disabled'
-  }
-};
-/**
- * Outputs warning message to the bowser console.
- *
- * @param  {String} msg
- * @return {Void}
- */
-
-function warn(msg) {
-  console.error("[Glide warn]: " + msg);
-}
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-  return typeof obj;
-} : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-};
-
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-
-var _extends = Object.assign || function (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
-
-    for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
-      }
-    }
-  }
-
-  return target;
-};
-
-var get = function get(object, property, receiver) {
-  if (object === null) object = Function.prototype;
-  var desc = Object.getOwnPropertyDescriptor(object, property);
-
-  if (desc === undefined) {
-    var parent = Object.getPrototypeOf(object);
-
-    if (parent === null) {
-      return undefined;
-    } else {
-      return get(parent, property, receiver);
-    }
-  } else if ("value" in desc) {
-    return desc.value;
-  } else {
-    var getter = desc.get;
-
-    if (getter === undefined) {
-      return undefined;
-    }
-
-    return getter.call(receiver);
-  }
-};
-
-var inherits = function (subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-};
-
-var possibleConstructorReturn = function (self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return call && (typeof call === "object" || typeof call === "function") ? call : self;
-};
-/**
- * Converts value entered as number
- * or string to integer value.
- *
- * @param {String} value
- * @returns {Number}
- */
-
-
-function toInt(value) {
-  return parseInt(value);
-}
-/**
- * Converts value entered as number
- * or string to flat value.
- *
- * @param {String} value
- * @returns {Number}
- */
-
-
-function toFloat(value) {
-  return parseFloat(value);
-}
-/**
- * Indicates whether the specified value is a string.
- *
- * @param  {*}   value
- * @return {Boolean}
- */
-
-
-function isString(value) {
-  return typeof value === 'string';
-}
-/**
- * Indicates whether the specified value is an object.
- *
- * @param  {*} value
- * @return {Boolean}
- *
- * @see https://github.com/jashkenas/underscore
- */
-
-
-function isObject(value) {
-  var type = typeof value === 'undefined' ? 'undefined' : _typeof(value);
-  return type === 'function' || type === 'object' && !!value; // eslint-disable-line no-mixed-operators
-}
-/**
- * Indicates whether the specified value is a number.
- *
- * @param  {*} value
- * @return {Boolean}
- */
-
-
-function isNumber(value) {
-  return typeof value === 'number';
-}
-/**
- * Indicates whether the specified value is a function.
- *
- * @param  {*} value
- * @return {Boolean}
- */
-
-
-function isFunction(value) {
-  return typeof value === 'function';
-}
-/**
- * Indicates whether the specified value is undefined.
- *
- * @param  {*} value
- * @return {Boolean}
- */
-
-
-function isUndefined(value) {
-  return typeof value === 'undefined';
-}
-/**
- * Indicates whether the specified value is an array.
- *
- * @param  {*} value
- * @return {Boolean}
- */
-
-
-function isArray(value) {
-  return value.constructor === Array;
-}
-/**
- * Creates and initializes specified collection of extensions.
- * Each extension receives access to instance of glide and rest of components.
- *
- * @param {Object} glide
- * @param {Object} extensions
- *
- * @returns {Object}
- */
-
-
-function mount(glide, extensions, events) {
-  var components = {};
-
-  for (var name in extensions) {
-    if (isFunction(extensions[name])) {
-      components[name] = extensions[name](glide, components, events);
-    } else {
-      warn('Extension must be a function');
-    }
-  }
-
-  for (var _name in components) {
-    if (isFunction(components[_name].mount)) {
-      components[_name].mount();
-    }
-  }
-
-  return components;
-}
-/**
- * Defines getter and setter property on the specified object.
- *
- * @param  {Object} obj         Object where property has to be defined.
- * @param  {String} prop        Name of the defined property.
- * @param  {Object} definition  Get and set definitions for the property.
- * @return {Void}
- */
-
-
-function define(obj, prop, definition) {
-  Object.defineProperty(obj, prop, definition);
-}
-/**
- * Sorts aphabetically object keys.
- *
- * @param  {Object} obj
- * @return {Object}
- */
-
-
-function sortKeys(obj) {
-  return Object.keys(obj).sort().reduce(function (r, k) {
-    r[k] = obj[k];
-    return r[k], r;
-  }, {});
-}
-/**
- * Merges passed settings object with default options.
- *
- * @param  {Object} defaults
- * @param  {Object} settings
- * @return {Object}
- */
-
-
-function mergeOptions(defaults, settings) {
-  var options = _extends({}, defaults, settings); // `Object.assign` do not deeply merge objects, so we
-  // have to do it manually for every nested object
-  // in options. Although it does not look smart,
-  // it's smaller and faster than some fancy
-  // merging deep-merge algorithm script.
-
-
-  if (settings.hasOwnProperty('classes')) {
-    options.classes = _extends({}, defaults.classes, settings.classes);
-
-    if (settings.classes.hasOwnProperty('direction')) {
-      options.classes.direction = _extends({}, defaults.classes.direction, settings.classes.direction);
-    }
-  }
-
-  if (settings.hasOwnProperty('breakpoints')) {
-    options.breakpoints = _extends({}, defaults.breakpoints, settings.breakpoints);
-  }
-
-  return options;
-}
-
-var EventsBus = function () {
-  /**
-   * Construct a EventBus instance.
-   *
-   * @param {Object} events
-   */
-  function EventsBus() {
-    var events = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    classCallCheck(this, EventsBus);
-    this.events = events;
-    this.hop = events.hasOwnProperty;
-  }
-  /**
-   * Adds listener to the specifed event.
-   *
-   * @param {String|Array} event
-   * @param {Function} handler
-   */
-
-
-  createClass(EventsBus, [{
-    key: 'on',
-    value: function on(event, handler) {
-      if (isArray(event)) {
-        for (var i = 0; i < event.length; i++) {
-          this.on(event[i], handler);
-        }
-      } // Create the event's object if not yet created
-
-
-      if (!this.hop.call(this.events, event)) {
-        this.events[event] = [];
-      } // Add the handler to queue
-
-
-      var index = this.events[event].push(handler) - 1; // Provide handle back for removal of event
-
-      return {
-        remove: function remove() {
-          delete this.events[event][index];
-        }
-      };
-    }
-    /**
-     * Runs registered handlers for specified event.
-     *
-     * @param {String|Array} event
-     * @param {Object=} context
-     */
-
-  }, {
-    key: 'emit',
-    value: function emit(event, context) {
-      if (isArray(event)) {
-        for (var i = 0; i < event.length; i++) {
-          this.emit(event[i], context);
-        }
-      } // If the event doesn't exist, or there's no handlers in queue, just leave
-
-
-      if (!this.hop.call(this.events, event)) {
-        return;
-      } // Cycle through events queue, fire!
-
-
-      this.events[event].forEach(function (item) {
-        item(context || {});
-      });
-    }
-  }]);
-  return EventsBus;
-}();
-
-var Glide = function () {
-  /**
-   * Construct glide.
-   *
-   * @param  {String} selector
-   * @param  {Object} options
-   */
-  function Glide(selector) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    classCallCheck(this, Glide);
-    this._c = {};
-    this._t = [];
-    this._e = new EventsBus();
-    this.disabled = false;
-    this.selector = selector;
-    this.settings = mergeOptions(defaults, options);
-    this.index = this.settings.startAt;
-  }
-  /**
-   * Initializes glide.
-   *
-   * @param {Object} extensions Collection of extensions to initialize.
-   * @return {Glide}
-   */
-
-
-  createClass(Glide, [{
-    key: 'mount',
-    value: function mount$$1() {
-      var extensions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      this._e.emit('mount.before');
-
-      if (isObject(extensions)) {
-        this._c = mount(this, extensions, this._e);
-      } else {
-        warn('You need to provide a object on `mount()`');
-      }
-
-      this._e.emit('mount.after');
-
-      return this;
-    }
-    /**
-     * Collects an instance `translate` transformers.
-     *
-     * @param  {Array} transformers Collection of transformers.
-     * @return {Void}
-     */
-
-  }, {
-    key: 'mutate',
-    value: function mutate() {
-      var transformers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-      if (isArray(transformers)) {
-        this._t = transformers;
-      } else {
-        warn('You need to provide a array on `mutate()`');
-      }
-
-      return this;
-    }
-    /**
-     * Updates glide with specified settings.
-     *
-     * @param {Object} settings
-     * @return {Glide}
-     */
-
-  }, {
-    key: 'update',
-    value: function update() {
-      var settings = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      this.settings = mergeOptions(this.settings, settings);
-
-      if (settings.hasOwnProperty('startAt')) {
-        this.index = settings.startAt;
-      }
-
-      this._e.emit('update');
-
-      return this;
-    }
-    /**
-     * Change slide with specified pattern. A pattern must be in the special format:
-     * `>` - Move one forward
-     * `<` - Move one backward
-     * `={i}` - Go to {i} zero-based slide (eq. '=1', will go to second slide)
-     * `>>` - Rewinds to end (last slide)
-     * `<<` - Rewinds to start (first slide)
-     *
-     * @param {String} pattern
-     * @return {Glide}
-     */
-
-  }, {
-    key: 'go',
-    value: function go(pattern) {
-      this._c.Run.make(pattern);
-
-      return this;
-    }
-    /**
-     * Move track by specified distance.
-     *
-     * @param {String} distance
-     * @return {Glide}
-     */
-
-  }, {
-    key: 'move',
-    value: function move(distance) {
-      this._c.Transition.disable();
-
-      this._c.Move.make(distance);
-
-      return this;
-    }
-    /**
-     * Destroy instance and revert all changes done by this._c.
-     *
-     * @return {Glide}
-     */
-
-  }, {
-    key: 'destroy',
-    value: function destroy() {
-      this._e.emit('destroy');
-
-      return this;
-    }
-    /**
-     * Start instance autoplaying.
-     *
-     * @param {Boolean|Number} interval Run autoplaying with passed interval regardless of `autoplay` settings
-     * @return {Glide}
-     */
-
-  }, {
-    key: 'play',
-    value: function play() {
-      var interval = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-      if (interval) {
-        this.settings.autoplay = interval;
-      }
-
-      this._e.emit('play');
-
-      return this;
-    }
-    /**
-     * Stop instance autoplaying.
-     *
-     * @return {Glide}
-     */
-
-  }, {
-    key: 'pause',
-    value: function pause() {
-      this._e.emit('pause');
-
-      return this;
-    }
-    /**
-     * Sets glide into a idle status.
-     *
-     * @return {Glide}
-     */
-
-  }, {
-    key: 'disable',
-    value: function disable() {
-      this.disabled = true;
-      return this;
-    }
-    /**
-     * Sets glide into a active status.
-     *
-     * @return {Glide}
-     */
-
-  }, {
-    key: 'enable',
-    value: function enable() {
-      this.disabled = false;
-      return this;
-    }
-    /**
-     * Adds cuutom event listener with handler.
-     *
-     * @param  {String|Array} event
-     * @param  {Function} handler
-     * @return {Glide}
-     */
-
-  }, {
-    key: 'on',
-    value: function on(event, handler) {
-      this._e.on(event, handler);
-
-      return this;
-    }
-    /**
-     * Checks if glide is a precised type.
-     *
-     * @param  {String} name
-     * @return {Boolean}
-     */
-
-  }, {
-    key: 'isType',
-    value: function isType(name) {
-      return this.settings.type === name;
-    }
-    /**
-     * Gets value of the core options.
-     *
-     * @return {Object}
-     */
-
-  }, {
-    key: 'settings',
-    get: function get$$1() {
-      return this._o;
-    }
-    /**
-     * Sets value of the core options.
-     *
-     * @param  {Object} o
-     * @return {Void}
-     */
-    ,
-    set: function set$$1(o) {
-      if (isObject(o)) {
-        this._o = o;
-      } else {
-        warn('Options must be an `object` instance.');
-      }
-    }
-    /**
-     * Gets current index of the slider.
-     *
-     * @return {Object}
-     */
-
-  }, {
-    key: 'index',
-    get: function get$$1() {
-      return this._i;
-    }
-    /**
-     * Sets current index a slider.
-     *
-     * @return {Object}
-     */
-    ,
-    set: function set$$1(i) {
-      this._i = toInt(i);
-    }
-    /**
-     * Gets type name of the slider.
-     *
-     * @return {String}
-     */
-
-  }, {
-    key: 'type',
-    get: function get$$1() {
-      return this.settings.type;
-    }
-    /**
-     * Gets value of the idle status.
-     *
-     * @return {Boolean}
-     */
-
-  }, {
-    key: 'disabled',
-    get: function get$$1() {
-      return this._d;
-    }
-    /**
-     * Sets value of the idle status.
-     *
-     * @return {Boolean}
-     */
-    ,
-    set: function set$$1(status) {
-      this._d = !!status;
-    }
-  }]);
-  return Glide;
-}();
-
-function Run(Glide, Components, Events) {
-  var Run = {
-    /**
-     * Initializes autorunning of the glide.
-     *
-     * @return {Void}
-     */
-    mount: function mount() {
-      this._o = false;
-    },
-
-    /**
-     * Makes glides running based on the passed moving schema.
-     *
-     * @param {String} move
-     */
-    make: function make(move) {
-      var _this = this;
-
-      if (!Glide.disabled) {
-        Glide.disable();
-        this.move = move;
-        Events.emit('run.before', this.move);
-        this.calculate();
-        Events.emit('run', this.move);
-        Components.Transition.after(function () {
-          if (_this.isStart()) {
-            Events.emit('run.start', _this.move);
-          }
-
-          if (_this.isEnd()) {
-            Events.emit('run.end', _this.move);
-          }
-
-          if (_this.isOffset('<') || _this.isOffset('>')) {
-            _this._o = false;
-            Events.emit('run.offset', _this.move);
-          }
-
-          Events.emit('run.after', _this.move);
-          Glide.enable();
-        });
-      }
-    },
-
-    /**
-     * Calculates current index based on defined move.
-     *
-     * @return {Void}
-     */
-    calculate: function calculate() {
-      var move = this.move,
-          length = this.length;
-      var steps = move.steps,
-          direction = move.direction;
-      var countableSteps = isNumber(toInt(steps)) && toInt(steps) !== 0;
-
-      switch (direction) {
-        case '>':
-          if (steps === '>') {
-            Glide.index = length;
-          } else if (this.isEnd()) {
-            if (!(Glide.isType('slider') && !Glide.settings.rewind)) {
-              this._o = true;
-              Glide.index = 0;
-            }
-          } else if (countableSteps) {
-            Glide.index += Math.min(length - Glide.index, -toInt(steps));
-          } else {
-            Glide.index++;
-          }
-
-          break;
-
-        case '<':
-          if (steps === '<') {
-            Glide.index = 0;
-          } else if (this.isStart()) {
-            if (!(Glide.isType('slider') && !Glide.settings.rewind)) {
-              this._o = true;
-              Glide.index = length;
-            }
-          } else if (countableSteps) {
-            Glide.index -= Math.min(Glide.index, toInt(steps));
-          } else {
-            Glide.index--;
-          }
-
-          break;
-
-        case '=':
-          Glide.index = steps;
-          break;
-
-        default:
-          warn('Invalid direction pattern [' + direction + steps + '] has been used');
-          break;
-      }
-    },
-
-    /**
-     * Checks if we are on the first slide.
-     *
-     * @return {Boolean}
-     */
-    isStart: function isStart() {
-      return Glide.index === 0;
-    },
-
-    /**
-     * Checks if we are on the last slide.
-     *
-     * @return {Boolean}
-     */
-    isEnd: function isEnd() {
-      return Glide.index === this.length;
-    },
-
-    /**
-     * Checks if we are making a offset run.
-     *
-     * @param {String} direction
-     * @return {Boolean}
-     */
-    isOffset: function isOffset(direction) {
-      return this._o && this.move.direction === direction;
-    }
-  };
-  define(Run, 'move', {
-    /**
-     * Gets value of the move schema.
-     *
-     * @returns {Object}
-     */
-    get: function get() {
-      return this._m;
-    },
-
-    /**
-     * Sets value of the move schema.
-     *
-     * @returns {Object}
-     */
-    set: function set(value) {
-      var step = value.substr(1);
-      this._m = {
-        direction: value.substr(0, 1),
-        steps: step ? toInt(step) ? toInt(step) : step : 0
-      };
-    }
-  });
-  define(Run, 'length', {
-    /**
-     * Gets value of the running distance based
-     * on zero-indexing number of slides.
-     *
-     * @return {Number}
-     */
-    get: function get() {
-      var settings = Glide.settings;
-      var length = Components.Html.slides.length; // If the `bound` option is acitve, a maximum running distance should be
-      // reduced by `perView` and `focusAt` settings. Running distance
-      // should end before creating an empty space after instance.
-
-      if (Glide.isType('slider') && settings.focusAt !== 'center' && settings.bound) {
-        return length - 1 - (toInt(settings.perView) - 1) + toInt(settings.focusAt);
-      }
-
-      return length - 1;
-    }
-  });
-  define(Run, 'offset', {
-    /**
-     * Gets status of the offsetting flag.
-     *
-     * @return {Boolean}
-     */
-    get: function get() {
-      return this._o;
-    }
-  });
-  return Run;
-}
-/**
- * Returns a current time.
- *
- * @return {Number}
- */
-
-
-function now() {
-  return new Date().getTime();
-}
-/**
- * Returns a function, that, when invoked, will only be triggered
- * at most once during a given window of time.
- *
- * @param {Function} func
- * @param {Number} wait
- * @param {Object=} options
- * @return {Function}
- *
- * @see https://github.com/jashkenas/underscore
- */
-
-
-function throttle(func, wait, options) {
-  var timeout = void 0,
-      context = void 0,
-      args = void 0,
-      result = void 0;
-  var previous = 0;
-  if (!options) options = {};
-
-  var later = function later() {
-    previous = options.leading === false ? 0 : now();
-    timeout = null;
-    result = func.apply(context, args);
-    if (!timeout) context = args = null;
-  };
-
-  var throttled = function throttled() {
-    var at = now();
-    if (!previous && options.leading === false) previous = at;
-    var remaining = wait - (at - previous);
-    context = this;
-    args = arguments;
-
-    if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-      }
-
-      previous = at;
-      result = func.apply(context, args);
-      if (!timeout) context = args = null;
-    } else if (!timeout && options.trailing !== false) {
-      timeout = setTimeout(later, remaining);
-    }
-
-    return result;
-  };
-
-  throttled.cancel = function () {
-    clearTimeout(timeout);
-    previous = 0;
-    timeout = context = args = null;
-  };
-
-  return throttled;
-}
-
-var MARGIN_TYPE = {
-  ltr: ['marginLeft', 'marginRight'],
-  rtl: ['marginRight', 'marginLeft']
-};
-
-function Gaps(Glide, Components, Events) {
-  var Gaps = {
-    /**
-     * Applies gaps between slides. First and last
-     * slides do not receive it's edge margins.
-     *
-     * @param {HTMLCollection} slides
-     * @return {Void}
-     */
-    apply: function apply(slides) {
-      for (var i = 0, len = slides.length; i < len; i++) {
-        var style = slides[i].style;
-        var direction = Components.Direction.value;
-
-        if (i !== 0) {
-          style[MARGIN_TYPE[direction][0]] = this.value / 2 + 'px';
-        } else {
-          style[MARGIN_TYPE[direction][0]] = '';
-        }
-
-        if (i !== slides.length - 1) {
-          style[MARGIN_TYPE[direction][1]] = this.value / 2 + 'px';
-        } else {
-          style[MARGIN_TYPE[direction][1]] = '';
-        }
-      }
-    },
-
-    /**
-     * Removes gaps from the slides.
-     *
-     * @param {HTMLCollection} slides
-     * @returns {Void}
-    */
-    remove: function remove(slides) {
-      for (var i = 0, len = slides.length; i < len; i++) {
-        var style = slides[i].style;
-        style.marginLeft = '';
-        style.marginRight = '';
-      }
-    }
-  };
-  define(Gaps, 'value', {
-    /**
-     * Gets value of the gap.
-     *
-     * @returns {Number}
-     */
-    get: function get() {
-      return toInt(Glide.settings.gap);
-    }
-  });
-  define(Gaps, 'grow', {
-    /**
-     * Gets additional dimentions value caused by gaps.
-     * Used to increase width of the slides wrapper.
-     *
-     * @returns {Number}
-     */
-    get: function get() {
-      return Gaps.value * (Components.Sizes.length - 1);
-    }
-  });
-  define(Gaps, 'reductor', {
-    /**
-     * Gets reduction value caused by gaps.
-     * Used to subtract width of the slides.
-     *
-     * @returns {Number}
-     */
-    get: function get() {
-      var perView = Glide.settings.perView;
-      return Gaps.value * (perView - 1) / perView;
-    }
-  });
-  /**
-   * Apply calculated gaps:
-   * - after building, so slides (including clones) will receive proper margins
-   * - on updating via API, to recalculate gaps with new options
-   */
-
-  Events.on(['build.after', 'update'], throttle(function () {
-    Gaps.apply(Components.Html.wrapper.children);
-  }, 30));
-  /**
-   * Remove gaps:
-   * - on destroying to bring markup to its inital state
-   */
-
-  Events.on('destroy', function () {
-    Gaps.remove(Components.Html.wrapper.children);
-  });
-  return Gaps;
-}
-/**
- * Finds siblings nodes of the passed node.
- *
- * @param  {Element} node
- * @return {Array}
- */
-
-
-function siblings(node) {
-  if (node && node.parentNode) {
-    var n = node.parentNode.firstChild;
-    var matched = [];
-
-    for (; n; n = n.nextSibling) {
-      if (n.nodeType === 1 && n !== node) {
-        matched.push(n);
-      }
-    }
-
-    return matched;
-  }
-
-  return [];
-}
-/**
- * Checks if passed node exist and is a valid element.
- *
- * @param  {Element} node
- * @return {Boolean}
- */
-
-
-function exist(node) {
-  if (node && node instanceof window.HTMLElement) {
-    return true;
-  }
-
-  return false;
-}
-
-var TRACK_SELECTOR = '[data-glide-el="track"]';
-
-function Html(Glide, Components) {
-  var Html = {
-    /**
-     * Setup slider HTML nodes.
-     *
-     * @param {Glide} glide
-     */
-    mount: function mount() {
-      this.root = Glide.selector;
-      this.track = this.root.querySelector(TRACK_SELECTOR);
-      this.slides = Array.prototype.slice.call(this.wrapper.children).filter(function (slide) {
-        return !slide.classList.contains(Glide.settings.classes.cloneSlide);
-      });
-    }
-  };
-  define(Html, 'root', {
-    /**
-     * Gets node of the glide main element.
-     *
-     * @return {Object}
-     */
-    get: function get() {
-      return Html._r;
-    },
-
-    /**
-     * Sets node of the glide main element.
-     *
-     * @return {Object}
-     */
-    set: function set(r) {
-      if (isString(r)) {
-        r = document.querySelector(r);
-      }
-
-      if (exist(r)) {
-        Html._r = r;
-      } else {
-        warn('Root element must be a existing Html node');
-      }
-    }
-  });
-  define(Html, 'track', {
-    /**
-     * Gets node of the glide track with slides.
-     *
-     * @return {Object}
-     */
-    get: function get() {
-      return Html._t;
-    },
-
-    /**
-     * Sets node of the glide track with slides.
-     *
-     * @return {Object}
-     */
-    set: function set(t) {
-      if (exist(t)) {
-        Html._t = t;
-      } else {
-        warn('Could not find track element. Please use ' + TRACK_SELECTOR + ' attribute.');
-      }
-    }
-  });
-  define(Html, 'wrapper', {
-    /**
-     * Gets node of the slides wrapper.
-     *
-     * @return {Object}
-     */
-    get: function get() {
-      return Html.track.children[0];
-    }
-  });
-  return Html;
-}
-
-function Peek(Glide, Components, Events) {
-  var Peek = {
-    /**
-     * Setups how much to peek based on settings.
-     *
-     * @return {Void}
-     */
-    mount: function mount() {
-      this.value = Glide.settings.peek;
-    }
-  };
-  define(Peek, 'value', {
-    /**
-     * Gets value of the peek.
-     *
-     * @returns {Number|Object}
-     */
-    get: function get() {
-      return Peek._v;
-    },
-
-    /**
-     * Sets value of the peek.
-     *
-     * @param {Number|Object} value
-     * @return {Void}
-     */
-    set: function set(value) {
-      if (isObject(value)) {
-        value.before = toInt(value.before);
-        value.after = toInt(value.after);
-      } else {
-        value = toInt(value);
-      }
-
-      Peek._v = value;
-    }
-  });
-  define(Peek, 'reductor', {
-    /**
-     * Gets reduction value caused by peek.
-     *
-     * @returns {Number}
-     */
-    get: function get() {
-      var value = Peek.value;
-      var perView = Glide.settings.perView;
-
-      if (isObject(value)) {
-        return value.before / perView + value.after / perView;
-      }
-
-      return value * 2 / perView;
-    }
-  });
-  /**
-   * Recalculate peeking sizes on:
-   * - when resizing window to update to proper percents
-   */
-
-  Events.on(['resize', 'update'], function () {
-    Peek.mount();
-  });
-  return Peek;
-}
-
-function Move(Glide, Components, Events) {
-  var Move = {
-    /**
-     * Constructs move component.
-     *
-     * @returns {Void}
-     */
-    mount: function mount() {
-      this._o = 0;
-    },
-
-    /**
-     * Calculates a movement value based on passed offset and currently active index.
-     *
-     * @param  {Number} offset
-     * @return {Void}
-     */
-    make: function make() {
-      var _this = this;
-
-      var offset = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-      this.offset = offset;
-      Events.emit('move', {
-        movement: this.value
-      });
-      Components.Transition.after(function () {
-        Events.emit('move.after', {
-          movement: _this.value
-        });
-      });
-    }
-  };
-  define(Move, 'offset', {
-    /**
-     * Gets an offset value used to modify current translate.
-     *
-     * @return {Object}
-     */
-    get: function get() {
-      return Move._o;
-    },
-
-    /**
-     * Sets an offset value used to modify current translate.
-     *
-     * @return {Object}
-     */
-    set: function set(value) {
-      Move._o = !isUndefined(value) ? toInt(value) : 0;
-    }
-  });
-  define(Move, 'translate', {
-    /**
-     * Gets a raw movement value.
-     *
-     * @return {Number}
-     */
-    get: function get() {
-      return Components.Sizes.slideWidth * Glide.index;
-    }
-  });
-  define(Move, 'value', {
-    /**
-     * Gets an actual movement value corrected by offset.
-     *
-     * @return {Number}
-     */
-    get: function get() {
-      var offset = this.offset;
-      var translate = this.translate;
-
-      if (Components.Direction.is('rtl')) {
-        return translate + offset;
-      }
-
-      return translate - offset;
-    }
-  });
-  /**
-   * Make movement to proper slide on:
-   * - before build, so glide will start at `startAt` index
-   * - on each standard run to move to newly calculated index
-   */
-
-  Events.on(['build.before', 'run'], function () {
-    Move.make();
-  });
-  return Move;
-}
-
-function Sizes(Glide, Components, Events) {
-  var Sizes = {
-    /**
-     * Setups dimentions of slides.
-     *
-     * @return {Void}
-     */
-    setupSlides: function setupSlides() {
-      var width = this.slideWidth + 'px';
-      var slides = Components.Html.slides;
-
-      for (var i = 0; i < slides.length; i++) {
-        slides[i].style.width = width;
-      }
-    },
-
-    /**
-     * Setups dimentions of slides wrapper.
-     *
-     * @return {Void}
-     */
-    setupWrapper: function setupWrapper(dimention) {
-      Components.Html.wrapper.style.width = this.wrapperSize + 'px';
-    },
-
-    /**
-     * Removes applied styles from HTML elements.
-     *
-     * @returns {Void}
-     */
-    remove: function remove() {
-      var slides = Components.Html.slides;
-
-      for (var i = 0; i < slides.length; i++) {
-        slides[i].style.width = '';
-      }
-
-      Components.Html.wrapper.style.width = '';
-    }
-  };
-  define(Sizes, 'length', {
-    /**
-     * Gets count number of the slides.
-     *
-     * @return {Number}
-     */
-    get: function get() {
-      return Components.Html.slides.length;
-    }
-  });
-  define(Sizes, 'width', {
-    /**
-     * Gets width value of the glide.
-     *
-     * @return {Number}
-     */
-    get: function get() {
-      return Components.Html.root.offsetWidth;
-    }
-  });
-  define(Sizes, 'wrapperSize', {
-    /**
-     * Gets size of the slides wrapper.
-     *
-     * @return {Number}
-     */
-    get: function get() {
-      return Sizes.slideWidth * Sizes.length + Components.Gaps.grow + Components.Clones.grow;
-    }
-  });
-  define(Sizes, 'slideWidth', {
-    /**
-     * Gets width value of the single slide.
-     *
-     * @return {Number}
-     */
-    get: function get() {
-      return Sizes.width / Glide.settings.perView - Components.Peek.reductor - Components.Gaps.reductor;
-    }
-  });
-  /**
-   * Apply calculated glide's dimensions:
-   * - before building, so other dimentions (e.g. translate) will be calculated propertly
-   * - when resizing window to recalculate sildes dimensions
-   * - on updating via API, to calculate dimensions based on new options
-   */
-
-  Events.on(['build.before', 'resize', 'update'], function () {
-    Sizes.setupSlides();
-    Sizes.setupWrapper();
-  });
-  /**
-   * Remove calculated glide's dimensions:
-   * - on destoting to bring markup to its inital state
-   */
-
-  Events.on('destroy', function () {
-    Sizes.remove();
-  });
-  return Sizes;
-}
-
-function Build(Glide, Components, Events) {
-  var Build = {
-    /**
-     * Init glide building. Adds classes, sets
-     * dimensions and setups initial state.
-     *
-     * @return {Void}
-     */
-    mount: function mount() {
-      Events.emit('build.before');
-      this.typeClass();
-      this.activeClass();
-      Events.emit('build.after');
-    },
-
-    /**
-     * Adds `type` class to the glide element.
-     *
-     * @return {Void}
-     */
-    typeClass: function typeClass() {
-      Components.Html.root.classList.add(Glide.settings.classes[Glide.settings.type]);
-    },
-
-    /**
-     * Sets active class to current slide.
-     *
-     * @return {Void}
-     */
-    activeClass: function activeClass() {
-      var classes = Glide.settings.classes;
-      var slide = Components.Html.slides[Glide.index];
-
-      if (slide) {
-        slide.classList.add(classes.activeSlide);
-        siblings(slide).forEach(function (sibling) {
-          sibling.classList.remove(classes.activeSlide);
-        });
-      }
-    },
-
-    /**
-     * Removes HTML classes applied at building.
-     *
-     * @return {Void}
-     */
-    removeClasses: function removeClasses() {
-      var classes = Glide.settings.classes;
-      Components.Html.root.classList.remove(classes[Glide.settings.type]);
-      Components.Html.slides.forEach(function (sibling) {
-        sibling.classList.remove(classes.activeSlide);
-      });
-    }
-  };
-  /**
-   * Clear building classes:
-   * - on destroying to bring HTML to its initial state
-   * - on updating to remove classes before remounting component
-   */
-
-  Events.on(['destroy', 'update'], function () {
-    Build.removeClasses();
-  });
-  /**
-   * Remount component:
-   * - on resizing of the window to calculate new dimentions
-   * - on updating settings via API
-   */
-
-  Events.on(['resize', 'update'], function () {
-    Build.mount();
-  });
-  /**
-   * Swap active class of current slide:
-   * - after each move to the new index
-   */
-
-  Events.on('move.after', function () {
-    Build.activeClass();
-  });
-  return Build;
-}
-
-function Clones(Glide, Components, Events) {
-  var Clones = {
-    /**
-     * Create pattern map and collect slides to be cloned.
-     */
-    mount: function mount() {
-      this.items = [];
-
-      if (Glide.isType('carousel')) {
-        this.items = this.collect();
-      }
-    },
-
-    /**
-     * Collect clones with pattern.
-     *
-     * @return {Void}
-     */
-    collect: function collect() {
-      var items = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-      var slides = Components.Html.slides;
-      var _Glide$settings = Glide.settings,
-          perView = _Glide$settings.perView,
-          classes = _Glide$settings.classes;
-      var peekIncrementer = +!!Glide.settings.peek;
-      var part = perView + peekIncrementer;
-      var start = slides.slice(0, part);
-      var end = slides.slice(-part);
-
-      for (var r = 0; r < Math.max(1, Math.floor(perView / slides.length)); r++) {
-        for (var i = 0; i < start.length; i++) {
-          var clone = start[i].cloneNode(true);
-          clone.classList.add(classes.cloneSlide);
-          items.push(clone);
-        }
-
-        for (var _i = 0; _i < end.length; _i++) {
-          var _clone = end[_i].cloneNode(true);
-
-          _clone.classList.add(classes.cloneSlide);
-
-          items.unshift(_clone);
-        }
-      }
-
-      return items;
-    },
-
-    /**
-     * Append cloned slides with generated pattern.
-     *
-     * @return {Void}
-     */
-    append: function append() {
-      var items = this.items;
-      var _Components$Html = Components.Html,
-          wrapper = _Components$Html.wrapper,
-          slides = _Components$Html.slides;
-      var half = Math.floor(items.length / 2);
-      var prepend = items.slice(0, half).reverse();
-      var append = items.slice(half, items.length);
-      var width = Components.Sizes.slideWidth + 'px';
-
-      for (var i = 0; i < append.length; i++) {
-        wrapper.appendChild(append[i]);
-      }
-
-      for (var _i2 = 0; _i2 < prepend.length; _i2++) {
-        wrapper.insertBefore(prepend[_i2], slides[0]);
-      }
-
-      for (var _i3 = 0; _i3 < items.length; _i3++) {
-        items[_i3].style.width = width;
-      }
-    },
-
-    /**
-     * Remove all cloned slides.
-     *
-     * @return {Void}
-     */
-    remove: function remove() {
-      var items = this.items;
-
-      for (var i = 0; i < items.length; i++) {
-        Components.Html.wrapper.removeChild(items[i]);
-      }
-    }
-  };
-  define(Clones, 'grow', {
-    /**
-     * Gets additional dimentions value caused by clones.
-     *
-     * @return {Number}
-     */
-    get: function get() {
-      return (Components.Sizes.slideWidth + Components.Gaps.value) * Clones.items.length;
-    }
-  });
-  /**
-   * Append additional slide's clones:
-   * - while glide's type is `carousel`
-   */
-
-  Events.on('update', function () {
-    Clones.remove();
-    Clones.mount();
-    Clones.append();
-  });
-  /**
-   * Append additional slide's clones:
-   * - while glide's type is `carousel`
-   */
-
-  Events.on('build.before', function () {
-    if (Glide.isType('carousel')) {
-      Clones.append();
-    }
-  });
-  /**
-   * Remove clones HTMLElements:
-   * - on destroying, to bring HTML to its initial state
-   */
-
-  Events.on('destroy', function () {
-    Clones.remove();
-  });
-  return Clones;
-}
-
-var EventsBinder = function () {
-  /**
-   * Construct a EventsBinder instance.
-   */
-  function EventsBinder() {
-    var listeners = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    classCallCheck(this, EventsBinder);
-    this.listeners = listeners;
-  }
-  /**
-   * Adds events listeners to arrows HTML elements.
-   *
-   * @param  {String|Array} events
-   * @param  {Element|Window|Document} el
-   * @param  {Function} closure
-   * @param  {Boolean|Object} capture
-   * @return {Void}
-   */
-
-
-  createClass(EventsBinder, [{
-    key: 'on',
-    value: function on(events, el, closure) {
-      var capture = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-
-      if (isString(events)) {
-        events = [events];
-      }
-
-      for (var i = 0; i < events.length; i++) {
-        this.listeners[events[i]] = closure;
-        el.addEventListener(events[i], this.listeners[events[i]], capture);
-      }
-    }
-    /**
-     * Removes event listeners from arrows HTML elements.
-     *
-     * @param  {String|Array} events
-     * @param  {Element|Window|Document} el
-     * @param  {Boolean|Object} capture
-     * @return {Void}
-     */
-
-  }, {
-    key: 'off',
-    value: function off(events, el) {
-      var capture = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-      if (isString(events)) {
-        events = [events];
-      }
-
-      for (var i = 0; i < events.length; i++) {
-        el.removeEventListener(events[i], this.listeners[events[i]], capture);
-      }
-    }
-    /**
-     * Destroy collected listeners.
-     *
-     * @returns {Void}
-     */
-
-  }, {
-    key: 'destroy',
-    value: function destroy() {
-      delete this.listeners;
-    }
-  }]);
-  return EventsBinder;
-}();
-
-function Resize(Glide, Components, Events) {
-  /**
-   * Instance of the binder for DOM Events.
-   *
-   * @type {EventsBinder}
-   */
-  var Binder = new EventsBinder();
-  var Resize = {
-    /**
-     * Initializes window bindings.
-     */
-    mount: function mount() {
-      this.bind();
-    },
-
-    /**
-     * Binds `rezsize` listener to the window.
-     * It's a costly event, so we are debouncing it.
-     *
-     * @return {Void}
-     */
-    bind: function bind() {
-      Binder.on('resize', window, throttle(function () {
-        Events.emit('resize');
-      }, Glide.settings.throttle));
-    },
-
-    /**
-     * Unbinds listeners from the window.
-     *
-     * @return {Void}
-     */
-    unbind: function unbind() {
-      Binder.off('resize', window);
-    }
-  };
-  /**
-   * Remove bindings from window:
-   * - on destroying, to remove added EventListener
-   */
-
-  Events.on('destroy', function () {
-    Resize.unbind();
-    Binder.destroy();
-  });
-  return Resize;
-}
-
-var VALID_DIRECTIONS = ['ltr', 'rtl'];
-var FLIPED_MOVEMENTS = {
-  '>': '<',
-  '<': '>',
-  '=': '='
-};
-
-function Direction(Glide, Components, Events) {
-  var Direction = {
-    /**
-     * Setups gap value based on settings.
-     *
-     * @return {Void}
-     */
-    mount: function mount() {
-      this.value = Glide.settings.direction;
-    },
-
-    /**
-     * Resolves pattern based on direction value
-     *
-     * @param {String} pattern
-     * @returns {String}
-     */
-    resolve: function resolve(pattern) {
-      var token = pattern.slice(0, 1);
-
-      if (this.is('rtl')) {
-        return pattern.split(token).join(FLIPED_MOVEMENTS[token]);
-      }
-
-      return pattern;
-    },
-
-    /**
-     * Checks value of direction mode.
-     *
-     * @param {String} direction
-     * @returns {Boolean}
-     */
-    is: function is(direction) {
-      return this.value === direction;
-    },
-
-    /**
-     * Applies direction class to the root HTML element.
-     *
-     * @return {Void}
-     */
-    addClass: function addClass() {
-      Components.Html.root.classList.add(Glide.settings.classes.direction[this.value]);
-    },
-
-    /**
-     * Removes direction class from the root HTML element.
-     *
-     * @return {Void}
-     */
-    removeClass: function removeClass() {
-      Components.Html.root.classList.remove(Glide.settings.classes.direction[this.value]);
-    }
-  };
-  define(Direction, 'value', {
-    /**
-     * Gets value of the direction.
-     *
-     * @returns {Number}
-     */
-    get: function get() {
-      return Direction._v;
-    },
-
-    /**
-     * Sets value of the direction.
-     *
-     * @param {String} value
-     * @return {Void}
-     */
-    set: function set(value) {
-      if (VALID_DIRECTIONS.indexOf(value) > -1) {
-        Direction._v = value;
-      } else {
-        warn('Direction value must be `ltr` or `rtl`');
-      }
-    }
-  });
-  /**
-   * Clear direction class:
-   * - on destroy to bring HTML to its initial state
-   * - on update to remove class before reappling bellow
-   */
-
-  Events.on(['destroy', 'update'], function () {
-    Direction.removeClass();
-  });
-  /**
-   * Remount component:
-   * - on update to reflect changes in direction value
-   */
-
-  Events.on('update', function () {
-    Direction.mount();
-  });
-  /**
-   * Apply direction class:
-   * - before building to apply class for the first time
-   * - on updating to reapply direction class that may changed
-   */
-
-  Events.on(['build.before', 'update'], function () {
-    Direction.addClass();
-  });
-  return Direction;
-}
-/**
- * Reflects value of glide movement.
- *
- * @param  {Object} Glide
- * @param  {Object} Components
- * @return {Object}
- */
-
-
-function Rtl(Glide, Components) {
-  return {
-    /**
-     * Negates the passed translate if glide is in RTL option.
-     *
-     * @param  {Number} translate
-     * @return {Number}
-     */
-    modify: function modify(translate) {
-      if (Components.Direction.is('rtl')) {
-        return -translate;
-      }
-
-      return translate;
-    }
-  };
-}
-/**
- * Updates glide movement with a `gap` settings.
- *
- * @param  {Object} Glide
- * @param  {Object} Components
- * @return {Object}
- */
-
-
-function Gap(Glide, Components) {
-  return {
-    /**
-     * Modifies passed translate value with number in the `gap` settings.
-     *
-     * @param  {Number} translate
-     * @return {Number}
-     */
-    modify: function modify(translate) {
-      return translate + Components.Gaps.value * Glide.index;
-    }
-  };
-}
-/**
- * Updates glide movement with width of additional clones width.
- *
- * @param  {Object} Glide
- * @param  {Object} Components
- * @return {Object}
- */
-
-
-function Grow(Glide, Components) {
-  return {
-    /**
-     * Adds to the passed translate width of the half of clones.
-     *
-     * @param  {Number} translate
-     * @return {Number}
-     */
-    modify: function modify(translate) {
-      return translate + Components.Clones.grow / 2;
-    }
-  };
-}
-/**
- * Updates glide movement with a `peek` settings.
- *
- * @param  {Object} Glide
- * @param  {Object} Components
- * @return {Object}
- */
-
-
-function Peeking(Glide, Components) {
-  return {
-    /**
-     * Modifies passed translate value with a `peek` setting.
-     *
-     * @param  {Number} translate
-     * @return {Number}
-     */
-    modify: function modify(translate) {
-      if (Glide.settings.focusAt >= 0) {
-        var peek = Components.Peek.value;
-
-        if (isObject(peek)) {
-          return translate - peek.before;
-        }
-
-        return translate - peek;
-      }
-
-      return translate;
-    }
-  };
-}
-/**
- * Updates glide movement with a `focusAt` settings.
- *
- * @param  {Object} Glide
- * @param  {Object} Components
- * @return {Object}
- */
-
-
-function Focusing(Glide, Components) {
-  return {
-    /**
-     * Modifies passed translate value with index in the `focusAt` setting.
-     *
-     * @param  {Number} translate
-     * @return {Number}
-     */
-    modify: function modify(translate) {
-      var gap = Components.Gaps.value;
-      var width = Components.Sizes.width;
-      var focusAt = Glide.settings.focusAt;
-      var slideWidth = Components.Sizes.slideWidth;
-
-      if (focusAt === 'center') {
-        return translate - (width / 2 - slideWidth / 2);
-      }
-
-      return translate - slideWidth * focusAt - gap * focusAt;
-    }
-  };
-}
-/**
- * Applies diffrent transformers on translate value.
- *
- * @param  {Object} Glide
- * @param  {Object} Components
- * @return {Object}
- */
-
-
-function mutator(Glide, Components, Events) {
-  /**
-   * Merge instance transformers with collection of default transformers.
-   * It's important that the Rtl component be last on the list,
-   * so it reflects all previous transformations.
-   *
-   * @type {Array}
-   */
-  var TRANSFORMERS = [Gap, Grow, Peeking, Focusing].concat(Glide._t, [Rtl]);
-  return {
-    /**
-     * Piplines translate value with registered transformers.
-     *
-     * @param  {Number} translate
-     * @return {Number}
-     */
-    mutate: function mutate(translate) {
-      for (var i = 0; i < TRANSFORMERS.length; i++) {
-        var transformer = TRANSFORMERS[i];
-
-        if (isFunction(transformer) && isFunction(transformer().modify)) {
-          translate = transformer(Glide, Components, Events).modify(translate);
-        } else {
-          warn('Transformer should be a function that returns an object with `modify()` method');
-        }
-      }
-
-      return translate;
-    }
-  };
-}
-
-function Translate(Glide, Components, Events) {
-  var Translate = {
-    /**
-     * Sets value of translate on HTML element.
-     *
-     * @param {Number} value
-     * @return {Void}
-     */
-    set: function set(value) {
-      var transform = mutator(Glide, Components).mutate(value);
-      Components.Html.wrapper.style.transform = 'translate3d(' + -1 * transform + 'px, 0px, 0px)';
-    },
-
-    /**
-     * Removes value of translate from HTML element.
-     *
-     * @return {Void}
-     */
-    remove: function remove() {
-      Components.Html.wrapper.style.transform = '';
-    }
-  };
-  /**
-   * Set new translate value:
-   * - on move to reflect index change
-   * - on updating via API to reflect possible changes in options
-   */
-
-  Events.on('move', function (context) {
-    var gap = Components.Gaps.value;
-    var length = Components.Sizes.length;
-    var width = Components.Sizes.slideWidth;
-
-    if (Glide.isType('carousel') && Components.Run.isOffset('<')) {
-      Components.Transition.after(function () {
-        Events.emit('translate.jump');
-        Translate.set(width * (length - 1));
-      });
-      return Translate.set(-width - gap * length);
-    }
-
-    if (Glide.isType('carousel') && Components.Run.isOffset('>')) {
-      Components.Transition.after(function () {
-        Events.emit('translate.jump');
-        Translate.set(0);
-      });
-      return Translate.set(width * length + gap * length);
-    }
-
-    return Translate.set(context.movement);
-  });
-  /**
-   * Remove translate:
-   * - on destroying to bring markup to its inital state
-   */
-
-  Events.on('destroy', function () {
-    Translate.remove();
-  });
-  return Translate;
-}
-
-function Transition(Glide, Components, Events) {
-  /**
-   * Holds inactivity status of transition.
-   * When true transition is not applied.
-   *
-   * @type {Boolean}
-   */
-  var disabled = false;
-  var Transition = {
-    /**
-     * Composes string of the CSS transition.
-     *
-     * @param {String} property
-     * @return {String}
-     */
-    compose: function compose(property) {
-      var settings = Glide.settings;
-
-      if (!disabled) {
-        return property + ' ' + this.duration + 'ms ' + settings.animationTimingFunc;
-      }
-
-      return property + ' 0ms ' + settings.animationTimingFunc;
-    },
-
-    /**
-     * Sets value of transition on HTML element.
-     *
-     * @param {String=} property
-     * @return {Void}
-     */
-    set: function set() {
-      var property = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'transform';
-      Components.Html.wrapper.style.transition = this.compose(property);
-    },
-
-    /**
-     * Removes value of transition from HTML element.
-     *
-     * @return {Void}
-     */
-    remove: function remove() {
-      Components.Html.wrapper.style.transition = '';
-    },
-
-    /**
-     * Runs callback after animation.
-     *
-     * @param  {Function} callback
-     * @return {Void}
-     */
-    after: function after(callback) {
-      setTimeout(function () {
-        callback();
-      }, this.duration);
-    },
-
-    /**
-     * Enable transition.
-     *
-     * @return {Void}
-     */
-    enable: function enable() {
-      disabled = false;
-      this.set();
-    },
-
-    /**
-     * Disable transition.
-     *
-     * @return {Void}
-     */
-    disable: function disable() {
-      disabled = true;
-      this.set();
-    }
-  };
-  define(Transition, 'duration', {
-    /**
-     * Gets duration of the transition based
-     * on currently running animation type.
-     *
-     * @return {Number}
-     */
-    get: function get() {
-      var settings = Glide.settings;
-
-      if (Glide.isType('slider') && Components.Run.offset) {
-        return settings.rewindDuration;
-      }
-
-      return settings.animationDuration;
-    }
-  });
-  /**
-   * Set transition `style` value:
-   * - on each moving, because it may be cleared by offset move
-   */
-
-  Events.on('move', function () {
-    Transition.set();
-  });
-  /**
-   * Disable transition:
-   * - before initial build to avoid transitioning from `0` to `startAt` index
-   * - while resizing window and recalculating dimentions
-   * - on jumping from offset transition at start and end edges in `carousel` type
-   */
-
-  Events.on(['build.before', 'resize', 'translate.jump'], function () {
-    Transition.disable();
-  });
-  /**
-   * Enable transition:
-   * - on each running, because it may be disabled by offset move
-   */
-
-  Events.on('run', function () {
-    Transition.enable();
-  });
-  /**
-   * Remove transition:
-   * - on destroying to bring markup to its inital state
-   */
-
-  Events.on('destroy', function () {
-    Transition.remove();
-  });
-  return Transition;
-}
-/**
- * Test via a getter in the options object to see
- * if the passive property is accessed.
- *
- * @see https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
- */
-
-
-var supportsPassive = false;
-
-try {
-  var opts = Object.defineProperty({}, 'passive', {
-    get: function get() {
-      supportsPassive = true;
-    }
-  });
-  window.addEventListener('testPassive', null, opts);
-  window.removeEventListener('testPassive', null, opts);
-} catch (e) {}
-
-var supportsPassive$1 = supportsPassive;
-var START_EVENTS = ['touchstart', 'mousedown'];
-var MOVE_EVENTS = ['touchmove', 'mousemove'];
-var END_EVENTS = ['touchend', 'touchcancel', 'mouseup', 'mouseleave'];
-var MOUSE_EVENTS = ['mousedown', 'mousemove', 'mouseup', 'mouseleave'];
-
-function swipe(Glide, Components, Events) {
-  /**
-   * Instance of the binder for DOM Events.
-   *
-   * @type {EventsBinder}
-   */
-  var Binder = new EventsBinder();
-  var swipeSin = 0;
-  var swipeStartX = 0;
-  var swipeStartY = 0;
-  var disabled = false;
-  var capture = supportsPassive$1 ? {
-    passive: true
-  } : false;
-  var Swipe = {
-    /**
-     * Initializes swipe bindings.
-     *
-     * @return {Void}
-     */
-    mount: function mount() {
-      this.bindSwipeStart();
-    },
-
-    /**
-     * Handler for `swipestart` event. Calculates entry points of the user's tap.
-     *
-     * @param {Object} event
-     * @return {Void}
-     */
-    start: function start(event) {
-      if (!disabled && !Glide.disabled) {
-        this.disable();
-        var swipe = this.touches(event);
-        swipeSin = null;
-        swipeStartX = toInt(swipe.pageX);
-        swipeStartY = toInt(swipe.pageY);
-        this.bindSwipeMove();
-        this.bindSwipeEnd();
-        Events.emit('swipe.start');
-      }
-    },
-
-    /**
-     * Handler for `swipemove` event. Calculates user's tap angle and distance.
-     *
-     * @param {Object} event
-     */
-    move: function move(event) {
-      if (!Glide.disabled) {
-        var _Glide$settings = Glide.settings,
-            touchAngle = _Glide$settings.touchAngle,
-            touchRatio = _Glide$settings.touchRatio,
-            classes = _Glide$settings.classes;
-        var swipe = this.touches(event);
-        var subExSx = toInt(swipe.pageX) - swipeStartX;
-        var subEySy = toInt(swipe.pageY) - swipeStartY;
-        var powEX = Math.abs(subExSx << 2);
-        var powEY = Math.abs(subEySy << 2);
-        var swipeHypotenuse = Math.sqrt(powEX + powEY);
-        var swipeCathetus = Math.sqrt(powEY);
-        swipeSin = Math.asin(swipeCathetus / swipeHypotenuse);
-
-        if (swipeSin * 180 / Math.PI < touchAngle) {
-          event.stopPropagation();
-          Components.Move.make(subExSx * toFloat(touchRatio));
-          Components.Html.root.classList.add(classes.dragging);
-          Events.emit('swipe.move');
-        } else {
-          return false;
-        }
-      }
-    },
-
-    /**
-     * Handler for `swipeend` event. Finitializes user's tap and decides about glide move.
-     *
-     * @param {Object} event
-     * @return {Void}
-     */
-    end: function end(event) {
-      if (!Glide.disabled) {
-        var settings = Glide.settings;
-        var swipe = this.touches(event);
-        var threshold = this.threshold(event);
-        var swipeDistance = swipe.pageX - swipeStartX;
-        var swipeDeg = swipeSin * 180 / Math.PI;
-        var steps = Math.round(swipeDistance / Components.Sizes.slideWidth);
-        this.enable();
-
-        if (swipeDistance > threshold && swipeDeg < settings.touchAngle) {
-          // While swipe is positive and greater than threshold move backward.
-          if (settings.perTouch) {
-            steps = Math.min(steps, toInt(settings.perTouch));
-          }
-
-          if (Components.Direction.is('rtl')) {
-            steps = -steps;
-          }
-
-          Components.Run.make(Components.Direction.resolve('<' + steps));
-        } else if (swipeDistance < -threshold && swipeDeg < settings.touchAngle) {
-          // While swipe is negative and lower than negative threshold move forward.
-          if (settings.perTouch) {
-            steps = Math.max(steps, -toInt(settings.perTouch));
-          }
-
-          if (Components.Direction.is('rtl')) {
-            steps = -steps;
-          }
-
-          Components.Run.make(Components.Direction.resolve('>' + steps));
-        } else {
-          // While swipe don't reach distance apply previous transform.
-          Components.Move.make();
-        }
-
-        Components.Html.root.classList.remove(settings.classes.dragging);
-        this.unbindSwipeMove();
-        this.unbindSwipeEnd();
-        Events.emit('swipe.end');
-      }
-    },
-
-    /**
-     * Binds swipe's starting event.
-     *
-     * @return {Void}
-     */
-    bindSwipeStart: function bindSwipeStart() {
-      var _this = this;
-
-      var settings = Glide.settings;
-
-      if (settings.swipeThreshold) {
-        Binder.on(START_EVENTS[0], Components.Html.wrapper, function (event) {
-          _this.start(event);
-        }, capture);
-      }
-
-      if (settings.dragThreshold) {
-        Binder.on(START_EVENTS[1], Components.Html.wrapper, function (event) {
-          _this.start(event);
-        }, capture);
-      }
-    },
-
-    /**
-     * Unbinds swipe's starting event.
-     *
-     * @return {Void}
-     */
-    unbindSwipeStart: function unbindSwipeStart() {
-      Binder.off(START_EVENTS[0], Components.Html.wrapper, capture);
-      Binder.off(START_EVENTS[1], Components.Html.wrapper, capture);
-    },
-
-    /**
-     * Binds swipe's moving event.
-     *
-     * @return {Void}
-     */
-    bindSwipeMove: function bindSwipeMove() {
-      var _this2 = this;
-
-      Binder.on(MOVE_EVENTS, Components.Html.wrapper, throttle(function (event) {
-        _this2.move(event);
-      }, Glide.settings.throttle), capture);
-    },
-
-    /**
-     * Unbinds swipe's moving event.
-     *
-     * @return {Void}
-     */
-    unbindSwipeMove: function unbindSwipeMove() {
-      Binder.off(MOVE_EVENTS, Components.Html.wrapper, capture);
-    },
-
-    /**
-     * Binds swipe's ending event.
-     *
-     * @return {Void}
-     */
-    bindSwipeEnd: function bindSwipeEnd() {
-      var _this3 = this;
-
-      Binder.on(END_EVENTS, Components.Html.wrapper, function (event) {
-        _this3.end(event);
-      });
-    },
-
-    /**
-     * Unbinds swipe's ending event.
-     *
-     * @return {Void}
-     */
-    unbindSwipeEnd: function unbindSwipeEnd() {
-      Binder.off(END_EVENTS, Components.Html.wrapper);
-    },
-
-    /**
-     * Normalizes event touches points accorting to different types.
-     *
-     * @param {Object} event
-     */
-    touches: function touches(event) {
-      if (MOUSE_EVENTS.indexOf(event.type) > -1) {
-        return event;
-      }
-
-      return event.touches[0] || event.changedTouches[0];
-    },
-
-    /**
-     * Gets value of minimum swipe distance settings based on event type.
-     *
-     * @return {Number}
-     */
-    threshold: function threshold(event) {
-      var settings = Glide.settings;
-
-      if (MOUSE_EVENTS.indexOf(event.type) > -1) {
-        return settings.dragThreshold;
-      }
-
-      return settings.swipeThreshold;
-    },
-
-    /**
-     * Enables swipe event.
-     *
-     * @return {self}
-     */
-    enable: function enable() {
-      disabled = false;
-      Components.Transition.enable();
-      return this;
-    },
-
-    /**
-     * Disables swipe event.
-     *
-     * @return {self}
-     */
-    disable: function disable() {
-      disabled = true;
-      Components.Transition.disable();
-      return this;
-    }
-  };
-  /**
-   * Add component class:
-   * - after initial building
-   */
-
-  Events.on('build.after', function () {
-    Components.Html.root.classList.add(Glide.settings.classes.swipeable);
-  });
-  /**
-   * Remove swiping bindings:
-   * - on destroying, to remove added EventListeners
-   */
-
-  Events.on('destroy', function () {
-    Swipe.unbindSwipeStart();
-    Swipe.unbindSwipeMove();
-    Swipe.unbindSwipeEnd();
-    Binder.destroy();
-  });
-  return Swipe;
-}
-
-function images(Glide, Components, Events) {
-  /**
-   * Instance of the binder for DOM Events.
-   *
-   * @type {EventsBinder}
-   */
-  var Binder = new EventsBinder();
-  var Images = {
-    /**
-     * Binds listener to glide wrapper.
-     *
-     * @return {Void}
-     */
-    mount: function mount() {
-      this.bind();
-    },
-
-    /**
-     * Binds `dragstart` event on wrapper to prevent dragging images.
-     *
-     * @return {Void}
-     */
-    bind: function bind() {
-      Binder.on('dragstart', Components.Html.wrapper, this.dragstart);
-    },
-
-    /**
-     * Unbinds `dragstart` event on wrapper.
-     *
-     * @return {Void}
-     */
-    unbind: function unbind() {
-      Binder.off('dragstart', Components.Html.wrapper);
-    },
-
-    /**
-     * Event handler. Prevents dragging.
-     *
-     * @return {Void}
-     */
-    dragstart: function dragstart(event) {
-      event.preventDefault();
-    }
-  };
-  /**
-   * Remove bindings from images:
-   * - on destroying, to remove added EventListeners
-   */
-
-  Events.on('destroy', function () {
-    Images.unbind();
-    Binder.destroy();
-  });
-  return Images;
-}
-
-function anchors(Glide, Components, Events) {
-  /**
-   * Instance of the binder for DOM Events.
-   *
-   * @type {EventsBinder}
-   */
-  var Binder = new EventsBinder();
-  /**
-   * Holds detaching status of anchors.
-   * Prevents detaching of already detached anchors.
-   *
-   * @private
-   * @type {Boolean}
-   */
-
-  var detached = false;
-  /**
-   * Holds preventing status of anchors.
-   * If `true` redirection after click will be disabled.
-   *
-   * @private
-   * @type {Boolean}
-   */
-
-  var prevented = false;
-  var Anchors = {
-    /**
-     * Setups a initial state of anchors component.
-     *
-     * @returns {Void}
-     */
-    mount: function mount() {
-      /**
-       * Holds collection of anchors elements.
-       *
-       * @private
-       * @type {HTMLCollection}
-       */
-      this._a = Components.Html.wrapper.querySelectorAll('a');
-      this.bind();
-    },
-
-    /**
-     * Binds events to anchors inside a track.
-     *
-     * @return {Void}
-     */
-    bind: function bind() {
-      Binder.on('click', Components.Html.wrapper, this.click);
-    },
-
-    /**
-     * Unbinds events attached to anchors inside a track.
-     *
-     * @return {Void}
-     */
-    unbind: function unbind() {
-      Binder.off('click', Components.Html.wrapper);
-    },
-
-    /**
-     * Handler for click event. Prevents clicks when glide is in `prevent` status.
-     *
-     * @param  {Object} event
-     * @return {Void}
-     */
-    click: function click(event) {
-      if (prevented) {
-        event.stopPropagation();
-        event.preventDefault();
-      }
-    },
-
-    /**
-     * Detaches anchors click event inside glide.
-     *
-     * @return {self}
-     */
-    detach: function detach() {
-      prevented = true;
-
-      if (!detached) {
-        for (var i = 0; i < this.items.length; i++) {
-          this.items[i].draggable = false;
-          this.items[i].setAttribute('data-href', this.items[i].getAttribute('href'));
-          this.items[i].removeAttribute('href');
-        }
-
-        detached = true;
-      }
-
-      return this;
-    },
-
-    /**
-     * Attaches anchors click events inside glide.
-     *
-     * @return {self}
-     */
-    attach: function attach() {
-      prevented = false;
-
-      if (detached) {
-        for (var i = 0; i < this.items.length; i++) {
-          this.items[i].draggable = true;
-          this.items[i].setAttribute('href', this.items[i].getAttribute('data-href'));
-        }
-
-        detached = false;
-      }
-
-      return this;
-    }
-  };
-  define(Anchors, 'items', {
-    /**
-     * Gets collection of the arrows HTML elements.
-     *
-     * @return {HTMLElement[]}
-     */
-    get: function get() {
-      return Anchors._a;
-    }
-  });
-  /**
-   * Detach anchors inside slides:
-   * - on swiping, so they won't redirect to its `href` attributes
-   */
-
-  Events.on('swipe.move', function () {
-    Anchors.detach();
-  });
-  /**
-   * Attach anchors inside slides:
-   * - after swiping and transitions ends, so they can redirect after click again
-   */
-
-  Events.on('swipe.end', function () {
-    Components.Transition.after(function () {
-      Anchors.attach();
-    });
-  });
-  /**
-   * Unbind anchors inside slides:
-   * - on destroying, to bring anchors to its initial state
-   */
-
-  Events.on('destroy', function () {
-    Anchors.attach();
-    Anchors.unbind();
-    Binder.destroy();
-  });
-  return Anchors;
-}
-
-var NAV_SELECTOR = '[data-glide-el="controls[nav]"]';
-var CONTROLS_SELECTOR = '[data-glide-el^="controls"]';
-
-function controls(Glide, Components, Events) {
-  /**
-   * Instance of the binder for DOM Events.
-   *
-   * @type {EventsBinder}
-   */
-  var Binder = new EventsBinder();
-  var capture = supportsPassive$1 ? {
-    passive: true
-  } : false;
-  var Controls = {
-    /**
-     * Inits arrows. Binds events listeners
-     * to the arrows HTML elements.
-     *
-     * @return {Void}
-     */
-    mount: function mount() {
-      /**
-       * Collection of navigation HTML elements.
-       *
-       * @private
-       * @type {HTMLCollection}
-       */
-      this._n = Components.Html.root.querySelectorAll(NAV_SELECTOR);
-      /**
-       * Collection of controls HTML elements.
-       *
-       * @private
-       * @type {HTMLCollection}
-       */
-
-      this._c = Components.Html.root.querySelectorAll(CONTROLS_SELECTOR);
-      this.addBindings();
-    },
-
-    /**
-     * Sets active class to current slide.
-     *
-     * @return {Void}
-     */
-    setActive: function setActive() {
-      for (var i = 0; i < this._n.length; i++) {
-        this.addClass(this._n[i].children);
-      }
-    },
-
-    /**
-     * Removes active class to current slide.
-     *
-     * @return {Void}
-     */
-    removeActive: function removeActive() {
-      for (var i = 0; i < this._n.length; i++) {
-        this.removeClass(this._n[i].children);
-      }
-    },
-
-    /**
-     * Toggles active class on items inside navigation.
-     *
-     * @param  {HTMLElement} controls
-     * @return {Void}
-     */
-    addClass: function addClass(controls) {
-      var settings = Glide.settings;
-      var item = controls[Glide.index];
-
-      if (item) {
-        item.classList.add(settings.classes.activeNav);
-        siblings(item).forEach(function (sibling) {
-          sibling.classList.remove(settings.classes.activeNav);
-        });
-      }
-    },
-
-    /**
-     * Removes active class from active control.
-     *
-     * @param  {HTMLElement} controls
-     * @return {Void}
-     */
-    removeClass: function removeClass(controls) {
-      var item = controls[Glide.index];
-
-      if (item) {
-        item.classList.remove(Glide.settings.classes.activeNav);
-      }
-    },
-
-    /**
-     * Adds handles to the each group of controls.
-     *
-     * @return {Void}
-     */
-    addBindings: function addBindings() {
-      for (var i = 0; i < this._c.length; i++) {
-        this.bind(this._c[i].children);
-      }
-    },
-
-    /**
-     * Removes handles from the each group of controls.
-     *
-     * @return {Void}
-     */
-    removeBindings: function removeBindings() {
-      for (var i = 0; i < this._c.length; i++) {
-        this.unbind(this._c[i].children);
-      }
-    },
-
-    /**
-     * Binds events to arrows HTML elements.
-     *
-     * @param {HTMLCollection} elements
-     * @return {Void}
-     */
-    bind: function bind(elements) {
-      for (var i = 0; i < elements.length; i++) {
-        Binder.on('click', elements[i], this.click);
-        Binder.on('touchstart', elements[i], this.click, capture);
-      }
-    },
-
-    /**
-     * Unbinds events binded to the arrows HTML elements.
-     *
-     * @param {HTMLCollection} elements
-     * @return {Void}
-     */
-    unbind: function unbind(elements) {
-      for (var i = 0; i < elements.length; i++) {
-        Binder.off(['click', 'touchstart'], elements[i]);
-      }
-    },
-
-    /**
-     * Handles `click` event on the arrows HTML elements.
-     * Moves slider in driection precised in
-     * `data-glide-dir` attribute.
-     *
-     * @param {Object} event
-     * @return {Void}
-     */
-    click: function click(event) {
-      event.preventDefault();
-      Components.Run.make(Components.Direction.resolve(event.currentTarget.getAttribute('data-glide-dir')));
-    }
-  };
-  define(Controls, 'items', {
-    /**
-     * Gets collection of the controls HTML elements.
-     *
-     * @return {HTMLElement[]}
-     */
-    get: function get() {
-      return Controls._c;
-    }
-  });
-  /**
-   * Swap active class of current navigation item:
-   * - after mounting to set it to initial index
-   * - after each move to the new index
-   */
-
-  Events.on(['mount.after', 'move.after'], function () {
-    Controls.setActive();
-  });
-  /**
-   * Remove bindings and HTML Classes:
-   * - on destroying, to bring markup to its initial state
-   */
-
-  Events.on('destroy', function () {
-    Controls.removeBindings();
-    Controls.removeActive();
-    Binder.destroy();
-  });
-  return Controls;
-}
-
-function keyboard(Glide, Components, Events) {
-  /**
-   * Instance of the binder for DOM Events.
-   *
-   * @type {EventsBinder}
-   */
-  var Binder = new EventsBinder();
-  var Keyboard = {
-    /**
-     * Binds keyboard events on component mount.
-     *
-     * @return {Void}
-     */
-    mount: function mount() {
-      if (Glide.settings.keyboard) {
-        this.bind();
-      }
-    },
-
-    /**
-     * Adds keyboard press events.
-     *
-     * @return {Void}
-     */
-    bind: function bind() {
-      Binder.on('keyup', document, this.press);
-    },
-
-    /**
-     * Removes keyboard press events.
-     *
-     * @return {Void}
-     */
-    unbind: function unbind() {
-      Binder.off('keyup', document);
-    },
-
-    /**
-     * Handles keyboard's arrows press and moving glide foward and backward.
-     *
-     * @param  {Object} event
-     * @return {Void}
-     */
-    press: function press(event) {
-      if (event.keyCode === 39) {
-        Components.Run.make(Components.Direction.resolve('>'));
-      }
-
-      if (event.keyCode === 37) {
-        Components.Run.make(Components.Direction.resolve('<'));
-      }
-    }
-  };
-  /**
-   * Remove bindings from keyboard:
-   * - on destroying to remove added events
-   * - on updating to remove events before remounting
-   */
-
-  Events.on(['destroy', 'update'], function () {
-    Keyboard.unbind();
-  });
-  /**
-   * Remount component
-   * - on updating to reflect potential changes in settings
-   */
-
-  Events.on('update', function () {
-    Keyboard.mount();
-  });
-  /**
-   * Destroy binder:
-   * - on destroying to remove listeners
-   */
-
-  Events.on('destroy', function () {
-    Binder.destroy();
-  });
-  return Keyboard;
-}
-
-function autoplay(Glide, Components, Events) {
-  /**
-   * Instance of the binder for DOM Events.
-   *
-   * @type {EventsBinder}
-   */
-  var Binder = new EventsBinder();
-  var Autoplay = {
-    /**
-     * Initializes autoplaying and events.
-     *
-     * @return {Void}
-     */
-    mount: function mount() {
-      this.start();
-
-      if (Glide.settings.hoverpause) {
-        this.bind();
-      }
-    },
-
-    /**
-     * Starts autoplaying in configured interval.
-     *
-     * @param {Boolean|Number} force Run autoplaying with passed interval regardless of `autoplay` settings
-     * @return {Void}
-     */
-    start: function start() {
-      var _this = this;
-
-      if (Glide.settings.autoplay) {
-        if (isUndefined(this._i)) {
-          this._i = setInterval(function () {
-            _this.stop();
-
-            Components.Run.make('>');
-
-            _this.start();
-          }, this.time);
-        }
-      }
-    },
-
-    /**
-     * Stops autorunning of the glide.
-     *
-     * @return {Void}
-     */
-    stop: function stop() {
-      this._i = clearInterval(this._i);
-    },
-
-    /**
-     * Stops autoplaying while mouse is over glide's area.
-     *
-     * @return {Void}
-     */
-    bind: function bind() {
-      var _this2 = this;
-
-      Binder.on('mouseover', Components.Html.root, function () {
-        _this2.stop();
-      });
-      Binder.on('mouseout', Components.Html.root, function () {
-        _this2.start();
-      });
-    },
-
-    /**
-     * Unbind mouseover events.
-     *
-     * @returns {Void}
-     */
-    unbind: function unbind() {
-      Binder.off(['mouseover', 'mouseout'], Components.Html.root);
-    }
-  };
-  define(Autoplay, 'time', {
-    /**
-     * Gets time period value for the autoplay interval. Prioritizes
-     * times in `data-glide-autoplay` attrubutes over options.
-     *
-     * @return {Number}
-     */
-    get: function get() {
-      var autoplay = Components.Html.slides[Glide.index].getAttribute('data-glide-autoplay');
-
-      if (autoplay) {
-        return toInt(autoplay);
-      }
-
-      return toInt(Glide.settings.autoplay);
-    }
-  });
-  /**
-   * Stop autoplaying and unbind events:
-   * - on destroying, to clear defined interval
-   * - on updating via API to reset interval that may changed
-   */
-
-  Events.on(['destroy', 'update'], function () {
-    Autoplay.unbind();
-  });
-  /**
-   * Stop autoplaying:
-   * - before each run, to restart autoplaying
-   * - on pausing via API
-   * - on destroying, to clear defined interval
-   * - while starting a swipe
-   * - on updating via API to reset interval that may changed
-   */
-
-  Events.on(['run.before', 'pause', 'destroy', 'swipe.start', 'update'], function () {
-    Autoplay.stop();
-  });
-  /**
-   * Start autoplaying:
-   * - after each run, to restart autoplaying
-   * - on playing via API
-   * - while ending a swipe
-   */
-
-  Events.on(['run.after', 'play', 'swipe.end'], function () {
-    Autoplay.start();
-  });
-  /**
-   * Remount autoplaying:
-   * - on updating via API to reset interval that may changed
-   */
-
-  Events.on('update', function () {
-    Autoplay.mount();
-  });
-  /**
-   * Destroy a binder:
-   * - on destroying glide instance to clearup listeners
-   */
-
-  Events.on('destroy', function () {
-    Binder.destroy();
-  });
-  return Autoplay;
-}
-/**
- * Sorts keys of breakpoint object so they will be ordered from lower to bigger.
- *
- * @param {Object} points
- * @returns {Object}
- */
-
-
-function sortBreakpoints(points) {
-  if (isObject(points)) {
-    return sortKeys(points);
-  } else {
-    warn('Breakpoints option must be an object');
-  }
-
-  return {};
-}
-
-function breakpoints(Glide, Components, Events) {
-  /**
-   * Instance of the binder for DOM Events.
-   *
-   * @type {EventsBinder}
-   */
-  var Binder = new EventsBinder();
-  /**
-   * Holds reference to settings.
-   *
-   * @type {Object}
-   */
-
-  var settings = Glide.settings;
-  /**
-   * Holds reference to breakpoints object in settings. Sorts breakpoints
-   * from smaller to larger. It is required in order to proper
-   * matching currently active breakpoint settings.
-   *
-   * @type {Object}
-   */
-
-  var points = sortBreakpoints(settings.breakpoints);
-  /**
-   * Cache initial settings before overwritting.
-   *
-   * @type {Object}
-   */
-
-  var defaults = _extends({}, settings);
-
-  var Breakpoints = {
-    /**
-     * Matches settings for currectly matching media breakpoint.
-     *
-     * @param {Object} points
-     * @returns {Object}
-     */
-    match: function match(points) {
-      if (typeof window.matchMedia !== 'undefined') {
-        for (var point in points) {
-          if (points.hasOwnProperty(point)) {
-            if (window.matchMedia('(max-width: ' + point + 'px)').matches) {
-              return points[point];
-            }
-          }
-        }
-      }
-
-      return defaults;
-    }
-  };
-  /**
-   * Overwrite instance settings with currently matching breakpoint settings.
-   * This happens right after component initialization.
-   */
-
-  _extends(settings, Breakpoints.match(points));
-  /**
-   * Update glide with settings of matched brekpoint:
-   * - window resize to update slider
-   */
-
-
-  Binder.on('resize', window, throttle(function () {
-    Glide.settings = mergeOptions(settings, Breakpoints.match(points));
-  }, Glide.settings.throttle));
-  /**
-   * Resort and update default settings:
-   * - on reinit via API, so breakpoint matching will be performed with options
-   */
-
-  Events.on('update', function () {
-    points = sortBreakpoints(points);
-    defaults = _extends({}, settings);
-  });
-  /**
-   * Unbind resize listener:
-   * - on destroying, to bring markup to its initial state
-   */
-
-  Events.on('destroy', function () {
-    Binder.off('resize', window);
-  });
-  return Breakpoints;
-}
-
-var COMPONENTS = {
-  Html: Html,
-  Translate: Translate,
-  Transition: Transition,
-  Direction: Direction,
-  Peek: Peek,
-  Sizes: Sizes,
-  Gaps: Gaps,
-  Move: Move,
-  Clones: Clones,
-  Resize: Resize,
-  Build: Build,
-  Run: Run
-};
-
-var Glide$1 = function (_Core) {
-  inherits(Glide$$1, _Core);
-
-  function Glide$$1() {
-    classCallCheck(this, Glide$$1);
-    return possibleConstructorReturn(this, (Glide$$1.__proto__ || Object.getPrototypeOf(Glide$$1)).apply(this, arguments));
-  }
-
-  createClass(Glide$$1, [{
-    key: 'mount',
-    value: function mount() {
-      var extensions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      return get(Glide$$1.prototype.__proto__ || Object.getPrototypeOf(Glide$$1.prototype), 'mount', this).call(this, _extends({}, COMPONENTS, extensions));
-    }
-  }]);
-  return Glide$$1;
-}(Glide);
-
-var _default = Glide$1;
-exports.default = _default;
-},{}],"../src/Homepage/glide.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.carouselGlideJS = carouselGlideJS;
-
-var _glideModular = _interopRequireWildcard(require("@glidejs/glide/dist/glide.modular.esm"));
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-// CAROUSEL IMAGES
-function carouselGlideJS() {
-  const carouselGlide = new _glideModular.default('.glide', {
-    type: 'carousel',
-    animationDuration: 600,
-    animationTimingFunc: 'linear',
-    autoplay: 8000,
-    hoverpause: true
-  });
-  carouselGlide.mount({
-    Autoplay: _glideModular.Autoplay
-  });
-}
-},{"@glidejs/glide/dist/glide.modular.esm":"../node_modules/@glidejs/glide/dist/glide.modular.esm.js"}],"../src/Homepage/displayCarousel.js":[function(require,module,exports) {
+},{"./clear-refinements/connectClearRefinements":"../node_modules/instantsearch.js/es/connectors/clear-refinements/connectClearRefinements.js","./current-refinements/connectCurrentRefinements":"../node_modules/instantsearch.js/es/connectors/current-refinements/connectCurrentRefinements.js","./hierarchical-menu/connectHierarchicalMenu":"../node_modules/instantsearch.js/es/connectors/hierarchical-menu/connectHierarchicalMenu.js","./hits/connectHits":"../node_modules/instantsearch.js/es/connectors/hits/connectHits.js","./hits/connectHitsWithInsights":"../node_modules/instantsearch.js/es/connectors/hits/connectHitsWithInsights.js","./hits-per-page/connectHitsPerPage":"../node_modules/instantsearch.js/es/connectors/hits-per-page/connectHitsPerPage.js","./infinite-hits/connectInfiniteHits":"../node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHits.js","./infinite-hits/connectInfiniteHitsWithInsights":"../node_modules/instantsearch.js/es/connectors/infinite-hits/connectInfiniteHitsWithInsights.js","./menu/connectMenu":"../node_modules/instantsearch.js/es/connectors/menu/connectMenu.js","./numeric-menu/connectNumericMenu":"../node_modules/instantsearch.js/es/connectors/numeric-menu/connectNumericMenu.js","./pagination/connectPagination":"../node_modules/instantsearch.js/es/connectors/pagination/connectPagination.js","./range/connectRange":"../node_modules/instantsearch.js/es/connectors/range/connectRange.js","./refinement-list/connectRefinementList":"../node_modules/instantsearch.js/es/connectors/refinement-list/connectRefinementList.js","./search-box/connectSearchBox":"../node_modules/instantsearch.js/es/connectors/search-box/connectSearchBox.js","./sort-by/connectSortBy":"../node_modules/instantsearch.js/es/connectors/sort-by/connectSortBy.js","./rating-menu/connectRatingMenu":"../node_modules/instantsearch.js/es/connectors/rating-menu/connectRatingMenu.js","./stats/connectStats":"../node_modules/instantsearch.js/es/connectors/stats/connectStats.js","./toggle-refinement/connectToggleRefinement":"../node_modules/instantsearch.js/es/connectors/toggle-refinement/connectToggleRefinement.js","./breadcrumb/connectBreadcrumb":"../node_modules/instantsearch.js/es/connectors/breadcrumb/connectBreadcrumb.js","./geo-search/connectGeoSearch":"../node_modules/instantsearch.js/es/connectors/geo-search/connectGeoSearch.js","./powered-by/connectPoweredBy":"../node_modules/instantsearch.js/es/connectors/powered-by/connectPoweredBy.js","./configure/connectConfigure":"../node_modules/instantsearch.js/es/connectors/configure/connectConfigure.js","./configure-related-items/connectConfigureRelatedItems":"../node_modules/instantsearch.js/es/connectors/configure-related-items/connectConfigureRelatedItems.js","./autocomplete/connectAutocomplete":"../node_modules/instantsearch.js/es/connectors/autocomplete/connectAutocomplete.js","./query-rules/connectQueryRules":"../node_modules/instantsearch.js/es/connectors/query-rules/connectQueryRules.js","./voice-search/connectVoiceSearch":"../node_modules/instantsearch.js/es/connectors/voice-search/connectVoiceSearch.js"}],"../src/Homepage/displayCarousel.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20705,9 +20705,6 @@ exports.carousel = void 0;
 
 var _connectors = require("instantsearch.js/es/connectors");
 
-// import { configure, hits, EXPERIMENTAL_configureRelatedItems } from 'instantsearch.js/es/widgets';
-// import instantsearch from 'instantsearch.js';
-// import algoliasearch from 'algoliasearch';
 const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirstRender) {
   let {
     widgetParams: {
@@ -40876,36 +40873,17 @@ function GetDataForCarousel() {
       });
 
       if (carouselConfig.configure) {
-        console.log(carouselConfig.configure);
         indexWidget.addWidgets([(0, _widgets.configure)(_objectSpread(_objectSpread({}, carouselConfig.configure), {}, {
           userToken: getUserToken()
         }))]);
-      } // const client = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-      // const gstar = client.initIndex('gstar_demo_test');
-      // const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
-
+      }
 
       indexWidget.addWidgets([(0, _displayCarousel.carousel)({
         title: carouselConfig.title,
         container: carouselContainer
-      }), // hits({
-      //     container: '#hits',
-      //     templates: carouselContainer,
-      // }),
-      // searchBox({
-      //     container: 'searchbox',
-      //     placeholder: 'Clothes, Sneakers...',
-      // }),
-      (0, _widgets.stats)({
+      }), (0, _widgets.stats)({
         container: '#stats'
-      }) // refinementList({
-      //     container: '#brand-list',
-      //     attribute: 'brand',
-      // }),
-      // pagination({
-      //     container: '#pagination',
-      // }),
-      ]);
+      })]);
       container.appendChild(carouselContainer);
       return indexWidget;
     });
@@ -40958,7 +40936,6 @@ function GetDataForCarousel() {
       if (isFirstRender) {
         autocompleteRef.current = (0, _autocompleteJs.autocomplete)({
           container: '#autocomplete',
-          // debug: true,
           openOnFocus: true,
           plugins: [recentSearchesPlugin, querySuggestionsPlugin],
 
@@ -41041,20 +41018,7 @@ function GetDataForCarousel() {
                   }
 
                 }
-              }, // {
-              //     getItems() {
-              //         return brands.facetHits;
-              //     },
-              //     templates: {
-              //         header() {
-              //             return headerTemplate({ title: "Brands" });
-              //         },
-              //         item({ item }) {
-              //             return facetTemplate({ title: item.highlighted });
-              //         }
-              //     }
-              // },
-              {
+              }, {
                 getItems() {
                   return categories.facetHits;
                 },
@@ -41087,7 +41051,6 @@ function GetDataForCarousel() {
               sections,
               state
             } = _ref5;
-            console.log('success');
             refine(state.query);
             window.location.href = "./searchResults.html?gstar_demo_test%5Bquery%5D=".concat(state.query);
           }
@@ -41123,7 +41086,6 @@ function GetDataForCarousel() {
         title,
         query
       } = _ref8;
-      console.log(query);
       return "\n            <div class=\"aa-btnShowMore-wrapper\">\n                <a href=\"./searchResults.html?gstar_demo_test%5Bquery%5D=".concat(query, "\" class=\"aa-btnShowMore\">\n                    ").concat(title, "\n                </a>\n          </div>\n        ");
     }
 
@@ -41132,11 +41094,10 @@ function GetDataForCarousel() {
         title,
         query
       } = _ref9;
-      console.log(title);
       return "\n          <div class=\"aa-ItemContentCategory\">\n            <a href=\"./searchResults.html?gstar_demo_test%5Bquery%5D=".concat(query, "\" class=\"aa-ItemLinkCategory\">\n                <div class=\"aa-ItemTitle\">").concat(title, "</div>\n            </a>\n          </div>\n        ");
     }
   }
-} // search.start();
+}
 },{"./displayCarousel":"../src/Homepage/displayCarousel.js","instantsearch.js":"../node_modules/instantsearch.js/es/index.js","algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-js/dist/esm/index.js","@algolia/autocomplete-plugin-query-suggestions":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js","@algolia/autocomplete-plugin-recent-searches":"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/index.js","@algolia/autocomplete-theme-classic":"../node_modules/@algolia/autocomplete-theme-classic/dist/theme.css"}],"../src/Homepage/displayCarouselDetail.js":[function(require,module,exports) {
 "use strict";
 
@@ -41167,4017 +41128,10 @@ function carouselDetailed() {
     templates: {
       item: hit => "\n            \n               \n                <i class=\"fas fa-heart heart\"></i>\n      \n            <div class=\"image-wrapper\">\n              <img src=\"".concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"hit-img\" />\n            </div>\n            <div class=\"carousel-detailed-display-info\">\n            <div class=\"hit-name\">\n            ").concat(hit.category, "\n            </div>\n            <div class=\"hit-color\">\n            ").concat(hit.colourFilter, "\n            </div>\n            <div class=\"hit-description\">").concat(hit.description, "</div>\n            <div class=\"hit-rating-price\">\n              <div class=\"hit-price\">$").concat(hit.price, "</div>\n            </div>\n            </div>\n          \n        ")
     }
-  })]); // function activeHeart() {
-  //     let heart = document.querySelector(".heart")
-  //     let cards = document.querySelectorAll(".ais-Hits-item")
-  //     cards.forEach(card => {
-  //         card.addEventListener('mouseover', (e) => {
-  //             e.preventDefault
-  //             console.log(heart)
-  //             this.heart.classList.add('active-heart')
-  //         })
-  //         card.addEventListener('mouseleave', (e) => {
-  //             e.preventDefault
-  //             this.heart.classList.remove('active-heart')
-  //         })
-  //     })
-  // }
-
-  searchDetail.start(); // setTimeout(activeHeart, 2000)
+  })]);
+  searchDetail.start();
 }
-},{"instantsearch.js":"../node_modules/instantsearch.js/es/index.js","algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js"}],"../node_modules/autocomplete.js/zepto.js":[function(require,module,exports) {
-var global = arguments[3];
-/* istanbul ignore next */
-/* Zepto v1.2.0 - zepto event assets data - zeptojs.com/license */
-(function(global, factory) {
-  module.exports = factory(global);
-}(/* this ##### UPDATED: here we want to use window/global instead of this which is the current file context ##### */ window, function(window) {
-  var Zepto = (function() {
-  var undefined, key, $, classList, emptyArray = [], concat = emptyArray.concat, filter = emptyArray.filter, slice = emptyArray.slice,
-    document = window.document,
-    elementDisplay = {}, classCache = {},
-    cssNumber = { 'column-count': 1, 'columns': 1, 'font-weight': 1, 'line-height': 1,'opacity': 1, 'z-index': 1, 'zoom': 1 },
-    fragmentRE = /^\s*<(\w+|!)[^>]*>/,
-    singleTagRE = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
-    tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig,
-    rootNodeRE = /^(?:body|html)$/i,
-    capitalRE = /([A-Z])/g,
-
-    // special attributes that should be get/set via method calls
-    methodAttributes = ['val', 'css', 'html', 'text', 'data', 'width', 'height', 'offset'],
-
-    adjacencyOperators = [ 'after', 'prepend', 'before', 'append' ],
-    table = document.createElement('table'),
-    tableRow = document.createElement('tr'),
-    containers = {
-      'tr': document.createElement('tbody'),
-      'tbody': table, 'thead': table, 'tfoot': table,
-      'td': tableRow, 'th': tableRow,
-      '*': document.createElement('div')
-    },
-    readyRE = /complete|loaded|interactive/,
-    simpleSelectorRE = /^[\w-]*$/,
-    class2type = {},
-    toString = class2type.toString,
-    zepto = {},
-    camelize, uniq,
-    tempParent = document.createElement('div'),
-    propMap = {
-      'tabindex': 'tabIndex',
-      'readonly': 'readOnly',
-      'for': 'htmlFor',
-      'class': 'className',
-      'maxlength': 'maxLength',
-      'cellspacing': 'cellSpacing',
-      'cellpadding': 'cellPadding',
-      'rowspan': 'rowSpan',
-      'colspan': 'colSpan',
-      'usemap': 'useMap',
-      'frameborder': 'frameBorder',
-      'contenteditable': 'contentEditable'
-    },
-    isArray = Array.isArray ||
-      function(object){ return object instanceof Array }
-
-  zepto.matches = function(element, selector) {
-    if (!selector || !element || element.nodeType !== 1) return false
-    var matchesSelector = element.matches || element.webkitMatchesSelector ||
-                          element.mozMatchesSelector || element.oMatchesSelector ||
-                          element.matchesSelector
-    if (matchesSelector) return matchesSelector.call(element, selector)
-    // fall back to performing a selector:
-    var match, parent = element.parentNode, temp = !parent
-    if (temp) (parent = tempParent).appendChild(element)
-    match = ~zepto.qsa(parent, selector).indexOf(element)
-    temp && tempParent.removeChild(element)
-    return match
-  }
-
-  function type(obj) {
-    return obj == null ? String(obj) :
-      class2type[toString.call(obj)] || "object"
-  }
-
-  function isFunction(value) { return type(value) == "function" }
-  function isWindow(obj)     { return obj != null && obj == obj.window }
-  function isDocument(obj)   { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
-  function isObject(obj)     { return type(obj) == "object" }
-  function isPlainObject(obj) {
-    return isObject(obj) && !isWindow(obj) && Object.getPrototypeOf(obj) == Object.prototype
-  }
-
-  function likeArray(obj) {
-    var length = !!obj && 'length' in obj && obj.length,
-      type = $.type(obj)
-
-    return 'function' != type && !isWindow(obj) && (
-      'array' == type || length === 0 ||
-        (typeof length == 'number' && length > 0 && (length - 1) in obj)
-    )
-  }
-
-  function compact(array) { return filter.call(array, function(item){ return item != null }) }
-  function flatten(array) { return array.length > 0 ? $.fn.concat.apply([], array) : array }
-  camelize = function(str){ return str.replace(/-+(.)?/g, function(match, chr){ return chr ? chr.toUpperCase() : '' }) }
-  function dasherize(str) {
-    return str.replace(/::/g, '/')
-           .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
-           .replace(/([a-z\d])([A-Z])/g, '$1_$2')
-           .replace(/_/g, '-')
-           .toLowerCase()
-  }
-  uniq = function(array){ return filter.call(array, function(item, idx){ return array.indexOf(item) == idx }) }
-
-  function classRE(name) {
-    return name in classCache ?
-      classCache[name] : (classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)'))
-  }
-
-  function maybeAddPx(name, value) {
-    return (typeof value == "number" && !cssNumber[dasherize(name)]) ? value + "px" : value
-  }
-
-  function defaultDisplay(nodeName) {
-    var element, display
-    if (!elementDisplay[nodeName]) {
-      element = document.createElement(nodeName)
-      document.body.appendChild(element)
-      display = getComputedStyle(element, '').getPropertyValue("display")
-      element.parentNode.removeChild(element)
-      display == "none" && (display = "block")
-      elementDisplay[nodeName] = display
-    }
-    return elementDisplay[nodeName]
-  }
-
-  function children(element) {
-    return 'children' in element ?
-      slice.call(element.children) :
-      $.map(element.childNodes, function(node){ if (node.nodeType == 1) return node })
-  }
-
-  function Z(dom, selector) {
-    var i, len = dom ? dom.length : 0
-    for (i = 0; i < len; i++) this[i] = dom[i]
-    this.length = len
-    this.selector = selector || ''
-  }
-
-  // `$.zepto.fragment` takes a html string and an optional tag name
-  // to generate DOM nodes from the given html string.
-  // The generated DOM nodes are returned as an array.
-  // This function can be overridden in plugins for example to make
-  // it compatible with browsers that don't support the DOM fully.
-  zepto.fragment = function(html, name, properties) {
-    var dom, nodes, container
-
-    // A special case optimization for a single tag
-    if (singleTagRE.test(html)) dom = $(document.createElement(RegExp.$1))
-
-    if (!dom) {
-      if (html.replace) html = html.replace(tagExpanderRE, "<$1></$2>")
-      if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
-      if (!(name in containers)) name = '*'
-
-      container = containers[name]
-      container.innerHTML = '' + html
-      dom = $.each(slice.call(container.childNodes), function(){
-        container.removeChild(this)
-      })
-    }
-
-    if (isPlainObject(properties)) {
-      nodes = $(dom)
-      $.each(properties, function(key, value) {
-        if (methodAttributes.indexOf(key) > -1) nodes[key](value)
-        else nodes.attr(key, value)
-      })
-    }
-
-    return dom
-  }
-
-  // `$.zepto.Z` swaps out the prototype of the given `dom` array
-  // of nodes with `$.fn` and thus supplying all the Zepto functions
-  // to the array. This method can be overridden in plugins.
-  zepto.Z = function(dom, selector) {
-    return new Z(dom, selector)
-  }
-
-  // `$.zepto.isZ` should return `true` if the given object is a Zepto
-  // collection. This method can be overridden in plugins.
-  zepto.isZ = function(object) {
-    return object instanceof zepto.Z
-  }
-
-  // `$.zepto.init` is Zepto's counterpart to jQuery's `$.fn.init` and
-  // takes a CSS selector and an optional context (and handles various
-  // special cases).
-  // This method can be overridden in plugins.
-  zepto.init = function(selector, context) {
-    var dom
-    // If nothing given, return an empty Zepto collection
-    if (!selector) return zepto.Z()
-    // Optimize for string selectors
-    else if (typeof selector == 'string') {
-      selector = selector.trim()
-      // If it's a html fragment, create nodes from it
-      // Note: In both Chrome 21 and Firefox 15, DOM error 12
-      // is thrown if the fragment doesn't begin with <
-      if (selector[0] == '<' && fragmentRE.test(selector))
-        dom = zepto.fragment(selector, RegExp.$1, context), selector = null
-      // If there's a context, create a collection on that context first, and select
-      // nodes from there
-      else if (context !== undefined) return $(context).find(selector)
-      // If it's a CSS selector, use it to select nodes.
-      else dom = zepto.qsa(document, selector)
-    }
-    // If a function is given, call it when the DOM is ready
-    else if (isFunction(selector)) return $(document).ready(selector)
-    // If a Zepto collection is given, just return it
-    else if (zepto.isZ(selector)) return selector
-    else {
-      // normalize array if an array of nodes is given
-      if (isArray(selector)) dom = compact(selector)
-      // Wrap DOM nodes.
-      else if (isObject(selector))
-        dom = [selector], selector = null
-      // If it's a html fragment, create nodes from it
-      else if (fragmentRE.test(selector))
-        dom = zepto.fragment(selector.trim(), RegExp.$1, context), selector = null
-      // If there's a context, create a collection on that context first, and select
-      // nodes from there
-      else if (context !== undefined) return $(context).find(selector)
-      // And last but no least, if it's a CSS selector, use it to select nodes.
-      else dom = zepto.qsa(document, selector)
-    }
-    // create a new Zepto collection from the nodes found
-    return zepto.Z(dom, selector)
-  }
-
-  // `$` will be the base `Zepto` object. When calling this
-  // function just call `$.zepto.init, which makes the implementation
-  // details of selecting nodes and creating Zepto collections
-  // patchable in plugins.
-  $ = function(selector, context){
-    return zepto.init(selector, context)
-  }
-
-  function extend(target, source, deep) {
-    for (key in source)
-      if (deep && (isPlainObject(source[key]) || isArray(source[key]))) {
-        if (isPlainObject(source[key]) && !isPlainObject(target[key]))
-          target[key] = {}
-        if (isArray(source[key]) && !isArray(target[key]))
-          target[key] = []
-        extend(target[key], source[key], deep)
-      }
-      else if (source[key] !== undefined) target[key] = source[key]
-  }
-
-  // Copy all but undefined properties from one or more
-  // objects to the `target` object.
-  $.extend = function(target){
-    var deep, args = slice.call(arguments, 1)
-    if (typeof target == 'boolean') {
-      deep = target
-      target = args.shift()
-    }
-    args.forEach(function(arg){ extend(target, arg, deep) })
-    return target
-  }
-
-  // `$.zepto.qsa` is Zepto's CSS selector implementation which
-  // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
-  // This method can be overridden in plugins.
-  zepto.qsa = function(element, selector){
-    var found,
-        maybeID = selector[0] == '#',
-        maybeClass = !maybeID && selector[0] == '.',
-        nameOnly = maybeID || maybeClass ? selector.slice(1) : selector, // Ensure that a 1 char tag name still gets checked
-        isSimple = simpleSelectorRE.test(nameOnly)
-    return (element.getElementById && isSimple && maybeID) ? // Safari DocumentFragment doesn't have getElementById
-      ( (found = element.getElementById(nameOnly)) ? [found] : [] ) :
-      (element.nodeType !== 1 && element.nodeType !== 9 && element.nodeType !== 11) ? [] :
-      slice.call(
-        isSimple && !maybeID && element.getElementsByClassName ? // DocumentFragment doesn't have getElementsByClassName/TagName
-          maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class
-          element.getElementsByTagName(selector) : // Or a tag
-          element.querySelectorAll(selector) // Or it's not simple, and we need to query all
-      )
-  }
-
-  function filtered(nodes, selector) {
-    return selector == null ? $(nodes) : $(nodes).filter(selector)
-  }
-
-  $.contains = document.documentElement.contains ?
-    function(parent, node) {
-      return parent !== node && parent.contains(node)
-    } :
-    function(parent, node) {
-      while (node && (node = node.parentNode))
-        if (node === parent) return true
-      return false
-    }
-
-  function funcArg(context, arg, idx, payload) {
-    return isFunction(arg) ? arg.call(context, idx, payload) : arg
-  }
-
-  function setAttribute(node, name, value) {
-    value == null ? node.removeAttribute(name) : node.setAttribute(name, value)
-  }
-
-  // access className property while respecting SVGAnimatedString
-  function className(node, value){
-    var klass = node.className || '',
-        svg   = klass && klass.baseVal !== undefined
-
-    if (value === undefined) return svg ? klass.baseVal : klass
-    svg ? (klass.baseVal = value) : (node.className = value)
-  }
-
-  // "true"  => true
-  // "false" => false
-  // "null"  => null
-  // "42"    => 42
-  // "42.5"  => 42.5
-  // "08"    => "08"
-  // JSON    => parse if valid
-  // String  => self
-  function deserializeValue(value) {
-    try {
-      return value ?
-        value == "true" ||
-        ( value == "false" ? false :
-          value == "null" ? null :
-          +value + "" == value ? +value :
-          /^[\[\{]/.test(value) ? $.parseJSON(value) :
-          value )
-        : value
-    } catch(e) {
-      return value
-    }
-  }
-
-  $.type = type
-  $.isFunction = isFunction
-  $.isWindow = isWindow
-  $.isArray = isArray
-  $.isPlainObject = isPlainObject
-
-  $.isEmptyObject = function(obj) {
-    var name
-    for (name in obj) return false
-    return true
-  }
-
-  $.isNumeric = function(val) {
-    var num = Number(val), type = typeof val
-    return val != null && type != 'boolean' &&
-      (type != 'string' || val.length) &&
-      !isNaN(num) && isFinite(num) || false
-  }
-
-  $.inArray = function(elem, array, i){
-    return emptyArray.indexOf.call(array, elem, i)
-  }
-
-  $.camelCase = camelize
-  $.trim = function(str) {
-    return str == null ? "" : String.prototype.trim.call(str)
-  }
-
-  // plugin compatibility
-  $.uuid = 0
-  $.support = { }
-  $.expr = { }
-  $.noop = function() {}
-
-  $.map = function(elements, callback){
-    var value, values = [], i, key
-    if (likeArray(elements))
-      for (i = 0; i < elements.length; i++) {
-        value = callback(elements[i], i)
-        if (value != null) values.push(value)
-      }
-    else
-      for (key in elements) {
-        value = callback(elements[key], key)
-        if (value != null) values.push(value)
-      }
-    return flatten(values)
-  }
-
-  $.each = function(elements, callback){
-    var i, key
-    if (likeArray(elements)) {
-      for (i = 0; i < elements.length; i++)
-        if (callback.call(elements[i], i, elements[i]) === false) return elements
-    } else {
-      for (key in elements)
-        if (callback.call(elements[key], key, elements[key]) === false) return elements
-    }
-
-    return elements
-  }
-
-  $.grep = function(elements, callback){
-    return filter.call(elements, callback)
-  }
-
-  if (window.JSON) $.parseJSON = JSON.parse
-
-  // Populate the class2type map
-  $.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(i, name) {
-    class2type[ "[object " + name + "]" ] = name.toLowerCase()
-  })
-
-  // Define methods that will be available on all
-  // Zepto collections
-  $.fn = {
-    constructor: zepto.Z,
-    length: 0,
-
-    // Because a collection acts like an array
-    // copy over these useful array functions.
-    forEach: emptyArray.forEach,
-    reduce: emptyArray.reduce,
-    push: emptyArray.push,
-    sort: emptyArray.sort,
-    splice: emptyArray.splice,
-    indexOf: emptyArray.indexOf,
-    concat: function(){
-      var i, value, args = []
-      for (i = 0; i < arguments.length; i++) {
-        value = arguments[i]
-        args[i] = zepto.isZ(value) ? value.toArray() : value
-      }
-      return concat.apply(zepto.isZ(this) ? this.toArray() : this, args)
-    },
-
-    // `map` and `slice` in the jQuery API work differently
-    // from their array counterparts
-    map: function(fn){
-      return $($.map(this, function(el, i){ return fn.call(el, i, el) }))
-    },
-    slice: function(){
-      return $(slice.apply(this, arguments))
-    },
-
-    ready: function(callback){
-      // need to check if document.body exists for IE as that browser reports
-      // document ready when it hasn't yet created the body element
-      if (readyRE.test(document.readyState) && document.body) callback($)
-      else document.addEventListener('DOMContentLoaded', function(){ callback($) }, false)
-      return this
-    },
-    get: function(idx){
-      return idx === undefined ? slice.call(this) : this[idx >= 0 ? idx : idx + this.length]
-    },
-    toArray: function(){ return this.get() },
-    size: function(){
-      return this.length
-    },
-    remove: function(){
-      return this.each(function(){
-        if (this.parentNode != null)
-          this.parentNode.removeChild(this)
-      })
-    },
-    each: function(callback){
-      emptyArray.every.call(this, function(el, idx){
-        return callback.call(el, idx, el) !== false
-      })
-      return this
-    },
-    filter: function(selector){
-      if (isFunction(selector)) return this.not(this.not(selector))
-      return $(filter.call(this, function(element){
-        return zepto.matches(element, selector)
-      }))
-    },
-    add: function(selector,context){
-      return $(uniq(this.concat($(selector,context))))
-    },
-    is: function(selector){
-      return this.length > 0 && zepto.matches(this[0], selector)
-    },
-    not: function(selector){
-      var nodes=[]
-      if (isFunction(selector) && selector.call !== undefined)
-        this.each(function(idx){
-          if (!selector.call(this,idx)) nodes.push(this)
-        })
-      else {
-        var excludes = typeof selector == 'string' ? this.filter(selector) :
-          (likeArray(selector) && isFunction(selector.item)) ? slice.call(selector) : $(selector)
-        this.forEach(function(el){
-          if (excludes.indexOf(el) < 0) nodes.push(el)
-        })
-      }
-      return $(nodes)
-    },
-    has: function(selector){
-      return this.filter(function(){
-        return isObject(selector) ?
-          $.contains(this, selector) :
-          $(this).find(selector).size()
-      })
-    },
-    eq: function(idx){
-      return idx === -1 ? this.slice(idx) : this.slice(idx, + idx + 1)
-    },
-    first: function(){
-      var el = this[0]
-      return el && !isObject(el) ? el : $(el)
-    },
-    last: function(){
-      var el = this[this.length - 1]
-      return el && !isObject(el) ? el : $(el)
-    },
-    find: function(selector){
-      var result, $this = this
-      if (!selector) result = $()
-      else if (typeof selector == 'object')
-        result = $(selector).filter(function(){
-          var node = this
-          return emptyArray.some.call($this, function(parent){
-            return $.contains(parent, node)
-          })
-        })
-      else if (this.length == 1) result = $(zepto.qsa(this[0], selector))
-      else result = this.map(function(){ return zepto.qsa(this, selector) })
-      return result
-    },
-    closest: function(selector, context){
-      var nodes = [], collection = typeof selector == 'object' && $(selector)
-      this.each(function(_, node){
-        while (node && !(collection ? collection.indexOf(node) >= 0 : zepto.matches(node, selector)))
-          node = node !== context && !isDocument(node) && node.parentNode
-        if (node && nodes.indexOf(node) < 0) nodes.push(node)
-      })
-      return $(nodes)
-    },
-    parents: function(selector){
-      var ancestors = [], nodes = this
-      while (nodes.length > 0)
-        nodes = $.map(nodes, function(node){
-          if ((node = node.parentNode) && !isDocument(node) && ancestors.indexOf(node) < 0) {
-            ancestors.push(node)
-            return node
-          }
-        })
-      return filtered(ancestors, selector)
-    },
-    parent: function(selector){
-      return filtered(uniq(this.pluck('parentNode')), selector)
-    },
-    children: function(selector){
-      return filtered(this.map(function(){ return children(this) }), selector)
-    },
-    contents: function() {
-      return this.map(function() { return this.contentDocument || slice.call(this.childNodes) })
-    },
-    siblings: function(selector){
-      return filtered(this.map(function(i, el){
-        return filter.call(children(el.parentNode), function(child){ return child!==el })
-      }), selector)
-    },
-    empty: function(){
-      return this.each(function(){ this.innerHTML = '' })
-    },
-    // `pluck` is borrowed from Prototype.js
-    pluck: function(property){
-      return $.map(this, function(el){ return el[property] })
-    },
-    show: function(){
-      return this.each(function(){
-        this.style.display == "none" && (this.style.display = '')
-        if (getComputedStyle(this, '').getPropertyValue("display") == "none")
-          this.style.display = defaultDisplay(this.nodeName)
-      })
-    },
-    replaceWith: function(newContent){
-      return this.before(newContent).remove()
-    },
-    wrap: function(structure){
-      var func = isFunction(structure)
-      if (this[0] && !func)
-        var dom   = $(structure).get(0),
-            clone = dom.parentNode || this.length > 1
-
-      return this.each(function(index){
-        $(this).wrapAll(
-          func ? structure.call(this, index) :
-            clone ? dom.cloneNode(true) : dom
-        )
-      })
-    },
-    wrapAll: function(structure){
-      if (this[0]) {
-        $(this[0]).before(structure = $(structure))
-        var children
-        // drill down to the inmost element
-        while ((children = structure.children()).length) structure = children.first()
-        $(structure).append(this)
-      }
-      return this
-    },
-    wrapInner: function(structure){
-      var func = isFunction(structure)
-      return this.each(function(index){
-        var self = $(this), contents = self.contents(),
-            dom  = func ? structure.call(this, index) : structure
-        contents.length ? contents.wrapAll(dom) : self.append(dom)
-      })
-    },
-    unwrap: function(){
-      this.parent().each(function(){
-        $(this).replaceWith($(this).children())
-      })
-      return this
-    },
-    clone: function(){
-      return this.map(function(){ return this.cloneNode(true) })
-    },
-    hide: function(){
-      return this.css("display", "none")
-    },
-    toggle: function(setting){
-      return this.each(function(){
-        var el = $(this)
-        ;(setting === undefined ? el.css("display") == "none" : setting) ? el.show() : el.hide()
-      })
-    },
-    prev: function(selector){ return $(this.pluck('previousElementSibling')).filter(selector || '*') },
-    next: function(selector){ return $(this.pluck('nextElementSibling')).filter(selector || '*') },
-    html: function(html){
-      return 0 in arguments ?
-        this.each(function(idx){
-          var originHtml = this.innerHTML
-          $(this).empty().append( funcArg(this, html, idx, originHtml) )
-        }) :
-        (0 in this ? this[0].innerHTML : null)
-    },
-    text: function(text){
-      return 0 in arguments ?
-        this.each(function(idx){
-          var newText = funcArg(this, text, idx, this.textContent)
-          this.textContent = newText == null ? '' : ''+newText
-        }) :
-        (0 in this ? this.pluck('textContent').join("") : null)
-    },
-    attr: function(name, value){
-      var result
-      return (typeof name == 'string' && !(1 in arguments)) ?
-        (0 in this && this[0].nodeType == 1 && (result = this[0].getAttribute(name)) != null ? result : undefined) :
-        this.each(function(idx){
-          if (this.nodeType !== 1) return
-          if (isObject(name)) for (key in name) setAttribute(this, key, name[key])
-          else setAttribute(this, name, funcArg(this, value, idx, this.getAttribute(name)))
-        })
-    },
-    removeAttr: function(name){
-      return this.each(function(){ this.nodeType === 1 && name.split(' ').forEach(function(attribute){
-        setAttribute(this, attribute)
-      }, this)})
-    },
-    prop: function(name, value){
-      name = propMap[name] || name
-      return (1 in arguments) ?
-        this.each(function(idx){
-          this[name] = funcArg(this, value, idx, this[name])
-        }) :
-        (this[0] && this[0][name])
-    },
-    removeProp: function(name){
-      name = propMap[name] || name
-      return this.each(function(){ delete this[name] })
-    },
-    data: function(name, value){
-      var attrName = 'data-' + name.replace(capitalRE, '-$1').toLowerCase()
-
-      var data = (1 in arguments) ?
-        this.attr(attrName, value) :
-        this.attr(attrName)
-
-      return data !== null ? deserializeValue(data) : undefined
-    },
-    val: function(value){
-      if (0 in arguments) {
-        if (value == null) value = ""
-        return this.each(function(idx){
-          this.value = funcArg(this, value, idx, this.value)
-        })
-      } else {
-        return this[0] && (this[0].multiple ?
-           $(this[0]).find('option').filter(function(){ return this.selected }).pluck('value') :
-           this[0].value)
-      }
-    },
-    offset: function(coordinates){
-      if (coordinates) return this.each(function(index){
-        var $this = $(this),
-            coords = funcArg(this, coordinates, index, $this.offset()),
-            parentOffset = $this.offsetParent().offset(),
-            props = {
-              top:  coords.top  - parentOffset.top,
-              left: coords.left - parentOffset.left
-            }
-
-        if ($this.css('position') == 'static') props['position'] = 'relative'
-        $this.css(props)
-      })
-      if (!this.length) return null
-      if (document.documentElement !== this[0] && !$.contains(document.documentElement, this[0]))
-        return {top: 0, left: 0}
-      var obj = this[0].getBoundingClientRect()
-      return {
-        left: obj.left + window.pageXOffset,
-        top: obj.top + window.pageYOffset,
-        width: Math.round(obj.width),
-        height: Math.round(obj.height)
-      }
-    },
-    css: function(property, value){
-      if (arguments.length < 2) {
-        var element = this[0]
-        if (typeof property == 'string') {
-          if (!element) return
-          return element.style[camelize(property)] || getComputedStyle(element, '').getPropertyValue(property)
-        } else if (isArray(property)) {
-          if (!element) return
-          var props = {}
-          var computedStyle = getComputedStyle(element, '')
-          $.each(property, function(_, prop){
-            props[prop] = (element.style[camelize(prop)] || computedStyle.getPropertyValue(prop))
-          })
-          return props
-        }
-      }
-
-      var css = ''
-      if (type(property) == 'string') {
-        if (!value && value !== 0)
-          this.each(function(){ this.style.removeProperty(dasherize(property)) })
-        else
-          css = dasherize(property) + ":" + maybeAddPx(property, value)
-      } else {
-        for (key in property)
-          if (!property[key] && property[key] !== 0)
-            this.each(function(){ this.style.removeProperty(dasherize(key)) })
-          else
-            css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';'
-      }
-
-      return this.each(function(){ this.style.cssText += ';' + css })
-    },
-    index: function(element){
-      return element ? this.indexOf($(element)[0]) : this.parent().children().indexOf(this[0])
-    },
-    hasClass: function(name){
-      if (!name) return false
-      return emptyArray.some.call(this, function(el){
-        return this.test(className(el))
-      }, classRE(name))
-    },
-    addClass: function(name){
-      if (!name) return this
-      return this.each(function(idx){
-        if (!('className' in this)) return
-        classList = []
-        var cls = className(this), newName = funcArg(this, name, idx, cls)
-        newName.split(/\s+/g).forEach(function(klass){
-          if (!$(this).hasClass(klass)) classList.push(klass)
-        }, this)
-        classList.length && className(this, cls + (cls ? " " : "") + classList.join(" "))
-      })
-    },
-    removeClass: function(name){
-      return this.each(function(idx){
-        if (!('className' in this)) return
-        if (name === undefined) return className(this, '')
-        classList = className(this)
-        funcArg(this, name, idx, classList).split(/\s+/g).forEach(function(klass){
-          classList = classList.replace(classRE(klass), " ")
-        })
-        className(this, classList.trim())
-      })
-    },
-    toggleClass: function(name, when){
-      if (!name) return this
-      return this.each(function(idx){
-        var $this = $(this), names = funcArg(this, name, idx, className(this))
-        names.split(/\s+/g).forEach(function(klass){
-          (when === undefined ? !$this.hasClass(klass) : when) ?
-            $this.addClass(klass) : $this.removeClass(klass)
-        })
-      })
-    },
-    scrollTop: function(value){
-      if (!this.length) return
-      var hasScrollTop = 'scrollTop' in this[0]
-      if (value === undefined) return hasScrollTop ? this[0].scrollTop : this[0].pageYOffset
-      return this.each(hasScrollTop ?
-        function(){ this.scrollTop = value } :
-        function(){ this.scrollTo(this.scrollX, value) })
-    },
-    scrollLeft: function(value){
-      if (!this.length) return
-      var hasScrollLeft = 'scrollLeft' in this[0]
-      if (value === undefined) return hasScrollLeft ? this[0].scrollLeft : this[0].pageXOffset
-      return this.each(hasScrollLeft ?
-        function(){ this.scrollLeft = value } :
-        function(){ this.scrollTo(value, this.scrollY) })
-    },
-    position: function() {
-      if (!this.length) return
-
-      var elem = this[0],
-        // Get *real* offsetParent
-        offsetParent = this.offsetParent(),
-        // Get correct offsets
-        offset       = this.offset(),
-        parentOffset = rootNodeRE.test(offsetParent[0].nodeName) ? { top: 0, left: 0 } : offsetParent.offset()
-
-      // Subtract element margins
-      // note: when an element has margin: auto the offsetLeft and marginLeft
-      // are the same in Safari causing offset.left to incorrectly be 0
-      offset.top  -= parseFloat( $(elem).css('margin-top') ) || 0
-      offset.left -= parseFloat( $(elem).css('margin-left') ) || 0
-
-      // Add offsetParent borders
-      parentOffset.top  += parseFloat( $(offsetParent[0]).css('border-top-width') ) || 0
-      parentOffset.left += parseFloat( $(offsetParent[0]).css('border-left-width') ) || 0
-
-      // Subtract the two offsets
-      return {
-        top:  offset.top  - parentOffset.top,
-        left: offset.left - parentOffset.left
-      }
-    },
-    offsetParent: function() {
-      return this.map(function(){
-        var parent = this.offsetParent || document.body
-        while (parent && !rootNodeRE.test(parent.nodeName) && $(parent).css("position") == "static")
-          parent = parent.offsetParent
-        return parent
-      })
-    }
-  }
-
-  // for now
-  $.fn.detach = $.fn.remove
-
-  // Generate the `width` and `height` functions
-  ;['width', 'height'].forEach(function(dimension){
-    var dimensionProperty =
-      dimension.replace(/./, function(m){ return m[0].toUpperCase() })
-
-    $.fn[dimension] = function(value){
-      var offset, el = this[0]
-      if (value === undefined) return isWindow(el) ? el['inner' + dimensionProperty] :
-        isDocument(el) ? el.documentElement['scroll' + dimensionProperty] :
-        (offset = this.offset()) && offset[dimension]
-      else return this.each(function(idx){
-        el = $(this)
-        el.css(dimension, funcArg(this, value, idx, el[dimension]()))
-      })
-    }
-  })
-
-  function traverseNode(node, fun) {
-    fun(node)
-    for (var i = 0, len = node.childNodes.length; i < len; i++)
-      traverseNode(node.childNodes[i], fun)
-  }
-
-  // Generate the `after`, `prepend`, `before`, `append`,
-  // `insertAfter`, `insertBefore`, `appendTo`, and `prependTo` methods.
-  adjacencyOperators.forEach(function(operator, operatorIndex) {
-    var inside = operatorIndex % 2 //=> prepend, append
-
-    $.fn[operator] = function(){
-      // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
-      var argType, nodes = $.map(arguments, function(arg) {
-            var arr = []
-            argType = type(arg)
-            if (argType == "array") {
-              arg.forEach(function(el) {
-                if (el.nodeType !== undefined) return arr.push(el)
-                else if ($.zepto.isZ(el)) return arr = arr.concat(el.get())
-                arr = arr.concat(zepto.fragment(el))
-              })
-              return arr
-            }
-            return argType == "object" || arg == null ?
-              arg : zepto.fragment(arg)
-          }),
-          parent, copyByClone = this.length > 1
-      if (nodes.length < 1) return this
-
-      return this.each(function(_, target){
-        parent = inside ? target : target.parentNode
-
-        // convert all methods to a "before" operation
-        target = operatorIndex == 0 ? target.nextSibling :
-                 operatorIndex == 1 ? target.firstChild :
-                 operatorIndex == 2 ? target :
-                 null
-
-        var parentInDocument = $.contains(document.documentElement, parent)
-
-        nodes.forEach(function(node){
-          if (copyByClone) node = node.cloneNode(true)
-          else if (!parent) return $(node).remove()
-
-          parent.insertBefore(node, target)
-          if (parentInDocument) traverseNode(node, function(el){
-            if (el.nodeName != null && el.nodeName.toUpperCase() === 'SCRIPT' &&
-               (!el.type || el.type === 'text/javascript') && !el.src){
-              var target = el.ownerDocument ? el.ownerDocument.defaultView : window
-              target['eval'].call(target, el.innerHTML)
-            }
-          })
-        })
-      })
-    }
-
-    // after    => insertAfter
-    // prepend  => prependTo
-    // before   => insertBefore
-    // append   => appendTo
-    $.fn[inside ? operator+'To' : 'insert'+(operatorIndex ? 'Before' : 'After')] = function(html){
-      $(html)[operator](this)
-      return this
-    }
-  })
-
-  zepto.Z.prototype = Z.prototype = $.fn
-
-  // Export internal API functions in the `$.zepto` namespace
-  zepto.uniq = uniq
-  zepto.deserializeValue = deserializeValue
-  $.zepto = zepto
-
-  return $
-})()
-
-;(function($){
-  var _zid = 1, undefined,
-      slice = Array.prototype.slice,
-      isFunction = $.isFunction,
-      isString = function(obj){ return typeof obj == 'string' },
-      handlers = {},
-      specialEvents={},
-      focusinSupported = 'onfocusin' in window,
-      focus = { focus: 'focusin', blur: 'focusout' },
-      hover = { mouseenter: 'mouseover', mouseleave: 'mouseout' }
-
-  specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents'
-
-  function zid(element) {
-    return element._zid || (element._zid = _zid++)
-  }
-  function findHandlers(element, event, fn, selector) {
-    event = parse(event)
-    if (event.ns) var matcher = matcherFor(event.ns)
-    return (handlers[zid(element)] || []).filter(function(handler) {
-      return handler
-        && (!event.e  || handler.e == event.e)
-        && (!event.ns || matcher.test(handler.ns))
-        && (!fn       || zid(handler.fn) === zid(fn))
-        && (!selector || handler.sel == selector)
-    })
-  }
-  function parse(event) {
-    var parts = ('' + event).split('.')
-    return {e: parts[0], ns: parts.slice(1).sort().join(' ')}
-  }
-  function matcherFor(ns) {
-    return new RegExp('(?:^| )' + ns.replace(' ', ' .* ?') + '(?: |$)')
-  }
-
-  function eventCapture(handler, captureSetting) {
-    return handler.del &&
-      (!focusinSupported && (handler.e in focus)) ||
-      !!captureSetting
-  }
-
-  function realEvent(type) {
-    return hover[type] || (focusinSupported && focus[type]) || type
-  }
-
-  function add(element, events, fn, data, selector, delegator, capture){
-    var id = zid(element), set = (handlers[id] || (handlers[id] = []))
-    events.split(/\s/).forEach(function(event){
-      if (event == 'ready') return $(document).ready(fn)
-      var handler   = parse(event)
-      handler.fn    = fn
-      handler.sel   = selector
-      // emulate mouseenter, mouseleave
-      if (handler.e in hover) fn = function(e){
-        var related = e.relatedTarget
-        if (!related || (related !== this && !$.contains(this, related)))
-          return handler.fn.apply(this, arguments)
-      }
-      handler.del   = delegator
-      var callback  = delegator || fn
-      handler.proxy = function(e){
-        e = compatible(e)
-        if (e.isImmediatePropagationStopped()) return
-        try {
-          var dataPropDescriptor = Object.getOwnPropertyDescriptor(e, 'data')
-          if (!dataPropDescriptor || dataPropDescriptor.writable)
-            e.data = data
-        } catch (e) {} // when using strict mode dataPropDescriptor will be undefined when e is InputEvent (even though data property exists). So we surround with try/catch
-        var result = callback.apply(element, e._args == undefined ? [e] : [e].concat(e._args))
-        if (result === false) e.preventDefault(), e.stopPropagation()
-        return result
-      }
-      handler.i = set.length
-      set.push(handler)
-      if ('addEventListener' in element)
-        element.addEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
-    })
-  }
-  function remove(element, events, fn, selector, capture){
-    var id = zid(element)
-    ;(events || '').split(/\s/).forEach(function(event){
-      findHandlers(element, event, fn, selector).forEach(function(handler){
-        delete handlers[id][handler.i]
-      if ('removeEventListener' in element)
-        element.removeEventListener(realEvent(handler.e), handler.proxy, eventCapture(handler, capture))
-      })
-    })
-  }
-
-  $.event = { add: add, remove: remove }
-
-  $.proxy = function(fn, context) {
-    var args = (2 in arguments) && slice.call(arguments, 2)
-    if (isFunction(fn)) {
-      var proxyFn = function(){ return fn.apply(context, args ? args.concat(slice.call(arguments)) : arguments) }
-      proxyFn._zid = zid(fn)
-      return proxyFn
-    } else if (isString(context)) {
-      if (args) {
-        args.unshift(fn[context], fn)
-        return $.proxy.apply(null, args)
-      } else {
-        return $.proxy(fn[context], fn)
-      }
-    } else {
-      throw new TypeError("expected function")
-    }
-  }
-
-  $.fn.bind = function(event, data, callback){
-    return this.on(event, data, callback)
-  }
-  $.fn.unbind = function(event, callback){
-    return this.off(event, callback)
-  }
-  $.fn.one = function(event, selector, data, callback){
-    return this.on(event, selector, data, callback, 1)
-  }
-
-  var returnTrue = function(){return true},
-      returnFalse = function(){return false},
-      ignoreProperties = /^([A-Z]|returnValue$|layer[XY]$|webkitMovement[XY]$)/,
-      eventMethods = {
-        preventDefault: 'isDefaultPrevented',
-        stopImmediatePropagation: 'isImmediatePropagationStopped',
-        stopPropagation: 'isPropagationStopped'
-      }
-
-  function compatible(event, source) {
-    if (source || !event.isDefaultPrevented) {
-      source || (source = event)
-
-      $.each(eventMethods, function(name, predicate) {
-        var sourceMethod = source[name]
-        event[name] = function(){
-          this[predicate] = returnTrue
-          return sourceMethod && sourceMethod.apply(source, arguments)
-        }
-        event[predicate] = returnFalse
-      })
-
-      try {
-        event.timeStamp || (event.timeStamp = Date.now())
-      } catch (ignored) { }
-
-      if (source.defaultPrevented !== undefined ? source.defaultPrevented :
-          'returnValue' in source ? source.returnValue === false :
-          source.getPreventDefault && source.getPreventDefault())
-        event.isDefaultPrevented = returnTrue
-    }
-    return event
-  }
-
-  function createProxy(event) {
-    var key, proxy = { originalEvent: event }
-    for (key in event)
-      if (!ignoreProperties.test(key) && event[key] !== undefined) proxy[key] = event[key]
-
-    return compatible(proxy, event)
-  }
-
-  $.fn.delegate = function(selector, event, callback){
-    return this.on(event, selector, callback)
-  }
-  $.fn.undelegate = function(selector, event, callback){
-    return this.off(event, selector, callback)
-  }
-
-  $.fn.live = function(event, callback){
-    $(document.body).delegate(this.selector, event, callback)
-    return this
-  }
-  $.fn.die = function(event, callback){
-    $(document.body).undelegate(this.selector, event, callback)
-    return this
-  }
-
-  $.fn.on = function(event, selector, data, callback, one){
-    var autoRemove, delegator, $this = this
-    if (event && !isString(event)) {
-      $.each(event, function(type, fn){
-        $this.on(type, selector, data, fn, one)
-      })
-      return $this
-    }
-
-    if (!isString(selector) && !isFunction(callback) && callback !== false)
-      callback = data, data = selector, selector = undefined
-    if (callback === undefined || data === false)
-      callback = data, data = undefined
-
-    if (callback === false) callback = returnFalse
-
-    return $this.each(function(_, element){
-      if (one) autoRemove = function(e){
-        remove(element, e.type, callback)
-        return callback.apply(this, arguments)
-      }
-
-      if (selector) delegator = function(e){
-        var evt, match = $(e.target).closest(selector, element).get(0)
-        if (match && match !== element) {
-          evt = $.extend(createProxy(e), {currentTarget: match, liveFired: element})
-          return (autoRemove || callback).apply(match, [evt].concat(slice.call(arguments, 1)))
-        }
-      }
-
-      add(element, event, callback, data, selector, delegator || autoRemove)
-    })
-  }
-  $.fn.off = function(event, selector, callback){
-    var $this = this
-    if (event && !isString(event)) {
-      $.each(event, function(type, fn){
-        $this.off(type, selector, fn)
-      })
-      return $this
-    }
-
-    if (!isString(selector) && !isFunction(callback) && callback !== false)
-      callback = selector, selector = undefined
-
-    if (callback === false) callback = returnFalse
-
-    return $this.each(function(){
-      remove(this, event, callback, selector)
-    })
-  }
-
-  $.fn.trigger = function(event, args){
-    event = (isString(event) || $.isPlainObject(event)) ? $.Event(event) : compatible(event)
-    event._args = args
-    return this.each(function(){
-      // handle focus(), blur() by calling them directly
-      if (event.type in focus && typeof this[event.type] == "function") this[event.type]()
-      // items in the collection might not be DOM elements
-      else if ('dispatchEvent' in this) this.dispatchEvent(event)
-      else $(this).triggerHandler(event, args)
-    })
-  }
-
-  // triggers event handlers on current element just as if an event occurred,
-  // doesn't trigger an actual event, doesn't bubble
-  $.fn.triggerHandler = function(event, args){
-    var e, result
-    this.each(function(i, element){
-      e = createProxy(isString(event) ? $.Event(event) : event)
-      e._args = args
-      e.target = element
-      $.each(findHandlers(element, event.type || event), function(i, handler){
-        result = handler.proxy(e)
-        if (e.isImmediatePropagationStopped()) return false
-      })
-    })
-    return result
-  }
-
-  // shortcut methods for `.bind(event, fn)` for each event type
-  ;('focusin focusout focus blur load resize scroll unload click dblclick '+
-  'mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave '+
-  'change select keydown keypress keyup error').split(' ').forEach(function(event) {
-    $.fn[event] = function(callback) {
-      return (0 in arguments) ?
-        this.bind(event, callback) :
-        this.trigger(event)
-    }
-  })
-
-  $.Event = function(type, props) {
-    if (!isString(type)) props = type, type = props.type
-    var event = document.createEvent(specialEvents[type] || 'Events'), bubbles = true
-    if (props) for (var name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
-    event.initEvent(type, bubbles, true)
-    return compatible(event)
-  }
-
-})(Zepto)
-
-;(function($){
-  var cache = [], timeout
-
-  $.fn.remove = function(){
-    return this.each(function(){
-      if(this.parentNode){
-        if(this.tagName === 'IMG'){
-          cache.push(this)
-          this.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
-          if (timeout) clearTimeout(timeout)
-          timeout = setTimeout(function(){ cache = [] }, 60000)
-        }
-        this.parentNode.removeChild(this)
-      }
-    })
-  }
-})(Zepto)
-
-;(function($){
-  var data = {}, dataAttr = $.fn.data, camelize = $.camelCase,
-    exp = $.expando = 'Zepto' + (+new Date()), emptyArray = []
-
-  // Get value from node:
-  // 1. first try key as given,
-  // 2. then try camelized key,
-  // 3. fall back to reading "data-*" attribute.
-  function getData(node, name) {
-    var id = node[exp], store = id && data[id]
-    if (name === undefined) return store || setData(node)
-    else {
-      if (store) {
-        if (name in store) return store[name]
-        var camelName = camelize(name)
-        if (camelName in store) return store[camelName]
-      }
-      return dataAttr.call($(node), name)
-    }
-  }
-
-  // Store value under camelized key on node
-  function setData(node, name, value) {
-    var id = node[exp] || (node[exp] = ++$.uuid),
-      store = data[id] || (data[id] = attributeData(node))
-    if (name !== undefined) store[camelize(name)] = value
-    return store
-  }
-
-  // Read all "data-*" attributes from a node
-  function attributeData(node) {
-    var store = {}
-    $.each(node.attributes || emptyArray, function(i, attr){
-      if (attr.name.indexOf('data-') == 0)
-        store[camelize(attr.name.replace('data-', ''))] =
-          $.zepto.deserializeValue(attr.value)
-    })
-    return store
-  }
-
-  $.fn.data = function(name, value) {
-    return value === undefined ?
-      // set multiple values via object
-      $.isPlainObject(name) ?
-        this.each(function(i, node){
-          $.each(name, function(key, value){ setData(node, key, value) })
-        }) :
-        // get value from first element
-        (0 in this ? getData(this[0], name) : undefined) :
-      // set value on all elements
-      this.each(function(){ setData(this, name, value) })
-  }
-
-  $.data = function(elem, name, value) {
-    return $(elem).data(name, value)
-  }
-
-  $.hasData = function(elem) {
-    var id = elem[exp], store = id && data[id]
-    return store ? !$.isEmptyObject(store) : false
-  }
-
-  $.fn.removeData = function(names) {
-    if (typeof names == 'string') names = names.split(/\s+/)
-    return this.each(function(){
-      var id = this[exp], store = id && data[id]
-      if (store) $.each(names || store, function(key){
-        delete store[names ? camelize(this) : key]
-      })
-    })
-  }
-
-  // Generate extended `remove` and `empty` functions
-  ;['remove', 'empty'].forEach(function(methodName){
-    var origFn = $.fn[methodName]
-    $.fn[methodName] = function() {
-      var elements = this.find('*')
-      if (methodName === 'remove') elements = elements.add(this)
-      elements.removeData()
-      return origFn.call(this)
-    }
-  })
-})(Zepto)
-  return Zepto
-}))
-
-},{}],"../node_modules/autocomplete.js/src/common/dom.js":[function(require,module,exports) {
-'use strict';
-
-module.exports = {
-  element: null
-};
-
-},{}],"../node_modules/autocomplete.js/src/common/utils.js":[function(require,module,exports) {
-'use strict';
-
-var DOM = require('./dom.js');
-
-function escapeRegExp(str) {
-  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
-}
-
-module.exports = {
-  // those methods are implemented differently
-  // depending on which build it is, using
-  // $... or angular... or Zepto... or require(...)
-  isArray: null,
-  isFunction: null,
-  isObject: null,
-  bind: null,
-  each: null,
-  map: null,
-  mixin: null,
-
-  isMsie: function(agentString) {
-    if (agentString === undefined) { agentString = navigator.userAgent; }
-    // from https://github.com/ded/bowser/blob/master/bowser.js
-    if ((/(msie|trident)/i).test(agentString)) {
-      var match = agentString.match(/(msie |rv:)(\d+(.\d+)?)/i);
-      if (match) { return match[2]; }
-    }
-    return false;
-  },
-
-  // http://stackoverflow.com/a/6969486
-  escapeRegExChars: function(str) {
-    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
-  },
-
-  isNumber: function(obj) { return typeof obj === 'number'; },
-
-  toStr: function toStr(s) {
-    return s === undefined || s === null ? '' : s + '';
-  },
-
-  cloneDeep: function cloneDeep(obj) {
-    var clone = this.mixin({}, obj);
-    var self = this;
-    this.each(clone, function(value, key) {
-      if (value) {
-        if (self.isArray(value)) {
-          clone[key] = [].concat(value);
-        } else if (self.isObject(value)) {
-          clone[key] = self.cloneDeep(value);
-        }
-      }
-    });
-    return clone;
-  },
-
-  error: function(msg) {
-    throw new Error(msg);
-  },
-
-  every: function(obj, test) {
-    var result = true;
-    if (!obj) {
-      return result;
-    }
-    this.each(obj, function(val, key) {
-      if (result) {
-        result = test.call(null, val, key, obj) && result;
-      }
-    });
-    return !!result;
-  },
-
-  any: function(obj, test) {
-    var found = false;
-    if (!obj) {
-      return found;
-    }
-    this.each(obj, function(val, key) {
-      if (test.call(null, val, key, obj)) {
-        found = true;
-        return false;
-      }
-    });
-    return found;
-  },
-
-  getUniqueId: (function() {
-    var counter = 0;
-    return function() { return counter++; };
-  })(),
-
-  templatify: function templatify(obj) {
-    if (this.isFunction(obj)) {
-      return obj;
-    }
-    var $template = DOM.element(obj);
-    if ($template.prop('tagName') === 'SCRIPT') {
-      return function template() { return $template.text(); };
-    }
-    return function template() { return String(obj); };
-  },
-
-  defer: function(fn) { setTimeout(fn, 0); },
-
-  noop: function() {},
-
-  formatPrefix: function(prefix, noPrefix) {
-    return noPrefix ? '' : prefix + '-';
-  },
-
-  className: function(prefix, clazz, skipDot) {
-    return (skipDot ? '' : '.') + prefix + clazz;
-  },
-
-  escapeHighlightedString: function(str, highlightPreTag, highlightPostTag) {
-    highlightPreTag = highlightPreTag || '<em>';
-    var pre = document.createElement('div');
-    pre.appendChild(document.createTextNode(highlightPreTag));
-
-    highlightPostTag = highlightPostTag || '</em>';
-    var post = document.createElement('div');
-    post.appendChild(document.createTextNode(highlightPostTag));
-
-    var div = document.createElement('div');
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML
-      .replace(RegExp(escapeRegExp(pre.innerHTML), 'g'), highlightPreTag)
-      .replace(RegExp(escapeRegExp(post.innerHTML), 'g'), highlightPostTag);
-  }
-};
-
-},{"./dom.js":"../node_modules/autocomplete.js/src/common/dom.js"}],"../node_modules/autocomplete.js/src/autocomplete/event_bus.js":[function(require,module,exports) {
-'use strict';
-
-var namespace = 'autocomplete:';
-
-var _ = require('../common/utils.js');
-var DOM = require('../common/dom.js');
-
-// constructor
-// -----------
-
-function EventBus(o) {
-  if (!o || !o.el) {
-    _.error('EventBus initialized without el');
-  }
-
-  this.$el = DOM.element(o.el);
-}
-
-// instance methods
-// ----------------
-
-_.mixin(EventBus.prototype, {
-
-  // ### public
-
-  trigger: function(type, suggestion, dataset, context) {
-    var event = _.Event(namespace + type);
-    this.$el.trigger(event, [suggestion, dataset, context]);
-    return event;
-  }
-});
-
-module.exports = EventBus;
-
-},{"../common/utils.js":"../node_modules/autocomplete.js/src/common/utils.js","../common/dom.js":"../node_modules/autocomplete.js/src/common/dom.js"}],"../node_modules/parcel-bundler/src/builtins/_empty.js":[function(require,module,exports) {
-
-},{}],"../node_modules/immediate/lib/queueMicrotask.js":[function(require,module,exports) {
-var global = arguments[3];
-'use strict';
-exports.test = function () {
-  return typeof global.queueMicrotask === 'function';
-};
-
-exports.install = function (func) {
-  return function () {
-    global.queueMicrotask(func);
-  };
-};
-
-},{}],"../node_modules/immediate/lib/mutation.js":[function(require,module,exports) {
-var global = arguments[3];
-'use strict';
-//based off rsvp https://github.com/tildeio/rsvp.js
-//license https://github.com/tildeio/rsvp.js/blob/master/LICENSE
-//https://github.com/tildeio/rsvp.js/blob/master/lib/rsvp/asap.js
-
-var Mutation = global.MutationObserver || global.WebKitMutationObserver;
-
-exports.test = function () {
-  return Mutation;
-};
-
-exports.install = function (handle) {
-  var called = 0;
-  var observer = new Mutation(handle);
-  var element = global.document.createTextNode('');
-  observer.observe(element, {
-    characterData: true
-  });
-  return function () {
-    element.data = (called = ++called % 2);
-  };
-};
-},{}],"../node_modules/immediate/lib/messageChannel.js":[function(require,module,exports) {
-var global = arguments[3];
-'use strict';
-
-exports.test = function () {
-  if (global.setImmediate) {
-    // we can only get here in IE10
-    // which doesn't handel postMessage well
-    return false;
-  }
-  return typeof global.MessageChannel !== 'undefined';
-};
-
-exports.install = function (func) {
-  var channel = new global.MessageChannel();
-  channel.port1.onmessage = func;
-  return function () {
-    channel.port2.postMessage(0);
-  };
-};
-},{}],"../node_modules/immediate/lib/stateChange.js":[function(require,module,exports) {
-var global = arguments[3];
-'use strict';
-
-exports.test = function () {
-  return 'document' in global && 'onreadystatechange' in global.document.createElement('script');
-};
-
-exports.install = function (handle) {
-  return function () {
-
-    // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
-    // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
-    var scriptEl = global.document.createElement('script');
-    scriptEl.onreadystatechange = function () {
-      handle();
-
-      scriptEl.onreadystatechange = null;
-      scriptEl.parentNode.removeChild(scriptEl);
-      scriptEl = null;
-    };
-    global.document.documentElement.appendChild(scriptEl);
-
-    return handle;
-  };
-};
-},{}],"../node_modules/immediate/lib/timeout.js":[function(require,module,exports) {
-'use strict';
-exports.test = function () {
-  return true;
-};
-
-exports.install = function (t) {
-  return function () {
-    setTimeout(t, 0);
-  };
-};
-},{}],"../node_modules/immediate/lib/index.js":[function(require,module,exports) {
-'use strict';
-var types = [
-  require('./nextTick'),
-  require('./queueMicrotask'),
-  require('./mutation.js'),
-  require('./messageChannel'),
-  require('./stateChange'),
-  require('./timeout')
-];
-var draining;
-var currentQueue;
-var queueIndex = -1;
-var queue = [];
-var scheduled = false;
-function cleanUpNextTick() {
-  if (!draining || !currentQueue) {
-    return;
-  }
-  draining = false;
-  if (currentQueue.length) {
-    queue = currentQueue.concat(queue);
-  } else {
-    queueIndex = -1;
-  }
-  if (queue.length) {
-    nextTick();
-  }
-}
-
-//named nextTick for less confusing stack traces
-function nextTick() {
-  if (draining) {
-    return;
-  }
-  scheduled = false;
-  draining = true;
-  var len = queue.length;
-  var timeout = setTimeout(cleanUpNextTick);
-  while (len) {
-    currentQueue = queue;
-    queue = [];
-    while (currentQueue && ++queueIndex < len) {
-      currentQueue[queueIndex].run();
-    }
-    queueIndex = -1;
-    len = queue.length;
-  }
-  currentQueue = null;
-  queueIndex = -1;
-  draining = false;
-  clearTimeout(timeout);
-}
-var scheduleDrain;
-var i = -1;
-var len = types.length;
-while (++i < len) {
-  if (types[i] && types[i].test && types[i].test()) {
-    scheduleDrain = types[i].install(nextTick);
-    break;
-  }
-}
-// v8 likes predictible objects
-function Item(fun, array) {
-  this.fun = fun;
-  this.array = array;
-}
-Item.prototype.run = function () {
-  var fun = this.fun;
-  var array = this.array;
-  switch (array.length) {
-  case 0:
-    return fun();
-  case 1:
-    return fun(array[0]);
-  case 2:
-    return fun(array[0], array[1]);
-  case 3:
-    return fun(array[0], array[1], array[2]);
-  default:
-    return fun.apply(null, array);
-  }
-
-};
-module.exports = immediate;
-function immediate(task) {
-  var args = new Array(arguments.length - 1);
-  if (arguments.length > 1) {
-    for (var i = 1; i < arguments.length; i++) {
-      args[i - 1] = arguments[i];
-    }
-  }
-  queue.push(new Item(task, args));
-  if (!scheduled && !draining) {
-    scheduled = true;
-    scheduleDrain();
-  }
-}
-
-},{"./nextTick":"../node_modules/parcel-bundler/src/builtins/_empty.js","./queueMicrotask":"../node_modules/immediate/lib/queueMicrotask.js","./mutation.js":"../node_modules/immediate/lib/mutation.js","./messageChannel":"../node_modules/immediate/lib/messageChannel.js","./stateChange":"../node_modules/immediate/lib/stateChange.js","./timeout":"../node_modules/immediate/lib/timeout.js"}],"../node_modules/autocomplete.js/src/autocomplete/event_emitter.js":[function(require,module,exports) {
-'use strict';
-
-var immediate = require('immediate');
-var splitter = /\s+/;
-
-module.exports = {
-  onSync: onSync,
-  onAsync: onAsync,
-  off: off,
-  trigger: trigger
-};
-
-function on(method, types, cb, context) {
-  var type;
-
-  if (!cb) {
-    return this;
-  }
-
-  types = types.split(splitter);
-  cb = context ? bindContext(cb, context) : cb;
-
-  this._callbacks = this._callbacks || {};
-
-  while (type = types.shift()) {
-    this._callbacks[type] = this._callbacks[type] || {sync: [], async: []};
-    this._callbacks[type][method].push(cb);
-  }
-
-  return this;
-}
-
-function onAsync(types, cb, context) {
-  return on.call(this, 'async', types, cb, context);
-}
-
-function onSync(types, cb, context) {
-  return on.call(this, 'sync', types, cb, context);
-}
-
-function off(types) {
-  var type;
-
-  if (!this._callbacks) {
-    return this;
-  }
-
-  types = types.split(splitter);
-
-  while (type = types.shift()) {
-    delete this._callbacks[type];
-  }
-
-  return this;
-}
-
-function trigger(types) {
-  var type;
-  var callbacks;
-  var args;
-  var syncFlush;
-  var asyncFlush;
-
-  if (!this._callbacks) {
-    return this;
-  }
-
-  types = types.split(splitter);
-  args = [].slice.call(arguments, 1);
-
-  while ((type = types.shift()) && (callbacks = this._callbacks[type])) { // eslint-disable-line
-    syncFlush = getFlush(callbacks.sync, this, [type].concat(args));
-    asyncFlush = getFlush(callbacks.async, this, [type].concat(args));
-
-    if (syncFlush()) {
-      immediate(asyncFlush);
-    }
-  }
-
-  return this;
-}
-
-function getFlush(callbacks, context, args) {
-  return flush;
-
-  function flush() {
-    var cancelled;
-
-    for (var i = 0, len = callbacks.length; !cancelled && i < len; i += 1) {
-      // only cancel if the callback explicitly returns false
-      cancelled = callbacks[i].apply(context, args) === false;
-    }
-
-    return !cancelled;
-  }
-}
-
-function bindContext(fn, context) {
-  return fn.bind ?
-    fn.bind(context) :
-    function() { fn.apply(context, [].slice.call(arguments, 0)); };
-}
-
-},{"immediate":"../node_modules/immediate/lib/index.js"}],"../node_modules/autocomplete.js/src/autocomplete/input.js":[function(require,module,exports) {
-'use strict';
-
-var specialKeyCodeMap;
-
-specialKeyCodeMap = {
-  9: 'tab',
-  27: 'esc',
-  37: 'left',
-  39: 'right',
-  13: 'enter',
-  38: 'up',
-  40: 'down'
-};
-
-var _ = require('../common/utils.js');
-var DOM = require('../common/dom.js');
-var EventEmitter = require('./event_emitter.js');
-
-// constructor
-// -----------
-
-function Input(o) {
-  var that = this;
-  var onBlur;
-  var onFocus;
-  var onKeydown;
-  var onInput;
-
-  o = o || {};
-
-  if (!o.input) {
-    _.error('input is missing');
-  }
-
-  // bound functions
-  onBlur = _.bind(this._onBlur, this);
-  onFocus = _.bind(this._onFocus, this);
-  onKeydown = _.bind(this._onKeydown, this);
-  onInput = _.bind(this._onInput, this);
-
-  this.$hint = DOM.element(o.hint);
-  this.$input = DOM.element(o.input)
-    .on('blur.aa', onBlur)
-    .on('focus.aa', onFocus)
-    .on('keydown.aa', onKeydown);
-
-  // if no hint, noop all the hint related functions
-  if (this.$hint.length === 0) {
-    this.setHint = this.getHint = this.clearHint = this.clearHintIfInvalid = _.noop;
-  }
-
-  // ie7 and ie8 don't support the input event
-  // ie9 doesn't fire the input event when characters are removed
-  // not sure if ie10 is compatible
-  if (!_.isMsie()) {
-    this.$input.on('input.aa', onInput);
-  } else {
-    this.$input.on('keydown.aa keypress.aa cut.aa paste.aa', function($e) {
-      // if a special key triggered this, ignore it
-      if (specialKeyCodeMap[$e.which || $e.keyCode]) {
-        return;
-      }
-
-      // give the browser a chance to update the value of the input
-      // before checking to see if the query changed
-      _.defer(_.bind(that._onInput, that, $e));
-    });
-  }
-
-  // the query defaults to whatever the value of the input is
-  // on initialization, it'll most likely be an empty string
-  this.query = this.$input.val();
-
-  // helps with calculating the width of the input's value
-  this.$overflowHelper = buildOverflowHelper(this.$input);
-}
-
-// static methods
-// --------------
-
-Input.normalizeQuery = function(str) {
-  // strips leading whitespace and condenses all whitespace
-  return (str || '').replace(/^\s*/g, '').replace(/\s{2,}/g, ' ');
-};
-
-// instance methods
-// ----------------
-
-_.mixin(Input.prototype, EventEmitter, {
-
-  // ### private
-
-  _onBlur: function onBlur() {
-    this.resetInputValue();
-    this.$input.removeAttr('aria-activedescendant');
-    this.trigger('blurred');
-  },
-
-  _onFocus: function onFocus() {
-    this.trigger('focused');
-  },
-
-  _onKeydown: function onKeydown($e) {
-    // which is normalized and consistent (but not for ie)
-    var keyName = specialKeyCodeMap[$e.which || $e.keyCode];
-
-    this._managePreventDefault(keyName, $e);
-    if (keyName && this._shouldTrigger(keyName, $e)) {
-      this.trigger(keyName + 'Keyed', $e);
-    }
-  },
-
-  _onInput: function onInput() {
-    this._checkInputValue();
-  },
-
-  _managePreventDefault: function managePreventDefault(keyName, $e) {
-    var preventDefault;
-    var hintValue;
-    var inputValue;
-
-    switch (keyName) {
-    case 'tab':
-      hintValue = this.getHint();
-      inputValue = this.getInputValue();
-
-      preventDefault = hintValue &&
-        hintValue !== inputValue &&
-        !withModifier($e);
-      break;
-
-    case 'up':
-    case 'down':
-      preventDefault = !withModifier($e);
-      break;
-
-    default:
-      preventDefault = false;
-    }
-
-    if (preventDefault) {
-      $e.preventDefault();
-    }
-  },
-
-  _shouldTrigger: function shouldTrigger(keyName, $e) {
-    var trigger;
-
-    switch (keyName) {
-    case 'tab':
-      trigger = !withModifier($e);
-      break;
-
-    default:
-      trigger = true;
-    }
-
-    return trigger;
-  },
-
-  _checkInputValue: function checkInputValue() {
-    var inputValue;
-    var areEquivalent;
-    var hasDifferentWhitespace;
-
-    inputValue = this.getInputValue();
-    areEquivalent = areQueriesEquivalent(inputValue, this.query);
-    hasDifferentWhitespace = areEquivalent && this.query ?
-      this.query.length !== inputValue.length : false;
-
-    this.query = inputValue;
-
-    if (!areEquivalent) {
-      this.trigger('queryChanged', this.query);
-    } else if (hasDifferentWhitespace) {
-      this.trigger('whitespaceChanged', this.query);
-    }
-  },
-
-  // ### public
-
-  focus: function focus() {
-    this.$input.focus();
-  },
-
-  blur: function blur() {
-    this.$input.blur();
-  },
-
-  getQuery: function getQuery() {
-    return this.query;
-  },
-
-  setQuery: function setQuery(query) {
-    this.query = query;
-  },
-
-  getInputValue: function getInputValue() {
-    return this.$input.val();
-  },
-
-  setInputValue: function setInputValue(value, silent) {
-    if (typeof value === 'undefined') {
-      value = this.query;
-    }
-    this.$input.val(value);
-
-    // silent prevents any additional events from being triggered
-    if (silent) {
-      this.clearHint();
-    } else {
-      this._checkInputValue();
-    }
-  },
-
-  expand: function expand() {
-    this.$input.attr('aria-expanded', 'true');
-  },
-
-  collapse: function collapse() {
-    this.$input.attr('aria-expanded', 'false');
-  },
-
-  setActiveDescendant: function setActiveDescendant(activedescendantId) {
-    this.$input.attr('aria-activedescendant', activedescendantId);
-  },
-
-  removeActiveDescendant: function removeActiveDescendant() {
-    this.$input.removeAttr('aria-activedescendant');
-  },
-
-  resetInputValue: function resetInputValue() {
-    this.setInputValue(this.query, true);
-  },
-
-  getHint: function getHint() {
-    return this.$hint.val();
-  },
-
-  setHint: function setHint(value) {
-    this.$hint.val(value);
-  },
-
-  clearHint: function clearHint() {
-    this.setHint('');
-  },
-
-  clearHintIfInvalid: function clearHintIfInvalid() {
-    var val;
-    var hint;
-    var valIsPrefixOfHint;
-    var isValid;
-
-    val = this.getInputValue();
-    hint = this.getHint();
-    valIsPrefixOfHint = val !== hint && hint.indexOf(val) === 0;
-    isValid = val !== '' && valIsPrefixOfHint && !this.hasOverflow();
-
-    if (!isValid) {
-      this.clearHint();
-    }
-  },
-
-  getLanguageDirection: function getLanguageDirection() {
-    return (this.$input.css('direction') || 'ltr').toLowerCase();
-  },
-
-  hasOverflow: function hasOverflow() {
-    // 2 is arbitrary, just picking a small number to handle edge cases
-    var constraint = this.$input.width() - 2;
-
-    this.$overflowHelper.text(this.getInputValue());
-
-    return this.$overflowHelper.width() >= constraint;
-  },
-
-  isCursorAtEnd: function() {
-    var valueLength;
-    var selectionStart;
-    var range;
-
-    valueLength = this.$input.val().length;
-    selectionStart = this.$input[0].selectionStart;
-
-    if (_.isNumber(selectionStart)) {
-      return selectionStart === valueLength;
-    } else if (document.selection) {
-      // NOTE: this won't work unless the input has focus, the good news
-      // is this code should only get called when the input has focus
-      range = document.selection.createRange();
-      range.moveStart('character', -valueLength);
-
-      return valueLength === range.text.length;
-    }
-
-    return true;
-  },
-
-  destroy: function destroy() {
-    this.$hint.off('.aa');
-    this.$input.off('.aa');
-
-    this.$hint = this.$input = this.$overflowHelper = null;
-  }
-});
-
-// helper functions
-// ----------------
-
-function buildOverflowHelper($input) {
-  return DOM.element('<pre aria-hidden="true"></pre>')
-    .css({
-      // position helper off-screen
-      position: 'absolute',
-      visibility: 'hidden',
-      // avoid line breaks and whitespace collapsing
-      whiteSpace: 'pre',
-      // use same font css as input to calculate accurate width
-      fontFamily: $input.css('font-family'),
-      fontSize: $input.css('font-size'),
-      fontStyle: $input.css('font-style'),
-      fontVariant: $input.css('font-variant'),
-      fontWeight: $input.css('font-weight'),
-      wordSpacing: $input.css('word-spacing'),
-      letterSpacing: $input.css('letter-spacing'),
-      textIndent: $input.css('text-indent'),
-      textRendering: $input.css('text-rendering'),
-      textTransform: $input.css('text-transform')
-    })
-    .insertAfter($input);
-}
-
-function areQueriesEquivalent(a, b) {
-  return Input.normalizeQuery(a) === Input.normalizeQuery(b);
-}
-
-function withModifier($e) {
-  return $e.altKey || $e.ctrlKey || $e.metaKey || $e.shiftKey;
-}
-
-module.exports = Input;
-
-},{"../common/utils.js":"../node_modules/autocomplete.js/src/common/utils.js","../common/dom.js":"../node_modules/autocomplete.js/src/common/dom.js","./event_emitter.js":"../node_modules/autocomplete.js/src/autocomplete/event_emitter.js"}],"../node_modules/autocomplete.js/src/autocomplete/html.js":[function(require,module,exports) {
-'use strict';
-
-module.exports = {
-  wrapper: '<span class="%ROOT%"></span>',
-  dropdown: '<span class="%PREFIX%%DROPDOWN_MENU%"></span>',
-  dataset: '<div class="%PREFIX%%DATASET%-%CLASS%"></div>',
-  suggestions: '<span class="%PREFIX%%SUGGESTIONS%"></span>',
-  suggestion: '<div class="%PREFIX%%SUGGESTION%"></div>'
-};
-
-},{}],"../node_modules/autocomplete.js/src/autocomplete/css.js":[function(require,module,exports) {
-'use strict';
-
-var _ = require('../common/utils.js');
-
-var css = {
-  wrapper: {
-    position: 'relative',
-    display: 'inline-block'
-  },
-  hint: {
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    borderColor: 'transparent',
-    boxShadow: 'none',
-    // #741: fix hint opacity issue on iOS
-    opacity: '1'
-  },
-  input: {
-    position: 'relative',
-    verticalAlign: 'top',
-    backgroundColor: 'transparent'
-  },
-  inputWithNoHint: {
-    position: 'relative',
-    verticalAlign: 'top'
-  },
-  dropdown: {
-    position: 'absolute',
-    top: '100%',
-    left: '0',
-    zIndex: '100',
-    display: 'none'
-  },
-  suggestions: {
-    display: 'block'
-  },
-  suggestion: {
-    whiteSpace: 'nowrap',
-    cursor: 'pointer'
-  },
-  suggestionChild: {
-    whiteSpace: 'normal'
-  },
-  ltr: {
-    left: '0',
-    right: 'auto'
-  },
-  rtl: {
-    left: 'auto',
-    right: '0'
-  },
-  defaultClasses: {
-    root: 'algolia-autocomplete',
-    prefix: 'aa',
-    noPrefix: false,
-    dropdownMenu: 'dropdown-menu',
-    input: 'input',
-    hint: 'hint',
-    suggestions: 'suggestions',
-    suggestion: 'suggestion',
-    cursor: 'cursor',
-    dataset: 'dataset',
-    empty: 'empty'
-  },
-  // will be merged with the default ones if appendTo is used
-  appendTo: {
-    wrapper: {
-      position: 'absolute',
-      zIndex: '100',
-      display: 'none'
-    },
-    input: {},
-    inputWithNoHint: {},
-    dropdown: {
-      display: 'block'
-    }
-  }
-};
-
-// ie specific styling
-if (_.isMsie()) {
-  // ie6-8 (and 9?) doesn't fire hover and click events for elements with
-  // transparent backgrounds, for a workaround, use 1x1 transparent gif
-  _.mixin(css.input, {
-    backgroundImage: 'url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7)'
-  });
-}
-
-// ie7 and under specific styling
-if (_.isMsie() && _.isMsie() <= 7) {
-  // if someone can tell me why this is necessary to align
-  // the hint with the query in ie7, i'll send you $5 - @JakeHarding
-  _.mixin(css.input, {marginTop: '-1px'});
-}
-
-module.exports = css;
-
-},{"../common/utils.js":"../node_modules/autocomplete.js/src/common/utils.js"}],"../node_modules/autocomplete.js/src/autocomplete/dataset.js":[function(require,module,exports) {
-'use strict';
-
-var datasetKey = 'aaDataset';
-var valueKey = 'aaValue';
-var datumKey = 'aaDatum';
-
-var _ = require('../common/utils.js');
-var DOM = require('../common/dom.js');
-var html = require('./html.js');
-var css = require('./css.js');
-var EventEmitter = require('./event_emitter.js');
-
-// constructor
-// -----------
-
-function Dataset(o) {
-  o = o || {};
-  o.templates = o.templates || {};
-
-  if (!o.source) {
-    _.error('missing source');
-  }
-
-  if (o.name && !isValidName(o.name)) {
-    _.error('invalid dataset name: ' + o.name);
-  }
-
-  // tracks the last query the dataset was updated for
-  this.query = null;
-  this._isEmpty = true;
-
-  this.highlight = !!o.highlight;
-  this.name = typeof o.name === 'undefined' || o.name === null ? _.getUniqueId() : o.name;
-
-  this.source = o.source;
-  this.displayFn = getDisplayFn(o.display || o.displayKey);
-
-  this.debounce = o.debounce;
-
-  this.cache = o.cache !== false;
-
-  this.templates = getTemplates(o.templates, this.displayFn);
-
-  this.css = _.mixin({}, css, o.appendTo ? css.appendTo : {});
-  this.cssClasses = o.cssClasses = _.mixin({}, css.defaultClasses, o.cssClasses || {});
-  this.cssClasses.prefix =
-    o.cssClasses.formattedPrefix || _.formatPrefix(this.cssClasses.prefix, this.cssClasses.noPrefix);
-
-  var clazz = _.className(this.cssClasses.prefix, this.cssClasses.dataset);
-  this.$el = o.$menu && o.$menu.find(clazz + '-' + this.name).length > 0 ?
-    DOM.element(o.$menu.find(clazz + '-' + this.name)[0]) :
-    DOM.element(
-      html.dataset.replace('%CLASS%', this.name)
-        .replace('%PREFIX%', this.cssClasses.prefix)
-        .replace('%DATASET%', this.cssClasses.dataset)
-    );
-
-  this.$menu = o.$menu;
-  this.clearCachedSuggestions();
-}
-
-// static methods
-// --------------
-
-Dataset.extractDatasetName = function extractDatasetName(el) {
-  return DOM.element(el).data(datasetKey);
-};
-
-Dataset.extractValue = function extractValue(el) {
-  return DOM.element(el).data(valueKey);
-};
-
-Dataset.extractDatum = function extractDatum(el) {
-  var datum = DOM.element(el).data(datumKey);
-  if (typeof datum === 'string') {
-    // Zepto has an automatic deserialization of the
-    // JSON encoded data attribute
-    datum = JSON.parse(datum);
-  }
-  return datum;
-};
-
-// instance methods
-// ----------------
-
-_.mixin(Dataset.prototype, EventEmitter, {
-
-  // ### private
-
-  _render: function render(query, suggestions) {
-    if (!this.$el) {
-      return;
-    }
-    var that = this;
-
-    var hasSuggestions;
-    var renderArgs = [].slice.call(arguments, 2);
-    this.$el.empty();
-
-    hasSuggestions = suggestions && suggestions.length;
-    this._isEmpty = !hasSuggestions;
-
-    if (!hasSuggestions && this.templates.empty) {
-      this.$el
-        .html(getEmptyHtml.apply(this, renderArgs))
-        .prepend(that.templates.header ? getHeaderHtml.apply(this, renderArgs) : null)
-        .append(that.templates.footer ? getFooterHtml.apply(this, renderArgs) : null);
-    } else if (hasSuggestions) {
-      this.$el
-        .html(getSuggestionsHtml.apply(this, renderArgs))
-        .prepend(that.templates.header ? getHeaderHtml.apply(this, renderArgs) : null)
-        .append(that.templates.footer ? getFooterHtml.apply(this, renderArgs) : null);
-    } else if (suggestions && !Array.isArray(suggestions)) {
-      throw new TypeError('suggestions must be an array');
-    }
-
-    if (this.$menu) {
-      this.$menu.addClass(
-        this.cssClasses.prefix + (hasSuggestions ? 'with' : 'without') + '-' + this.name
-      ).removeClass(
-        this.cssClasses.prefix + (hasSuggestions ? 'without' : 'with') + '-' + this.name
-      );
-    }
-
-    this.trigger('rendered', query);
-
-    function getEmptyHtml() {
-      var args = [].slice.call(arguments, 0);
-      args = [{query: query, isEmpty: true}].concat(args);
-      return that.templates.empty.apply(this, args);
-    }
-
-    function getSuggestionsHtml() {
-      var args = [].slice.call(arguments, 0);
-      var $suggestions;
-      var nodes;
-      var self = this;
-
-      var suggestionsHtml = html.suggestions.
-        replace('%PREFIX%', this.cssClasses.prefix).
-        replace('%SUGGESTIONS%', this.cssClasses.suggestions);
-      $suggestions = DOM
-        .element(suggestionsHtml)
-        .css(this.css.suggestions);
-
-      // jQuery#append doesn't support arrays as the first argument
-      // until version 1.8, see http://bugs.jquery.com/ticket/11231
-      nodes = _.map(suggestions, getSuggestionNode);
-      $suggestions.append.apply($suggestions, nodes);
-
-      return $suggestions;
-
-      function getSuggestionNode(suggestion) {
-        var $el;
-
-        var suggestionHtml = html.suggestion.
-          replace('%PREFIX%', self.cssClasses.prefix).
-          replace('%SUGGESTION%', self.cssClasses.suggestion);
-        $el = DOM.element(suggestionHtml)
-          .attr({
-            role: 'option',
-            id: ['option', Math.floor(Math.random() * 100000000)].join('-')
-          })
-          .append(that.templates.suggestion.apply(this, [suggestion].concat(args)));
-
-        $el.data(datasetKey, that.name);
-        $el.data(valueKey, that.displayFn(suggestion) || undefined); // this led to undefined return value
-        $el.data(datumKey, JSON.stringify(suggestion));
-        $el.children().each(function() { DOM.element(this).css(self.css.suggestionChild); });
-
-        return $el;
-      }
-    }
-
-    function getHeaderHtml() {
-      var args = [].slice.call(arguments, 0);
-      args = [{query: query, isEmpty: !hasSuggestions}].concat(args);
-      return that.templates.header.apply(this, args);
-    }
-
-    function getFooterHtml() {
-      var args = [].slice.call(arguments, 0);
-      args = [{query: query, isEmpty: !hasSuggestions}].concat(args);
-      return that.templates.footer.apply(this, args);
-    }
-  },
-
-  // ### public
-
-  getRoot: function getRoot() {
-    return this.$el;
-  },
-
-  update: function update(query) {
-    function handleSuggestions(suggestions) {
-      // if the update has been canceled or if the query has changed
-      // do not render the suggestions as they've become outdated
-      if (!this.canceled && query === this.query) {
-        // concat all the other arguments that could have been passed
-        // to the render function, and forward them to _render
-        var extraArgs = [].slice.call(arguments, 1);
-        this.cacheSuggestions(query, suggestions, extraArgs);
-        this._render.apply(this, [query, suggestions].concat(extraArgs));
-      }
-    }
-
-    this.query = query;
-    this.canceled = false;
-
-    if (this.shouldFetchFromCache(query)) {
-      handleSuggestions.apply(this, [this.cachedSuggestions].concat(this.cachedRenderExtraArgs));
-    } else {
-      var that = this;
-      var execSource = function() {
-        // When the call is debounced the condition avoid to do a useless
-        // request with the last character when the input has been cleared
-        if (!that.canceled) {
-          that.source(query, handleSuggestions.bind(that));
-        }
-      };
-
-      if (this.debounce) {
-        var later = function() {
-          that.debounceTimeout = null;
-          execSource();
-        };
-        clearTimeout(this.debounceTimeout);
-        this.debounceTimeout = setTimeout(later, this.debounce);
-      } else {
-        execSource();
-      }
-    }
-  },
-
-  cacheSuggestions: function cacheSuggestions(query, suggestions, extraArgs) {
-    this.cachedQuery = query;
-    this.cachedSuggestions = suggestions;
-    this.cachedRenderExtraArgs = extraArgs;
-  },
-
-  shouldFetchFromCache: function shouldFetchFromCache(query) {
-    return this.cache &&
-      this.cachedQuery === query &&
-      this.cachedSuggestions &&
-      this.cachedSuggestions.length;
-  },
-
-  clearCachedSuggestions: function clearCachedSuggestions() {
-    delete this.cachedQuery;
-    delete this.cachedSuggestions;
-    delete this.cachedRenderExtraArgs;
-  },
-
-  cancel: function cancel() {
-    this.canceled = true;
-  },
-
-  clear: function clear() {
-    if (this.$el) {
-      this.cancel();
-      this.$el.empty();
-      this.trigger('rendered', '');
-    }
-  },
-
-  isEmpty: function isEmpty() {
-    return this._isEmpty;
-  },
-
-  destroy: function destroy() {
-    this.clearCachedSuggestions();
-    this.$el = null;
-  }
-});
-
-// helper functions
-// ----------------
-
-function getDisplayFn(display) {
-  display = display || 'value';
-
-  return _.isFunction(display) ? display : displayFn;
-
-  function displayFn(obj) {
-    return obj[display];
-  }
-}
-
-function getTemplates(templates, displayFn) {
-  return {
-    empty: templates.empty && _.templatify(templates.empty),
-    header: templates.header && _.templatify(templates.header),
-    footer: templates.footer && _.templatify(templates.footer),
-    suggestion: templates.suggestion || suggestionTemplate
-  };
-
-  function suggestionTemplate(context) {
-    return '<p>' + displayFn(context) + '</p>';
-  }
-}
-
-function isValidName(str) {
-  // dashes, underscores, letters, and numbers
-  return (/^[_a-zA-Z0-9-]+$/).test(str);
-}
-
-module.exports = Dataset;
-
-},{"../common/utils.js":"../node_modules/autocomplete.js/src/common/utils.js","../common/dom.js":"../node_modules/autocomplete.js/src/common/dom.js","./html.js":"../node_modules/autocomplete.js/src/autocomplete/html.js","./css.js":"../node_modules/autocomplete.js/src/autocomplete/css.js","./event_emitter.js":"../node_modules/autocomplete.js/src/autocomplete/event_emitter.js"}],"../node_modules/autocomplete.js/src/autocomplete/dropdown.js":[function(require,module,exports) {
-'use strict';
-
-var _ = require('../common/utils.js');
-var DOM = require('../common/dom.js');
-var EventEmitter = require('./event_emitter.js');
-var Dataset = require('./dataset.js');
-var css = require('./css.js');
-
-// constructor
-// -----------
-
-function Dropdown(o) {
-  var that = this;
-  var onSuggestionClick;
-  var onSuggestionMouseEnter;
-  var onSuggestionMouseLeave;
-
-  o = o || {};
-
-  if (!o.menu) {
-    _.error('menu is required');
-  }
-
-  if (!_.isArray(o.datasets) && !_.isObject(o.datasets)) {
-    _.error('1 or more datasets required');
-  }
-  if (!o.datasets) {
-    _.error('datasets is required');
-  }
-
-  this.isOpen = false;
-  this.isEmpty = true;
-  this.minLength = o.minLength || 0;
-  this.templates = {};
-  this.appendTo = o.appendTo || false;
-  this.css = _.mixin({}, css, o.appendTo ? css.appendTo : {});
-  this.cssClasses = o.cssClasses = _.mixin({}, css.defaultClasses, o.cssClasses || {});
-  this.cssClasses.prefix =
-    o.cssClasses.formattedPrefix || _.formatPrefix(this.cssClasses.prefix, this.cssClasses.noPrefix);
-
-  // bound functions
-  onSuggestionClick = _.bind(this._onSuggestionClick, this);
-  onSuggestionMouseEnter = _.bind(this._onSuggestionMouseEnter, this);
-  onSuggestionMouseLeave = _.bind(this._onSuggestionMouseLeave, this);
-
-  var cssClass = _.className(this.cssClasses.prefix, this.cssClasses.suggestion);
-  this.$menu = DOM.element(o.menu)
-    .on('mouseenter.aa', cssClass, onSuggestionMouseEnter)
-    .on('mouseleave.aa', cssClass, onSuggestionMouseLeave)
-    .on('click.aa', cssClass, onSuggestionClick);
-
-  this.$container = o.appendTo ? o.wrapper : this.$menu;
-
-  if (o.templates && o.templates.header) {
-    this.templates.header = _.templatify(o.templates.header);
-    this.$menu.prepend(this.templates.header());
-  }
-
-  if (o.templates && o.templates.empty) {
-    this.templates.empty = _.templatify(o.templates.empty);
-    this.$empty = DOM.element('<div class="' +
-      _.className(this.cssClasses.prefix, this.cssClasses.empty, true) + '">' +
-      '</div>');
-    this.$menu.append(this.$empty);
-    this.$empty.hide();
-  }
-
-  this.datasets = _.map(o.datasets, function(oDataset) {
-    return initializeDataset(that.$menu, oDataset, o.cssClasses);
-  });
-  _.each(this.datasets, function(dataset) {
-    var root = dataset.getRoot();
-    if (root && root.parent().length === 0) {
-      that.$menu.append(root);
-    }
-    dataset.onSync('rendered', that._onRendered, that);
-  });
-
-  if (o.templates && o.templates.footer) {
-    this.templates.footer = _.templatify(o.templates.footer);
-    this.$menu.append(this.templates.footer());
-  }
-
-  var self = this;
-  DOM.element(window).resize(function() {
-    self._redraw();
-  });
-}
-
-// instance methods
-// ----------------
-
-_.mixin(Dropdown.prototype, EventEmitter, {
-
-  // ### private
-
-  _onSuggestionClick: function onSuggestionClick($e) {
-    this.trigger('suggestionClicked', DOM.element($e.currentTarget));
-  },
-
-  _onSuggestionMouseEnter: function onSuggestionMouseEnter($e) {
-    var elt = DOM.element($e.currentTarget);
-    if (elt.hasClass(_.className(this.cssClasses.prefix, this.cssClasses.cursor, true))) {
-      // we're already on the cursor
-      // => we're probably entering it again after leaving it for a nested div
-      return;
-    }
-    this._removeCursor();
-
-    // Fixes iOS double tap behaviour, by modifying the DOM right before the
-    // native href clicks happens, iOS will requires another tap to follow
-    // a suggestion that has an <a href> element inside
-    // https://www.google.com/search?q=ios+double+tap+bug+href
-    var suggestion = this;
-    setTimeout(function() {
-      // this exact line, when inside the main loop, will trigger a double tap bug
-      // on iOS devices
-      suggestion._setCursor(elt, false);
-    }, 0);
-  },
-
-  _onSuggestionMouseLeave: function onSuggestionMouseLeave($e) {
-    // $e.relatedTarget is the `EventTarget` the pointing device entered to
-    if ($e.relatedTarget) {
-      var elt = DOM.element($e.relatedTarget);
-      if (elt.closest('.' + _.className(this.cssClasses.prefix, this.cssClasses.cursor, true)).length > 0) {
-        // our father is a cursor
-        // => it means we're just leaving the suggestion for a nested div
-        return;
-      }
-    }
-    this._removeCursor();
-    this.trigger('cursorRemoved');
-  },
-
-  _onRendered: function onRendered(e, query) {
-    this.isEmpty = _.every(this.datasets, isDatasetEmpty);
-
-    if (this.isEmpty) {
-      if (query.length >= this.minLength) {
-        this.trigger('empty');
-      }
-
-      if (this.$empty) {
-        if (query.length < this.minLength) {
-          this._hide();
-        } else {
-          var html = this.templates.empty({
-            query: this.datasets[0] && this.datasets[0].query
-          });
-          this.$empty.html(html);
-          this.$empty.show();
-          this._show();
-        }
-      } else if (_.any(this.datasets, hasEmptyTemplate)) {
-        if (query.length < this.minLength) {
-          this._hide();
-        } else {
-          this._show();
-        }
-      } else {
-        this._hide();
-      }
-    } else if (this.isOpen) {
-      if (this.$empty) {
-        this.$empty.empty();
-        this.$empty.hide();
-      }
-
-      if (query.length >= this.minLength) {
-        this._show();
-      } else {
-        this._hide();
-      }
-    }
-
-    this.trigger('datasetRendered');
-
-    function isDatasetEmpty(dataset) {
-      return dataset.isEmpty();
-    }
-
-    function hasEmptyTemplate(dataset) {
-      return dataset.templates && dataset.templates.empty;
-    }
-  },
-
-  _hide: function() {
-    this.$container.hide();
-  },
-
-  _show: function() {
-    // can't use jQuery#show because $menu is a span element we want
-    // display: block; not dislay: inline;
-    this.$container.css('display', 'block');
-
-    this._redraw();
-
-    this.trigger('shown');
-  },
-
-  _redraw: function redraw() {
-    if (!this.isOpen || !this.appendTo) return;
-
-    this.trigger('redrawn');
-  },
-
-  _getSuggestions: function getSuggestions() {
-    return this.$menu.find(_.className(this.cssClasses.prefix, this.cssClasses.suggestion));
-  },
-
-  _getCursor: function getCursor() {
-    return this.$menu.find(_.className(this.cssClasses.prefix, this.cssClasses.cursor)).first();
-  },
-
-  _setCursor: function setCursor($el, updateInput) {
-    $el.first()
-      .addClass(_.className(this.cssClasses.prefix, this.cssClasses.cursor, true))
-      .attr('aria-selected', 'true');
-    this.trigger('cursorMoved', updateInput);
-  },
-
-  _removeCursor: function removeCursor() {
-    this._getCursor()
-      .removeClass(_.className(this.cssClasses.prefix, this.cssClasses.cursor, true))
-      .removeAttr('aria-selected');
-  },
-
-  _moveCursor: function moveCursor(increment) {
-    var $suggestions;
-    var $oldCursor;
-    var newCursorIndex;
-    var $newCursor;
-
-    if (!this.isOpen) {
-      return;
-    }
-
-    $oldCursor = this._getCursor();
-    $suggestions = this._getSuggestions();
-
-    this._removeCursor();
-
-    // shifting before and after modulo to deal with -1 index
-    newCursorIndex = $suggestions.index($oldCursor) + increment;
-    newCursorIndex = (newCursorIndex + 1) % ($suggestions.length + 1) - 1;
-
-    if (newCursorIndex === -1) {
-      this.trigger('cursorRemoved');
-
-      return;
-    } else if (newCursorIndex < -1) {
-      newCursorIndex = $suggestions.length - 1;
-    }
-
-    this._setCursor($newCursor = $suggestions.eq(newCursorIndex), true);
-
-    // in the case of scrollable overflow
-    // make sure the cursor is visible in the menu
-    this._ensureVisible($newCursor);
-  },
-
-  _ensureVisible: function ensureVisible($el) {
-    var elTop;
-    var elBottom;
-    var menuScrollTop;
-    var menuHeight;
-
-    elTop = $el.position().top;
-    elBottom = elTop + $el.height() +
-      parseInt($el.css('margin-top'), 10) +
-      parseInt($el.css('margin-bottom'), 10);
-    menuScrollTop = this.$menu.scrollTop();
-    menuHeight = this.$menu.height() +
-      parseInt(this.$menu.css('padding-top'), 10) +
-      parseInt(this.$menu.css('padding-bottom'), 10);
-
-    if (elTop < 0) {
-      this.$menu.scrollTop(menuScrollTop + elTop);
-    } else if (menuHeight < elBottom) {
-      this.$menu.scrollTop(menuScrollTop + (elBottom - menuHeight));
-    }
-  },
-
-  // ### public
-
-  close: function close() {
-    if (this.isOpen) {
-      this.isOpen = false;
-
-      this._removeCursor();
-      this._hide();
-
-      this.trigger('closed');
-    }
-  },
-
-  open: function open() {
-    if (!this.isOpen) {
-      this.isOpen = true;
-
-      if (!this.isEmpty) {
-        this._show();
-      }
-
-      this.trigger('opened');
-    }
-  },
-
-  setLanguageDirection: function setLanguageDirection(dir) {
-    this.$menu.css(dir === 'ltr' ? this.css.ltr : this.css.rtl);
-  },
-
-  moveCursorUp: function moveCursorUp() {
-    this._moveCursor(-1);
-  },
-
-  moveCursorDown: function moveCursorDown() {
-    this._moveCursor(+1);
-  },
-
-  getDatumForSuggestion: function getDatumForSuggestion($el) {
-    var datum = null;
-
-    if ($el.length) {
-      datum = {
-        raw: Dataset.extractDatum($el),
-        value: Dataset.extractValue($el),
-        datasetName: Dataset.extractDatasetName($el)
-      };
-    }
-
-    return datum;
-  },
-
-  getCurrentCursor: function getCurrentCursor() {
-    return this._getCursor().first();
-  },
-
-  getDatumForCursor: function getDatumForCursor() {
-    return this.getDatumForSuggestion(this._getCursor().first());
-  },
-
-  getDatumForTopSuggestion: function getDatumForTopSuggestion() {
-    return this.getDatumForSuggestion(this._getSuggestions().first());
-  },
-
-  cursorTopSuggestion: function cursorTopSuggestion() {
-    this._setCursor(this._getSuggestions().first(), false);
-  },
-
-  update: function update(query) {
-    _.each(this.datasets, updateDataset);
-
-    function updateDataset(dataset) {
-      dataset.update(query);
-    }
-  },
-
-  empty: function empty() {
-    _.each(this.datasets, clearDataset);
-    this.isEmpty = true;
-
-    function clearDataset(dataset) {
-      dataset.clear();
-    }
-  },
-
-  isVisible: function isVisible() {
-    return this.isOpen && !this.isEmpty;
-  },
-
-  destroy: function destroy() {
-    this.$menu.off('.aa');
-
-    this.$menu = null;
-
-    _.each(this.datasets, destroyDataset);
-
-    function destroyDataset(dataset) {
-      dataset.destroy();
-    }
-  }
-});
-
-// helper functions
-// ----------------
-Dropdown.Dataset = Dataset;
-
-function initializeDataset($menu, oDataset, cssClasses) {
-  return new Dropdown.Dataset(_.mixin({$menu: $menu, cssClasses: cssClasses}, oDataset));
-}
-
-module.exports = Dropdown;
-
-},{"../common/utils.js":"../node_modules/autocomplete.js/src/common/utils.js","../common/dom.js":"../node_modules/autocomplete.js/src/common/dom.js","./event_emitter.js":"../node_modules/autocomplete.js/src/autocomplete/event_emitter.js","./dataset.js":"../node_modules/autocomplete.js/src/autocomplete/dataset.js","./css.js":"../node_modules/autocomplete.js/src/autocomplete/css.js"}],"../node_modules/autocomplete.js/version.js":[function(require,module,exports) {
-module.exports = "0.38.0";
-
-},{}],"../node_modules/autocomplete.js/src/common/parseAlgoliaClientVersion.js":[function(require,module,exports) {
-'use strict';
-
-module.exports = function parseAlgoliaClientVersion(agent) {
-  var parsed =
-    // User agent for algoliasearch >= 3.33.0
-    agent.match(/Algolia for JavaScript \((\d+\.)(\d+\.)(\d+)\)/) ||
-    // User agent for algoliasearch < 3.33.0
-    agent.match(/Algolia for vanilla JavaScript (\d+\.)(\d+\.)(\d+)/);
-
-  if (parsed) {
-    return [parsed[1], parsed[2], parsed[3]];
-  }
-
-  return undefined;
-};
-
-},{}],"../node_modules/autocomplete.js/src/sources/hits.js":[function(require,module,exports) {
-'use strict';
-
-var _ = require('../common/utils.js');
-var version = require('../../version.js');
-var parseAlgoliaClientVersion = require('../common/parseAlgoliaClientVersion.js');
-
-function createMultiQuerySource() {
-  var queries = [];
-  var lastResults = [];
-  var lastSearch = window.Promise.resolve();
-
-  function requestSearch(queryClient, queryIndex) {
-    // Since all requests happen synchronously, this is executed once all the
-    // sources have been requested.
-    return window.Promise.resolve()
-      .then(function() {
-        if (queries.length) {
-          lastSearch = queryClient.search(queries);
-          queries = [];
-        }
-
-        return lastSearch;
-      })
-      .then(function(result) {
-        if (!result) {
-          return undefined;
-        }
-
-        lastResults = result.results;
-        return lastResults[queryIndex];
-      });
-  }
-
-  return function multiQuerySource(searchIndex, params) {
-    return function search(query, cb) {
-      var queryClient = searchIndex.as;
-      var queryIndex =
-        queries.push({
-          indexName: searchIndex.indexName,
-          query: query,
-          params: params
-        }) - 1;
-
-      requestSearch(queryClient, queryIndex)
-        .then(function(result) {
-          if (result) {
-            cb(result.hits, result);
-          }
-        })
-        .catch(function(error) {
-          _.error(error.message);
-        });
-    };
-  };
-}
-
-var source = createMultiQuerySource();
-
-module.exports = function search(index, params) {
-  var algoliaVersion = parseAlgoliaClientVersion(index.as._ua);
-
-  if (algoliaVersion && algoliaVersion[0] >= 3 && algoliaVersion[1] > 20) {
-    var autocompleteUserAgent = 'autocomplete.js ' + version;
-
-    if (index.as._ua.indexOf(autocompleteUserAgent) === -1) {
-      index.as._ua += '; ' + autocompleteUserAgent;
-    }
-  }
-
-  return source(index, params);
-};
-
-},{"../common/utils.js":"../node_modules/autocomplete.js/src/common/utils.js","../../version.js":"../node_modules/autocomplete.js/version.js","../common/parseAlgoliaClientVersion.js":"../node_modules/autocomplete.js/src/common/parseAlgoliaClientVersion.js"}],"../node_modules/autocomplete.js/src/sources/popularIn.js":[function(require,module,exports) {
-'use strict';
-
-var _ = require('../common/utils.js');
-var version = require('../../version.js');
-var parseAlgoliaClientVersion = require('../common/parseAlgoliaClientVersion.js');
-
-module.exports = function popularIn(index, params, details, options) {
-  var algoliaVersion = parseAlgoliaClientVersion(index.as._ua);
-  if (algoliaVersion && algoliaVersion[0] >= 3 && algoliaVersion[1] > 20) {
-    params = params || {};
-    params.additionalUA = 'autocomplete.js ' + version;
-  }
-  if (!details.source) {
-    return _.error("Missing 'source' key");
-  }
-  var source = _.isFunction(details.source) ? details.source : function(hit) { return hit[details.source]; };
-
-  if (!details.index) {
-    return _.error("Missing 'index' key");
-  }
-  var detailsIndex = details.index;
-
-  options = options || {};
-
-  return sourceFn;
-
-  function sourceFn(query, cb) {
-    index.search(query, params, function(error, content) {
-      if (error) {
-        _.error(error.message);
-        return;
-      }
-
-      if (content.hits.length > 0) {
-        var first = content.hits[0];
-
-        var detailsParams = _.mixin({hitsPerPage: 0}, details);
-        delete detailsParams.source; // not a query parameter
-        delete detailsParams.index; // not a query parameter
-
-        var detailsAlgoliaVersion = parseAlgoliaClientVersion(detailsIndex.as._ua);
-        if (detailsAlgoliaVersion && detailsAlgoliaVersion[0] >= 3 && detailsAlgoliaVersion[1] > 20) {
-          params.additionalUA = 'autocomplete.js ' + version;
-        }
-
-        detailsIndex.search(source(first), detailsParams, function(error2, content2) {
-          if (error2) {
-            _.error(error2.message);
-            return;
-          }
-
-          var suggestions = [];
-
-          // add the 'all department' entry before others
-          if (options.includeAll) {
-            var label = options.allTitle || 'All departments';
-            suggestions.push(_.mixin({
-              facet: {value: label, count: content2.nbHits}
-            }, _.cloneDeep(first)));
-          }
-
-          // enrich the first hit iterating over the facets
-          _.each(content2.facets, function(values, facet) {
-            _.each(values, function(count, value) {
-              suggestions.push(_.mixin({
-                facet: {facet: facet, value: value, count: count}
-              }, _.cloneDeep(first)));
-            });
-          });
-
-          // append all other hits
-          for (var i = 1; i < content.hits.length; ++i) {
-            suggestions.push(content.hits[i]);
-          }
-
-          cb(suggestions, content);
-        });
-
-        return;
-      }
-
-      cb([]);
-    });
-  }
-};
-
-},{"../common/utils.js":"../node_modules/autocomplete.js/src/common/utils.js","../../version.js":"../node_modules/autocomplete.js/version.js","../common/parseAlgoliaClientVersion.js":"../node_modules/autocomplete.js/src/common/parseAlgoliaClientVersion.js"}],"../node_modules/autocomplete.js/src/sources/index.js":[function(require,module,exports) {
-'use strict';
-
-module.exports = {
-  hits: require('./hits.js'),
-  popularIn: require('./popularIn.js')
-};
-
-},{"./hits.js":"../node_modules/autocomplete.js/src/sources/hits.js","./popularIn.js":"../node_modules/autocomplete.js/src/sources/popularIn.js"}],"../node_modules/autocomplete.js/src/autocomplete/typeahead.js":[function(require,module,exports) {
-'use strict';
-
-var attrsKey = 'aaAttrs';
-
-var _ = require('../common/utils.js');
-var DOM = require('../common/dom.js');
-var EventBus = require('./event_bus.js');
-var Input = require('./input.js');
-var Dropdown = require('./dropdown.js');
-var html = require('./html.js');
-var css = require('./css.js');
-
-// constructor
-// -----------
-
-// THOUGHT: what if datasets could dynamically be added/removed?
-function Typeahead(o) {
-  var $menu;
-  var $hint;
-
-  o = o || {};
-
-  if (!o.input) {
-    _.error('missing input');
-  }
-
-  this.isActivated = false;
-  this.debug = !!o.debug;
-  this.autoselect = !!o.autoselect;
-  this.autoselectOnBlur = !!o.autoselectOnBlur;
-  this.openOnFocus = !!o.openOnFocus;
-  this.minLength = _.isNumber(o.minLength) ? o.minLength : 1;
-  this.autoWidth = (o.autoWidth === undefined) ? true : !!o.autoWidth;
-  this.clearOnSelected = !!o.clearOnSelected;
-  this.tabAutocomplete = (o.tabAutocomplete === undefined) ? true : !!o.tabAutocomplete;
-
-  o.hint = !!o.hint;
-
-  if (o.hint && o.appendTo) {
-    throw new Error('[autocomplete.js] hint and appendTo options can\'t be used at the same time');
-  }
-
-  this.css = o.css = _.mixin({}, css, o.appendTo ? css.appendTo : {});
-  this.cssClasses = o.cssClasses = _.mixin({}, css.defaultClasses, o.cssClasses || {});
-  this.cssClasses.prefix =
-    o.cssClasses.formattedPrefix = _.formatPrefix(this.cssClasses.prefix, this.cssClasses.noPrefix);
-  this.listboxId = o.listboxId = [this.cssClasses.root, 'listbox', _.getUniqueId()].join('-');
-
-  var domElts = buildDom(o);
-
-  this.$node = domElts.wrapper;
-  var $input = this.$input = domElts.input;
-  $menu = domElts.menu;
-  $hint = domElts.hint;
-
-  if (o.dropdownMenuContainer) {
-    DOM.element(o.dropdownMenuContainer)
-      .css('position', 'relative') // ensure the container has a relative position
-      .append($menu.css('top', '0')); // override the top: 100%
-  }
-
-  // #705: if there's scrollable overflow, ie doesn't support
-  // blur cancellations when the scrollbar is clicked
-  //
-  // #351: preventDefault won't cancel blurs in ie <= 8
-  $input.on('blur.aa', function($e) {
-    var active = document.activeElement;
-    if (_.isMsie() && ($menu[0] === active || $menu[0].contains(active))) {
-      $e.preventDefault();
-      // stop immediate in order to prevent Input#_onBlur from
-      // getting exectued
-      $e.stopImmediatePropagation();
-      _.defer(function() { $input.focus(); });
-    }
-  });
-
-  // #351: prevents input blur due to clicks within dropdown menu
-  $menu.on('mousedown.aa', function($e) { $e.preventDefault(); });
-
-  this.eventBus = o.eventBus || new EventBus({el: $input});
-
-  this.dropdown = new Typeahead.Dropdown({
-    appendTo: o.appendTo,
-    wrapper: this.$node,
-    menu: $menu,
-    datasets: o.datasets,
-    templates: o.templates,
-    cssClasses: o.cssClasses,
-    minLength: this.minLength
-  })
-    .onSync('suggestionClicked', this._onSuggestionClicked, this)
-    .onSync('cursorMoved', this._onCursorMoved, this)
-    .onSync('cursorRemoved', this._onCursorRemoved, this)
-    .onSync('opened', this._onOpened, this)
-    .onSync('closed', this._onClosed, this)
-    .onSync('shown', this._onShown, this)
-    .onSync('empty', this._onEmpty, this)
-    .onSync('redrawn', this._onRedrawn, this)
-    .onAsync('datasetRendered', this._onDatasetRendered, this);
-
-  this.input = new Typeahead.Input({input: $input, hint: $hint})
-    .onSync('focused', this._onFocused, this)
-    .onSync('blurred', this._onBlurred, this)
-    .onSync('enterKeyed', this._onEnterKeyed, this)
-    .onSync('tabKeyed', this._onTabKeyed, this)
-    .onSync('escKeyed', this._onEscKeyed, this)
-    .onSync('upKeyed', this._onUpKeyed, this)
-    .onSync('downKeyed', this._onDownKeyed, this)
-    .onSync('leftKeyed', this._onLeftKeyed, this)
-    .onSync('rightKeyed', this._onRightKeyed, this)
-    .onSync('queryChanged', this._onQueryChanged, this)
-    .onSync('whitespaceChanged', this._onWhitespaceChanged, this);
-
-  this._bindKeyboardShortcuts(o);
-
-  this._setLanguageDirection();
-}
-
-// instance methods
-// ----------------
-
-_.mixin(Typeahead.prototype, {
-  // ### private
-
-  _bindKeyboardShortcuts: function(options) {
-    if (!options.keyboardShortcuts) {
-      return;
-    }
-    var $input = this.$input;
-    var keyboardShortcuts = [];
-    _.each(options.keyboardShortcuts, function(key) {
-      if (typeof key === 'string') {
-        key = key.toUpperCase().charCodeAt(0);
-      }
-      keyboardShortcuts.push(key);
-    });
-    DOM.element(document).keydown(function(event) {
-      var elt = (event.target || event.srcElement);
-      var tagName = elt.tagName;
-      if (elt.isContentEditable || tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA') {
-        // already in an input
-        return;
-      }
-
-      var which = event.which || event.keyCode;
-      if (keyboardShortcuts.indexOf(which) === -1) {
-        // not the right shortcut
-        return;
-      }
-
-      $input.focus();
-      event.stopPropagation();
-      event.preventDefault();
-    });
-  },
-
-  _onSuggestionClicked: function onSuggestionClicked(type, $el) {
-    var datum;
-    var context = {selectionMethod: 'click'};
-
-    if (datum = this.dropdown.getDatumForSuggestion($el)) {
-      this._select(datum, context);
-    }
-  },
-
-  _onCursorMoved: function onCursorMoved(event, updateInput) {
-    var datum = this.dropdown.getDatumForCursor();
-    var currentCursorId = this.dropdown.getCurrentCursor().attr('id');
-    this.input.setActiveDescendant(currentCursorId);
-
-    if (datum) {
-      if (updateInput) {
-        this.input.setInputValue(datum.value, true);
-      }
-
-      this.eventBus.trigger('cursorchanged', datum.raw, datum.datasetName);
-    }
-  },
-
-  _onCursorRemoved: function onCursorRemoved() {
-    this.input.resetInputValue();
-    this._updateHint();
-    this.eventBus.trigger('cursorremoved');
-  },
-
-  _onDatasetRendered: function onDatasetRendered() {
-    this._updateHint();
-
-    this.eventBus.trigger('updated');
-  },
-
-  _onOpened: function onOpened() {
-    this._updateHint();
-    this.input.expand();
-
-    this.eventBus.trigger('opened');
-  },
-
-  _onEmpty: function onEmpty() {
-    this.eventBus.trigger('empty');
-  },
-
-  _onRedrawn: function onRedrawn() {
-    this.$node.css('top', 0 + 'px');
-    this.$node.css('left', 0 + 'px');
-
-    var inputRect = this.$input[0].getBoundingClientRect();
-
-    if (this.autoWidth) {
-      this.$node.css('width', inputRect.width + 'px');
-    }
-
-    var wrapperRect = this.$node[0].getBoundingClientRect();
-
-    var top = inputRect.bottom - wrapperRect.top;
-    this.$node.css('top', top + 'px');
-    var left = inputRect.left - wrapperRect.left;
-    this.$node.css('left', left + 'px');
-
-    this.eventBus.trigger('redrawn');
-  },
-
-  _onShown: function onShown() {
-    this.eventBus.trigger('shown');
-    if (this.autoselect) {
-      this.dropdown.cursorTopSuggestion();
-    }
-  },
-
-  _onClosed: function onClosed() {
-    this.input.clearHint();
-    this.input.removeActiveDescendant();
-    this.input.collapse();
-
-    this.eventBus.trigger('closed');
-  },
-
-  _onFocused: function onFocused() {
-    this.isActivated = true;
-
-    if (this.openOnFocus) {
-      var query = this.input.getQuery();
-      if (query.length >= this.minLength) {
-        this.dropdown.update(query);
-      } else {
-        this.dropdown.empty();
-      }
-
-      this.dropdown.open();
-    }
-  },
-
-  _onBlurred: function onBlurred() {
-    var cursorDatum;
-    var topSuggestionDatum;
-
-    cursorDatum = this.dropdown.getDatumForCursor();
-    topSuggestionDatum = this.dropdown.getDatumForTopSuggestion();
-    var context = {selectionMethod: 'blur'};
-
-    if (!this.debug) {
-      if (this.autoselectOnBlur && cursorDatum) {
-        this._select(cursorDatum, context);
-      } else if (this.autoselectOnBlur && topSuggestionDatum) {
-        this._select(topSuggestionDatum, context);
-      } else {
-        this.isActivated = false;
-        this.dropdown.empty();
-        this.dropdown.close();
-      }
-    }
-  },
-
-  _onEnterKeyed: function onEnterKeyed(type, $e) {
-    var cursorDatum;
-    var topSuggestionDatum;
-
-    cursorDatum = this.dropdown.getDatumForCursor();
-    topSuggestionDatum = this.dropdown.getDatumForTopSuggestion();
-    var context = {selectionMethod: 'enterKey'};
-
-    if (cursorDatum) {
-      this._select(cursorDatum, context);
-      $e.preventDefault();
-    } else if (this.autoselect && topSuggestionDatum) {
-      this._select(topSuggestionDatum, context);
-      $e.preventDefault();
-    }
-  },
-
-  _onTabKeyed: function onTabKeyed(type, $e) {
-    if (!this.tabAutocomplete) {
-      // Closing the dropdown enables further tabbing
-      this.dropdown.close();
-      return;
-    }
-
-    var datum;
-    var context = {selectionMethod: 'tabKey'};
-
-    if (datum = this.dropdown.getDatumForCursor()) {
-      this._select(datum, context);
-      $e.preventDefault();
-    } else {
-      this._autocomplete(true);
-    }
-  },
-
-  _onEscKeyed: function onEscKeyed() {
-    this.dropdown.close();
-    this.input.resetInputValue();
-  },
-
-  _onUpKeyed: function onUpKeyed() {
-    var query = this.input.getQuery();
-
-    if (this.dropdown.isEmpty && query.length >= this.minLength) {
-      this.dropdown.update(query);
-    } else {
-      this.dropdown.moveCursorUp();
-    }
-
-    this.dropdown.open();
-  },
-
-  _onDownKeyed: function onDownKeyed() {
-    var query = this.input.getQuery();
-
-    if (this.dropdown.isEmpty && query.length >= this.minLength) {
-      this.dropdown.update(query);
-    } else {
-      this.dropdown.moveCursorDown();
-    }
-
-    this.dropdown.open();
-  },
-
-  _onLeftKeyed: function onLeftKeyed() {
-    if (this.dir === 'rtl') {
-      this._autocomplete();
-    }
-  },
-
-  _onRightKeyed: function onRightKeyed() {
-    if (this.dir === 'ltr') {
-      this._autocomplete();
-    }
-  },
-
-  _onQueryChanged: function onQueryChanged(e, query) {
-    this.input.clearHintIfInvalid();
-
-    if (query.length >= this.minLength) {
-      this.dropdown.update(query);
-    } else {
-      this.dropdown.empty();
-    }
-
-    this.dropdown.open();
-    this._setLanguageDirection();
-  },
-
-  _onWhitespaceChanged: function onWhitespaceChanged() {
-    this._updateHint();
-    this.dropdown.open();
-  },
-
-  _setLanguageDirection: function setLanguageDirection() {
-    var dir = this.input.getLanguageDirection();
-
-    if (this.dir !== dir) {
-      this.dir = dir;
-      this.$node.css('direction', dir);
-      this.dropdown.setLanguageDirection(dir);
-    }
-  },
-
-  _updateHint: function updateHint() {
-    var datum;
-    var val;
-    var query;
-    var escapedQuery;
-    var frontMatchRegEx;
-    var match;
-
-    datum = this.dropdown.getDatumForTopSuggestion();
-
-    if (datum && this.dropdown.isVisible() && !this.input.hasOverflow()) {
-      val = this.input.getInputValue();
-      query = Input.normalizeQuery(val);
-      escapedQuery = _.escapeRegExChars(query);
-
-      // match input value, then capture trailing text
-      frontMatchRegEx = new RegExp('^(?:' + escapedQuery + ')(.+$)', 'i');
-      match = frontMatchRegEx.exec(datum.value);
-
-      // clear hint if there's no trailing text
-      if (match) {
-        this.input.setHint(val + match[1]);
-      } else {
-        this.input.clearHint();
-      }
-    } else {
-      this.input.clearHint();
-    }
-  },
-
-  _autocomplete: function autocomplete(laxCursor) {
-    var hint;
-    var query;
-    var isCursorAtEnd;
-    var datum;
-
-    hint = this.input.getHint();
-    query = this.input.getQuery();
-    isCursorAtEnd = laxCursor || this.input.isCursorAtEnd();
-
-    if (hint && query !== hint && isCursorAtEnd) {
-      datum = this.dropdown.getDatumForTopSuggestion();
-      if (datum) {
-        this.input.setInputValue(datum.value);
-      }
-
-      this.eventBus.trigger('autocompleted', datum.raw, datum.datasetName);
-    }
-  },
-
-  _select: function select(datum, context) {
-    if (typeof datum.value !== 'undefined') {
-      this.input.setQuery(datum.value);
-    }
-    if (this.clearOnSelected) {
-      this.setVal('');
-    } else {
-      this.input.setInputValue(datum.value, true);
-    }
-
-    this._setLanguageDirection();
-
-    var event = this.eventBus.trigger('selected', datum.raw, datum.datasetName, context);
-    if (event.isDefaultPrevented() === false) {
-      this.dropdown.close();
-
-      // #118: allow click event to bubble up to the body before removing
-      // the suggestions otherwise we break event delegation
-      _.defer(_.bind(this.dropdown.empty, this.dropdown));
-    }
-  },
-
-  // ### public
-
-  open: function open() {
-    // if the menu is not activated yet, we need to update
-    // the underlying dropdown menu to trigger the search
-    // otherwise we're not gonna see anything
-    if (!this.isActivated) {
-      var query = this.input.getInputValue();
-      if (query.length >= this.minLength) {
-        this.dropdown.update(query);
-      } else {
-        this.dropdown.empty();
-      }
-    }
-    this.dropdown.open();
-  },
-
-  close: function close() {
-    this.dropdown.close();
-  },
-
-  setVal: function setVal(val) {
-    // expect val to be a string, so be safe, and coerce
-    val = _.toStr(val);
-
-    if (this.isActivated) {
-      this.input.setInputValue(val);
-    } else {
-      this.input.setQuery(val);
-      this.input.setInputValue(val, true);
-    }
-
-    this._setLanguageDirection();
-  },
-
-  getVal: function getVal() {
-    return this.input.getQuery();
-  },
-
-  destroy: function destroy() {
-    this.input.destroy();
-    this.dropdown.destroy();
-
-    destroyDomStructure(this.$node, this.cssClasses);
-
-    this.$node = null;
-  },
-
-  getWrapper: function getWrapper() {
-    return this.dropdown.$container[0];
-  }
-});
-
-function buildDom(options) {
-  var $input;
-  var $wrapper;
-  var $dropdown;
-  var $hint;
-
-  $input = DOM.element(options.input);
-  $wrapper = DOM
-    .element(html.wrapper.replace('%ROOT%', options.cssClasses.root))
-    .css(options.css.wrapper);
-
-  // override the display property with the table-cell value
-  // if the parent element is a table and the original input was a block
-  //  -> https://github.com/algolia/autocomplete.js/issues/16
-  if (!options.appendTo && $input.css('display') === 'block' && $input.parent().css('display') === 'table') {
-    $wrapper.css('display', 'table-cell');
-  }
-  var dropdownHtml = html.dropdown.
-    replace('%PREFIX%', options.cssClasses.prefix).
-    replace('%DROPDOWN_MENU%', options.cssClasses.dropdownMenu);
-  $dropdown = DOM.element(dropdownHtml)
-    .css(options.css.dropdown)
-    .attr({
-      role: 'listbox',
-      id: options.listboxId
-    });
-  if (options.templates && options.templates.dropdownMenu) {
-    $dropdown.html(_.templatify(options.templates.dropdownMenu)());
-  }
-  $hint = $input.clone().css(options.css.hint).css(getBackgroundStyles($input));
-
-  $hint
-    .val('')
-    .addClass(_.className(options.cssClasses.prefix, options.cssClasses.hint, true))
-    .removeAttr('id name placeholder required')
-    .prop('readonly', true)
-    .attr({
-      'aria-hidden': 'true',
-      autocomplete: 'off',
-      spellcheck: 'false',
-      tabindex: -1
-    });
-  if ($hint.removeData) {
-    $hint.removeData();
-  }
-
-  // store the original values of the attrs that get modified
-  // so modifications can be reverted on destroy
-  $input.data(attrsKey, {
-    'aria-autocomplete': $input.attr('aria-autocomplete'),
-    'aria-expanded': $input.attr('aria-expanded'),
-    'aria-owns': $input.attr('aria-owns'),
-    autocomplete: $input.attr('autocomplete'),
-    dir: $input.attr('dir'),
-    role: $input.attr('role'),
-    spellcheck: $input.attr('spellcheck'),
-    style: $input.attr('style'),
-    type: $input.attr('type')
-  });
-
-  $input
-    .addClass(_.className(options.cssClasses.prefix, options.cssClasses.input, true))
-    .attr({
-      autocomplete: 'off',
-      spellcheck: false,
-
-      // Accessibility features
-      // Give the field a presentation of a "select".
-      // Combobox is the combined presentation of a single line textfield
-      // with a listbox popup.
-      // https://www.w3.org/WAI/PF/aria/roles#combobox
-      role: 'combobox',
-      // Let the screen reader know the field has an autocomplete
-      // feature to it.
-      'aria-autocomplete': (options.datasets &&
-        options.datasets[0] && options.datasets[0].displayKey ? 'both' : 'list'),
-      // Indicates whether the dropdown it controls is currently expanded or collapsed
-      'aria-expanded': 'false',
-      'aria-label': options.ariaLabel,
-      // Explicitly point to the listbox,
-      // which is a list of suggestions (aka options)
-      'aria-owns': options.listboxId
-    })
-    .css(options.hint ? options.css.input : options.css.inputWithNoHint);
-
-  // ie7 does not like it when dir is set to auto
-  try {
-    if (!$input.attr('dir')) {
-      $input.attr('dir', 'auto');
-    }
-  } catch (e) {
-    // ignore
-  }
-
-  $wrapper = options.appendTo
-    ? $wrapper.appendTo(DOM.element(options.appendTo).eq(0)).eq(0)
-    : $input.wrap($wrapper).parent();
-
-  $wrapper
-    .prepend(options.hint ? $hint : null)
-    .append($dropdown);
-
-  return {
-    wrapper: $wrapper,
-    input: $input,
-    hint: $hint,
-    menu: $dropdown
-  };
-}
-
-function getBackgroundStyles($el) {
-  return {
-    backgroundAttachment: $el.css('background-attachment'),
-    backgroundClip: $el.css('background-clip'),
-    backgroundColor: $el.css('background-color'),
-    backgroundImage: $el.css('background-image'),
-    backgroundOrigin: $el.css('background-origin'),
-    backgroundPosition: $el.css('background-position'),
-    backgroundRepeat: $el.css('background-repeat'),
-    backgroundSize: $el.css('background-size')
-  };
-}
-
-function destroyDomStructure($node, cssClasses) {
-  var $input = $node.find(_.className(cssClasses.prefix, cssClasses.input));
-
-  // need to remove attrs that weren't previously defined and
-  // revert attrs that originally had a value
-  _.each($input.data(attrsKey), function(val, key) {
-    if (val === undefined) {
-      $input.removeAttr(key);
-    } else {
-      $input.attr(key, val);
-    }
-  });
-
-  $input
-    .detach()
-    .removeClass(_.className(cssClasses.prefix, cssClasses.input, true))
-    .insertAfter($node);
-  if ($input.removeData) {
-    $input.removeData(attrsKey);
-  }
-
-  $node.remove();
-}
-
-Typeahead.Dropdown = Dropdown;
-Typeahead.Input = Input;
-Typeahead.sources = require('../sources/index.js');
-
-module.exports = Typeahead;
-
-},{"../common/utils.js":"../node_modules/autocomplete.js/src/common/utils.js","../common/dom.js":"../node_modules/autocomplete.js/src/common/dom.js","./event_bus.js":"../node_modules/autocomplete.js/src/autocomplete/event_bus.js","./input.js":"../node_modules/autocomplete.js/src/autocomplete/input.js","./dropdown.js":"../node_modules/autocomplete.js/src/autocomplete/dropdown.js","./html.js":"../node_modules/autocomplete.js/src/autocomplete/html.js","./css.js":"../node_modules/autocomplete.js/src/autocomplete/css.js","../sources/index.js":"../node_modules/autocomplete.js/src/sources/index.js"}],"../node_modules/autocomplete.js/src/standalone/index.js":[function(require,module,exports) {
-'use strict';
-
-// this will inject Zepto in window, unfortunately no easy commonJS zepto build
-var zepto = require('../../zepto.js');
-
-// setup DOM element
-var DOM = require('../common/dom.js');
-DOM.element = zepto;
-
-// setup utils functions
-var _ = require('../common/utils.js');
-_.isArray = zepto.isArray;
-_.isFunction = zepto.isFunction;
-_.isObject = zepto.isPlainObject;
-_.bind = zepto.proxy;
-_.each = function(collection, cb) {
-  // stupid argument order for jQuery.each
-  zepto.each(collection, reverseArgs);
-  function reverseArgs(index, value) {
-    return cb(value, index);
-  }
-};
-_.map = zepto.map;
-_.mixin = zepto.extend;
-_.Event = zepto.Event;
-
-var typeaheadKey = 'aaAutocomplete';
-var Typeahead = require('../autocomplete/typeahead.js');
-var EventBus = require('../autocomplete/event_bus.js');
-
-function autocomplete(selector, options, datasets, typeaheadObject) {
-  datasets = _.isArray(datasets) ? datasets : [].slice.call(arguments, 2);
-
-  var inputs = zepto(selector).each(function(i, input) {
-    var $input = zepto(input);
-    var eventBus = new EventBus({el: $input});
-    var typeahead = typeaheadObject || new Typeahead({
-      input: $input,
-      eventBus: eventBus,
-      dropdownMenuContainer: options.dropdownMenuContainer,
-      hint: options.hint === undefined ? true : !!options.hint,
-      minLength: options.minLength,
-      autoselect: options.autoselect,
-      autoselectOnBlur: options.autoselectOnBlur,
-      tabAutocomplete: options.tabAutocomplete,
-      openOnFocus: options.openOnFocus,
-      templates: options.templates,
-      debug: options.debug,
-      clearOnSelected: options.clearOnSelected,
-      cssClasses: options.cssClasses,
-      datasets: datasets,
-      keyboardShortcuts: options.keyboardShortcuts,
-      appendTo: options.appendTo,
-      autoWidth: options.autoWidth,
-      ariaLabel: options.ariaLabel || input.getAttribute('aria-label')
-    });
-    $input.data(typeaheadKey, typeahead);
-  });
-
-  // expose all methods in the `autocomplete` attribute
-  inputs.autocomplete = {};
-  _.each(['open', 'close', 'getVal', 'setVal', 'destroy', 'getWrapper'], function(method) {
-    inputs.autocomplete[method] = function() {
-      var methodArguments = arguments;
-      var result;
-      inputs.each(function(j, input) {
-        var typeahead = zepto(input).data(typeaheadKey);
-        result = typeahead[method].apply(typeahead, methodArguments);
-      });
-      return result;
-    };
-  });
-
-  return inputs;
-}
-
-autocomplete.sources = Typeahead.sources;
-autocomplete.escapeHighlightedString = _.escapeHighlightedString;
-
-var wasAutocompleteSet = 'autocomplete' in window;
-var oldAutocomplete = window.autocomplete;
-autocomplete.noConflict = function noConflict() {
-  if (wasAutocompleteSet) {
-    window.autocomplete = oldAutocomplete;
-  } else {
-    delete window.autocomplete;
-  }
-  return autocomplete;
-};
-
-module.exports = autocomplete;
-
-},{"../../zepto.js":"../node_modules/autocomplete.js/zepto.js","../common/dom.js":"../node_modules/autocomplete.js/src/common/dom.js","../common/utils.js":"../node_modules/autocomplete.js/src/common/utils.js","../autocomplete/typeahead.js":"../node_modules/autocomplete.js/src/autocomplete/typeahead.js","../autocomplete/event_bus.js":"../node_modules/autocomplete.js/src/autocomplete/event_bus.js"}],"../node_modules/autocomplete.js/index.js":[function(require,module,exports) {
-'use strict';
-
-module.exports = require('./src/standalone/');
-
-},{"./src/standalone/":"../node_modules/autocomplete.js/src/standalone/index.js"}],"../src/Homepage/autocomplete.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.autoComplete = autoComplete;
-
-var _algoliasearch = _interopRequireDefault(require("algoliasearch"));
-
-var _autocomplete = _interopRequireDefault(require("autocomplete.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// import { autocomplete } from 'instantsearch.js/es/connectors';
-function autoComplete() {
-  const client = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-  const gstar = client.initIndex('gstar_demo_test');
-  const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
-
-  function newHitsSource(index, params) {
-    return function doSearch(query, cb) {
-      index.search(query, params).then(function (res) {
-        cb(res.hits, res);
-      }).catch(function (err) {
-        console.error(err);
-        cb([]);
-      });
-      console.log(query);
-    };
-  }
-
-  (0, _autocomplete.default)('#aa-search-input', {}, [{
-    source: newHitsSource(gstar, {
-      hitsPerPage: 3
-    }),
-    displayKey: 'name',
-    templates: {
-      header: '<div class="aa-suggestions-category">Product</div>',
-
-      suggestion(_ref) {
-        let {
-          _highlightResult
-        } = _ref;
-        return " <a>\n                                <div class=\"aa-suggestions-product\">\n                                    <img src=\"".concat(_highlightResult.image_link.value, "\">\n                                    <div class=\"aa-suggestions-product-info\">\n                                        <span>").concat(_highlightResult.name.value, "</span>\n                                        <p>$").concat(_highlightResult.price.value, "</p>\n                                    </div>\n                                </div>\n                            </a>\n                            ");
-      }
-
-    }
-  }, {
-    source: newHitsSource(gstardetail, {
-      hitsPerPage: 5
-    }),
-    displayKey: 'name',
-    templates: {
-      header: '<div class="aa-suggestions-category">Category</div>',
-
-      suggestion(_ref2) {
-        let {
-          _highlightResult
-        } = _ref2;
-        return "\n                    <a href=\"./searchResults.html>\n                        <span>".concat(_highlightResult.category.value, "</span>\n                    </a>");
-      }
-
-    }
-  }]).on('autocomplete:selected', function (event, suggestion, dataset, context) {
-    localStorage.setItem('userQuery', suggestion.name);
-    window.location.href = "./searchResults.html";
-  });
-} // var client = algoliasearch('YourApplicationID', 'YourSearchOnlyAPIKey');
-// var index = client.initIndex('YourIndex');
-// function newHitsSource(index, params) {
-//     return function doSearch(query, cb) {
-//         index
-//             .search(query, params)
-//             .then(function (res) {
-//                 cb(res.hits, res);
-//             })
-//             .catch(function (err) {
-//                 console.error(err);
-//                 cb([]);
-//             });
-//     };
-// }
-// autocomplete('#search-input', { hint: false }, [
-//     {
-//         source: newHitsSource(index, { hitsPerPage: 5 }),
-//         displayKey: 'my_attribute',
-//         templates: {
-//             suggestion: function (suggestion) {
-//                 return suggestion._highlightResult.my_attribute.value;
-//             }
-//         }
-//     }
-// ]).on('autocomplete:selected', function (event, suggestion, dataset, context) {
-//     console.log(event, suggestion, dataset, context);
-// });
-},{"algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","autocomplete.js":"../node_modules/autocomplete.js/index.js"}],"../src/Homepage/burgerMenu.js":[function(require,module,exports) {
+},{"instantsearch.js":"../node_modules/instantsearch.js/es/index.js","algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js"}],"../src/Homepage/burgerMenu.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -45247,89 +41201,22 @@ function togglePersona() {
 },{}],"../src/Homepage/app.js":[function(require,module,exports) {
 "use strict";
 
-var _connectors = require("instantsearch.js/es/connectors");
-
 var _glide = require("./glide");
 
 var _getCarousel = require("./getCarousel");
 
 var _displayCarouselDetail = require("./displayCarouselDetail");
 
-var _autocomplete = require("./autocomplete");
-
 var _burgerMenu = require("./burgerMenu");
 
 var _persona = require("./persona");
 
-// import { searchBar } from "./searchbarDropdown";
 (0, _glide.carouselGlideJS)();
 (0, _getCarousel.GetDataForCarousel)();
 (0, _displayCarouselDetail.carouselDetailed)();
-(0, _autocomplete.autoComplete)();
-(0, _burgerMenu.burgerMenu)(); // searchBar()
-
+(0, _burgerMenu.burgerMenu)();
 (0, _persona.togglePersona)();
-/* global algoliasearch instantsearch */
-// const searchClient = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-// const search = instantsearch({
-//   indexName: 'gstar_demo_test',
-//   searchClient,
-// });
-// function getCarouselConfigs() {
-//   return searchClient
-//     .initIndex("gstar_demo_config")
-//     .search("", {
-//       attributesToHighlight: [],
-//       attributesToRetrieve: ["title", "indexName", "configure"],
-//     })
-//     .then((res) => res.hits);
-// }
-// function fullConfig(carouselConfig) {
-//   search.addWidgets([
-//     instantsearch.widgets.searchBox({
-//       container: '#searchbox',
-//       placeholder: 'Clothes, Sneakers...',
-//     }),
-//     instantsearch.widgets.configure({
-//       ...carouselConfig.configure
-//     }),
-//     instantsearch.widgets.hits({
-//       container: '#hits',
-//       title: carouselConfig.title,
-//       templates: {
-//         item: `
-//         <article>
-//         <img class="hit-image" src="{{{image_link}}}">
-//         <h1>{{#helpers.highlight}}{ "attribute": "name" }{{/helpers.highlight}}</h1>
-//         <p>{{#helpers.highlight}}{ "attribute": "description" }{{/helpers.highlight}}</p>
-//         </article>
-//         `,
-//       },
-//     }),
-//     instantsearch.widgets.refinementList({
-//       container: '#brand-list',
-//       attribute: 'brand',
-//     }),
-//     instantsearch.widgets.pagination({
-//       container: '#pagination',
-//     }),
-//   ]);
-// }
-// function winterTitle(carouselConfig) {
-//   let winterCarousel = document.querySelector(".ais-Hits")
-//   console.log(winterCarousel)
-//   let h2 = document.createElement('h2')
-//   h2.innerText = carouselConfig.title
-//   winterCarousel.appendChild(h2)
-// }
-// getCarouselConfigs().then((carousels) => {
-//   carousels.map((carouselConfig) => {
-//     fullConfig(carouselConfig)
-//     winterTitle(carouselConfig)
-//   })
-// });
-// search.start();
-},{"instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","./glide":"../src/Homepage/glide.js","./getCarousel":"../src/Homepage/getCarousel.js","./displayCarouselDetail":"../src/Homepage/displayCarouselDetail.js","./autocomplete":"../src/Homepage/autocomplete.js","./burgerMenu":"../src/Homepage/burgerMenu.js","./persona":"../src/Homepage/persona.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./glide":"../src/Homepage/glide.js","./getCarousel":"../src/Homepage/getCarousel.js","./displayCarouselDetail":"../src/Homepage/displayCarouselDetail.js","./burgerMenu":"../src/Homepage/burgerMenu.js","./persona":"../src/Homepage/persona.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -45357,7 +41244,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49422" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52487" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

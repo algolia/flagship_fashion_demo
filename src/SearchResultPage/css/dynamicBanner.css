@@ -16,8 +16,7 @@
 .banner-wrapper h3 {
     background: -webkit-linear-gradient(317deg, rgba(0,0,0,1) 0%, rgba(255,255,255,1) 18%);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-      
+    -webkit-text-fill-color: transparent;      
 }
 
 .banner-title--wrapper{

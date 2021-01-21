@@ -1,5 +1,4 @@
 .header {
-  /* max-width: 1200px ; */
   margin: 0 auto;
  }
  
@@ -131,7 +130,7 @@
 
 
 
-
+/* MEDIA QUERIES / BREAKPOINTS */
 
 @media screen and (max-width: 1024px){
 
@@ -240,6 +239,8 @@ body {
   overflow-x: hidden !important;
 }
 }
+
+/* ANIMATIONS */
 
  @keyframes navlinksFade {
      from {

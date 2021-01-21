@@ -45,24 +45,6 @@ export function carouselDetailed() {
         }),
     ]);
 
-    // function activeHeart() {
-    //     let heart = document.querySelector(".heart")
-    //     let cards = document.querySelectorAll(".ais-Hits-item")
-    //     cards.forEach(card => {
-    //         card.addEventListener('mouseover', (e) => {
-    //             e.preventDefault
-
-    //             console.log(heart)
-    //             this.heart.classList.add('active-heart')
-    //         })
-    //         card.addEventListener('mouseleave', (e) => {
-    //             e.preventDefault
-
-    //             this.heart.classList.remove('active-heart')
-    //         })
-    //     })
-    // }
-
     searchDetail.start()
-    // setTimeout(activeHeart, 2000)
+
 }

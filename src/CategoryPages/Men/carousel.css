@@ -1,13 +1,16 @@
+  
+  .body-wrapper{
+    overflow-x: hidden;
+    position: relative;
+  }
+  
+  /* CAROUSEL */
 
 .container {
     max-width: 90%;
     margin: 0 auto;
     padding: 1rem;
     overflow-x: hidden;
-  }
-  
-  .carousel section {
-  
   }
   
   .carousel h2 {
@@ -58,7 +61,6 @@
   
   .carousel .carousel-list-container::-webkit-scrollbar:horizontal {
     height: 4px;
-  
   }
   
   .carousel .carousel-list-container::-webkit-scrollbar-thumb {
@@ -136,8 +138,6 @@
   }
 
   /* MAN PAGE RESULT */
-
-
 
 .ais-Hits-list{
   width: 90vw;
@@ -231,26 +231,29 @@
       background-color: rgb(240, 240, 239);
   }
   
+
+
+  /* MEDIA QUERIES / BREAKPOINT */
+
   @media screen and (max-width: 768px){
-      body {
-          overflow-x: hidden !important;
-      }
-      .ais-Hits-list{
-          grid-template-columns: repeat(2, 1fr);
-      }
-     }
-     @media screen and (max-width: 560px){
-      body {
+    body {
+      overflow-x: hidden !important;
+    }
+    .ais-Hits-list{
+      grid-template-columns: repeat(2, 1fr);
+    }
+}
+  @media screen and (max-width: 560px){
+    body {
         overflow-x: hidden !important;
     }
     .ais-Hits-list{
-      grid-template-columns: repeat(1, 1fr);
-  }
-  
-  .ais-Stats-text{
-      font-size: 0.8rem;
-  }
-  .btn-filter {
-      padding: 0.2rem 1rem;
-  }
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .ais-Stats-text{
+        font-size: 0.8rem;
+    }
+    .btn-filter {
+        padding: 0.2rem 1rem;
+    }
   }

@@ -83,7 +83,6 @@ export function GetDataForCarousel() {
             });
 
             if (carouselConfig.configure) {
-                console.log(carouselConfig.configure)
                 indexWidget.addWidgets([
                     configure({
                         ...carouselConfig.configure,
@@ -92,35 +91,14 @@ export function GetDataForCarousel() {
                 ]);
             }
 
-            // const client = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-            // const gstar = client.initIndex('gstar_demo_test');
-            // const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
-
             indexWidget.addWidgets([
                 carousel({
                     title: carouselConfig.title,
                     container: carouselContainer,
                 }),
-                // hits({
-                //     container: '#hits',
-                //     templates: carouselContainer,
-                // }),
-                // searchBox({
-                //     container: 'searchbox',
-                //     placeholder: 'Clothes, Sneakers...',
-                // }),
                 stats({
                     container: '#stats',
                 })
-
-
-                // refinementList({
-                //     container: '#brand-list',
-                //     attribute: 'brand',
-                // }),
-                // pagination({
-                //     container: '#pagination',
-                // }),
             ]);
 
             container.appendChild(carouselContainer);
@@ -169,7 +147,6 @@ export function GetDataForCarousel() {
             if (isFirstRender) {
                 autocompleteRef.current = autocomplete({
                     container: '#autocomplete',
-                    // debug: true,
                     openOnFocus: true,
                     plugins: [recentSearchesPlugin, querySuggestionsPlugin],
 
@@ -243,19 +220,6 @@ export function GetDataForCarousel() {
                                         },
                                     },
                                 },
-                                // {
-                                //     getItems() {
-                                //         return brands.facetHits;
-                                //     },
-                                //     templates: {
-                                //         header() {
-                                //             return headerTemplate({ title: "Brands" });
-                                //         },
-                                //         item({ item }) {
-                                //             return facetTemplate({ title: item.highlighted });
-                                //         }
-                                //     }
-                                // },
                                 {
                                     getItems() {
                                         return categories.facetHits;
@@ -276,7 +240,6 @@ export function GetDataForCarousel() {
                         });
                     },
                     onSubmit({ root, sections, state }) {
-                        console.log('success')
                         refine(state.query);
                         window.location.href = `./searchResults.html?gstar_demo_test%5Bquery%5D=${state.query}`
 
@@ -315,7 +278,6 @@ export function GetDataForCarousel() {
         }
 
         function moreResultsTemplate({ title, query }) {
-            console.log(query)
             return `
             <div class="aa-btnShowMore-wrapper">
                 <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-btnShowMore">
@@ -326,7 +288,6 @@ export function GetDataForCarousel() {
         }
 
         function facetTemplate({ title, query }) {
-            console.log(title)
             return `
           <div class="aa-ItemContentCategory">
             <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-ItemLinkCategory">
@@ -335,11 +296,5 @@ export function GetDataForCarousel() {
           </div>
         `;
         }
-
     }
-
-
 }
-
-
-// search.start();
