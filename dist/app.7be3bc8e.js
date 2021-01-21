@@ -37341,9 +37341,6 @@ exports.carousel = void 0;
 
 var _connectors = require("instantsearch.js/es/connectors");
 
-// import { configure, hits, EXPERIMENTAL_configureRelatedItems } from 'instantsearch.js/es/widgets';
-// import instantsearch from 'instantsearch.js';
-// import algoliasearch from 'algoliasearch';
 const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirstRender) {
   let {
     widgetParams: {
@@ -37363,751 +37360,7 @@ const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFi
   container.querySelector('ul').innerHTML = hits.map(hit => "\n        <li>\n          <div class=\"image-wrapper\">\n            <img src=\"".concat(hit.image_link, "\" alt=\"").concat(hit.name, "\">\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ")).join('');
 });
 exports.carousel = carousel;
-},{"instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js"}],"../src/Homepage/getCarousel.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.GetDataForCarousel = GetDataForCarousel;
-
-var _displayCarousel = require("./displayCarousel");
-
-var _instantsearch = _interopRequireDefault(require("instantsearch.js"));
-
-var _algoliasearch = _interopRequireDefault(require("algoliasearch"));
-
-var _widgets = require("instantsearch.js/es/widgets");
-
-var _connectors = require("instantsearch.js/es/connectors");
-
-var _autocompleteJs = require("@algolia/autocomplete-js");
-
-var _autocompletePluginQuerySuggestions = require("@algolia/autocomplete-plugin-query-suggestions");
-
-var _autocompletePluginRecentSearches = require("@algolia/autocomplete-plugin-recent-searches");
-
-require("@algolia/autocomplete-theme-classic");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function GetDataForCarousel() {
-  // GET CREDENTIALS
-  const searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-  const search = (0, _instantsearch.default)({
-    indexName: 'gstar_demo_test',
-    searchClient,
-    routing: true
-  });
-  const autocompleteSearchBox = createAutocompleteSearchBox();
-  search.addWidgets([(0, _widgets.index)({
-    indexName: 'gstar_demo_test'
-  }).addWidgets([autocompleteSearchBox({
-    container: '#autocomplete',
-    placeholder: 'Search products'
-  })])]);
-  const userTokenSelector = document.getElementById("user-token-selector");
-  userTokenSelector.addEventListener("change", () => {
-    userTokenSelector.disabled = true;
-    search.removeWidgets(carouselWidgets);
-    getCarouselConfigs().then(carousels => {
-      userTokenSelector.disabled = false;
-      carouselWidgets = createWidgets(carousels);
-      search.addWidgets(carouselWidgets);
-    });
-  });
-
-  function getUserToken() {
-    localStorage.setItem('personaValue', userTokenSelector.value);
-    return userTokenSelector.value;
-  } //GET THE CONFIG
-
-
-  function getCarouselConfigs() {
-    return searchClient.initIndex("gstar_demo_config").search("", {
-      facetFilters: ['userToken:' + getUserToken()],
-      attributesToHighlight: [],
-      attributesToRetrieve: ["title", "indexName", "configure"]
-    }).then(res => res.hits);
-  } //WIDGET CREATION
-
-
-  let carouselWidgets = [];
-
-  function createWidgets(carousels) {
-    const container = document.querySelector("#stacked-carousels");
-    container.innerText = "";
-    return carousels.map(carouselConfig => {
-      const carouselContainer = document.createElement("div");
-      carouselContainer.className = "carousel";
-      const indexWidget = (0, _widgets.index)({
-        indexName: carouselConfig.indexName,
-        indexId: carouselConfig.objectID
-      });
-
-      if (carouselConfig.configure) {
-        console.log(carouselConfig.configure);
-        indexWidget.addWidgets([(0, _widgets.configure)(_objectSpread(_objectSpread({}, carouselConfig.configure), {}, {
-          userToken: getUserToken()
-        }))]);
-      } // const client = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-      // const gstar = client.initIndex('gstar_demo_test');
-      // const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
-
-
-      indexWidget.addWidgets([(0, _displayCarousel.carousel)({
-        title: carouselConfig.title,
-        container: carouselContainer
-      }), // hits({
-      //     container: '#hits',
-      //     templates: carouselContainer,
-      // }),
-      // searchBox({
-      //     container: 'searchbox',
-      //     placeholder: 'Clothes, Sneakers...',
-      // }),
-      (0, _widgets.stats)({
-        container: '#stats'
-      }) // refinementList({
-      //     container: '#brand-list',
-      //     attribute: 'brand',
-      // }),
-      // pagination({
-      //     container: '#pagination',
-      // }),
-      ]);
-      container.appendChild(carouselContainer);
-      return indexWidget;
-    });
-  } // retrieve the carousel configuration once
-
-
-  getCarouselConfigs().then(carousels => {
-    userTokenSelector.disabled = false;
-    carouselWidgets = createWidgets(carousels);
-    search.addWidgets(carouselWidgets);
-    search.start();
-  });
-
-  function createAutocompleteSearchBox() {
-    const appId = 'HYDY1KWTWB';
-    const apiKey = '28cf6d38411215e2eef188e635216508';
-    const searchClient = (0, _algoliasearch.default)(appId, apiKey);
-    const recentSearchesPlugin = (0, _autocompletePluginRecentSearches.createLocalStorageRecentSearchesPlugin)({
-      key: 'search',
-      limit: 3
-    });
-    const querySuggestionsPlugin = (0, _autocompletePluginQuerySuggestions.createQuerySuggestionsPlugin)({
-      searchClient,
-      indexName: 'gstar_demo_test_query_suggestions',
-
-      getSearchParams() {
-        return recentSearchesPlugin.data.getAlgoliaSearchParams({
-          hitsPerPage: 3
-        });
-      }
-
-    }); // Use autocompleteRef to track the current autocomplete instance
-
-    const autocompleteRef = {
-      current: null
-    }; // Use indicesRef to track which index (or indices) to query using autocomplete
-
-    const indicesRef = {
-      current: []
-    };
-
-    const renderAutocomplete = (renderOptions, isFirstRender) => {
-      const {
-        indices,
-        refine
-      } = renderOptions; // Store indices prop in indicesRef
-
-      indicesRef.current = indices || []; // Instantiate autocomplete instance during the first render
-
-      if (isFirstRender) {
-        autocompleteRef.current = (0, _autocompleteJs.autocomplete)({
-          container: '#autocomplete',
-          // debug: true,
-          openOnFocus: true,
-          plugins: [recentSearchesPlugin, querySuggestionsPlugin],
-
-          getSources(_ref) {
-            let {
-              query
-            } = _ref;
-
-            if (!query) {
-              return [];
-            }
-
-            return (0, _autocompleteJs.getAlgoliaResults)({
-              searchClient,
-              queries: [{
-                query,
-                indexName: 'gstar_demo_test',
-                params: {
-                  hitsPerPage: 3,
-                  attributesToSnippet: ['name:10'],
-                  enablePersonalization: true
-                }
-              }]
-            }).then(async (_ref2) => {
-              let [products] = _ref2;
-              const [categories] = await searchClient.searchForFacetValues([{
-                indexName: 'gstar_demo_test',
-                params: {
-                  facetName: 'name',
-                  facetQuery: query,
-                  highlightPreTag: '<mark>',
-                  highlightPostTag: '</mark>',
-                  maxFacetHits: 5,
-                  enablePersonalization: true
-                }
-              }, {
-                indexName: 'gstar_demo_test',
-                params: {
-                  facetName: 'category',
-                  facetQuery: query,
-                  highlightPreTag: '<mark>',
-                  highlightPostTag: '</mark>',
-                  maxFacetHits: 5,
-                  enablePersonalization: true
-                }
-              }]);
-              return [{
-                getItems() {
-                  return products.hits;
-                },
-
-                templates: {
-                  header() {
-                    return headerTemplate({
-                      title: 'Products'
-                    });
-                  },
-
-                  item(_ref3) {
-                    let {
-                      item
-                    } = _ref3;
-                    return productTemplate({
-                      image: item.image_link,
-                      title: (0, _autocompleteJs.snippetHit)({
-                        hit: item,
-                        attribute: 'name'
-                      }),
-                      description: item.description,
-                      price: item.price,
-                      query: products.query
-                    });
-                  },
-
-                  footer() {
-                    return moreResultsTemplate({
-                      title: "See all products (".concat(products.nbHits, ")"),
-                      query: products.query
-                    });
-                  }
-
-                }
-              }, // {
-              //     getItems() {
-              //         return brands.facetHits;
-              //     },
-              //     templates: {
-              //         header() {
-              //             return headerTemplate({ title: "Brands" });
-              //         },
-              //         item({ item }) {
-              //             return facetTemplate({ title: item.highlighted });
-              //         }
-              //     }
-              // },
-              {
-                getItems() {
-                  return categories.facetHits;
-                },
-
-                templates: {
-                  header() {
-                    return headerTemplate({
-                      title: 'Categories'
-                    });
-                  },
-
-                  item(_ref4) {
-                    let {
-                      item
-                    } = _ref4;
-                    return facetTemplate({
-                      title: item.highlighted,
-                      query: products.query
-                    });
-                  }
-
-                }
-              }];
-            });
-          },
-
-          onSubmit(_ref5) {
-            let {
-              root,
-              sections,
-              state
-            } = _ref5;
-            console.log('success');
-            refine(state.query);
-            window.location.href = "./searchResults.html?gstar_demo_test%5Bquery%5D=".concat(state.query);
-          }
-
-        }); // During subsequent renders, refresh the autocomplete instance
-      } else if (autocompleteRef.current) {
-        autocompleteRef.current.refresh();
-      }
-    };
-
-    return (0, _connectors.connectAutocomplete)(renderAutocomplete);
-
-    function headerTemplate(_ref6) {
-      let {
-        title
-      } = _ref6;
-      return "\n            <div class=\"aa-titleCategory\">\n                <h3>".concat(title, "</h3>\n            </div>\n            ");
-    }
-
-    function productTemplate(_ref7) {
-      let {
-        image,
-        title,
-        description,
-        price,
-        query
-      } = _ref7;
-      return "\n            <div class=\"aa-ItemContent\">\n                <a href=\"./searchResults.html?gstar_demo_test%5Bquery%5D=".concat(query, "\" class=\"aa-ItemLink\">\n                    <div class=\"aa-ItemImage\">\n                        <img src=\"").concat(image, "\" alt=\"").concat(title, "\">\n                    </div>\n                    <div class=\"aa-ItemInfos\">\n                        <div class=\"aa-ItemTitle\">").concat(title, "</div>\n                        <div class=\"aa-ItemPrice\">$").concat(price, "</div>\n                    </div>\n                </a>\n            </div>\n        ");
-    }
-
-    function moreResultsTemplate(_ref8) {
-      let {
-        title,
-        query
-      } = _ref8;
-      console.log(query);
-      return "\n            <div class=\"aa-btnShowMore-wrapper\">\n                <a href=\"./searchResults.html?gstar_demo_test%5Bquery%5D=".concat(query, "\" class=\"aa-btnShowMore\">\n                    ").concat(title, "\n                </a>\n          </div>\n        ");
-    }
-
-    function facetTemplate(_ref9) {
-      let {
-        title,
-        query
-      } = _ref9;
-      console.log(title);
-      return "\n          <div class=\"aa-ItemContentCategory\">\n            <a href=\"./searchResults.html?gstar_demo_test%5Bquery%5D=".concat(query, "\" class=\"aa-ItemLinkCategory\">\n                <div class=\"aa-ItemTitle\">").concat(title, "</div>\n            </a>\n          </div>\n        ");
-    }
-  }
-} // search.start();
-},{"./displayCarousel":"../src/Homepage/displayCarousel.js","instantsearch.js":"../node_modules/instantsearch.js/es/index.js","algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-js/dist/esm/index.js","@algolia/autocomplete-plugin-query-suggestions":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js","@algolia/autocomplete-plugin-recent-searches":"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/index.js","@algolia/autocomplete-theme-classic":"../node_modules/@algolia/autocomplete-theme-classic/dist/theme.css"}],"../src/SearchResultPage/autocomplete.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.autocompleteSearchResult = autocompleteSearchResult;
-
-var _autocompleteJs = require("@algolia/autocomplete-js");
-
-var _autocompletePluginQuerySuggestions = require("@algolia/autocomplete-plugin-query-suggestions");
-
-var _autocompletePluginRecentSearches = require("@algolia/autocomplete-plugin-recent-searches");
-
-var _algoliasearch = _interopRequireDefault(require("algoliasearch"));
-
-var _searchResults = _interopRequireDefault(require("./searchResults"));
-
-require("@algolia/autocomplete-theme-classic");
-
-var _getCarousel = require("../Homepage/getCarousel");
-
-var _displayCarousel = require("../Homepage/displayCarousel");
-
-var _instantsearch = _interopRequireDefault(require("instantsearch.js"));
-
-var _widgets = require("instantsearch.js/es/widgets");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function autocompleteSearchResult() {
-  const appId = "HYDY1KWTWB";
-  const apiKey = "28cf6d38411215e2eef188e635216508";
-  const searchClient = (0, _algoliasearch.default)(appId, apiKey);
-  const recentSearchesPlugin = (0, _autocompletePluginRecentSearches.createLocalStorageRecentSearchesPlugin)({
-    key: "search",
-    limit: 3
-  });
-  const querySuggestionsPlugin = (0, _autocompletePluginQuerySuggestions.createQuerySuggestionsPlugin)({
-    searchClient,
-    indexName: "gstar_demo_test_query_suggestions",
-
-    getSearchParams() {
-      console.log(arguments);
-      return recentSearchesPlugin.data.getAlgoliaSearchParams({
-        hitsPerPage: 3
-      });
-    }
-
-  });
-  (0, _autocompleteJs.autocomplete)({
-    container: "#autocomplete",
-    // debug: true,
-    openOnFocus: true,
-    plugins: [recentSearchesPlugin, querySuggestionsPlugin],
-
-    getSources(_ref) {
-      let {
-        query
-      } = _ref;
-
-      if (!query) {
-        return [];
-      }
-
-      return (0, _autocompleteJs.getAlgoliaResults)({
-        searchClient,
-        queries: [{
-          query,
-          indexName: "gstar_demo_test",
-          params: {
-            hitsPerPage: 3,
-            attributesToSnippet: ["name:10"],
-            enablePersonalization: true
-          }
-        }]
-      }).then(async (_ref2) => {
-        let [products] = _ref2;
-        const [categories] = await searchClient.searchForFacetValues([{
-          indexName: "gstar_demo_test",
-          params: {
-            facetName: "name",
-            facetQuery: query,
-            highlightPreTag: "<mark>",
-            highlightPostTag: "</mark>",
-            maxFacetHits: 5,
-            enablePersonalization: true
-          }
-        }, {
-          indexName: "gstar_demo_test",
-          params: {
-            facetName: "category",
-            facetQuery: query,
-            highlightPreTag: "<mark>",
-            highlightPostTag: "</mark>",
-            maxFacetHits: 5,
-            enablePersonalization: true
-          }
-        }]);
-        return [{
-          getItems() {
-            return products.hits;
-          },
-
-          templates: {
-            header() {
-              return headerTemplate({
-                title: "Products"
-              });
-            },
-
-            item(_ref3) {
-              let {
-                item
-              } = _ref3;
-              return productTemplate({
-                image: item.image_link,
-                title: (0, _autocompleteJs.snippetHit)({
-                  hit: item,
-                  attribute: "name"
-                }),
-                description: item.description,
-                price: item.price
-              });
-            },
-
-            footer() {
-              return moreResultsTemplate({
-                title: "See all products (".concat(products.nbHits, ")")
-              });
-            }
-
-          }
-        }, // {
-        //     getItems() {
-        //         return brands.facetHits;
-        //     },
-        //     templates: {
-        //         header() {
-        //             return headerTemplate({ title: "Brands" });
-        //         },
-        //         item({ item }) {
-        //             return facetTemplate({ title: item.highlighted });
-        //         }
-        //     }
-        // },
-        {
-          getItems() {
-            return categories.facetHits;
-          },
-
-          templates: {
-            header() {
-              return headerTemplate({
-                title: "Categories"
-              });
-            },
-
-            item(_ref4) {
-              let {
-                item
-              } = _ref4;
-              return facetTemplate({
-                title: item.highlighted
-              });
-            }
-
-          }
-        }];
-      });
-    },
-
-    onSubmit(_ref5) {
-      let {
-        root,
-        sections,
-        state
-      } = _ref5;
-      renderHits(root, sections, state); // root.append(...sections);
-
-      getQueryFromUser(state.query);
-    }
-
-  });
-
-  function headerTemplate(_ref6) {
-    let {
-      title
-    } = _ref6;
-    return "\n        <div class=\"aa-titleCategory\">\n            <h3>".concat(title, "</h3>\n        </div>\n        ");
-  }
-
-  function statNbProduct(_ref7) {
-    let {
-      stat
-    } = _ref7;
-    let statNb = document.querySelector('.stats-searchResult');
-    statNb.innerHTML = "<p>lblblblblb ".concat(stat, "</p>");
-  }
-
-  function productTemplate(_ref8) {
-    let {
-      image,
-      title,
-      description,
-      price
-    } = _ref8;
-    return "\n      <div class=\"aa-ItemContent\">\n        <div class=\"aa-ItemImage\">\n          <img src=\"".concat(image, "\" alt=\"").concat(title, "\">\n        </div>\n        <div class=\"aa-ItemInfos\">\n        <div class=\"aa-ItemTitle\">").concat(title, "</div>\n        <div class=\"aa-ItemPrice\">$").concat(price, "</div>\n        </div>\n      </div>\n    ");
-  }
-
-  function moreResultsTemplate(_ref9) {
-    let {
-      title
-    } = _ref9;
-    return "\n        <div class=\"aa-btnShowMore-wrapper\">\n            <a href=\"#\" class=\"aa-btnShowMore\">\n                ".concat(title, "\n            </a>\n      </div>\n    ");
-  }
-
-  function facetTemplate(_ref10) {
-    let {
-      title
-    } = _ref10;
-    return "\n      <div class=\"aa-ItemContent\">\n        <div class=\"aa-ItemTitle\">".concat(title, "</div>\n      </div>\n    ");
-  }
-
-  function getQueryFromUser(query) {
-    return query;
-  }
-
-  function renderHits(root, sections, state) {
-    const index = searchClient.initIndex('gstar_demo_test');
-    const hitContainer = document.querySelector('#hitsResults');
-    console.log(state);
-    index.search(state.query, {
-      facetFilters: ['genderFilter:men']
-    }).then(result => {
-      const hits = result.hits;
-      console.log(result);
-
-      if (hits.length != 0) {
-        displayResultOrNoResult(hits);
-        const pagination = document.querySelector('#pagination');
-        pagination.style.display = 'block';
-        hitContainer.innerHTML = hits.map(hit => "\n                <li class=\"carousel-list-item\">\n                <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>").concat(hit.name, "</div>\n                                \n                            <div class=\"colorWrapper\">\n                                    <div>").concat(hit.hexColorCode.split('//')[0], "</div>\n                                    <div style=\"background: ").concat(hit.hexColorCode.split('//')[1], "\" class=\"hit-colorsHex\"></div>\n                                </div>\n                                \n                                \n                            </div>\n                        <div class=\"hit-price\">$").concat(hit.price, "</div>\n                        \n                    </div>\n                </a>\n            </li>\n                ")).join('');
-      } else {
-        noResult(hits);
-      }
-    });
-  }
-
-  function noResult(hits) {
-    let executed = false;
-
-    if (!executed) {
-      executed = true;
-      displayResultOrNoResult(hits);
-      const containerNoresult = document.querySelector('.container');
-      const noResults = document.querySelector('.noResultMessage');
-      const query = document.querySelector(".aa-InputWrapper input").value;
-      const pagination = document.querySelector('#pagination');
-      pagination.style.display = 'none';
-
-      if (!noResults) {
-        let noResults = document.createElement('div');
-        noResults.innerHTML = '';
-        noResults.classList.add('noResultMessage');
-        noResults.innerHTML = "<p>Sorry no result for <span>".concat(query, "</span></p>\n            <p>Please check the spelling or try to remove filters</p>\n            <p>You can check our latest trends and collection bellow</p>");
-        containerNoresult.prepend(noResults);
-      } else {
-        noResults.innerHTML = '';
-        noResults.classList.add('noResultMessage');
-        noResults.innerHTML = "<p>Sorry no result for <span>".concat(query, "</span></p>\n            <p>Please check the spelling or try to remove filters</p>\n            <p>You can check our latest trends and collection bellow</p>");
-        containerNoresult.prepend(noResults);
-      }
-
-      const searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-      const search = (0, _instantsearch.default)({
-        indexName: 'gstar_demo_test',
-        searchClient
-      }); // const userTokenSelector = document.getElementById("user-token-selector");
-      // userTokenSelector.addEventListener("change", () => {
-      //     userTokenSelector.disabled = true;
-      //     search.removeWidgets(carouselWidgets);
-      //     getCarouselConfigs().then((carousels) => {
-      //         console.log(carousels)
-      //         userTokenSelector.disabled = false;
-      //         carouselWidgets = createWidgets(carousels);
-      //         search.addWidgets(carouselWidgets);
-      //     });
-      // });
-
-      function getUserToken() {
-        const getPersona = localStorage.getItem('personaValue');
-        console.log(getPersona);
-        return getPersona;
-      } //GET THE CONFIG
-
-
-      function getCarouselConfigs() {
-        return searchClient.initIndex("gstar_demo_config").search("", {
-          facetFilters: ['userToken:' + getUserToken()],
-          attributesToHighlight: [],
-          attributesToRetrieve: ["title", "indexName", "configure"]
-        }).then(res => res.hits);
-      } //WIDGET CREATION
-
-
-      let carouselWidgets = [];
-
-      function createWidgets(carousels) {
-        const container = document.querySelector("#stacked-carousels");
-        container.innerText = "";
-        return carousels.map(carouselConfig => {
-          const carouselContainer = document.createElement("div");
-          carouselContainer.className = "carousel";
-          const indexWidget = (0, _widgets.index)({
-            indexName: carouselConfig.indexName,
-            indexId: carouselConfig.objectID
-          });
-
-          if (carouselConfig.configure) {
-            console.log(carouselConfig.configure);
-            indexWidget.addWidgets([(0, _widgets.configure)(_objectSpread(_objectSpread({}, carouselConfig.configure), {}, {
-              userToken: getUserToken()
-            }))]);
-          } // const client = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
-          // const gstar = client.initIndex('gstar_demo_test');
-          // const gstardetail = client.initIndex('Gstar_demo_carousel_detail');
-
-
-          indexWidget.addWidgets([(0, _displayCarousel.carousel)({
-            title: carouselConfig.title,
-            container: carouselContainer
-          }) // hits({
-          //     container: '#hits',
-          //     templates: carouselContainer,
-          // }),
-          // searchBox({
-          //     container: 'searchbox',
-          //     placeholder: 'Clothes, Sneakers...',
-          // }),
-          //    stats({
-          //        container: '#stats',
-          //    })
-          // refinementList({
-          //     container: '#brand-list',
-          //     attribute: 'brand',
-          // }),
-          // pagination({
-          //     container: '#pagination',
-          // }),
-          ]);
-          container.appendChild(carouselContainer);
-          return indexWidget;
-        });
-      } // retrieve the carousel configuration once
-
-
-      getCarouselConfigs().then(carousels => {
-        carouselWidgets = createWidgets(carousels);
-        search.addWidgets(carouselWidgets);
-        search.start();
-      });
-    }
-  }
-
-  function displayResultOrNoResult(hits) {
-    const hitContainer = document.querySelector('#hitsResults');
-    const noResultCarousel = document.querySelector('#stacked-carousels');
-    const noResultContainer = document.querySelector('.container');
-    console.log(hits);
-
-    if (hits.length === 0) {
-      hitContainer.classList.remove('displayGrid');
-      hitContainer.classList.add('displayFalse');
-      noResultCarousel.classList.add('displayTrue');
-      noResultCarousel.classList.remove('displayFalse');
-      noResultContainer.classList.remove('displayFalse');
-      noResultContainer.classList.add('displayTrue');
-    } else {
-      hitContainer.classList.add('displayGrid');
-      hitContainer.classList.remove('displayFalse');
-      noResultCarousel.classList.remove('displayGrid');
-      noResultCarousel.classList.add('displayFalse');
-      noResultContainer.classList.add('displayFalse');
-      noResultContainer.classList.remove('displayTrue');
-    }
-  }
-}
-},{"@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-js/dist/esm/index.js","@algolia/autocomplete-plugin-query-suggestions":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js","@algolia/autocomplete-plugin-recent-searches":"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/index.js","algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","./searchResults":"../src/SearchResultPage/searchResults.js","@algolia/autocomplete-theme-classic":"../node_modules/@algolia/autocomplete-theme-classic/dist/theme.css","../Homepage/getCarousel":"../src/Homepage/getCarousel.js","../Homepage/displayCarousel":"../src/Homepage/displayCarousel.js","instantsearch.js":"../node_modules/instantsearch.js/es/index.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js"}],"../src/SearchResultPage/searchResults.js":[function(require,module,exports) {
+},{"instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js"}],"../src/SearchResultPage/searchResults.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38125,8 +37378,6 @@ var _widgets = require("instantsearch.js/es/widgets");
 
 var _connectors = require("instantsearch.js/es/connectors");
 
-var _autocomplete = require("./autocomplete");
-
 var _autocompleteJs = require("@algolia/autocomplete-js");
 
 var _autocompletePluginQuerySuggestions = require("@algolia/autocomplete-plugin-query-suggestions");
@@ -38136,8 +37387,6 @@ var _autocompletePluginRecentSearches = require("@algolia/autocomplete-plugin-re
 require("@algolia/autocomplete-theme-classic");
 
 var _displayCarousel = require("../Homepage/displayCarousel");
-
-var _localStorage = require("@algolia/autocomplete-plugin-recent-searches/dist/esm/usecases/localStorage");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38348,20 +37597,7 @@ function searchResults() {
                   }
 
                 }
-              }, // {
-              //     getItems() {
-              //         return brands.facetHits;
-              //     },
-              //     templates: {
-              //         header() {
-              //             return headerTemplate({ title: "Brands" });
-              //         },
-              //         item({ item }) {
-              //             return facetTemplate({ title: item.highlighted });
-              //         }
-              //     }
-              // },
-              {
+              }, {
                 getItems() {
                   return categories.facetHits;
                 },
@@ -38447,7 +37683,6 @@ function searchResults() {
 
       if (!executed) {
         executed = true;
-        console.log('je suis dans no reesult');
         displayResultOrNoResult(stateCollection);
         const containerNoresult = document.querySelector('.container');
         const noResults = document.querySelector('.noResultMessage');
@@ -38527,7 +37762,6 @@ function searchResults() {
     }
 
     function displayResultOrNoResult(stateCollection) {
-      console.log(stateCollection);
       const hitContainer = document.querySelector('#hitsResults');
       const hit = document.querySelector("#hits");
       const noResultCarousel = document.querySelector('#stacked-carousels');
@@ -38706,22 +37940,16 @@ function searchResults() {
     }
   }
 
-  const autocompleteSearchBox = createAutocompleteSearchBox(); // const customHits = connectHits(renderHitsAutocomplete);
+  const autocompleteSearchBox = createAutocompleteSearchBox();
 
   const renderVirtualSearchBox = (renderOptions, isFirstRender) => {
     const {
       refine
-    } = renderOptions; // console.log(refine)
-    // const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
-    // console.log(noResultHits)
-    // if (isFirstRender) {
-    // }
-
-    refine(search.renderState.gstar_demo_test.autocomplete.currentRefinement); // const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
+    } = renderOptions;
+    refine(search.renderState.gstar_demo_test.autocomplete.currentRefinement);
   };
 
-  const virtualSearchBox = (0, _connectors.connectSearchBox)(renderVirtualSearchBox); // const virtualHierarchicalMenu = connectHierarchicalMenu(() => { });
-
+  const virtualSearchBox = (0, _connectors.connectSearchBox)(renderVirtualSearchBox);
   search.addWidgets([(0, _widgets.index)({
     indexName: 'gstar_demo_test'
   }).addWidgets([(0, _widgets.configure)({
@@ -38760,7 +37988,6 @@ function searchResults() {
     render(options) {
       const container = document.querySelector('#smart-sort-banner');
       const isSmartSortResult = options.results._rawResults.length > 0 && typeof options.results._rawResults[0].nbSortedHits === 'number';
-      console.log(isSmartSortResult);
       container.classList.toggle('ais-SmartSortBanner--hidden', !isSmartSortResult);
 
       if (!isSmartSortResult) {
@@ -38840,33 +38067,13 @@ function searchResults() {
       item: hit => "\n                <li class=\"carousel-list-item\">\n                <div class=\"badgeWrapper\">\n                        <div>".concat(displayEcoBadge(hit), "</div>\n                        <div>").concat(displayOffBadge(hit), "</div>\n                    </div>\n                <a href=\"").concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                   \n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>").concat(hit.name, "</div>\n                                \n                            <div class=\"colorWrapper\">\n                                    <div>").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[0] : '', "</div>\n                                    <div style=\"background: ").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[1] : '', "\" class=\"hit-colorsHex\"></div>\n                                </div>\n                                \n                                \n                            </div>\n                            <div class=\"hit-price\">\n                            ").concat(displayPrice(hit), "\n                        </div>\n                        \n                    </div>\n                </a>\n            </li>\n                "),
       injectedItem: hit => "\n                 <li class=\"carousel-list-item\">\n                 \n                        <div class=\"image-wrapper\">\n                            <img class=\"injectImg\" src=\"".concat(hit.image, "\" alt=\"\">\n                        </div>\n                        <div class=\"btn-injection-content-wrapper\">\n                            <a class=\"btn-injection-content\">Check it out</a>\n                        </div>\n                   \n                  </li>\n              "),
       noResults: response => "\n                \n              "
-    } // afterItemRenderer: (element, hit, response) => {
-    //     const button = element.querySelector("button");
-    //     console.log(button)
-    //     if (button) {
-    //         button.addEventListener("click", event => {
-    //             console.log(event)
-    //             event.stopPropagation();
-    //             // aa("clickedObjectIDsAfterSearch", {
-    //             //   eventName: "product_clicked",
-    //             //   index: "atis-prods",
-    //             //   queryID: response.queryID,
-    //             //   objectIDs: [hit.objectID],
-    //             //   positions: [hit.__position]
-    //             // });
-    //         });
-    //     }
-    // }
-
-  }), // customHits({
-  //     container: document.querySelector('#hits'),
-  // }),
-  (0, _widgets.pagination)({
+    }
+  }), (0, _widgets.pagination)({
     container: '#pagination'
   })]);
   search.start();
 }
-},{"instantsearch.js":"../node_modules/instantsearch.js/es/index.js","algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","./hits-with-content/hits-with-content":"../src/SearchResultPage/hits-with-content/hits-with-content.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","./autocomplete":"../src/SearchResultPage/autocomplete.js","@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-js/dist/esm/index.js","@algolia/autocomplete-plugin-query-suggestions":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js","@algolia/autocomplete-plugin-recent-searches":"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/index.js","@algolia/autocomplete-theme-classic":"../node_modules/@algolia/autocomplete-theme-classic/dist/theme.css","../Homepage/displayCarousel":"../src/Homepage/displayCarousel.js","@algolia/autocomplete-plugin-recent-searches/dist/esm/usecases/localStorage":"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/usecases/localStorage/index.js"}],"../src/SearchResultPage/filterResults.js":[function(require,module,exports) {
+},{"instantsearch.js":"../node_modules/instantsearch.js/es/index.js","algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","./hits-with-content/hits-with-content":"../src/SearchResultPage/hits-with-content/hits-with-content.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-js/dist/esm/index.js","@algolia/autocomplete-plugin-query-suggestions":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js","@algolia/autocomplete-plugin-recent-searches":"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/index.js","@algolia/autocomplete-theme-classic":"../node_modules/@algolia/autocomplete-theme-classic/dist/theme.css","../Homepage/displayCarousel":"../src/Homepage/displayCarousel.js"}],"../src/SearchResultPage/filterResults.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38895,14 +38102,12 @@ function filterResult() {
   categoryBtn.addEventListener('click', fadeFiltersCategory);
   colorBtn.addEventListener('click', fadeFiltersColor);
   sizeBtn.addEventListener('click', fadeFiltersSize);
-  priceBtn.addEventListener('click', fadeFiltersPrice); // btnBackToFilter.addEventListener('click', backToFilters)
-
+  priceBtn.addEventListener('click', fadeFiltersPrice);
   btnBackToFilter.forEach(btn => {
     btn.addEventListener('click', backToFilters);
   });
 
   function backToFilters(e) {
-    console.log(e);
     e.preventDefault();
     filterItem.forEach(filter => {
       filter.classList.remove('fadeFilters');
@@ -38993,92 +38198,7 @@ function filterResult() {
       priceFilter.classList.add('fadeFilters');
     }
   }
-} // function colorCircle() {
-//     function colorUnselected() {
-//         const colorInput = document.querySelectorAll('.color-list .ais-RefinementList-checkbox')
-//         colorInput.forEach(input => {
-//             changeColor(input)
-//             input.addEventListener('click', (e) => {
-//                 e.preventDefault()
-//                 setTimeout(colorSelected, 50)
-//             })
-//         })
-//     }
-//     function clearFilters() {
-//         const btnClear = document.querySelector('.ais-ClearRefinements-button')
-//         const refineResultColor = document.querySelectorAll('.ais-CurrentRefinements-delete')
-//         refineResultColor.forEach(close => {
-//             close.addEventListener('click', (e) => {
-//                 colorUnselected()
-//             })
-//         })
-//         btnClear.addEventListener('click', (e) => {
-//             colorUnselected()
-//         })
-//     }
-//     clearFilters()
-//     function colorSelected() {
-//         const colorInputSelected = document.querySelectorAll('.color-list .ais-RefinementList-item--selected .ais-RefinementList-checkbox')
-//         colorInputSelected.forEach(input => {
-//             changeColor(input)
-//             input.addEventListener('click', (e) => {
-//                 e.preventDefault()
-//                 setTimeout(colorUnselected, 500)
-//             })
-//         })
-//     }
-//     function changeColor(input) {
-//         let inputColor = input.value
-//         switch (inputColor) {
-//             case inputColor = 'Red':
-//                 input.value = "#FF0000"
-//                 input.type = 'color'
-//                 break;
-//             case inputColor = 'Beige':
-//                 input.value = "#F5F5DC"
-//                 input.type = 'color'
-//                 break;
-//             case inputColor = 'Dark blue':
-//                 input.value = "#000158"
-//                 input.type = 'color'
-//                 break;
-//             case inputColor = 'Grey':
-//                 input.value = "#808080"
-//                 input.type = 'color'
-//                 break;
-//             case inputColor = 'Black':
-//                 input.value = "#000"
-//                 input.type = 'color'
-//                 break;
-//             case inputColor = 'Medium blue':
-//                 input.value = "#0000CD"
-//                 input.type = 'color'
-//                 break;
-//             case inputColor = 'White':
-//                 input.value = "#FFFFFF"
-//                 input.type = 'color'
-//                 break;
-//             case inputColor = 'Green':
-//                 input.value = "#008000"
-//                 input.type = 'color'
-//                 break;
-//             case inputColor = 'Green':
-//                 input.value = "#008000"
-//                 input.type = 'color'
-//                 break;
-//             case inputColor = 'Light blue':
-//                 input.value = "#ADD8E6"
-//                 input.type = 'color'
-//                 break;
-//             case inputColor = 'Brown':
-//                 input.value = "#A0522D"
-//                 input.type = 'color'
-//                 break;
-//         }
-//     }
-//     colorUnselected()
-// }
-// setTimeout(colorCircle, 1000)
+}
 },{}],"../src/Homepage/burgerMenu.js":[function(require,module,exports) {
 "use strict";
 
@@ -39151,7 +38271,6 @@ function relatedResultModal() {
   searchInput.addEventListener('change', handleKeyUp);
 
   function handleKeyUp(e) {
-    console.log('toto');
     window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
 
     if (e) {
@@ -39170,7 +38289,6 @@ function relatedResultModal() {
   function domListening() {
     const observer = new MutationObserver(mutation => {
       if (mutation) {
-        console.log(mutation);
         getObjectID();
       }
     });
@@ -39357,13 +38475,9 @@ var _relatedResultModal = require("./relatedResultModal");
 
 var _cardAnimations = require("./cardAnimations");
 
-// import { autocompleteSearchResult } from "./autocomplete";
-// import { searchBar } from "../searchbarDropdown";
 (0, _searchResults.searchResults)();
 (0, _filterResults.filterResult)();
-(0, _burgerMenu.burgerMenu)(); // autocompleteSearchResult()
-// searchBar()
-
+(0, _burgerMenu.burgerMenu)();
 var checkExist = setInterval(function () {
   if (document.readyState != 'loading') {
     (0, _relatedResultModal.relatedResultModal)();
@@ -39399,7 +38513,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49422" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52487" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

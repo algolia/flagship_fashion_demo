@@ -48,11 +48,9 @@ function GetDataCarousel() {
             });
 
             if (carouselConfig.configure) {
-                console.log(carouselConfig.configure)
                 indexWidget.addWidgets([
                     configure({
                         ...carouselConfig.configure
-                        // userToken: getUserToken(),
                     }),
                 ]);
             }
@@ -62,26 +60,6 @@ function GetDataCarousel() {
                     title: carouselConfig.title,
                     container: carouselContainer,
                 }),
-                // hits({
-                //     container: '#hits',
-                //     templates: carouselContainer,
-                // }),
-                // searchBox({
-                //     container: '#searchbox',
-                //     placeholder: 'Clothes, Sneakers...',
-                // }),
-                stats({
-                    container: '#stats',
-                })
-
-
-                // refinementList({
-                //     container: '#brand-list',
-                //     attribute: 'brand',
-                // }),
-                // pagination({
-                //     container: '#pagination',
-                // }),
             ]);
 
             container.appendChild(carouselContainer);
@@ -91,7 +69,6 @@ function GetDataCarousel() {
 
     // retrieve the carousel configuration once
     getCarouselConfigs().then((carousels) => {
-        console.log(carousels)
         carouselWidgets = createWidgets(carousels);
         search.addWidgets(carouselWidgets);
         search.start();
@@ -99,9 +76,8 @@ function GetDataCarousel() {
 
 
 }
+
+// APP.JS CALL
 GetDataCarousel()
 burgerMenu()
 renderCarouselAllProduct()
-
-
-// search.start();

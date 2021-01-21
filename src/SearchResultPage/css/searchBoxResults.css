@@ -1,5 +1,3 @@
-
-
 .ais-Hits-list{
 width: 90vw;
 margin: 2rem auto;
@@ -134,7 +132,6 @@ align-items: center;
     color: black;
 }
 .hit-sizeFilter p{
-    /* visibility: hidden; */
    font-size: 0.8rem;
    font-family: 'Roboto';
     color: black;
@@ -142,7 +139,6 @@ align-items: center;
     
 }
 .hit-sizeFilter span{
-    /* visibility: hidden; */
    font-size: 0.8rem;
    font-family: 'Roboto';
     color: black;
@@ -250,6 +246,8 @@ align-items: center;
     border-radius: 0;
 }
 
+/* MEDIA QUERIES / BREAKPOINTS */
+
 @media screen and (max-width: 1400px){
  
     .badgeWrapper{
@@ -263,10 +261,6 @@ align-items: center;
     .ais-Hits-list{
         grid-template-columns: repeat(2, 1fr);
     }
-    /* .badgeWrapper{
-        right: 3rem;
-        width: 50%;
-    } */
    }
 @media screen and (max-width: 560px){
     body {

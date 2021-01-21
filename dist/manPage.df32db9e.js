@@ -30652,7 +30652,6 @@ var _connectors = require("instantsearch.js/es/connectors");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import { configure, hits, EXPERIMENTAL_configureRelatedItems } from 'instantsearch.js/es/widgets';
 const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirstRender) {
   let {
     widgetParams: {
@@ -30663,7 +30662,6 @@ const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFi
   } = _ref;
 
   if (isFirstRender) {
-    console.log(container);
     const section = document.createElement('section');
     section.classList.add('section-carousel-winter');
     container.appendChild(section);
@@ -30677,12 +30675,7 @@ const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFi
     btnSection.classList.add('btn-carousel-winter');
     btnSection.innerHTML = "See All";
     btnSection.href = "./index.html";
-    divSection.appendChild(btnSection); // document
-    //   .querySelector('.title-carousel-winter').insertAdjacentHTML(
-    //     'afterbegin',
-    //     `<h2>${title}</h2><a href="/searchResults.html" class="btn-carousel-winter">See All</a>`
-    //   );
-
+    divSection.appendChild(btnSection);
     const ul = document.createElement('ul');
     ul.classList.add('carousel-list-container');
     section.appendChild(ul);
@@ -30806,31 +30799,13 @@ function GetDataCarousel() {
       });
 
       if (carouselConfig.configure) {
-        console.log(carouselConfig.configure);
         indexWidget.addWidgets([(0, _widgets.configure)(_objectSpread({}, carouselConfig.configure))]);
       }
 
       indexWidget.addWidgets([(0, _displayCarouselManPage.carousel)({
         title: carouselConfig.title,
         container: carouselContainer
-      }), // hits({
-      //     container: '#hits',
-      //     templates: carouselContainer,
-      // }),
-      // searchBox({
-      //     container: '#searchbox',
-      //     placeholder: 'Clothes, Sneakers...',
-      // }),
-      (0, _widgets.stats)({
-        container: '#stats'
-      }) // refinementList({
-      //     container: '#brand-list',
-      //     attribute: 'brand',
-      // }),
-      // pagination({
-      //     container: '#pagination',
-      // }),
-      ]);
+      })]);
       container.appendChild(carouselContainer);
       return indexWidget;
     });
@@ -30838,16 +30813,16 @@ function GetDataCarousel() {
 
 
   getCarouselConfigs().then(carousels => {
-    console.log(carousels);
     carouselWidgets = createWidgets(carousels);
     search.addWidgets(carouselWidgets);
     search.start();
   });
-}
+} // APP.JS CALL
+
 
 GetDataCarousel();
 (0, _burgerMenu.burgerMenu)();
-(0, _displayCarouselManPage.renderCarouselAllProduct)(); // search.start();
+(0, _displayCarouselManPage.renderCarouselAllProduct)();
 },{"./displayCarouselManPage":"../src/CategoryPages/Men/displayCarouselManPage.js","../../Homepage/burgerMenu":"../src/Homepage/burgerMenu.js","instantsearch.js":"../node_modules/instantsearch.js/es/index.js","algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -30876,7 +30851,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49422" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52487" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -29,7 +29,6 @@ export function relatedResultModal() {
     searchInput.addEventListener('change', handleKeyUp);
 
     function handleKeyUp(e) {
-        console.log('toto')
         window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
         if (e) {
             timer = window.setTimeout(() => {
@@ -49,7 +48,6 @@ export function relatedResultModal() {
 
         const observer = new MutationObserver(mutation => {
             if (mutation) {
-                console.log(mutation)
                 getObjectID()
             }
         });

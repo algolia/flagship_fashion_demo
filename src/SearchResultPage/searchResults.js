@@ -6,7 +6,6 @@ import {
     refinementList,
     stats,
     sortBy,
-    hits,
     pagination,
     rangeSlider,
     voiceSearch,
@@ -19,10 +18,7 @@ import {
     connectCurrentRefinements,
     connectAutocomplete,
     connectSearchBox,
-    connectHierarchicalMenu,
-    connectHits,
 } from 'instantsearch.js/es/connectors';
-import { autocompleteSearchResult } from './autocomplete';
 
 import {
     autocomplete,
@@ -33,7 +29,7 @@ import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches';
 import '@algolia/autocomplete-theme-classic';
 import { carousel } from '../Homepage/displayCarousel';
-import { getLocalStorage } from '@algolia/autocomplete-plugin-recent-searches/dist/esm/usecases/localStorage';
+
 
 export function searchResults() {
     const searchClient = algoliasearch(
@@ -279,19 +275,6 @@ export function searchResults() {
                                         },
                                     },
                                 },
-                                // {
-                                //     getItems() {
-                                //         return brands.facetHits;
-                                //     },
-                                //     templates: {
-                                //         header() {
-                                //             return headerTemplate({ title: "Brands" });
-                                //         },
-                                //         item({ item }) {
-                                //             return facetTemplate({ title: item.highlighted });
-                                //         }
-                                //     }
-                                // },
                                 {
                                     getItems() {
                                         return categories.facetHits;
@@ -371,7 +354,6 @@ export function searchResults() {
             let executed = false;
             if (!executed) {
                 executed = true;
-                console.log('je suis dans no reesult')
                 displayResultOrNoResult(stateCollection);
                 const containerNoresult = document.querySelector('.container');
                 const noResults = document.querySelector('.noResultMessage');
@@ -472,7 +454,6 @@ export function searchResults() {
         }
 
         function displayResultOrNoResult(stateCollection) {
-            console.log(stateCollection)
             const hitContainer = document.querySelector('#hitsResults');
             const hit = document.querySelector("#hits")
             const noResultCarousel = document.querySelector('#stacked-carousels');
@@ -672,25 +653,15 @@ export function searchResults() {
 
 
     const autocompleteSearchBox = createAutocompleteSearchBox();
-    // const customHits = connectHits(renderHitsAutocomplete);
 
     const renderVirtualSearchBox = (renderOptions, isFirstRender) => {
         const { refine } = renderOptions;
-        // console.log(refine)
-        // const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
-        // console.log(noResultHits)
-        // if (isFirstRender) {
-        // }
         refine(search.renderState.gstar_demo_test.autocomplete.currentRefinement);
-        // const noResultHits = search.renderState.gstar_demo_test.stats.nbHits;
-
-
     };
 
 
     const virtualSearchBox = connectSearchBox(renderVirtualSearchBox);
 
-    // const virtualHierarchicalMenu = connectHierarchicalMenu(() => { });
     search.addWidgets([
         index({
             indexName: 'gstar_demo_test',
@@ -748,7 +719,6 @@ export function searchResults() {
                 const isSmartSortResult =
                     options.results._rawResults.length > 0 &&
                     typeof options.results._rawResults[0].nbSortedHits === 'number';
-                console.log(isSmartSortResult)
                 container.classList.toggle(
                     'ais-SmartSortBanner--hidden',
                     !isSmartSortResult
@@ -910,29 +880,7 @@ export function searchResults() {
                 
               `
             },
-            // afterItemRenderer: (element, hit, response) => {
-            //     const button = element.querySelector("button");
-            //     console.log(button)
-            //     if (button) {
-            //         button.addEventListener("click", event => {
-
-            //             console.log(event)
-            //             event.stopPropagation();
-
-            //             // aa("clickedObjectIDsAfterSearch", {
-            //             //   eventName: "product_clicked",
-            //             //   index: "atis-prods",
-            //             //   queryID: response.queryID,
-            //             //   objectIDs: [hit.objectID],
-            //             //   positions: [hit.__position]
-            //             // });
-            //         });
-            //     }
-            // }
         }),
-        // customHits({
-        //     container: document.querySelector('#hits'),
-        // }),
         pagination({
             container: '#pagination',
         }),

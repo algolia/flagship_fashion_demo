@@ -1,10 +1,8 @@
 /* HEADER & SEARCHBAR */
 
-
-.header {
-    /* max-width: 1200px ; */
-    margin: 0 auto;
-   }
+  .header {
+      margin: 0 auto;
+    }
    
    .header a {
      color: #fff;
@@ -252,10 +250,10 @@
        transform: rotate(45deg) translate(-5px, -6px);
    }
 
-   
+
+   /* MEDIA QUERIES / BREAKPOINT */
 
    @media screen and (max-width: 1024px){
-
     .searchbar-wrapper{
      width: 100%;
      justify-self: center;
@@ -405,6 +403,9 @@
     overflow-x: hidden !important;
 }
 }
+
+
+/* ANIMATIONS */
   
    @keyframes navlinksFade {
        from {
