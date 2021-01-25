@@ -37421,6 +37421,7 @@ function searchResults() {
     [...widgetParams.container.querySelectorAll('a')].forEach(element => {
       element.addEventListener('click', event => {
         event.preventDefault();
+        console.log(refine);
         refine(event.currentTarget.dataset.value);
       });
     });
@@ -37462,7 +37463,7 @@ function searchResults() {
       widgetParams,
       refine
     } = renderOptions;
-    document.querySelector('#current-refinements').innerHTML = "\n    <ul class=\"currentRefinment-filters\">\n      ".concat(items.map(renderListItem).join(''), "\n    </ul>\n  ");
+    document.querySelector('#current-refinements').innerHTML = "\n            <ul class=\"currentRefinment-filters\">\n              ".concat(items.map(renderListItem).join(''), "\n            </ul>\n          ");
     [...widgetParams.container.querySelectorAll('.btnCloseRefinements')].forEach(element => {
       element.addEventListener('click', event => {
         const item = Object.keys(event.currentTarget.dataset).reduce((acc, key) => _objectSpread(_objectSpread({}, acc), {}, {
@@ -37950,14 +37951,7 @@ function searchResults() {
   };
 
   const virtualSearchBox = (0, _connectors.connectSearchBox)(renderVirtualSearchBox);
-  search.addWidgets([(0, _widgets.index)({
-    indexName: 'gstar_demo_test'
-  }).addWidgets([(0, _widgets.configure)({
-    hitsPerPage: 5
-  }), autocompleteSearchBox({
-    container: '#autocomplete',
-    placeholder: 'Search products'
-  }), customRefinementList({
+  search.addWidgets([customRefinementList({
     container: document.querySelector('#refinement-list-SearchResult'),
     attribute: 'keywords',
     showMoreLimit: 10
@@ -37965,6 +37959,13 @@ function searchResults() {
     container: document.querySelector('#banner')
   }), customCurrentRefinements({
     container: document.querySelector('#current-refinements')
+  }), (0, _widgets.index)({
+    indexName: 'gstar_demo_test'
+  }).addWidgets([(0, _widgets.configure)({
+    hitsPerPage: 5
+  }), autocompleteSearchBox({
+    container: '#autocomplete',
+    placeholder: 'Search products'
   }), {
     init(opts) {}
 
@@ -38513,7 +38514,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52487" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60860" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
