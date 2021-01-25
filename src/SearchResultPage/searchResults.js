@@ -72,6 +72,7 @@ export function searchResults() {
         [...widgetParams.container.querySelectorAll('a')].forEach(element => {
             element.addEventListener('click', event => {
                 event.preventDefault();
+                console.log(refine)
                 refine(event.currentTarget.dataset.value);
             });
         });
@@ -138,10 +139,10 @@ export function searchResults() {
     const renderCurrentRefinements = (renderOptions, isFirstRender) => {
         const { items, widgetParams, refine } = renderOptions;
         document.querySelector('#current-refinements').innerHTML = `
-    <ul class="currentRefinment-filters">
-      ${items.map(renderListItem).join('')}
-    </ul>
-  `;
+            <ul class="currentRefinment-filters">
+              ${items.map(renderListItem).join('')}
+            </ul>
+          `;
 
         [
             ...widgetParams.container.querySelectorAll('.btnCloseRefinements'),
@@ -662,7 +663,20 @@ export function searchResults() {
 
     const virtualSearchBox = connectSearchBox(renderVirtualSearchBox);
 
+
+
     search.addWidgets([
+        customRefinementList({
+            container: document.querySelector('#refinement-list-SearchResult'),
+            attribute: 'keywords',
+            showMoreLimit: 10,
+        }),
+        customQueryRuleCustomData({
+            container: document.querySelector('#banner'),
+        }),
+        customCurrentRefinements({
+            container: document.querySelector('#current-refinements'),
+        }),
         index({
             indexName: 'gstar_demo_test',
 
@@ -673,17 +687,6 @@ export function searchResults() {
             autocompleteSearchBox({
                 container: '#autocomplete',
                 placeholder: 'Search products',
-            }),
-            customRefinementList({
-                container: document.querySelector('#refinement-list-SearchResult'),
-                attribute: 'keywords',
-                showMoreLimit: 10,
-            }),
-            customQueryRuleCustomData({
-                container: document.querySelector('#banner'),
-            }),
-            customCurrentRefinements({
-                container: document.querySelector('#current-refinements'),
             }),
             {
                 init(opts) {
