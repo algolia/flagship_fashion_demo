@@ -124,10 +124,12 @@ export function searchResults() {
             .map(key => `data-${key}="${refinement[key]}"`)
             .join(' ');
 
+
     const renderListItem = item => `
       ${item.refinements
             .map(
-                refinement => `<li>${refinement.value.split('//')[0]} (${refinement.count
+                refinement => `
+                <li>${refinement.attribute === "hexColorCode" ? refinement.value.split('//')[0] : refinement.value} (${refinement.count != undefined ? refinement.count : '$'
                     })
             <button ${createDataAttribtues(
                         refinement
@@ -677,6 +679,7 @@ export function searchResults() {
         customCurrentRefinements({
             container: document.querySelector('#current-refinements'),
         }),
+
         index({
             indexName: 'gstar_demo_test',
 
@@ -768,6 +771,12 @@ export function searchResults() {
             container: '#gender-list',
             attribute: 'genderFilter',
         }),
+        rangeSlider({
+            container: '#price-list',
+            attribute: 'price',
+            tooltips: true,
+            pips: true
+        }),
         refinementList({
             container: '#hexColor-list',
             attribute: 'hexColorCode',
@@ -790,6 +799,11 @@ export function searchResults() {
         refinementList({
             container: '#size-list',
             attribute: 'sizeFilter',
+        }),
+        voiceSearch({
+            container: '#voicesearch',
+            searchAsYouSpeak: true,
+            language: 'en-US',
         }),
         sortBy({
             container: '#sort-by',
@@ -820,11 +834,6 @@ export function searchResults() {
         }),
         stats({
             container: '#stats-searchResult',
-        }),
-        voiceSearch({
-            container: '#voicesearch',
-            searchAsYouSpeak: true,
-            language: 'en-US',
         }),
         new HitsWithContent({
             container: "#hits",

@@ -37455,7 +37455,7 @@ function searchResults() {
 
   const createDataAttribtues = refinement => Object.keys(refinement).map(key => "data-".concat(key, "=\"").concat(refinement[key], "\"")).join(' ');
 
-  const renderListItem = item => "\n      ".concat(item.refinements.map(refinement => "<li>".concat(refinement.value.split('//')[0], " (").concat(refinement.count, ")\n            <button ").concat(createDataAttribtues(refinement), " class=\"btnCloseRefinements\">X</button></li>")).join(''), "\n");
+  const renderListItem = item => "\n      ".concat(item.refinements.map(refinement => "\n                <li>".concat(refinement.attribute === "hexColorCode" ? refinement.value.split('//')[0] : refinement.value, " (").concat(refinement.count != undefined ? refinement.count : '$', ")\n            <button ").concat(createDataAttribtues(refinement), " class=\"btnCloseRefinements\">X</button></li>")).join(''), "\n");
 
   const renderCurrentRefinements = (renderOptions, isFirstRender) => {
     const {
@@ -38019,6 +38019,11 @@ function searchResults() {
   }), (0, _widgets.refinementList)({
     container: '#gender-list',
     attribute: 'genderFilter'
+  }), (0, _widgets.rangeSlider)({
+    container: '#price-list',
+    attribute: 'price',
+    tooltips: true,
+    pips: true
   }), (0, _widgets.refinementList)({
     container: '#hexColor-list',
     attribute: 'hexColorCode',
@@ -38036,6 +38041,10 @@ function searchResults() {
   }), (0, _widgets.refinementList)({
     container: '#size-list',
     attribute: 'sizeFilter'
+  }), (0, _widgets.voiceSearch)({
+    container: '#voicesearch',
+    searchAsYouSpeak: true,
+    language: 'en-US'
   }), (0, _widgets.sortBy)({
     container: '#sort-by',
     items: [{
@@ -38058,10 +38067,6 @@ function searchResults() {
     pips: true
   }), (0, _widgets.stats)({
     container: '#stats-searchResult'
-  }), (0, _widgets.voiceSearch)({
-    container: '#voicesearch',
-    searchAsYouSpeak: true,
-    language: 'en-US'
   }), new _hitsWithContent.default({
     container: "#hits",
     templates: {
@@ -38514,7 +38519,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60860" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49569" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

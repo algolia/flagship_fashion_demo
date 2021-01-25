@@ -610,4 +610,4 @@ var e;!function(){"use strict";var r={}.hasOwnProperty;function n(){for(var e=[]
 },{}],"yuG7":[function(require,module,exports) {
 "use strict";var e=require("./glide"),r=require("./getCarousel"),u=require("./displayCarouselDetail"),a=require("./burgerMenu"),i=require("./persona");(0,e.carouselGlideJS)(),(0,r.GetDataForCarousel)(),(0,u.carouselDetailed)(),(0,a.burgerMenu)(),(0,i.togglePersona)();
 },{"./glide":"BtHc","./getCarousel":"SsmV","./displayCarouselDetail":"jloD","./burgerMenu":"sGVT","./persona":"rSZj"}]},{},["yuG7"], null)
-//# sourceMappingURL=/app.c4e75bb0.js.map
+//# sourceMappingURL=app.c4e75bb0.js.map
