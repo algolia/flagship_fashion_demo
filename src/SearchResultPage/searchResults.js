@@ -18,6 +18,7 @@ import {
   connectCurrentRefinements,
   connectAutocomplete,
   connectSearchBox,
+  connectHits,
 } from 'instantsearch.js/es/connectors';
 
 import {
@@ -666,6 +667,108 @@ export function searchResults() {
 
   const virtualSearchBox = connectSearchBox(renderVirtualSearchBox);
 
+  const renderHits = (renderOptions, isFirstRender) => {
+    const { hits, widgetParams } = renderOptions;
+
+    const response = renderOptions.results;
+
+    const isValidUserData = userData => userData && Array.isArray(userData);
+
+    const shouldInjectRecord = (position, start, end) =>
+      position > start && position <= end;
+
+    const userData = search.renderState.gstar_demo_test.queryRules.items;
+
+    if (isValidUserData(userData)) {
+      if (response !== undefined) {
+        console.log(response);
+        //Appending custom data at the beginning of the array of results only if it's in the range of the position
+        let start = response.page * response.hitsPerPage + 1;
+        let end = response.page * response.hitsPerPage + response.hitsPerPage;
+        userData.forEach(record => {
+          if (shouldInjectRecord(record.position, start, end)) {
+            response.hits.splice(record.position - 1, 0, record);
+          }
+        });
+      }
+    }
+
+    document.querySelector('#hits').innerHTML = `
+      <ul class="hitsAutocomplete displayGrid">
+        ${hits
+          .map((hit, bindEvent) => {
+            if (hit.injected) {
+              return ` <li class="carousel-list-item">
+                          <div class="image-wrapper">
+                              <img class="injectImg" src="${hit.image}" alt="">
+                          </div>
+                          <div class="btn-injection-content-wrapper">
+                              <a class="btn-injection-content">Check it out</a>
+                          </div>
+  
+                    </li>`;
+            } else {
+              return `<li class="carousel-list-item">
+                            <div class="badgeWrapper">
+                                    <div>${displayEcoBadge(hit)}</div>
+                                    <div>${displayOffBadge(hit)}</div>
+                                </div>
+                            <a href="${
+                              hit.url
+                            }" class="product-searchResult" data-id="${
+                hit.objectID
+              }">
+                                <div class="image-wrapper">
+                                    <img src="${
+                                      hit.image_link
+                                    }" align="left" alt="${
+                hit.name
+              }" class="result-img" />
+            
+                                    <div class="hit-sizeFilter">
+                                        <p>Sizes available: <span>${
+                                          hit.sizeFilter
+                                        }</span></p>
+                                    </div>
+                                </div>
+                                <div class="hit-name">
+                                    <div class="hit-infos">
+                                        <div>${hit.name}</div>
+            
+                                        <div class="colorWrapper">
+                                                <div>${
+                                                  hit.hexColorCode
+                                                    ? hit.hexColorCode.split(
+                                                        '//'
+                                                      )[0]
+                                                    : ''
+                                                }</div>
+                                                <div style="background: ${
+                                                  hit.hexColorCode
+                                                    ? hit.hexColorCode.split(
+                                                        '//'
+                                                      )[1]
+                                                    : ''
+                                                }" class="hit-colorsHex"></div>
+                                            </div>
+            
+                                        </div>
+                                        <div class="hit-price">
+                                        ${displayPrice(hit)}
+                                    </div>
+            
+                                </div>
+                            </a>
+                        </li>`;
+            }
+          })
+          .join('')}
+      </ul>
+    `;
+  };
+
+  const connectedHitsWithInjectedContent = connectHits(renderHits);
+
   search.addWidgets([
     customRefinementList({
       container: document.querySelector('#refinement-list-SearchResult'),
@@ -833,73 +936,75 @@ export function searchResults() {
     stats({
       container: '#stats-searchResult',
     }),
-    new HitsWithContent({
-      container: '#hits',
-      templates: {
-        item: (hit, bindEvent) => `
-                <li class="carousel-list-item">
-                <div class="badgeWrapper">
-                        <div>${displayEcoBadge(hit)}</div>
-                        <div>${displayOffBadge(hit)}</div>
-                    </div>
-                <a href="${hit.url}" class="product-searchResult" data-id="${
-          hit.objectID
-        }">
-                    <div class="image-wrapper">
-                        <img src="${hit.image_link}" align="left" alt="${
-          hit.name
-        }" class="result-img" />
-                   
-                        <div class="hit-sizeFilter">
-                            <p>Sizes available: <span>${
-                              hit.sizeFilter
-                            }</span></p>
-                        </div>
-                    </div>
-                    <div class="hit-name">
-                        <div class="hit-infos">
-                            <div>${hit.name}</div>
-                                
-                            <div class="colorWrapper">
-                                    <div>${
-                                      hit.hexColorCode
-                                        ? hit.hexColorCode.split('//')[0]
-                                        : ''
-                                    }</div>
-                                    <div style="background: ${
-                                      hit.hexColorCode
-                                        ? hit.hexColorCode.split('//')[1]
-                                        : ''
-                                    }" class="hit-colorsHex"></div>
-                                </div>
-                                
-                                
-                            </div>
-                            <div class="hit-price">
-                            ${displayPrice(hit)}
-                        </div>
-                        
-                    </div>
-                </a>
-            </li>
-                `,
-        injectedItem: hit => `
-                 <li class="carousel-list-item">
-                 
-                        <div class="image-wrapper">
-                            <img class="injectImg" src="${hit.image}" alt="">
-                        </div>
-                        <div class="btn-injection-content-wrapper">
-                            <a class="btn-injection-content">Check it out</a>
-                        </div>
-                   
-                  </li>
-              `,
-        noResults: response => `
-                
-              `,
-      },
-    }),
+    connectedHitsWithInjectedContent({ container: '#hits' }),
+    // new HitsWithContent({
+    //   container: '#hits',
+    //   templates: {
+    //     item: (hit, bindEvent) => `
+    //             <li onClick=${console.log(
+    //               bindEvent
+    //             )} class="carousel-list-item">
+    //             <div class="badgeWrapper">
+    //                     <div>${displayEcoBadge(hit)}</div>
+    //                     <div>${displayOffBadge(hit)}</div>
+    //                 </div>
+    //             <a href="${hit.url}" class="product-searchResult" data-id="${
+    //       hit.objectID
+    //     }">
+    //                 <div class="image-wrapper">
+    //                     <img src="${hit.image_link}" align="left" alt="${
+    //       hit.name
+    //     }" class="result-img" />
+
+    //                     <div class="hit-sizeFilter">
+    //                         <p>Sizes available: <span>${
+    //                           hit.sizeFilter
+    //                         }</span></p>
+    //                     </div>
+    //                 </div>
+    //                 <div class="hit-name">
+    //                     <div class="hit-infos">
+    //                         <div>${hit.name}</div>
+
+    //                         <div class="colorWrapper">
+    //                                 <div>${
+    //                                   hit.hexColorCode
+    //                                     ? hit.hexColorCode.split('//')[0]
+    //                                     : ''
+    //                                 }</div>
+    //                                 <div style="background: ${
+    //                                   hit.hexColorCode
+    //                                     ? hit.hexColorCode.split('//')[1]
+    //                                     : ''
+    //                                 }" class="hit-colorsHex"></div>
+    //                             </div>
+
+    //                         </div>
+    //                         <div class="hit-price">
+    //                         ${displayPrice(hit)}
+    //                     </div>
+
+    //                 </div>
+    //             </a>
+    //         </li>
+    //             `,
+    //     injectedItem: hit => `
+    //              <li class="carousel-list-item">
+
+    //                     <div class="image-wrapper">
+    //                         <img class="injectImg" src="${hit.image}" alt="">
+    //                     </div>
+    //                     <div class="btn-injection-content-wrapper">
+    //                         <a class="btn-injection-content">Check it out</a>
+    //                     </div>
+
+    //               </li>
+    //           `,
+    //     noResults: response => `
+
+    //           `,
+    //   },
+    // }),
     pagination({
       container: '#pagination',
     }),

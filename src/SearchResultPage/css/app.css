@@ -30,3 +30,8 @@ ul, li {
     overflow-x: hidden;
     position: relative
 }
+
+.results-list{
+    display: flex;
+    flex-direction: row;
+}

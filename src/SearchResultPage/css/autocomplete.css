@@ -291,7 +291,9 @@ transition: 0.2s ease-in-out;
 }
 
 .carousel-list-item {
-  margin: auto;
+  /* margin: auto; */
+  list-style: none;
+  flex: 0 0 33.333333%;
 }
 
 .carousel h2 {
@@ -309,3 +311,7 @@ transition: 0.2s ease-in-out;
 }
   
  }
+
+.results-list {
+  display: flex;
+}
