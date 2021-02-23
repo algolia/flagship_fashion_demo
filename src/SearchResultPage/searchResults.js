@@ -18,6 +18,7 @@ import {
     connectCurrentRefinements,
     connectAutocomplete,
     connectSearchBox,
+    connectConfigure
 } from 'instantsearch.js/es/connectors';
 
 import {
@@ -562,12 +563,22 @@ export function searchResults() {
                 searchClient,
             });
 
+
+            const userTokenSelector = document.getElementById("user-token-selector");
+            console.log(userTokenSelector)
+            userTokenSelector.addEventListener("change", () => {
+                userTokenSelector.disabled = true;
+                search.removeWidgets(carouselWidgets);
+                getCarouselConfigs().then((carousels) => {
+                    userTokenSelector.disabled = false;
+                    carouselWidgets = createWidgets(carousels);
+                    search.addWidgets(carouselWidgets);
+                });
+            });
+
             function getUserToken() {
-                const getPersona = localStorage.getItem('personaValue');
-
-                return getPersona;
+                return userTokenSelector.value;
             }
-
             //GET THE CONFIG
             function getCarouselConfigs() {
                 return searchClient
@@ -619,6 +630,8 @@ export function searchResults() {
 
             // retrieve the carousel configuration once
             getCarouselConfigs().then(carousels => {
+
+                userTokenSelector.disabled = false;
                 carouselWidgets = createWidgets(carousels);
                 search.addWidgets(carouselWidgets);
                 search.start();
@@ -655,6 +668,19 @@ export function searchResults() {
         }
     }
 
+    const renderConfigure = (renderOptions, isFirstRender) => {
+        const { refine, widgetParams } = renderOptions;
+
+        const userToken = document.querySelector('.user-token-selector')
+        userToken.addEventListener('change', (e) => {
+            refine({ userToken: e.target.value });
+        })
+    };
+
+    const customConfigure = connectConfigure(
+        renderConfigure
+    );
+
     const autocompleteSearchBox = createAutocompleteSearchBox();
 
     const renderVirtualSearchBox = (renderOptions, isFirstRender) => {
@@ -665,6 +691,13 @@ export function searchResults() {
     const virtualSearchBox = connectSearchBox(renderVirtualSearchBox);
 
     search.addWidgets([
+        customConfigure({
+            container: document.querySelector('#configure'),
+            searchParameters: {
+                hitsPerPage: 20,
+                enablePersonalization: true,
+            },
+        }),
         customRefinementList({
             container: document.querySelector('#refinement-list-SearchResult'),
             attribute: 'keywords',
