@@ -668,7 +668,11 @@ export function searchResults() {
   const virtualSearchBox = connectSearchBox(renderVirtualSearchBox);
 
   const renderHits = (renderOptions, isFirstRender) => {
-    const { hits, widgetParams } = renderOptions;
+    window.consoleFunction = () => {
+      console.log('hi');
+    };
+
+    const { hits, widgetParams, bindEvent } = renderOptions;
 
     const response = renderOptions.results;
 
@@ -677,26 +681,28 @@ export function searchResults() {
     const shouldInjectRecord = (position, start, end) =>
       position > start && position <= end;
 
-    const userData = search.renderState.gstar_demo_test.queryRules.items;
+    if (search.renderState.gstar_demo_test.queryRules.items !== undefined) {
+      const userData = search.renderState.gstar_demo_test.queryRules.items;
 
-    if (isValidUserData(userData)) {
-      if (response !== undefined) {
-        console.log(response);
-        //Appending custom data at the beginning of the array of results only if it's in the range of the position
-        let start = response.page * response.hitsPerPage + 1;
-        let end = response.page * response.hitsPerPage + response.hitsPerPage;
-        userData.forEach(record => {
-          if (shouldInjectRecord(record.position, start, end)) {
-            response.hits.splice(record.position - 1, 0, record);
-          }
-        });
+      if (isValidUserData(userData)) {
+        if (response !== undefined) {
+          console.log(response);
+          //Appending custom data at the beginning of the array of results only if it's in the range of the position
+          let start = response.page * response.hitsPerPage + 1;
+          let end = response.page * response.hitsPerPage + response.hitsPerPage;
+          userData.forEach(record => {
+            if (shouldInjectRecord(record.position, start, end)) {
+              response.hits.splice(record.position - 1, 0, record);
+            }
+          });
+        }
       }
     }
 
     document.querySelector('#hits').innerHTML = `
       <ul class="hitsAutocomplete displayGrid">
         ${hits
-          .map((hit, bindEvent) => {
+          .map(hit => {
             if (hit.injected) {
               return ` <li class="carousel-list-item">
                           <div class="image-wrapper">
@@ -708,7 +714,10 @@ export function searchResults() {
   
                     </li>`;
             } else {
-              return `<li class="carousel-list-item">
+              // We want to call the following onclick ${bindEvent('click', hit, 'Product Clicked')}
+              return `<li
+             onclick=consoleFunction() 
+             class="carousel-list-item">
                             <div class="badgeWrapper">
                                     <div>${displayEcoBadge(hit)}</div>
                                     <div>${displayOffBadge(hit)}</div>

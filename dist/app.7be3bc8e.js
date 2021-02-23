@@ -45941,9 +45941,14 @@ function searchResults() {
   const virtualSearchBox = (0, _connectors.connectSearchBox)(renderVirtualSearchBox);
 
   const renderHits = (renderOptions, isFirstRender) => {
+    window.consoleFunction = () => {
+      console.log('hi');
+    };
+
     const {
       hits,
-      widgetParams
+      widgetParams,
+      bindEvent
     } = renderOptions;
     const response = renderOptions.results;
 
@@ -45951,27 +45956,30 @@ function searchResults() {
 
     const shouldInjectRecord = (position, start, end) => position > start && position <= end;
 
-    const userData = search.renderState.gstar_demo_test.queryRules.items;
+    if (search.renderState.gstar_demo_test.queryRules.items !== undefined) {
+      const userData = search.renderState.gstar_demo_test.queryRules.items;
 
-    if (isValidUserData(userData)) {
-      if (response !== undefined) {
-        console.log(response); //Appending custom data at the beginning of the array of results only if it's in the range of the position
+      if (isValidUserData(userData)) {
+        if (response !== undefined) {
+          console.log(response); //Appending custom data at the beginning of the array of results only if it's in the range of the position
 
-        let start = response.page * response.hitsPerPage + 1;
-        let end = response.page * response.hitsPerPage + response.hitsPerPage;
-        userData.forEach(record => {
-          if (shouldInjectRecord(record.position, start, end)) {
-            response.hits.splice(record.position - 1, 0, record);
-          }
-        });
+          let start = response.page * response.hitsPerPage + 1;
+          let end = response.page * response.hitsPerPage + response.hitsPerPage;
+          userData.forEach(record => {
+            if (shouldInjectRecord(record.position, start, end)) {
+              response.hits.splice(record.position - 1, 0, record);
+            }
+          });
+        }
       }
     }
 
-    document.querySelector('#hits').innerHTML = "\n      <ul class=\"hitsAutocomplete displayGrid\">\n        ".concat(hits.map((hit, bindEvent) => {
+    document.querySelector('#hits').innerHTML = "\n      <ul class=\"hitsAutocomplete displayGrid\">\n        ".concat(hits.map(hit => {
       if (hit.injected) {
         return " <li class=\"carousel-list-item\">\n                          <div class=\"image-wrapper\">\n                              <img class=\"injectImg\" src=\"".concat(hit.image, "\" alt=\"\">\n                          </div>\n                          <div class=\"btn-injection-content-wrapper\">\n                              <a class=\"btn-injection-content\">Check it out</a>\n                          </div>\n  \n                    </li>");
       } else {
-        return "<li class=\"carousel-list-item\">\n                            <div class=\"badgeWrapper\">\n                                    <div>".concat(displayEcoBadge(hit), "</div>\n                                    <div>").concat(displayOffBadge(hit), "</div>\n                                </div>\n                            <a href=\"").concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                                <div class=\"image-wrapper\">\n                                    <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n            \n                                    <div class=\"hit-sizeFilter\">\n                                        <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                                    </div>\n                                </div>\n                                <div class=\"hit-name\">\n                                    <div class=\"hit-infos\">\n                                        <div>").concat(hit.name, "</div>\n            \n                                        <div class=\"colorWrapper\">\n                                                <div>").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[0] : '', "</div>\n                                                <div style=\"background: ").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[1] : '', "\" class=\"hit-colorsHex\"></div>\n                                            </div>\n            \n                                        </div>\n                                        <div class=\"hit-price\">\n                                        ").concat(displayPrice(hit), "\n                                    </div>\n            \n                                </div>\n                            </a>\n                        </li>");
+        // We want to call the following onclick ${bindEvent('click', hit, 'Product Clicked')}
+        return "<li\n             onclick=consoleFunction() \n             class=\"carousel-list-item\">\n                            <div class=\"badgeWrapper\">\n                                    <div>".concat(displayEcoBadge(hit), "</div>\n                                    <div>").concat(displayOffBadge(hit), "</div>\n                                </div>\n                            <a href=\"").concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                                <div class=\"image-wrapper\">\n                                    <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n            \n                                    <div class=\"hit-sizeFilter\">\n                                        <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                                    </div>\n                                </div>\n                                <div class=\"hit-name\">\n                                    <div class=\"hit-infos\">\n                                        <div>").concat(hit.name, "</div>\n            \n                                        <div class=\"colorWrapper\">\n                                                <div>").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[0] : '', "</div>\n                                                <div style=\"background: ").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[1] : '', "\" class=\"hit-colorsHex\"></div>\n                                            </div>\n            \n                                        </div>\n                                        <div class=\"hit-price\">\n                                        ").concat(displayPrice(hit), "\n                                    </div>\n            \n                                </div>\n                            </a>\n                        </li>");
       }
     }).join(''), "\n      </ul>\n    ");
   };
@@ -46601,7 +46609,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50358" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53967" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
