@@ -1,7 +1,7 @@
 import { carousel } from "./displayCarousel";
 import instantsearch from "instantsearch.js";
 import algoliasearch from "algoliasearch";
-import { configure, index, searchBox, pagination, refinementList, stats } from "instantsearch.js/es/widgets";
+import { configure, index, stats } from "instantsearch.js/es/widgets";
 import { connectAutocomplete } from 'instantsearch.js/es/connectors';
 import {
     autocomplete,
@@ -127,7 +127,6 @@ export function GetDataForCarousel() {
             searchClient,
             indexName: 'gstar_demo_test_query_suggestions',
             getSearchParams() {
-                console.log(recentSearchesPlugin.data.getAlgoliaSearchParams())
                 return recentSearchesPlugin.data.getAlgoliaSearchParams({
                     hitsPerPage: 3,
                 });
