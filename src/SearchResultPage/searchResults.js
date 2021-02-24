@@ -25,6 +25,7 @@ import {
     autocomplete,
     getAlgoliaResults,
     snippetHit,
+    highlightHit
 } from '@algolia/autocomplete-js';
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions';
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches';
@@ -276,9 +277,17 @@ export function searchResults() {
                                         item({ item }) {
                                             return productTemplate({
                                                 image: item.image_link,
-                                                title: snippetHit({ hit: item, attribute: 'name' }),
+                                                title: highlightHit({ hit: item, attribute: 'name' }),
                                                 description: item.description,
                                                 price: item.price,
+                                                _highlightResult: {
+                                                    query: {
+                                                        title: {
+                                                            value:
+                                                                '__aa-highlight__He__/aa-highlight__llo t__aa-highlight__he__/aa-highlight__re',
+                                                        },
+                                                    },
+                                                },
                                             });
                                         },
                                         footer() {
@@ -891,7 +900,7 @@ export function searchResults() {
                     </div>
                     <div class="hit-name">
                         <div class="hit-infos">
-                            <div>${hit.name}</div>
+                            <div>${hit._highlightResult.name.value}</div>
                                 
                             <div class="colorWrapper">
                                     <div>${hit.hexColorCode

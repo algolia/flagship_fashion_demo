@@ -45408,7 +45408,6 @@ function searchResults() {
       suggestionContainer.appendChild(ul);
     }
 
-    console.log(query);
     suggestionIndex.search(query, {
       hitsPerPage: 1
     }).then((_ref) => {
@@ -45419,7 +45418,6 @@ function searchResults() {
       [...suggestionContainer.querySelectorAll('li')].forEach(element => {
         element.addEventListener('click', event => {
           event.preventDefault();
-          console.log(event.target.innerText);
           search.renderState['gstar_demo_test'].refinementList.category.refine(event.target.innerText); // refine(event.target.innerText);
         });
       });
@@ -45581,12 +45579,19 @@ function searchResults() {
                     } = _ref4;
                     return productTemplate({
                       image: item.image_link,
-                      title: (0, _autocompleteJs.snippetHit)({
+                      title: (0, _autocompleteJs.highlightHit)({
                         hit: item,
                         attribute: 'name'
                       }),
                       description: item.description,
-                      price: item.price
+                      price: item.price,
+                      _highlightResult: {
+                        query: {
+                          title: {
+                            value: '__aa-highlight__He__/aa-highlight__llo t__aa-highlight__he__/aa-highlight__re'
+                          }
+                        }
+                      }
                     });
                   },
 
@@ -45859,7 +45864,6 @@ function searchResults() {
         searchClient
       });
       const userTokenSelector = document.getElementById("user-token-selector");
-      console.log(userTokenSelector);
       userTokenSelector.addEventListener("change", () => {
         userTokenSelector.disabled = true;
         search.removeWidgets(carouselWidgets);
@@ -46100,7 +46104,7 @@ function searchResults() {
   }), new _hitsWithContent.default({
     container: '#hits',
     templates: {
-      item: (hit, bindEvent) => "\n                <li class=\"carousel-list-item\">\n                <div class=\"badgeWrapper\">\n                        <div>".concat(displayEcoBadge(hit), "</div>\n                        <div>").concat(displayOffBadge(hit), "</div>\n                    </div>\n                <a href=\"").concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                   \n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>").concat(hit.name, "</div>\n                                \n                            <div class=\"colorWrapper\">\n                                    <div>").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[0] : '', "</div>\n                                    <div style=\"background: ").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[1] : '', "\" class=\"hit-colorsHex\"></div>\n                                </div>\n                                \n                                \n                            </div>\n                            <div class=\"hit-price\">\n                            ").concat(displayPrice(hit), "\n                        </div>\n                        \n                    </div>\n                </a>\n            </li>\n                "),
+      item: (hit, bindEvent) => "\n                <li class=\"carousel-list-item\">\n                <div class=\"badgeWrapper\">\n                        <div>".concat(displayEcoBadge(hit), "</div>\n                        <div>").concat(displayOffBadge(hit), "</div>\n                    </div>\n                <a href=\"").concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                    <div class=\"image-wrapper\">\n                        <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                   \n                        <div class=\"hit-sizeFilter\">\n                            <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                        </div>\n                    </div>\n                    <div class=\"hit-name\">\n                        <div class=\"hit-infos\">\n                            <div>").concat(hit._highlightResult.name.value, "</div>\n                                \n                            <div class=\"colorWrapper\">\n                                    <div>").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[0] : '', "</div>\n                                    <div style=\"background: ").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[1] : '', "\" class=\"hit-colorsHex\"></div>\n                                </div>\n                                \n                                \n                            </div>\n                            <div class=\"hit-price\">\n                            ").concat(displayPrice(hit), "\n                        </div>\n                        \n                    </div>\n                </a>\n            </li>\n                "),
       injectedItem: hit => "\n                 <li class=\"carousel-list-item\">\n                 \n                        <div class=\"image-wrapper\">\n                            <img class=\"injectImg\" src=\"".concat(hit.image, "\" alt=\"\">\n                        </div>\n                        <div class=\"btn-injection-content-wrapper\">\n                            <a class=\"btn-injection-content\">Check it out</a>\n                        </div>\n                   \n                  </li>\n              "),
       noResults: response => "\n                \n              "
     }
@@ -46583,7 +46587,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59060" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51527" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

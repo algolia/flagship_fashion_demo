@@ -40910,7 +40910,6 @@ function GetDataForCarousel() {
       indexName: 'gstar_demo_test_query_suggestions',
 
       getSearchParams() {
-        console.log(recentSearchesPlugin.data.getAlgoliaSearchParams());
         return recentSearchesPlugin.data.getAlgoliaSearchParams({
           hitsPerPage: 3
         });
@@ -40937,6 +40936,7 @@ function GetDataForCarousel() {
       if (isFirstRender) {
         autocompleteRef.current = (0, _autocompleteJs.autocomplete)({
           container: '#autocomplete',
+          // debug: true,
           openOnFocus: true,
           plugins: [recentSearchesPlugin, querySuggestionsPlugin],
 
@@ -40999,15 +40999,26 @@ function GetDataForCarousel() {
                     let {
                       item
                     } = _ref3;
+                    // const highlightedValue = highlightHit({
+                    //     item,
+                    //     attribute: 'query',
+                    // });
                     return productTemplate({
                       image: item.image_link,
-                      title: (0, _autocompleteJs.snippetHit)({
+                      title: (0, _autocompleteJs.highlightHit)({
                         hit: item,
                         attribute: 'name'
                       }),
                       description: item.description,
                       price: item.price,
-                      query: products.query
+                      query: products.query,
+                      _highlightResult: {
+                        query: {
+                          title: {
+                            value: '__aa-highlight__He__/aa-highlight__llo t__aa-highlight__he__/aa-highlight__re'
+                          }
+                        }
+                      }
                     });
                   },
 
@@ -41245,7 +41256,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59060" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51527" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
