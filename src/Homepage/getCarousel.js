@@ -127,6 +127,7 @@ export function GetDataForCarousel() {
             searchClient,
             indexName: 'gstar_demo_test_query_suggestions',
             getSearchParams() {
+                console.log(recentSearchesPlugin.data.getAlgoliaSearchParams())
                 return recentSearchesPlugin.data.getAlgoliaSearchParams({
                     hitsPerPage: 3,
                 });

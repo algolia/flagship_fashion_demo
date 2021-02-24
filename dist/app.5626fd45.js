@@ -40910,6 +40910,7 @@ function GetDataForCarousel() {
       indexName: 'gstar_demo_test_query_suggestions',
 
       getSearchParams() {
+        console.log(recentSearchesPlugin.data.getAlgoliaSearchParams());
         return recentSearchesPlugin.data.getAlgoliaSearchParams({
           hitsPerPage: 3
         });
@@ -41244,7 +41245,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49569" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59060" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

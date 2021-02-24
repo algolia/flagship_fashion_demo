@@ -1,6 +1,6 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
-import HitsWithContent from "./hits-with-content/hits-with-content";
+import HitsWithContent from './hits-with-content/hits-with-content';
 import {
     clearRefinements,
     refinementList,
@@ -18,6 +18,7 @@ import {
     connectCurrentRefinements,
     connectAutocomplete,
     connectSearchBox,
+    connectConfigure
 } from 'instantsearch.js/es/connectors';
 
 import {
@@ -30,6 +31,8 @@ import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-pl
 import '@algolia/autocomplete-theme-classic';
 import { carousel } from '../Homepage/displayCarousel';
 
+import aa from 'search-insights';
+import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 
 export function searchResults() {
     const searchClient = algoliasearch(
@@ -40,9 +43,14 @@ export function searchResults() {
     const search = instantsearch({
         indexName: 'gstar_demo_test',
         searchClient,
-        routing: true
+        routing: true,
     });
 
+    const insightsMiddleware = createInsightsMiddleware({
+        insightsClient: aa,
+    });
+
+    search.use(insightsMiddleware);
 
     const renderRefinementList = (renderOptions, isFirstRender) => {
         const { items, refine, createURL, widgetParams } = renderOptions;
@@ -72,7 +80,7 @@ export function searchResults() {
         [...widgetParams.container.querySelectorAll('a')].forEach(element => {
             element.addEventListener('click', event => {
                 event.preventDefault();
-                console.log(refine)
+                console.log(refine);
                 refine(event.currentTarget.dataset.value);
             });
         });
@@ -87,15 +95,13 @@ export function searchResults() {
     const renderQueryRuleCustomData = (renderOptions, isFirstRender) => {
         const { items, widgetParams, refine } = renderOptions;
 
-
-
         const checkBanner = items.map(item => {
-            return item.banner
-        })
+            return item.banner;
+        });
 
         if (!checkBanner.includes(undefined)) {
-            let banner = widgetParams.container
-            banner.style.display = "block"
+            let banner = widgetParams.container;
+            banner.style.display = 'block';
             widgetParams.container.innerHTML = `
             <div class="banner-wrapper">
               ${items
@@ -114,8 +120,8 @@ export function searchResults() {
             </div>
           `;
         } else {
-            let banner = widgetParams.container
-            banner.style.display = "none"
+            let banner = widgetParams.container;
+            banner.style.display = 'none';
         }
     };
 
@@ -124,13 +130,14 @@ export function searchResults() {
             .map(key => `data-${key}="${refinement[key]}"`)
             .join(' ');
 
-
     const renderListItem = item => `
       ${item.refinements
             .map(
                 refinement => `
-                <li>${refinement.attribute === "hexColorCode" ? refinement.value.split('//')[0] : refinement.value} (${refinement.count != undefined ? refinement.count : '$'
-                    })
+                <li>${refinement.attribute === 'hexColorCode'
+                        ? refinement.value.split('//')[0]
+                        : refinement.value
+                    } (${refinement.count != undefined ? refinement.count : '$'})
             <button ${createDataAttribtues(
                         refinement
                     )} class="btnCloseRefinements">X</button></li>`
@@ -171,8 +178,6 @@ export function searchResults() {
         renderCurrentRefinements
     );
 
-
-
     function createAutocompleteSearchBox() {
         const appId = 'HYDY1KWTWB';
         const apiKey = '28cf6d38411215e2eef188e635216508';
@@ -195,7 +200,6 @@ export function searchResults() {
         const autocompleteRef = { current: null };
         // Use indicesRef to track which index (or indices) to query using autocomplete
         const indicesRef = { current: [] };
-
 
         const renderAutocomplete = (renderOptions, isFirstRender) => {
             const { indices, refine } = renderOptions;
@@ -295,14 +299,13 @@ export function searchResults() {
                         });
                     },
                     onSubmit({ root, sections, state }) {
-                        const stateCollection = state.collections[3].items.length
+                        const stateCollection = state.collections[3].items.length;
                         if (stateCollection === 0) {
-                            noResult(stateCollection)
+                            noResult(stateCollection);
                         } else {
                             refine(state.query);
-                            displayResultOrNoResult(stateCollection)
+                            displayResultOrNoResult(stateCollection);
                         }
-
                     },
                 });
                 // During subsequent renders, refresh the autocomplete instance
@@ -426,7 +429,6 @@ export function searchResults() {
                         });
 
                         if (carouselConfig.configure) {
-
                             indexWidget.addWidgets([
                                 configure({
                                     ...carouselConfig.configure,
@@ -458,7 +460,7 @@ export function searchResults() {
 
         function displayResultOrNoResult(stateCollection) {
             const hitContainer = document.querySelector('#hitsResults');
-            const hit = document.querySelector("#hits")
+            const hit = document.querySelector('#hits');
             const noResultCarousel = document.querySelector('#stacked-carousels');
             const noResultContainer = document.querySelector('.container');
             const pagination = document.querySelector('#pagination');
@@ -489,35 +491,37 @@ export function searchResults() {
     function displayPrice(hit) {
         if (hit.newPrice) {
             return `<p class="cross-price">$${hit.price}</p>
-                    <p>$${hit.newPrice}</p>`
+                    <p>$${hit.newPrice}</p>`;
         } else {
-            return `<p>$${hit.price}</p>`
+            return `<p>$${hit.price}</p>`;
         }
     }
 
     function displayEcoBadge(hit) {
         if (hit.badges) {
-            let eco = hit.badges.eco
+            let eco = hit.badges.eco;
             if (eco) {
-                return `<div class="badge badgeEco"><p>Eco</p></div>`
-            } else { return `` }
+                return `<div class="badge badgeEco"><p>Eco</p></div>`;
+            } else {
+                return ``;
+            }
         } else {
-            return ``
+            return ``;
         }
     }
 
     function displayOffBadge(hit) {
         if (hit.badges) {
-            let off = hit.badges.off
+            let off = hit.badges.off;
             if (off) {
-                let discount = (1 - (hit.newPrice / hit.price)) * 100
-                discount = Math.floor(parseInt(discount, 10))
-                return `<div class="badge badgeOff">${discount}% Off</div>`
+                let discount = (1 - hit.newPrice / hit.price) * 100;
+                discount = Math.floor(parseInt(discount, 10));
+                return `<div class="badge badgeOff">${discount}% Off</div>`;
             } else {
-                return ``
+                return ``;
             }
         } else {
-            return ``
+            return ``;
         }
     }
 
@@ -559,12 +563,22 @@ export function searchResults() {
                 searchClient,
             });
 
+
+            const userTokenSelector = document.getElementById("user-token-selector");
+            console.log(userTokenSelector)
+            userTokenSelector.addEventListener("change", () => {
+                userTokenSelector.disabled = true;
+                search.removeWidgets(carouselWidgets);
+                getCarouselConfigs().then((carousels) => {
+                    userTokenSelector.disabled = false;
+                    carouselWidgets = createWidgets(carousels);
+                    search.addWidgets(carouselWidgets);
+                });
+            });
+
             function getUserToken() {
-                const getPersona = localStorage.getItem('personaValue');
-
-                return getPersona;
+                return userTokenSelector.value;
             }
-
             //GET THE CONFIG
             function getCarouselConfigs() {
                 return searchClient
@@ -594,7 +608,6 @@ export function searchResults() {
                     });
 
                     if (carouselConfig.configure) {
-
                         indexWidget.addWidgets([
                             configure({
                                 ...carouselConfig.configure,
@@ -617,6 +630,8 @@ export function searchResults() {
 
             // retrieve the carousel configuration once
             getCarouselConfigs().then(carousels => {
+
+                userTokenSelector.disabled = false;
                 carouselWidgets = createWidgets(carousels);
                 search.addWidgets(carouselWidgets);
                 search.start();
@@ -626,7 +641,7 @@ export function searchResults() {
 
     function displayResultOrNoResult(hits) {
         const hitContainer = document.querySelector('#hitsResults');
-        const hit = document.querySelector("#hits")
+        const hit = document.querySelector('#hits');
         const noResultCarousel = document.querySelector('#stacked-carousels');
         const noResultContainer = document.querySelector('.container');
         const pagination = document.querySelector('#pagination');
@@ -653,7 +668,18 @@ export function searchResults() {
         }
     }
 
+    const renderConfigure = (renderOptions, isFirstRender) => {
+        const { refine, widgetParams } = renderOptions;
 
+        const userToken = document.querySelector('.user-token-selector')
+        userToken.addEventListener('change', (e) => {
+            refine({ userToken: e.target.value });
+        })
+    };
+
+    const customConfigure = connectConfigure(
+        renderConfigure
+    );
 
     const autocompleteSearchBox = createAutocompleteSearchBox();
 
@@ -662,12 +688,16 @@ export function searchResults() {
         refine(search.renderState.gstar_demo_test.autocomplete.currentRefinement);
     };
 
-
     const virtualSearchBox = connectSearchBox(renderVirtualSearchBox);
 
-
-
     search.addWidgets([
+        customConfigure({
+            container: document.querySelector('#configure'),
+            searchParameters: {
+                hitsPerPage: 20,
+                enablePersonalization: true,
+            },
+        }),
         customRefinementList({
             container: document.querySelector('#refinement-list-SearchResult'),
             attribute: 'keywords',
@@ -682,7 +712,6 @@ export function searchResults() {
 
         index({
             indexName: 'gstar_demo_test',
-
         }).addWidgets([
             configure({
                 hitsPerPage: 5,
@@ -692,21 +721,21 @@ export function searchResults() {
                 placeholder: 'Search products',
             }),
             {
-                init(opts) {
-
-                }
+                init(opts) { },
             },
             {
                 render(options) {
                     const results = options.results;
                     if (results.nbHits === 0) {
-                        noResult(results.nbHits, results.query)
+                        noResult(results.nbHits, results.query);
                     }
-                }
-            }
+                },
+            },
         ]),
         configure({
-            query: localStorage.getItem('userQuery') ? localStorage.getItem('userQuery') : ``,
+            query: localStorage.getItem('userQuery')
+                ? localStorage.getItem('userQuery')
+                : ``,
         }),
         {
             init() {
@@ -775,7 +804,7 @@ export function searchResults() {
             container: '#price-list',
             attribute: 'price',
             tooltips: true,
-            pips: true
+            pips: true,
         }),
         refinementList({
             container: '#hexColor-list',
@@ -830,22 +859,22 @@ export function searchResults() {
             container: '#price-list',
             attribute: 'price',
             tooltips: true,
-            pips: true
+            pips: true,
         }),
         stats({
             container: '#stats-searchResult',
         }),
         new HitsWithContent({
-            container: "#hits",
+            container: '#hits',
             templates: {
-                item: hit => `
+                item: (hit, bindEvent) => `
                 <li class="carousel-list-item">
                 <div class="badgeWrapper">
                         <div>${displayEcoBadge(hit)}</div>
                         <div>${displayOffBadge(hit)}</div>
                     </div>
-                <a href="${hit.url
-                    }" class="product-searchResult" data-id="${hit.objectID}">
+                <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID
+                    }">
                     <div class="image-wrapper">
                         <img src="${hit.image_link}" align="left" alt="${hit.name
                     }" class="result-img" />
@@ -860,9 +889,13 @@ export function searchResults() {
                             <div>${hit.name}</div>
                                 
                             <div class="colorWrapper">
-                                    <div>${hit.hexColorCode ? hit.hexColorCode.split('//')[0] : ''
+                                    <div>${hit.hexColorCode
+                        ? hit.hexColorCode.split('//')[0]
+                        : ''
                     }</div>
-                                    <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
+                                    <div style="background: ${hit.hexColorCode
+                        ? hit.hexColorCode.split('//')[1]
+                        : ''
                     }" class="hit-colorsHex"></div>
                                 </div>
                                 
@@ -890,15 +923,13 @@ export function searchResults() {
               `,
                 noResults: response => `
                 
-              `
+              `,
             },
         }),
         pagination({
             container: '#pagination',
         }),
-
     ]);
 
     search.start();
 }
-
