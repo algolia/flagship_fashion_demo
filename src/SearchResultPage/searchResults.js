@@ -52,38 +52,44 @@ export function searchResults() {
 
     search.use(insightsMiddleware);
 
-    const renderRefinementList = (renderOptions, isFirstRender) => {
-        const { items, refine, createURL, widgetParams } = renderOptions;
+    let suggestionIndex = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508').initIndex(
+        'gstar_demo_test_query_suggestions'
+    );
 
+    const renderCustomSearchBar = (renderOptions, isFirstRender) => {
+        const { items, refine, widgetParams, query } = renderOptions;
+        const suggestionContainer = document.querySelector('.refinement-list-SearchResult')
         if (isFirstRender) {
             const ul = document.createElement('ul');
-            widgetParams.container.appendChild(ul);
+            ul.classList.add('suggestion-wrapper')
+            suggestionContainer.appendChild(ul);
         }
+        console.log(query)
 
-        widgetParams.container.querySelector('ul').innerHTML = items
-            .map(
-                item => `
-                  <li style="${isRefined(item)}">
-                    <a
-                      href="${createURL(item.value)}"
-                      data-value="${item.value}"
-                      style="${isRefined(item)}"
-                    >
-                      ${item.label} <span style="${isRefined(item)}">(${item.count
-                    })</span>
-                    </a>
-                  </li>
-                `
-            )
-            .join('');
+        suggestionIndex
+            .search(query, {
+                hitsPerPage: 1,
+            })
+            .then(({ hits }) => {
+                suggestionContainer.querySelector('ul').innerHTML = hits
+                    .map(
+                        item => item.category.map(i => ` 
+                        <li style="${isRefined(i)}">${i}</li>
+                    ` ).slice(0, 11).join('')
+                    )
+                    .join('');
 
-        [...widgetParams.container.querySelectorAll('a')].forEach(element => {
-            element.addEventListener('click', event => {
-                event.preventDefault();
-                console.log(refine);
-                refine(event.currentTarget.dataset.value);
-            });
-        });
+                [...suggestionContainer.querySelectorAll('li')].forEach(element => {
+                    element.addEventListener('click', event => {
+                        event.preventDefault();
+                        console.log(event.target.innerText)
+                        search.renderState['gstar_demo_test'].refinementList.category.refine(event.target.innerText)
+                        // refine(event.target.innerText);
+                    });
+                });
+
+            })
+
     };
 
     function isRefined(item) {
@@ -170,7 +176,9 @@ export function searchResults() {
         });
     };
 
-    const customRefinementList = connectRefinementList(renderRefinementList);
+    const customSearchBox = connectSearchBox(
+        renderCustomSearchBar
+    );
     const customQueryRuleCustomData = connectQueryRules(
         renderQueryRuleCustomData
     );
@@ -698,11 +706,6 @@ export function searchResults() {
                 enablePersonalization: true,
             },
         }),
-        customRefinementList({
-            container: document.querySelector('#refinement-list-SearchResult'),
-            attribute: 'keywords',
-            showMoreLimit: 10,
-        }),
         customQueryRuleCustomData({
             container: document.querySelector('#banner'),
         }),
@@ -719,6 +722,11 @@ export function searchResults() {
             autocompleteSearchBox({
                 container: '#autocomplete',
                 placeholder: 'Search products',
+            }),
+            customSearchBox({
+                container: document.querySelector('#refinement-list-SearchResult'),
+                attribute: 'keywords',
+                showMoreLimit: 10,
             }),
             {
                 init(opts) { },
