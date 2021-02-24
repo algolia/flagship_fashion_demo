@@ -900,7 +900,7 @@ export function searchResults() {
                     </div>
                     <div class="hit-name">
                         <div class="hit-infos">
-                            <div>${hit.name}</div>
+                            <div>${hit._highlightResult.name.value}</div>
                                 
                             <div class="colorWrapper">
                                     <div>${hit.hexColorCode
