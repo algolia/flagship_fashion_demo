@@ -64,7 +64,6 @@ export function searchResults() {
             ul.classList.add('suggestion-wrapper')
             suggestionContainer.appendChild(ul);
         }
-        console.log(query)
 
         suggestionIndex
             .search(query, {
@@ -82,7 +81,6 @@ export function searchResults() {
                 [...suggestionContainer.querySelectorAll('li')].forEach(element => {
                     element.addEventListener('click', event => {
                         event.preventDefault();
-                        console.log(event.target.innerText)
                         search.renderState['gstar_demo_test'].refinementList.category.refine(event.target.innerText)
                         // refine(event.target.innerText);
                     });
@@ -573,7 +571,6 @@ export function searchResults() {
 
 
             const userTokenSelector = document.getElementById("user-token-selector");
-            console.log(userTokenSelector)
             userTokenSelector.addEventListener("change", () => {
                 userTokenSelector.disabled = true;
                 search.removeWidgets(carouselWidgets);
