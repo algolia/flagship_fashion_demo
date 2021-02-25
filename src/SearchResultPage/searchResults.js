@@ -668,8 +668,9 @@ export function searchResults() {
   const virtualSearchBox = connectSearchBox(renderVirtualSearchBox);
 
   const renderHits = (renderOptions, isFirstRender) => {
-    window.consoleFunction = () => {
+    window.consoleFunction = bindEvent => {
       console.log('hi');
+      // event listener
     };
 
     const { hits, widgetParams, bindEvent } = renderOptions;
@@ -716,7 +717,6 @@ export function searchResults() {
             } else {
               // We want to call the following onclick ${bindEvent('click', hit, 'Product Clicked')}
               return `<li
-             onclick=consoleFunction() 
              class="carousel-list-item">
                             <div class="badgeWrapper">
                                     <div>${displayEcoBadge(hit)}</div>
@@ -768,6 +768,13 @@ export function searchResults() {
             
                                 </div>
                             </a>
+                            <button
+                          type="button"
+                          ${bindEvent('click', hit, 'Product Added')}
+                        >
+                          Add to cart
+                          <!-- this button will send a click event when user clicks -->
+                        </button>
                         </li>`;
             }
           })
