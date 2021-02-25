@@ -45940,16 +45940,57 @@ function searchResults() {
 
   const virtualSearchBox = (0, _connectors.connectSearchBox)(renderVirtualSearchBox);
 
-  const renderHits = (renderOptions, isFirstRender) => {
-    window.consoleFunction = bindEvent => {
-      console.log('hi'); // event listener
-    };
+  const findInsightsTarget = (startElement, endElement, validator) => {
+    let element = startElement;
 
+    while (element && !validator(element)) {
+      if (element === endElement) {
+        return null;
+      }
+
+      element = element.parentElement;
+    }
+
+    return element;
+  };
+
+  const parseInsightsEvent = element => {
+    const serializedPayload = element.getAttribute('data-insights-event');
+
+    if (typeof serializedPayload !== 'string') {
+      throw new Error('The insights middleware expects `data-insights-event` to be a base64-encoded JSON string.');
+    }
+
+    try {
+      return JSON.parse(atob(serializedPayload));
+    } catch (error) {
+      throw new Error('The insights middleware was unable to parse `data-insights-event`.');
+    }
+  };
+
+  const renderHits = (renderOptions, isFirstRender) => {
     const {
       hits,
       widgetParams,
-      bindEvent
+      bindEvent,
+      instantSearchInstance
     } = renderOptions;
+    console.log(instantSearchInstance);
+    const container = document.querySelector(widgetParams.container);
+
+    if (isFirstRender) {
+      container.addEventListener('click', event => {
+        const targetWithEvent = findInsightsTarget(event.target, event.currentTarget, element => element.hasAttribute('data-insights-event'));
+        console.log(targetWithEvent);
+
+        if (targetWithEvent) {
+          const payload = parseInsightsEvent(targetWithEvent);
+          console.log(payload);
+          instantSearchInstance.sendEventToInsights(payload);
+        }
+      });
+    }
+
     const response = renderOptions.results;
 
     const isValidUserData = userData => userData && Array.isArray(userData);
@@ -45974,14 +46015,14 @@ function searchResults() {
       }
     }
 
-    document.querySelector('#hits').innerHTML = "\n      <ul class=\"hitsAutocomplete displayGrid\">\n        ".concat(hits.map(hit => {
+    document.querySelector('#hits').innerHTML = "\n        ".concat(hits.map(hit => {
       if (hit.injected) {
         return " <li class=\"carousel-list-item\">\n                          <div class=\"image-wrapper\">\n                              <img class=\"injectImg\" src=\"".concat(hit.image, "\" alt=\"\">\n                          </div>\n                          <div class=\"btn-injection-content-wrapper\">\n                              <a class=\"btn-injection-content\">Check it out</a>\n                          </div>\n  \n                    </li>");
       } else {
         // We want to call the following onclick ${bindEvent('click', hit, 'Product Clicked')}
         return "<li\n             class=\"carousel-list-item\">\n                            <div class=\"badgeWrapper\">\n                                    <div>".concat(displayEcoBadge(hit), "</div>\n                                    <div>").concat(displayOffBadge(hit), "</div>\n                                </div>\n                            <a href=\"").concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                                <div class=\"image-wrapper\">\n                                    <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n            \n                                    <div class=\"hit-sizeFilter\">\n                                        <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                                    </div>\n                                </div>\n                                <div class=\"hit-name\">\n                                    <div class=\"hit-infos\">\n                                        <div>").concat(hit.name, "</div>\n            \n                                        <div class=\"colorWrapper\">\n                                                <div>").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[0] : '', "</div>\n                                                <div style=\"background: ").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[1] : '', "\" class=\"hit-colorsHex\"></div>\n                                            </div>\n            \n                                        </div>\n                                        <div class=\"hit-price\">\n                                        ").concat(displayPrice(hit), "\n                                    </div>\n            \n                                </div>\n                            </a>\n                            <button\n                          type=\"button\"\n                          ").concat(bindEvent('click', hit, 'Product Added'), "\n                        >\n                          Add to cart\n                          <!-- this button will send a click event when user clicks -->\n                        </button>\n                        </li>");
       }
-    }).join(''), "\n      </ul>\n    ");
+    }).join(''), "\n    ");
   };
 
   const connectedHitsWithInjectedContent = (0, _connectors.connectHits)(renderHits);
@@ -46609,7 +46650,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58501" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58295" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

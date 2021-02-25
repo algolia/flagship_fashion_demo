@@ -667,13 +667,63 @@ export function searchResults() {
 
   const virtualSearchBox = connectSearchBox(renderVirtualSearchBox);
 
-  const renderHits = (renderOptions, isFirstRender) => {
-    window.consoleFunction = bindEvent => {
-      console.log('hi');
-      // event listener
-    };
+  const findInsightsTarget = (startElement, endElement, validator) => {
+    let element = startElement;
+    while (element && !validator(element)) {
+      if (element === endElement) {
+        return null;
+      }
+      element = element.parentElement;
+    }
+    return element;
+  };
 
-    const { hits, widgetParams, bindEvent } = renderOptions;
+  const parseInsightsEvent = element => {
+    const serializedPayload = element.getAttribute('data-insights-event');
+
+    if (typeof serializedPayload !== 'string') {
+      throw new Error(
+        'The insights middleware expects `data-insights-event` to be a base64-encoded JSON string.'
+      );
+    }
+
+    try {
+      return JSON.parse(atob(serializedPayload));
+    } catch (error) {
+      throw new Error(
+        'The insights middleware was unable to parse `data-insights-event`.'
+      );
+    }
+  };
+
+  const renderHits = (renderOptions, isFirstRender) => {
+    const {
+      hits,
+      widgetParams,
+      bindEvent,
+      instantSearchInstance,
+    } = renderOptions;
+
+    console.log(instantSearchInstance);
+
+    const container = document.querySelector(widgetParams.container);
+
+    if (isFirstRender) {
+      container.addEventListener('click', event => {
+        const targetWithEvent = findInsightsTarget(
+          event.target,
+          event.currentTarget,
+          element => element.hasAttribute('data-insights-event')
+        );
+        console.log(targetWithEvent);
+
+        if (targetWithEvent) {
+          const payload = parseInsightsEvent(targetWithEvent);
+          console.log(payload);
+          instantSearchInstance.sendEventToInsights(payload);
+        }
+      });
+    }
 
     const response = renderOptions.results;
 
@@ -701,7 +751,6 @@ export function searchResults() {
     }
 
     document.querySelector('#hits').innerHTML = `
-      <ul class="hitsAutocomplete displayGrid">
         ${hits
           .map(hit => {
             if (hit.injected) {
@@ -779,7 +828,6 @@ export function searchResults() {
             }
           })
           .join('')}
-      </ul>
     `;
   };
 
