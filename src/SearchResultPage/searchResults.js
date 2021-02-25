@@ -101,9 +101,12 @@ export function searchResults() {
         const { items, widgetParams, refine } = renderOptions;
 
         const checkBanner = items.map(item => {
-            return item.banner;
+            if (items.length < 2) {
+                return item.banner;
+            }
         });
-
+        console.log(items)
+        console.log(checkBanner)
         if (!checkBanner.includes(undefined)) {
             let banner = widgetParams.container;
             banner.style.display = 'block';
@@ -313,8 +316,9 @@ export function searchResults() {
                             ];
                         });
                     },
-                    onSubmit({ root, sections, state }) {
-                        const stateCollection = state.collections[3].items.length;
+                    onSubmit({ root, sections, state, event }) {
+                        const stateCollection = state.collections[2].items.length;
+                        console.log(state)
                         if (stateCollection === 0) {
                             noResult(stateCollection);
                         } else {
@@ -330,6 +334,8 @@ export function searchResults() {
         };
 
         return connectAutocomplete(renderAutocomplete);
+
+
 
         function headerTemplate({ title }) {
             return `

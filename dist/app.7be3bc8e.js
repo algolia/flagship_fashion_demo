@@ -45437,8 +45437,12 @@ function searchResults() {
       refine
     } = renderOptions;
     const checkBanner = items.map(item => {
-      return item.banner;
+      if (items.length < 2) {
+        return item.banner;
+      }
     });
+    console.log(items);
+    console.log(checkBanner);
 
     if (!checkBanner.includes(undefined)) {
       let banner = widgetParams.container;
@@ -45632,9 +45636,11 @@ function searchResults() {
             let {
               root,
               sections,
-              state
+              state,
+              event
             } = _ref6;
-            const stateCollection = state.collections[3].items.length;
+            const stateCollection = state.collections[2].items.length;
+            console.log(state);
 
             if (stateCollection === 0) {
               noResult(stateCollection);
@@ -46587,7 +46593,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51527" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62393" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
