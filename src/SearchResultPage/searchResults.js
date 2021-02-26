@@ -52,6 +52,35 @@ export function searchResults() {
 
   search.use(insightsMiddleware);
 
+  const findInsightsTarget = (startElement, endElement, validator) => {
+    let element = startElement;
+    while (element && !validator(element)) {
+      if (element === endElement) {
+        return null;
+      }
+      element = element.parentElement;
+    }
+    return element;
+  };
+
+  const parseInsightsEvent = element => {
+    const serializedPayload = element.getAttribute('data-insights-event');
+
+    if (typeof serializedPayload !== 'string') {
+      throw new Error(
+        'The insights middleware expects `data-insights-event` to be a base64-encoded JSON string.'
+      );
+    }
+
+    try {
+      return JSON.parse(atob(serializedPayload));
+    } catch (error) {
+      throw new Error(
+        'The insights middleware was unable to parse `data-insights-event`.'
+      );
+    }
+  };
+
   const renderRefinementList = (renderOptions, isFirstRender) => {
     const { items, refine, createURL, widgetParams } = renderOptions;
 
@@ -667,35 +696,6 @@ export function searchResults() {
 
   const virtualSearchBox = connectSearchBox(renderVirtualSearchBox);
 
-  const findInsightsTarget = (startElement, endElement, validator) => {
-    let element = startElement;
-    while (element && !validator(element)) {
-      if (element === endElement) {
-        return null;
-      }
-      element = element.parentElement;
-    }
-    return element;
-  };
-
-  const parseInsightsEvent = element => {
-    const serializedPayload = element.getAttribute('data-insights-event');
-
-    if (typeof serializedPayload !== 'string') {
-      throw new Error(
-        'The insights middleware expects `data-insights-event` to be a base64-encoded JSON string.'
-      );
-    }
-
-    try {
-      return JSON.parse(atob(serializedPayload));
-    } catch (error) {
-      throw new Error(
-        'The insights middleware was unable to parse `data-insights-event`.'
-      );
-    }
-  };
-
   const renderHits = (renderOptions, isFirstRender) => {
     const {
       hits,
@@ -703,8 +703,6 @@ export function searchResults() {
       bindEvent,
       instantSearchInstance,
     } = renderOptions;
-
-    console.log(instantSearchInstance);
 
     const container = document.querySelector(widgetParams.container);
 
@@ -715,11 +713,9 @@ export function searchResults() {
           event.currentTarget,
           element => element.hasAttribute('data-insights-event')
         );
-        console.log(targetWithEvent);
 
         if (targetWithEvent) {
           const payload = parseInsightsEvent(targetWithEvent);
-          console.log(payload);
           instantSearchInstance.sendEventToInsights(payload);
         }
       });
@@ -764,8 +760,8 @@ export function searchResults() {
   
                     </li>`;
             } else {
-              // We want to call the following onclick ${bindEvent('click', hit, 'Product Clicked')}
               return `<li
+              ${bindEvent('click', hit, 'Product Clicked')}
              class="carousel-list-item">
                             <div class="badgeWrapper">
                                     <div>${displayEcoBadge(hit)}</div>
@@ -817,13 +813,6 @@ export function searchResults() {
             
                                 </div>
                             </a>
-                            <button
-                          type="button"
-                          ${bindEvent('click', hit, 'Product Added')}
-                        >
-                          Add to cart
-                          <!-- this button will send a click event when user clicks -->
-                        </button>
                         </li>`;
             }
           })
