@@ -1,0 +1,116 @@
+/* USER PERSONA SELECTOR */
+
+.labelUserPersonna {
+    position: fixed;
+    top: 20vh;
+    left: -1rem;
+    width: 40px;
+    height: 100px;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid rgba(240, 240, 239, 0.5);
+    z-index: 16;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bounce 2s infinite;
+    cursor: pointer;
+}
+.labelUserPersonna p {
+    writing-mode: vertical-rl;
+    margin-left: 20px;
+    text-orientation: sideways-right;
+    font-size: 0.8rem;
+    font-family: "Castoro", serif;
+    font-style: italic;
+}
+
+.userPersonaSelector {
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    width: 200px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 4px 4px 20px rgb(0, 0, 0, 0.3);
+    border-radius: 3px;
+    position: fixed;
+    top: 20vh;
+    left: 0;
+    z-index: 15;
+}
+
+.closePersona {
+    cursor: pointer;
+    position: absolute;
+    top: 0.1rem;
+    right: 0.8rem;
+}
+
+.userPersonaSelector p {
+    color: black;
+    font-size: 0.8rem;
+    font-style: italic;
+    font-family: "Castoro", serif;
+}
+.userPersonaSelector select {
+    background-color: rgb(246, 245, 243);
+    border: none;
+    padding: 0.6rem;
+    padding-left: 3rem;
+    border-radius: 5px;
+    font-family: "Castoro", serif;
+}
+
+.personaFadeIn {
+    animation: personaIn 0.8s forwards;
+}
+.personaFadeOut {
+    animation: personaOut 0.8s forwards;
+}
+
+/* ANIMATIONS */
+
+@keyframes personaIn {
+    0% {
+        visibility: hidden;
+        transform: translateX(-100%);
+    }
+    100% {
+        visibility: visible;
+        transform: translateX(0%);
+    }
+}
+@keyframes personaOut {
+    0% {
+        visibility: visible;
+        transform: translateX(0%);
+    }
+    100% {
+        visibility: hidden;
+        transform: translateX(-100%);
+    }
+}
+@keyframes bounce {
+    0% {
+        transform: translateX(0) scale(1);
+    }
+    50% {
+        transform: translateX(5px);
+    }
+    75% {
+        transform: translateX(3px);
+    }
+    80% {
+        transform: translateX(2px);
+    }
+    90% {
+        transform: translateX(4px);
+    }
+    100% {
+        transform: translateX(0px);
+    }
+}

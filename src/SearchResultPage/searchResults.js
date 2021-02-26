@@ -1,6 +1,5 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
-import HitsWithContent from './hits-with-content/hits-with-content';
 import {
   clearRefinements,
   refinementList,
@@ -18,13 +17,14 @@ import {
   connectCurrentRefinements,
   connectAutocomplete,
   connectSearchBox,
-  connectHits,
+  connectConfigure,
 } from 'instantsearch.js/es/connectors';
 
 import {
   autocomplete,
   getAlgoliaResults,
   snippetHit,
+  highlightHit,
 } from '@algolia/autocomplete-js';
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions';
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches';
@@ -51,6 +51,11 @@ export function searchResults() {
   });
 
   search.use(insightsMiddleware);
+
+  let suggestionIndex = algoliasearch(
+    'HYDY1KWTWB',
+    '28cf6d38411215e2eef188e635216508'
+  ).initIndex('gstar_demo_test_query_suggestions');
 
   const findInsightsTarget = (startElement, endElement, validator) => {
     let element = startElement;
@@ -81,39 +86,45 @@ export function searchResults() {
     }
   };
 
-  const renderRefinementList = (renderOptions, isFirstRender) => {
-    const { items, refine, createURL, widgetParams } = renderOptions;
-
+  const renderCustomSearchBar = (renderOptions, isFirstRender) => {
+    const { items, refine, widgetParams, query } = renderOptions;
+    const suggestionContainer = document.querySelector(
+      '.refinement-list-SearchResult'
+    );
     if (isFirstRender) {
       const ul = document.createElement('ul');
-      widgetParams.container.appendChild(ul);
+      ul.classList.add('suggestion-wrapper');
+      suggestionContainer.appendChild(ul);
     }
 
-    widgetParams.container.querySelector('ul').innerHTML = items
-      .map(
-        item => `
-                  <li style="${isRefined(item)}">
-                    <a
-                      href="${createURL(item.value)}"
-                      data-value="${item.value}"
-                      style="${isRefined(item)}"
-                    >
-                      ${item.label} <span style="${isRefined(item)}">(${
-          item.count
-        })</span>
-                    </a>
-                  </li>
-                `
-      )
-      .join('');
+    suggestionIndex
+      .search(query, {
+        hitsPerPage: 1,
+      })
+      .then(({ hits }) => {
+        suggestionContainer.querySelector('ul').innerHTML = hits
+          .map(item =>
+            item.category
+              .map(
+                i => ` 
+                        <li style="${isRefined(i)}">${i}</li>
+                    `
+              )
+              .slice(0, 11)
+              .join('')
+          )
+          .join('');
 
-    [...widgetParams.container.querySelectorAll('a')].forEach(element => {
-      element.addEventListener('click', event => {
-        event.preventDefault();
-        console.log(refine);
-        refine(event.currentTarget.dataset.value);
+        [...suggestionContainer.querySelectorAll('li')].forEach(element => {
+          element.addEventListener('click', event => {
+            event.preventDefault();
+            search.renderState[
+              'gstar_demo_test'
+            ].refinementList.category.refine(event.target.innerText);
+            // refine(event.target.innerText);
+          });
+        });
       });
-    });
   };
 
   function isRefined(item) {
@@ -126,9 +137,12 @@ export function searchResults() {
     const { items, widgetParams, refine } = renderOptions;
 
     const checkBanner = items.map(item => {
-      return item.banner;
+      if (items.length < 2) {
+        return item.banner;
+      }
     });
-
+    console.log(items);
+    console.log(checkBanner);
     if (!checkBanner.includes(undefined)) {
       let banner = widgetParams.container;
       banner.style.display = 'block';
@@ -201,7 +215,7 @@ export function searchResults() {
     });
   };
 
-  const customRefinementList = connectRefinementList(renderRefinementList);
+  const customSearchBox = connectSearchBox(renderCustomSearchBar);
   const customQueryRuleCustomData = connectQueryRules(
     renderQueryRuleCustomData
   );
@@ -301,9 +315,17 @@ export function searchResults() {
                     item({ item }) {
                       return productTemplate({
                         image: item.image_link,
-                        title: snippetHit({ hit: item, attribute: 'name' }),
+                        title: highlightHit({ hit: item, attribute: 'name' }),
                         description: item.description,
                         price: item.price,
+                        _highlightResult: {
+                          query: {
+                            title: {
+                              value:
+                                '__aa-highlight__He__/aa-highlight__llo t__aa-highlight__he__/aa-highlight__re',
+                            },
+                          },
+                        },
                       });
                     },
                     footer() {
@@ -329,8 +351,9 @@ export function searchResults() {
               ];
             });
           },
-          onSubmit({ root, sections, state }) {
-            const stateCollection = state.collections[3].items.length;
+          onSubmit({ root, sections, state, event }) {
+            const stateCollection = state.collections[2].items.length;
+            console.log(state);
             if (stateCollection === 0) {
               noResult(stateCollection);
             } else {
@@ -594,12 +617,20 @@ export function searchResults() {
         searchClient,
       });
 
+      const userTokenSelector = document.getElementById('user-token-selector');
+      userTokenSelector.addEventListener('change', () => {
+        userTokenSelector.disabled = true;
+        search.removeWidgets(carouselWidgets);
+        getCarouselConfigs().then(carousels => {
+          userTokenSelector.disabled = false;
+          carouselWidgets = createWidgets(carousels);
+          search.addWidgets(carouselWidgets);
+        });
+      });
+
       function getUserToken() {
-        const getPersona = localStorage.getItem('personaValue');
-
-        return getPersona;
+        return userTokenSelector.value;
       }
-
       //GET THE CONFIG
       function getCarouselConfigs() {
         return searchClient
@@ -651,6 +682,7 @@ export function searchResults() {
 
       // retrieve the carousel configuration once
       getCarouselConfigs().then(carousels => {
+        userTokenSelector.disabled = false;
         carouselWidgets = createWidgets(carousels);
         search.addWidgets(carouselWidgets);
         search.start();
@@ -686,6 +718,17 @@ export function searchResults() {
       pagination.style.display = 'block';
     }
   }
+
+  const renderConfigure = (renderOptions, isFirstRender) => {
+    const { refine, widgetParams } = renderOptions;
+
+    const userToken = document.querySelector('.user-token-selector');
+    userToken.addEventListener('change', e => {
+      refine({ userToken: e.target.value });
+    });
+  };
+
+  const customConfigure = connectConfigure(renderConfigure);
 
   const autocompleteSearchBox = createAutocompleteSearchBox();
 
@@ -823,10 +866,12 @@ export function searchResults() {
   const connectedHitsWithInjectedContent = connectHits(renderHits);
 
   search.addWidgets([
-    customRefinementList({
-      container: document.querySelector('#refinement-list-SearchResult'),
-      attribute: 'keywords',
-      showMoreLimit: 10,
+    customConfigure({
+      container: document.querySelector('#configure'),
+      searchParameters: {
+        hitsPerPage: 20,
+        enablePersonalization: true,
+      },
     }),
     customQueryRuleCustomData({
       container: document.querySelector('#banner'),
@@ -844,6 +889,11 @@ export function searchResults() {
       autocompleteSearchBox({
         container: '#autocomplete',
         placeholder: 'Search products',
+      }),
+      customSearchBox({
+        container: document.querySelector('#refinement-list-SearchResult'),
+        attribute: 'keywords',
+        showMoreLimit: 10,
       }),
       {
         init(opts) {},
@@ -990,74 +1040,6 @@ export function searchResults() {
       container: '#stats-searchResult',
     }),
     connectedHitsWithInjectedContent({ container: '#hits' }),
-    // new HitsWithContent({
-    //   container: '#hits',
-    //   templates: {
-    //     item: (hit, bindEvent) => `
-    //             <li onClick=${console.log(
-    //               bindEvent
-    //             )} class="carousel-list-item">
-    //             <div class="badgeWrapper">
-    //                     <div>${displayEcoBadge(hit)}</div>
-    //                     <div>${displayOffBadge(hit)}</div>
-    //                 </div>
-    //             <a href="${hit.url}" class="product-searchResult" data-id="${
-    //       hit.objectID
-    //     }">
-    //                 <div class="image-wrapper">
-    //                     <img src="${hit.image_link}" align="left" alt="${
-    //       hit.name
-    //     }" class="result-img" />
-
-    //                     <div class="hit-sizeFilter">
-    //                         <p>Sizes available: <span>${
-    //                           hit.sizeFilter
-    //                         }</span></p>
-    //                     </div>
-    //                 </div>
-    //                 <div class="hit-name">
-    //                     <div class="hit-infos">
-    //                         <div>${hit.name}</div>
-
-    //                         <div class="colorWrapper">
-    //                                 <div>${
-    //                                   hit.hexColorCode
-    //                                     ? hit.hexColorCode.split('//')[0]
-    //                                     : ''
-    //                                 }</div>
-    //                                 <div style="background: ${
-    //                                   hit.hexColorCode
-    //                                     ? hit.hexColorCode.split('//')[1]
-    //                                     : ''
-    //                                 }" class="hit-colorsHex"></div>
-    //                             </div>
-
-    //                         </div>
-    //                         <div class="hit-price">
-    //                         ${displayPrice(hit)}
-    //                     </div>
-
-    //                 </div>
-    //             </a>
-    //         </li>
-    //             `,
-    //     injectedItem: hit => `
-    //              <li class="carousel-list-item">
-
-    //                     <div class="image-wrapper">
-    //                         <img class="injectImg" src="${hit.image}" alt="">
-    //                     </div>
-    //                     <div class="btn-injection-content-wrapper">
-    //                         <a class="btn-injection-content">Check it out</a>
-    //                     </div>
-
-    //               </li>
-    //           `,
-    //     noResults: response => `
-
-    //           `,
-    //   },
-    // }),
     pagination({
       container: '#pagination',
     }),

@@ -1,6 +1,6 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
-import { configure, hits, EXPERIMENTAL_configureRelatedItems } from 'instantsearch.js/es/widgets';
+import { configure, hits } from 'instantsearch.js/es/widgets';
 
 
 export function carouselDetailed() {

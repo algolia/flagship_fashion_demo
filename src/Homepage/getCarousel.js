@@ -1,12 +1,13 @@
 import { carousel } from "./displayCarousel";
 import instantsearch from "instantsearch.js";
 import algoliasearch from "algoliasearch";
-import { configure, index, searchBox, pagination, refinementList, stats } from "instantsearch.js/es/widgets";
+import { configure, index, stats } from "instantsearch.js/es/widgets";
 import { connectAutocomplete } from 'instantsearch.js/es/connectors';
 import {
     autocomplete,
     getAlgoliaResults,
     snippetHit,
+    highlightHit
 } from '@algolia/autocomplete-js';
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions';
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches';
@@ -147,6 +148,7 @@ export function GetDataForCarousel() {
             if (isFirstRender) {
                 autocompleteRef.current = autocomplete({
                     container: '#autocomplete',
+                    // debug: true,
                     openOnFocus: true,
                     plugins: [recentSearchesPlugin, querySuggestionsPlugin],
 
@@ -204,12 +206,24 @@ export function GetDataForCarousel() {
                                             return headerTemplate({ title: 'Products' });
                                         },
                                         item({ item }) {
+                                            // const highlightedValue = highlightHit({
+                                            //     item,
+                                            //     attribute: 'query',
+                                            // });
                                             return productTemplate({
                                                 image: item.image_link,
-                                                title: snippetHit({ hit: item, attribute: 'name' }),
+                                                title: highlightHit({ hit: item, attribute: 'name' }),
                                                 description: item.description,
                                                 price: item.price,
                                                 query: products.query,
+                                                _highlightResult: {
+                                                    query: {
+                                                        title: {
+                                                            value:
+                                                                '__aa-highlight__He__/aa-highlight__llo t__aa-highlight__he__/aa-highlight__re',
+                                                        },
+                                                    },
+                                                },
                                             });
                                         },
                                         footer() {

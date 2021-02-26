@@ -34,21 +34,23 @@
     "instantsearch.js"
   ],
   "dependencies": {
+    "@algolia/autocomplete-core": "^1.0.0-alpha.34",
+    "@algolia/autocomplete-js": "^1.0.0-alpha.29",
+    "@algolia/autocomplete-plugin-algolia-insights": "1.0.0-alpha.37",
+    "@algolia/autocomplete-plugin-query-suggestions": "^1.0.0-alpha.35",
+    "@algolia/autocomplete-plugin-recent-searches": "^1.0.0-alpha.34",
+    "@algolia/autocomplete-preset-algolia": "1.0.0-alpha.37",
+    "@algolia/autocomplete-theme-classic": "^1.0.0-alpha.36",
+    "@algolia/client-search": "^4.5.1",
     "@babel/runtime": "^7.12.5",
     "@glidejs/glide": "^3.4.1",
-    "algoliasearch": "^4.8.3",
+    "algoliasearch": "^4.5.1",
     "autocomplete.js": "^0.38.0",
     "babel-polyfill": "^6.26.0",
-    "instantsearch.js": "^4.9.1",
+    "instantsearch.js": "^4.15.0",
     "parcel-bundler": "^1.12.4",
-    "serve-static": "^1.14.1",
-    "@algolia/autocomplete-js": "1.0.0-alpha.37",
-    "@algolia/autocomplete-plugin-algolia-insights": "1.0.0-alpha.37",
-    "@algolia/autocomplete-plugin-query-suggestions": "1.0.0-alpha.37",
-    "@algolia/autocomplete-plugin-recent-searches": "1.0.0-alpha.37",
-    "@algolia/autocomplete-preset-algolia": "1.0.0-alpha.37",
-    "@algolia/autocomplete-theme-classic": "1.0.0-alpha.37",
-    "search-insights": "1.6.3"
+    "search-insights": "^1.7.1",
+    "serve-static": "^1.14.1"
   },
   "browserslist": [
     "since 2017-06"
