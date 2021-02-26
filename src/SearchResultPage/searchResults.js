@@ -18,12 +18,12 @@ import {
   connectAutocomplete,
   connectSearchBox,
   connectConfigure,
+  connectHits
 } from 'instantsearch.js/es/connectors';
 
 import {
   autocomplete,
   getAlgoliaResults,
-  snippetHit,
   highlightHit,
 } from '@algolia/autocomplete-js';
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions';
@@ -758,6 +758,7 @@ export function searchResults() {
         );
 
         if (targetWithEvent) {
+          console.log(targetWithEvent)
           const payload = parseInsightsEvent(targetWithEvent);
           instantSearchInstance.sendEventToInsights(payload);
         }
