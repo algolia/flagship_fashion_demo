@@ -29,5 +29,10 @@ li {
 
 .body-wrapper {
     overflow-x: hidden;
-    position: relative;
+    position: relative
+}
+
+.results-list{
+    display: flex;
+    flex-direction: row;
 }
