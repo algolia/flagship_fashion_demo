@@ -238,6 +238,19 @@
     border-radius: 0;
 }
 
+/* POPUP EVENT  */
+.popUpEvent {
+    position: absolute;
+    top: calc(100vh - 5rem);
+    left: calc(0vw + 2rem);
+    background-color: rgba(99, 175, 84, 0.76);
+    color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    z-index: 500;
+    animation: disapear 3s forwards 3s;
+}
+
 /* MEDIA QUERIES / BREAKPOINTS */
 
 @media screen and (max-width: 1400px) {
@@ -300,5 +313,17 @@
         visibility: hidden;
         opacity: 0;
         transform: translateY(4rem) scale(1);
+    }
+}
+
+@keyframes disapear {
+    0% {
+        visibility: visible;
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(5rem);
+        opacity: 0;
+        visibility: hidden;
     }
 }
