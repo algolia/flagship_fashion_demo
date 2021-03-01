@@ -20,3 +20,10 @@ yarn start
 
 Open http://localhost:3000 to see your app.
 # flasgship_fashion_demo
+
+## How to contribute
+
+- new features should be developed on a new branch and then merged into `next`
+- `master` consists of the latest stable version of the application in production
+- `next` is akin to the next beta release and should be used for testing
+- `next` is pushed to master on a continuous basis, defined by each sprints output
