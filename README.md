@@ -40,11 +40,11 @@ Open http://localhost:3000 to see your app.
     <tr>
       <td>Stable</td>
       <td>master</td>
-      <td>Accepts merges from Working and Hotfixes</td>
+      <td>Accepts merges from Next and Hotfixes</td>
     </tr>
     <tr>
       <td>Next</td>
-      <td>master</td>
+      <td>next</td>
       <td>Accepts merges from Features/Issues</td>
     </tr>
     <tr>
