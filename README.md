@@ -19,7 +19,7 @@ yarn start
 ```
 
 Open http://localhost:3000 to see your app.
-# flasgship_fashion_demo
+# Flagship Fashion Demo
 
 ## How to contribute
 
@@ -27,3 +27,5 @@ Open http://localhost:3000 to see your app.
 - `master` consists of the latest stable version of the application in production
 - `next` is akin to the next beta release and should be used for testing
 - `next` is pushed to master on a continuous basis, defined by each sprints output
+
+- please use [semantic commit messages](https://www.conventionalcommits.org), and any PRs must be reviewed by demo eng team before merge.
