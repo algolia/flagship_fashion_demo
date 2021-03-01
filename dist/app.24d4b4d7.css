@@ -694,6 +694,13 @@ body {
 .image-wrapper {
     display: flex;
     position: relative;
+    justify-content: center;
+    cursor: pointer;
+}
+.image-wrapper a {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .result-img {
@@ -703,12 +710,24 @@ body {
     margin-bottom: 3rem;
     filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
     transition: 0.2s ease-in-out;
+    cursor: pointer;
 }
 
 .result-img:hover {
-    transform: scale(1.1);
+    transform: scale(0.9);
     filter: drop-shadow(16px 16px 20px rgb(240, 240, 239));
     transition: 0.2s ease-in-out;
+}
+
+.result-img-overlay {
+    opacity: 0;
+    position: absolute;
+    height: 100%;
+    width: 50%;
+    background-color: rgba(255, 255, 255, 0.678);
+    transition: opacity 0.5s ease-in-out;
+    pointer-events: none;
+    cursor: pointer;
 }
 
 .ais-Hits-item {
@@ -831,6 +850,23 @@ body {
     font-style: italic;
 }
 
+.hit-addToCart {
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 30%;
+    left: 0;
+    align-items: center;
+    width: 100%;
+    height: 4rem;
+    color: black;
+}
+.hit-addToCart i {
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
 .fadeInSize {
     animation: fadeInSize 0.5s forwards;
 }
@@ -923,16 +959,37 @@ body {
 }
 
 /* POPUP EVENT  */
-.popUpEvent {
-    position: absolute;
-    top: calc(100vh - 5rem);
+
+.popUp-wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+.popUpEventClick {
+    position: fixed;
+    top: calc(100% - 5rem);
     left: calc(0vw + 2rem);
     background-color: rgba(99, 175, 84, 0.76);
     color: white;
     padding: 1rem;
     border-radius: 5px;
     z-index: 500;
-    animation: disapear 3s forwards 3s;
+    animation: disapear 6s forwards;
+    font-family: "Roboto";
+    box-sizing: border-box;
+}
+.popUpEventCart {
+    position: fixed;
+    top: calc(100% - 9rem);
+    left: calc(0vw + 2rem);
+    background-color: rgba(230, 196, 0, 0.699);
+    color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    z-index: 500;
+    animation: disapear 6s forwards;
+    font-family: "Roboto";
+    box-sizing: border-box;
 }
 
 /* MEDIA QUERIES / BREAKPOINTS */
@@ -1002,11 +1059,20 @@ body {
 
 @keyframes disapear {
     0% {
-        visibility: visible;
+        opacity: 0;
+    }
+    25% {
         opacity: 1;
     }
+    50% {
+        opacity: 0.8;
+        transform: translateY(0rem);
+    }
+    75% {
+        opacity: 0.5;
+    }
     100% {
-        transform: translateY(5rem);
+        transform: translateY(2rem);
         opacity: 0;
         visibility: hidden;
     }

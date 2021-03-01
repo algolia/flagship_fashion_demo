@@ -763,26 +763,31 @@ export function searchResults() {
                     const payload = parseInsightsEvent(targetWithEvent);
                     instantSearchInstance.sendEventToInsights(payload);
                     console.log(payload.payload.objectIDs[0])
-                    popUpEvent(payload.payload.eventName, payload.payload.objectIDs[0])
+                    popUpEventClick(payload.payload.eventName, payload.payload.objectIDs[0])
+                    // popUpEventCart(payload.payload.eventName, payload.payload.objectIDs[0])
                 }
             });
         }
 
-        function popUpEvent(event, object) {
+        function popUpEventClick(event, object) {
             const index = searchClient.initIndex('gstar_demo_test');
             let rightPanel = document.querySelector('.right-panel')
+            let popUpWrapper = document.querySelector('.popUp-wrapper')
             index.getObject(object).then(object => {
                 let div = document.createElement('div')
-                div.classList.add('popUpEvent')
-                div.innerHTML = `Open product details logged, on ${object.name}`
-                rightPanel.appendChild(div)
+
+                if (event === 'Product Clicked') {
+                    div.classList.add('popUpEventClick')
+                    div.innerHTML = `Open product details, on ${object.name}`
+                } else if (event === 'Product Added') {
+                    div.classList.add('popUpEventCart')
+                    div.innerHTML = `Add to cart product, on ${object.name}`
+                }
+                popUpWrapper.appendChild(div)
                 div.addEventListener('animationend', () => {
-                    div.remove()
+                    // div.remove()
                 });
             });
-
-
-
         }
 
         const response = renderOptions.results;
@@ -825,25 +830,24 @@ export function searchResults() {
                     </li>`;
                     } else {
                         return `<li
-              ${bindEvent('click', hit, 'Product Clicked')}
-             class="carousel-list-item">
+                        ${bindEvent('click', hit, 'Product Clicked')}
+             class="carousel-list-item carousel-list-item-modal-call" data-id="${hit.objectID}">
                             <div class="badgeWrapper">
                                     <div>${displayEcoBadge(hit)}</div>
                                     <div>${displayOffBadge(hit)}</div>
                                 </div>
-                            <a href="${hit.url
-                            }" class="product-searchResult" data-id="${hit.objectID
-                            }">
-                                <div class="image-wrapper">
-                                    <img src="${hit.image_link
-                            }" align="left" alt="${hit.name
-                            }" class="result-img" />
-            
+                            <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
+                                <div class="image-wrapper" data-id="${hit.objectID}">
+                                    <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                                    <div class="result-img-overlay"></div>
+                                    <div class="hit-addToCart">
+                                        <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-cart-arrow-down"></i></a>
+                                    </div>
                                     <div class="hit-sizeFilter">
-                                        <p>Sizes available: <span>${hit.sizeFilter
-                            }</span></p>
+                                        <p>Sizes available: <span>${hit.sizeFilter}</span></p>
                                     </div>
                                 </div>
+                               
                                 <div class="hit-name">
                                     <div class="hit-infos">
                                         <div>${hit.name}</div>

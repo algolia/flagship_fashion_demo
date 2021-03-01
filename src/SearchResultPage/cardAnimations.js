@@ -17,6 +17,8 @@ export function cardAnimation() {
         cardProduct.forEach((product) => {
             let sizeInfo = product.querySelector('.hit-sizeFilter')
             let badges = product.querySelector('.badgeWrapper')
+            let addToCart = product.querySelector('.hit-addToCart')
+            let imgOverlay = product.querySelector('.result-img-overlay')
             product.addEventListener('mouseenter', (e) => {
                 if (sizeInfo) {
                     sizeInfo.classList.remove('fadeOutSize')
@@ -25,7 +27,9 @@ export function cardAnimation() {
                 if (badges) {
                     badges.classList.add('scaleDown')
                 }
-
+                addToCart.classList.remove('fadeOutSize')
+                addToCart.classList.add('fadeInSize')
+                imgOverlay.style.opacity = 1
 
 
             })
@@ -37,6 +41,9 @@ export function cardAnimation() {
                 if (badges) {
                     badges.classList.remove('scaleDown')
                 }
+                addToCart.classList.add('fadeOutSize')
+                addToCart.classList.remove('fadeInSize')
+                imgOverlay.style.opacity = 0
             })
         })
     }

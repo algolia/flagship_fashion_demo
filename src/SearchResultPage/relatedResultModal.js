@@ -25,7 +25,7 @@ export function relatedResultModal() {
 
   let searchInput = document.querySelector('.autocomplete input');
   let timer,
-    timeoutVal = 500;
+    timeoutVal = 1000;
   // detects when the user is actively typing
   searchInput.addEventListener('keypress', handleKeyPress);
   // triggers a check to see if the user is actually done typing
@@ -48,6 +48,7 @@ export function relatedResultModal() {
   // Listen to the Dom and change the content of the relatedsearch carousel with the search
   function domListening() {
     const observer = new MutationObserver(mutation => {
+      console.log(mutation)
       if (mutation) {
         getObjectID();
       }
@@ -58,10 +59,10 @@ export function relatedResultModal() {
     });
   }
 
+  let productSearchResult = document.querySelectorAll('.image-wrapper');
+  console.log(productSearchResult)
   const getObjectID = () => {
-    let productSearchResult = document.querySelectorAll(
-      '.product-searchResult'
-    );
+
     productSearchResult.forEach(item => {
       if (item.dataset.id !== 'undefined') {
         index.getObject(item.dataset.id).then(object => {
@@ -144,25 +145,21 @@ export function relatedResultModal() {
         templates: {
           item: (hit, bindEvent) =>
             `          
-                        <a onClick=${console.log(bindEvent)} href="${
-              hit.url
+                        <a onClick=${console.log(bindEvent)} href="${hit.url
             }" class="product-searchResult" data-id="${hit.objectID}">
                         <div class="image-wrapper">
-                            <img src="${hit.image_link}" align="left" alt="${
-              hit.name
+                            <img src="${hit.image_link}" align="left" alt="${hit.name
             }" class="result-img" />
                             <div class="hit-sizeFilter">
-                                <p>Sizes available: <span>${
-                                  hit.sizeFilter
-                                }</span></p>
+                                <p>Sizes available: <span>${hit.sizeFilter
+            }</span></p>
                             </div>
                         </div>
                         <div class="hit-name">
                             <div class="hit-infos">
                             <div>${hit.name}</div>
-                                <div class="hit-colors">${
-                                  hit.colourFilter
-                                }</div>
+                                <div class="hit-colors">${hit.colourFilter
+            }</div>
                             </div>
                             <div class="hit-price">$${hit.price}</div>
                         </div>

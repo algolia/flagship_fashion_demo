@@ -45950,21 +45950,28 @@ function searchResults() {
           const payload = parseInsightsEvent(targetWithEvent);
           instantSearchInstance.sendEventToInsights(payload);
           console.log(payload.payload.objectIDs[0]);
-          popUpEvent(payload.payload.eventName, payload.payload.objectIDs[0]);
+          popUpEventClick(payload.payload.eventName, payload.payload.objectIDs[0]); // popUpEventCart(payload.payload.eventName, payload.payload.objectIDs[0])
         }
       });
     }
 
-    function popUpEvent(event, object) {
+    function popUpEventClick(event, object) {
       const index = searchClient.initIndex('gstar_demo_test');
       let rightPanel = document.querySelector('.right-panel');
+      let popUpWrapper = document.querySelector('.popUp-wrapper');
       index.getObject(object).then(object => {
         let div = document.createElement('div');
-        div.classList.add('popUpEvent');
-        div.innerHTML = "Open product details logged, on ".concat(object.name);
-        rightPanel.appendChild(div);
-        div.addEventListener('animationend', () => {
-          div.remove();
+
+        if (event === 'Product Clicked') {
+          div.classList.add('popUpEventClick');
+          div.innerHTML = "Open product details, on ".concat(object.name);
+        } else if (event === 'Product Added') {
+          div.classList.add('popUpEventCart');
+          div.innerHTML = "Add to cart product, on ".concat(object.name);
+        }
+
+        popUpWrapper.appendChild(div);
+        div.addEventListener('animationend', () => {// div.remove()
         });
       });
     }
@@ -45997,7 +46004,7 @@ function searchResults() {
       if (hit.injected) {
         return " <li class=\"carousel-list-item\">\n                          <div class=\"image-wrapper\">\n                              <img class=\"injectImg\" src=\"".concat(hit.image, "\" alt=\"\">\n                          </div>\n                          <div class=\"btn-injection-content-wrapper\">\n                              <a class=\"btn-injection-content\">Check it out</a>\n                          </div>\n  \n                    </li>");
       } else {
-        return "<li\n              ".concat(bindEvent('click', hit, 'Product Clicked'), "\n             class=\"carousel-list-item\">\n                            <div class=\"badgeWrapper\">\n                                    <div>").concat(displayEcoBadge(hit), "</div>\n                                    <div>").concat(displayOffBadge(hit), "</div>\n                                </div>\n                            <a href=\"").concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                                <div class=\"image-wrapper\">\n                                    <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n            \n                                    <div class=\"hit-sizeFilter\">\n                                        <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                                    </div>\n                                </div>\n                                <div class=\"hit-name\">\n                                    <div class=\"hit-infos\">\n                                        <div>").concat(hit.name, "</div>\n            \n                                        <div class=\"colorWrapper\">\n                                                <div>").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[0] : '', "</div>\n                                                <div style=\"background: ").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[1] : '', "\" class=\"hit-colorsHex\"></div>\n                                            </div>\n            \n                                        </div>\n                                        <div class=\"hit-price\">\n                                        ").concat(displayPrice(hit), "\n                                    </div>\n            \n                                </div>\n                            </a>\n                        </li>");
+        return "<li\n                        ".concat(bindEvent('click', hit, 'Product Clicked'), "\n             class=\"carousel-list-item carousel-list-item-modal-call\" data-id=\"").concat(hit.objectID, "\">\n                            <div class=\"badgeWrapper\">\n                                    <div>").concat(displayEcoBadge(hit), "</div>\n                                    <div>").concat(displayOffBadge(hit), "</div>\n                                </div>\n                            <a href=\"").concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                                <div class=\"image-wrapper\" data-id=\"").concat(hit.objectID, "\">\n                                    <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                                    <div class=\"result-img-overlay\"></div>\n                                    <div class=\"hit-addToCart\">\n                                        <a ").concat(bindEvent('click', hit, 'Product Added'), "><i class=\"fas fa-cart-arrow-down\"></i></a>\n                                    </div>\n                                    <div class=\"hit-sizeFilter\">\n                                        <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                                    </div>\n                                </div>\n                               \n                                <div class=\"hit-name\">\n                                    <div class=\"hit-infos\">\n                                        <div>").concat(hit.name, "</div>\n            \n                                        <div class=\"colorWrapper\">\n                                                <div>").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[0] : '', "</div>\n                                                <div style=\"background: ").concat(hit.hexColorCode ? hit.hexColorCode.split('//')[1] : '', "\" class=\"hit-colorsHex\"></div>\n                                            </div>\n            \n                                        </div>\n                                        <div class=\"hit-price\">\n                                        ").concat(displayPrice(hit), "\n                                    </div>\n            \n                                </div>\n                            </a>\n                        </li>");
       }
     }).join(''), "\n    ");
   };
@@ -46323,7 +46330,7 @@ function relatedResultModal() {
   });
   let searchInput = document.querySelector('.autocomplete input');
   let timer,
-      timeoutVal = 500; // detects when the user is actively typing
+      timeoutVal = 1000; // detects when the user is actively typing
 
   searchInput.addEventListener('keypress', handleKeyPress); // triggers a check to see if the user is actually done typing
 
@@ -46347,6 +46354,8 @@ function relatedResultModal() {
 
   function domListening() {
     const observer = new MutationObserver(mutation => {
+      console.log(mutation);
+
       if (mutation) {
         getObjectID();
       }
@@ -46357,8 +46366,10 @@ function relatedResultModal() {
     });
   }
 
+  let productSearchResult = document.querySelectorAll('.image-wrapper');
+  console.log(productSearchResult);
+
   const getObjectID = () => {
-    let productSearchResult = document.querySelectorAll('.product-searchResult');
     productSearchResult.forEach(item => {
       if (item.dataset.id !== 'undefined') {
         index.getObject(item.dataset.id).then(object => {
@@ -46495,6 +46506,8 @@ function cardAnimation() {
     cardProduct.forEach(product => {
       let sizeInfo = product.querySelector('.hit-sizeFilter');
       let badges = product.querySelector('.badgeWrapper');
+      let addToCart = product.querySelector('.hit-addToCart');
+      let imgOverlay = product.querySelector('.result-img-overlay');
       product.addEventListener('mouseenter', e => {
         if (sizeInfo) {
           sizeInfo.classList.remove('fadeOutSize');
@@ -46504,6 +46517,10 @@ function cardAnimation() {
         if (badges) {
           badges.classList.add('scaleDown');
         }
+
+        addToCart.classList.remove('fadeOutSize');
+        addToCart.classList.add('fadeInSize');
+        imgOverlay.style.opacity = 1;
       });
       product.addEventListener('mouseleave', e => {
         if (sizeInfo) {
@@ -46514,6 +46531,10 @@ function cardAnimation() {
         if (badges) {
           badges.classList.remove('scaleDown');
         }
+
+        addToCart.classList.add('fadeOutSize');
+        addToCart.classList.remove('fadeInSize');
+        imgOverlay.style.opacity = 0;
       });
     });
   }
@@ -46606,7 +46627,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51963" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62585" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
