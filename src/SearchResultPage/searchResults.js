@@ -141,8 +141,7 @@ export function searchResults() {
                 return item.banner;
             }
         });
-        console.log(items);
-        console.log(checkBanner);
+
         if (!checkBanner.includes(undefined)) {
             let banner = widgetParams.container;
             banner.style.display = 'block';
@@ -352,7 +351,7 @@ export function searchResults() {
                     },
                     onSubmit({ root, sections, state, event }) {
                         const stateCollection = state.collections[2].items.length;
-                        console.log(state);
+                        // console.log(state);
                         if (stateCollection === 0) {
                             noResult(stateCollection);
                         } else {
@@ -748,7 +747,7 @@ export function searchResults() {
 
         const container = document.querySelector(widgetParams.container);
 
-        console.log(bindEvent)
+
 
         if (isFirstRender) {
             container.addEventListener('click', event => {
@@ -762,7 +761,6 @@ export function searchResults() {
                     console.log(targetWithEvent)
                     const payload = parseInsightsEvent(targetWithEvent);
                     instantSearchInstance.sendEventToInsights(payload);
-                    console.log(payload.payload.objectIDs[0])
                     popUpEventClick(payload.payload.eventName, payload.payload.objectIDs[0])
                     // popUpEventCart(payload.payload.eventName, payload.payload.objectIDs[0])
                 }
@@ -802,7 +800,7 @@ export function searchResults() {
 
             if (isValidUserData(userData)) {
                 if (response !== undefined) {
-                    console.log(response);
+
                     //Appending custom data at the beginning of the array of results only if it's in the range of the position
                     let start = response.page * response.hitsPerPage + 1;
                     let end = response.page * response.hitsPerPage + response.hitsPerPage;
@@ -830,15 +828,15 @@ export function searchResults() {
                     </li>`;
                     } else {
                         return `<li
-                        ${bindEvent('click', hit, 'Product Clicked')}
+                        
              class="carousel-list-item carousel-list-item-modal-call" data-id="${hit.objectID}">
                             <div class="badgeWrapper">
                                     <div>${displayEcoBadge(hit)}</div>
                                     <div>${displayOffBadge(hit)}</div>
                                 </div>
-                            <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
-                                <div class="image-wrapper" data-id="${hit.objectID}">
-                                    <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                            
+                                <div class="image-wrapper" data-id="${hit.objectID}" ${bindEvent('click', hit, 'Product Clicked')}>
+                                    <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" data-id="${hit.objectID}"  />
                                     <div class="result-img-overlay"></div>
                                     <div class="hit-addToCart">
                                         <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-cart-arrow-down"></i></a>
@@ -873,7 +871,7 @@ export function searchResults() {
                                     </div>
             
                                 </div>
-                            </a>
+                           
                         </li>`;
                     }
                 })

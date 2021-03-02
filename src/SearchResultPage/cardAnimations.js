@@ -27,11 +27,12 @@ export function cardAnimation() {
                 if (badges) {
                     badges.classList.add('scaleDown')
                 }
-                addToCart.classList.remove('fadeOutSize')
-                addToCart.classList.add('fadeInSize')
-                imgOverlay.style.opacity = 1
+                if (addToCart) {
+                    addToCart.classList.remove('fadeOutSize')
+                    addToCart.classList.add('fadeInSize')
+                    imgOverlay.style.opacity = 1
 
-
+                }
             })
             product.addEventListener('mouseleave', (e) => {
                 if (sizeInfo) {
@@ -41,9 +42,11 @@ export function cardAnimation() {
                 if (badges) {
                     badges.classList.remove('scaleDown')
                 }
-                addToCart.classList.add('fadeOutSize')
-                addToCart.classList.remove('fadeInSize')
-                imgOverlay.style.opacity = 0
+                if (addToCart) {
+                    addToCart.classList.add('fadeOutSize')
+                    addToCart.classList.remove('fadeInSize')
+                    imgOverlay.style.opacity = 0
+                }
             })
         })
     }

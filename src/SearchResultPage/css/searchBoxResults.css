@@ -172,15 +172,17 @@
     justify-content: center;
     position: absolute;
     top: 30%;
-    left: 0;
+    right: 50%;
+    transform: translate(50%, -50%);
     align-items: center;
-    width: 100%;
+    width: fit-content;
     height: 4rem;
     color: black;
 }
 .hit-addToCart i {
     font-size: 1.2rem;
     cursor: pointer;
+    z-index: 501;
 }
 
 .fadeInSize {
@@ -390,6 +392,6 @@
     100% {
         transform: translateY(2rem);
         opacity: 0;
-        visibility: hidden;
+        /* visibility: hidden; */
     }
 }
