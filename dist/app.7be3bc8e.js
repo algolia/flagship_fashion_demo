@@ -46311,6 +46311,10 @@ var _widgets = require("instantsearch.js/es/widgets");
 
 var _connectors = require("instantsearch.js/es/connectors");
 
+var _middlewares = require("instantsearch.js/es/middlewares");
+
+var _searchInsights = _interopRequireDefault(require("search-insights"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function relatedResultModal() {
@@ -46324,6 +46328,39 @@ function relatedResultModal() {
     indexName: 'Gstar_demo_carousel_detail',
     searchClient
   });
+  const insightsMiddleware = (0, _middlewares.createInsightsMiddleware)({
+    insightsClient: _searchInsights.default
+  });
+  search.use(insightsMiddleware);
+
+  const findInsightsTarget = (startElement, endElement, validator) => {
+    let element = startElement;
+
+    while (element && !validator(element)) {
+      if (element === endElement) {
+        return null;
+      }
+
+      element = element.parentElement;
+    }
+
+    return element;
+  };
+
+  const parseInsightsEvent = element => {
+    const serializedPayload = element.getAttribute('data-insights-event');
+
+    if (typeof serializedPayload !== 'string') {
+      throw new Error('The insights middleware expects `data-insights-event` to be a base64-encoded JSON string.');
+    }
+
+    try {
+      return JSON.parse(atob(serializedPayload));
+    } catch (error) {
+      throw new Error('The insights middleware was unable to parse `data-insights-event`.');
+    }
+  };
+
   let searchInput = document.querySelector('.autocomplete input');
   let searchForm = document.querySelector('.autocomplete .aa-Form');
   let timer,
@@ -46423,6 +46460,9 @@ function relatedResultModal() {
       const container = document.querySelector('#carousel-relatedItems');
 
       if (isFirstRender) {
+        let ul = document.createElement('ul');
+        ul.classList.add('ais-Hits-list');
+        container.appendChild(ul);
         container.addEventListener('click', event => {
           const targetWithEvent = findInsightsTarget(event.target, event.currentTarget, element => element.hasAttribute('data-insights-event'));
 
@@ -46436,6 +46476,7 @@ function relatedResultModal() {
       }
 
       function popUpEventClick(event, object) {
+        console.log(event);
         const index = searchClient.initIndex('gstar_demo_test');
         let rightPanel = document.querySelector('.right-panel');
         let popUpWrapper = document.querySelector('.popUp-wrapper');
@@ -46456,8 +46497,8 @@ function relatedResultModal() {
         });
       }
 
-      document.querySelector('#carousel-relatedItems').innerHTML = "\n      ".concat(hits.map(hit => {
-        return "          \n                              <a href=\"".concat(hit.url, "\" class=\"product-searchResult\" data-id=\"").concat(hit.objectID, "\">\n                              <div class=\"image-wrapper\" ").concat(bindEvent('click', hit, 'Product Clicked'), ">\n                                  <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                  <div class=\"hit-addToCart\">\n                  <a ").concat(bindEvent('click', hit, 'Product Added'), "><i class=\"fas fa-cart-arrow-down\"></i></a>\n              </div>\n                                  <div class=\"hit-sizeFilter\">\n                                      <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                                  </div>\n                              </div>\n                              <div class=\"hit-name\">\n                                  <div class=\"hit-infos\">\n                                  <div>").concat(hit.name, "</div>\n                                      <div class=\"hit-colors\">").concat(hit.colourFilter, "</div>\n                                  </div>\n                                  <div class=\"hit-price\">$").concat(hit.price, "</div>\n                              </div>\n                          </a>\n                              ");
+      document.querySelector('#carousel-relatedItems ul').innerHTML = "\n      ".concat(hits.map(hit => {
+        return "         \n            \n            <li class=\"ais-Hits-item carousel-list-item\">   \n              <div class=\"image-wrapper\" ".concat(bindEvent('click', hit, 'Product Clicked'), ">\n                <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                <div class=\"result-img-overlay\"></div>\n                <div class=\"hit-addToCart\">\n                  <a ").concat(bindEvent('click', hit, 'Product Added'), "><i class=\"fas fa-cart-arrow-down\"></i></a>\n                </div>\n                <div class=\"hit-sizeFilter\">\n                    <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                </div>\n              </div>\n              <div class=\"hit-name\">\n                  <div class=\"hit-infos\">\n                    <div>").concat(hit.name, "</div>\n                        <div class=\"hit-colors\">").concat(hit.colourFilter, "</div>\n                  </div>\n                  <div class=\"hit-price\">$").concat(hit.price, "</div>\n              </div>\n            </li>\n                              ");
       }).join(''), "\n  ");
     };
 
@@ -46563,7 +46604,7 @@ function relatedResultModal() {
   search.start();
   searchIndexSecond.start();
 }
-},{"algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js":"../node_modules/instantsearch.js/es/index.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js"}],"../src/SearchResultPage/cardAnimations.js":[function(require,module,exports) {
+},{"algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js":"../node_modules/instantsearch.js/es/index.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","instantsearch.js/es/middlewares":"../node_modules/instantsearch.js/es/middlewares/index.js","search-insights":"../node_modules/search-insights/index.cjs.js"}],"../src/SearchResultPage/cardAnimations.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -46714,7 +46755,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50739" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53708" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

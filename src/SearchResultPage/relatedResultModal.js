@@ -6,6 +6,8 @@ import {
   EXPERIMENTAL_configureRelatedItems,
 } from 'instantsearch.js/es/widgets';
 import { connectHits } from 'instantsearch.js/es/connectors';
+import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
+import aa from 'search-insights';
 
 
 export function relatedResultModal() {
@@ -14,7 +16,6 @@ export function relatedResultModal() {
     '28cf6d38411215e2eef188e635216508'
   );
   const index = searchClient.initIndex('gstar_demo_test');
-
 
   const search = instantsearch({
     indexName: 'gstar_demo_test',
@@ -25,6 +26,44 @@ export function relatedResultModal() {
     indexName: 'Gstar_demo_carousel_detail',
     searchClient,
   });
+
+  const insightsMiddleware = createInsightsMiddleware({
+    insightsClient: aa,
+  });
+
+  search.use(insightsMiddleware);
+
+  const findInsightsTarget = (startElement, endElement, validator) => {
+    let element = startElement;
+    while (element && !validator(element)) {
+      if (element === endElement) {
+        return null;
+      }
+      element = element.parentElement;
+    }
+    return element;
+  };
+
+  const parseInsightsEvent = element => {
+    const serializedPayload = element.getAttribute('data-insights-event');
+
+    if (typeof serializedPayload !== 'string') {
+      throw new Error(
+        'The insights middleware expects `data-insights-event` to be a base64-encoded JSON string.'
+      );
+    }
+
+    try {
+      return JSON.parse(atob(serializedPayload));
+    } catch (error) {
+      throw new Error(
+        'The insights middleware was unable to parse `data-insights-event`.'
+      );
+    }
+  };
+
+
+
 
   let searchInput = document.querySelector('.autocomplete input');
   let searchForm = document.querySelector('.autocomplete .aa-Form')
@@ -134,6 +173,10 @@ export function relatedResultModal() {
 
 
       if (isFirstRender) {
+        let ul = document.createElement('ul')
+        ul.classList.add('ais-Hits-list')
+        container.appendChild(ul)
+
         container.addEventListener('click', event => {
           const targetWithEvent = findInsightsTarget(
             event.target,
@@ -152,6 +195,7 @@ export function relatedResultModal() {
       }
 
       function popUpEventClick(event, object) {
+        console.log(event)
         const index = searchClient.initIndex('gstar_demo_test');
         let rightPanel = document.querySelector('.right-panel')
         let popUpWrapper = document.querySelector('.popUp-wrapper')
@@ -172,32 +216,31 @@ export function relatedResultModal() {
         });
       }
 
-      document.querySelector('#carousel-relatedItems').innerHTML = `
+      document.querySelector('#carousel-relatedItems ul').innerHTML = `
       ${hits
           .map(hit => {
 
-            return `          
-                              <a href="${hit.url
-              }" class="product-searchResult" data-id="${hit.objectID}">
-                              <div class="image-wrapper" ${bindEvent('click', hit, 'Product Clicked')}>
-                                  <img src="${hit.image_link}" align="left" alt="${hit.name
-              }" class="result-img" />
-                  <div class="hit-addToCart">
+            return `         
+            
+            <li class="ais-Hits-item carousel-list-item">   
+              <div class="image-wrapper" ${bindEvent('click', hit, 'Product Clicked')}>
+                <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                <div class="result-img-overlay"></div>
+                <div class="hit-addToCart">
                   <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-cart-arrow-down"></i></a>
+                </div>
+                <div class="hit-sizeFilter">
+                    <p>Sizes available: <span>${hit.sizeFilter}</span></p>
+                </div>
               </div>
-                                  <div class="hit-sizeFilter">
-                                      <p>Sizes available: <span>${hit.sizeFilter}</span></p>
-                                  </div>
-                              </div>
-                              <div class="hit-name">
-                                  <div class="hit-infos">
-                                  <div>${hit.name}</div>
-                                      <div class="hit-colors">${hit.colourFilter
-              }</div>
-                                  </div>
-                                  <div class="hit-price">$${hit.price}</div>
-                              </div>
-                          </a>
+              <div class="hit-name">
+                  <div class="hit-infos">
+                    <div>${hit.name}</div>
+                        <div class="hit-colors">${hit.colourFilter}</div>
+                  </div>
+                  <div class="hit-price">$${hit.price}</div>
+              </div>
+            </li>
                               `;
 
           })
