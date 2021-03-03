@@ -27,11 +27,14 @@ export function relatedResultModal() {
     searchClient,
   });
 
+
+  // CONFIG TO SEND INSIGHT EVENT TO THE DASHBOARD FOR PERSONALISATION
   const insightsMiddleware = createInsightsMiddleware({
     insightsClient: aa,
   });
 
   search.use(insightsMiddleware);
+  searchIndexSecond.use(insightsMiddleware)
 
   const findInsightsTarget = (startElement, endElement, validator) => {
     let element = startElement;
@@ -69,13 +72,11 @@ export function relatedResultModal() {
   let searchForm = document.querySelector('.autocomplete .aa-Form')
   let timer,
     timeoutVal = 500;
-  // detects when the user is actively typing
-  // searchInput.addEventListener('keypress', handleKeyPress);
-  // triggers a check to see if the user is actually done typing
+
+  // triggers a check to see if the user is submiting his search
   searchForm.addEventListener('submit', handleKeyUp);
 
   function handleKeyUp(e) {
-    console.log(e)
     window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
     if (e) {
       timer = window.setTimeout(() => {
@@ -85,15 +86,10 @@ export function relatedResultModal() {
     }
   }
 
-  // function handleKeyPress(e) {
-  //   window.clearTimeout(timer);
-  // }
-
   // Listen to the Dom and change the content of the relatedsearch carousel with the search
   function domListening() {
     const observer = new MutationObserver(mutation => {
       if (mutation) {
-        console.log('mutation')
         getObjectID();
       }
     });
@@ -101,27 +97,17 @@ export function relatedResultModal() {
       childList: true,
       subtree: true,
     });
-    console.log('disconnect')
     observer.disconnect()
   }
 
-  let productSearchResult = document.querySelectorAll('.image-wrapper');
-
-
-
   const getObjectID = () => {
-    console.log('objectID')
     let productSearchResult = document.querySelectorAll('.image-wrapper');
     productSearchResult.forEach(item => {
-
       if (item.dataset.id !== undefined) {
-        console.log(item.dataset.id)
         index.getObject(item.dataset.id).then(object => {
           item.addEventListener('click', e => {
             let img = item.querySelector('img')
-            console.log(item)
             if (e.target === item || e.target === img) {
-              console.log('if')
               e.preventDefault();
               displayrelateditems(object);
               displayModal();
@@ -141,13 +127,19 @@ export function relatedResultModal() {
     let modalWrapper = document.querySelector('.modal-relatedItems--wrapper');
     let closeModal = document.querySelector('.modal-relatedItems--closeBtn');
     let fadeInModal = document.querySelector('.modal-relatedItems');
-    // modalWrapper.classList.toggle('displayBlock')
+    let ulFirst = document.querySelectorAll('.modal-relatedItems ul')
 
-    closeModal.addEventListener('click', () => {
-      modalWrapper.classList.remove('displayBlock');
-      fadeInModal.classList.remove('fadeInModal');
-      modalWrapper.classList.add('fadeOutModal');
-    });
+
+    modalWrapper.addEventListener('click', (e) => {
+      if (e.target !== fadeInModal && !fadeInModal.contains(e.target) || e.target === closeModal) {
+        modalWrapper.classList.remove('displayBlock');
+        fadeInModal.classList.remove('fadeInModal');
+        modalWrapper.classList.add('fadeOutModal');
+        ulFirst.forEach(i => {
+          i.remove()
+        })
+      }
+    })
 
     if (!modalWrapper.classList.contains('displayBlock')) {
       modalWrapper.classList.add('displayBlock');
@@ -167,15 +159,19 @@ export function relatedResultModal() {
         instantSearchInstance,
       } = renderOptions;
 
-
-      const container = document.querySelector('#carousel-relatedItems');
+      const container = document.querySelector('.modal-relatedItems')
+      const firstCarousel = document.querySelector('#carousel-relatedItems');
+      const secondCarousel = document.querySelector('#carousel-relatedItemsSecond');
 
 
 
       if (isFirstRender) {
         let ul = document.createElement('ul')
+        let ulSecondCarousel = document.createElement('ul')
         ul.classList.add('ais-Hits-list')
-        container.appendChild(ul)
+        ulSecondCarousel.classList.add('ais-Hits-list')
+        firstCarousel.appendChild(ul)
+        secondCarousel.appendChild(ulSecondCarousel)
 
         container.addEventListener('click', event => {
           const targetWithEvent = findInsightsTarget(
@@ -185,19 +181,15 @@ export function relatedResultModal() {
           );
 
           if (targetWithEvent) {
-            console.log(targetWithEvent)
             const payload = parseInsightsEvent(targetWithEvent);
             instantSearchInstance.sendEventToInsights(payload);
             popUpEventClick(payload.payload.eventName, payload.payload.objectIDs[0])
-            // popUpEventCart(payload.payload.eventName, payload.payload.objectIDs[0])
           }
         });
       }
 
       function popUpEventClick(event, object) {
-        console.log(event)
         const index = searchClient.initIndex('gstar_demo_test');
-        let rightPanel = document.querySelector('.right-panel')
         let popUpWrapper = document.querySelector('.popUp-wrapper')
         index.getObject(object).then(object => {
           let div = document.createElement('div')
@@ -244,8 +236,39 @@ export function relatedResultModal() {
                               `;
 
           })
-          .join('')}
-  `;
+          .join('')}`;
+
+      document.querySelector('#carousel-relatedItemsSecond ul').innerHTML = `
+          ${hits
+          .map(hit => {
+
+            return `         
+                
+                <li class="ais-Hits-item carousel-list-item">   
+                  <div class="image-wrapper" ${bindEvent('click', hit, 'Product Clicked')}>
+                    <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                    <div class="result-img-overlay"></div>
+                    <div class="hit-addToCart">
+                      <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-cart-arrow-down"></i></a>
+                    </div>
+                    <div class="hit-sizeFilter">
+                        <p>Sizes available: <span>${hit.sizeFilter}</span></p>
+                    </div>
+                  </div>
+                  <div class="hit-name">
+                      <div class="hit-infos">
+                        <div>${hit.name}</div>
+                            <div class="hit-colors">${hit.colourFilter}</div>
+                      </div>
+                      <div class="hit-price">$${hit.price}</div>
+                  </div>
+                </li>
+                                  `;
+
+          })
+          .join('')}`;
+
+
     };
 
 
@@ -298,35 +321,6 @@ export function relatedResultModal() {
       customHits({
         container: document.querySelector('#carousel-relatedItems'),
       }),
-      // hits({
-      //   container: '#carousel-relatedItems',
-      //   templates: {
-      //     item: (hit, bindEvent) =>
-      //       `          
-      //                   <a href="${hit.url
-      //       }" class="product-searchResult" data-id="${hit.objectID}">
-      //                   <div class="image-wrapper" ${bindEvent('click', hit, 'Product Clicked')}>
-      //                       <img src="${hit.image_link}" align="left" alt="${hit.name
-      //       }" class="result-img" />
-      //       <div class="hit-addToCart">
-      //       <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-cart-arrow-down"></i></a>
-      //   </div>
-      //                       <div class="hit-sizeFilter">
-      //                           <p>Sizes available: <span>${hit.sizeFilter}</span></p>
-      //                       </div>
-      //                   </div>
-      //                   <div class="hit-name">
-      //                       <div class="hit-infos">
-      //                       <div>${hit.name}</div>
-      //                           <div class="hit-colors">${hit.colourFilter
-      //       }</div>
-      //                       </div>
-      //                       <div class="hit-price">$${hit.price}</div>
-      //                   </div>
-      //               </a>
-      //                   `,
-      //   },
-      // }),
     ]);
     // Add the widgets 2nd index
     searchIndexSecond.addWidgets([
@@ -342,28 +336,8 @@ export function relatedResultModal() {
           colourFilter: { score: 2 },
         },
       }),
-      hits({
-        container: '#carousel-relatedItemsSecond',
-        templates: {
-          item: hit =>
-            `          
-                        <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
-                        <div class="image-wrapper">
-                            <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
-                            <div class="hit-sizeFilter">
-                                <p>Sizes available: <span>${hit.sizeFilter}</span></p>
-                            </div>
-                        </div>
-                        <div class="hit-name">
-                            <div class="hit-infos">
-                            <div>${hit.name}</div>
-                                <div class="hit-colors">${hit.colourFilter}</div>
-                            </div>
-                            <div class="hit-price">$${hit.price}</div>
-                        </div>
-                    </a>
-                        `,
-        },
+      customHits({
+        container: document.querySelector('#carousel-relatedItemsSecond'),
       }),
     ]);
   }
