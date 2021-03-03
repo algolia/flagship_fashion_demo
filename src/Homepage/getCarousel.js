@@ -24,6 +24,7 @@ export function GetDataForCarousel() {
         routing: true
     });
 
+
     const autocompleteSearchBox = createAutocompleteSearchBox();
 
     search.addWidgets([

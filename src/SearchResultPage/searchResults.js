@@ -758,7 +758,6 @@ export function searchResults() {
                 );
 
                 if (targetWithEvent) {
-                    console.log(targetWithEvent)
                     const payload = parseInsightsEvent(targetWithEvent);
                     instantSearchInstance.sendEventToInsights(payload);
                     popUpEventClick(payload.payload.eventName, payload.payload.objectIDs[0])
@@ -783,7 +782,7 @@ export function searchResults() {
                 }
                 popUpWrapper.appendChild(div)
                 div.addEventListener('animationend', () => {
-                    // div.remove()
+                    div.remove()
                 });
             });
         }

@@ -203,7 +203,7 @@ export function relatedResultModal() {
           }
           popUpWrapper.appendChild(div)
           div.addEventListener('animationend', () => {
-            // div.remove()
+            div.remove()
           });
         });
       }
@@ -230,7 +230,7 @@ export function relatedResultModal() {
                     <div>${hit.name}</div>
                         <div class="hit-colors">${hit.colourFilter}</div>
                   </div>
-                  <div class="hit-price">$${hit.price}</div>
+                  <div class="related-hit-price">$${hit.price}</div>
               </div>
             </li>
                               `;

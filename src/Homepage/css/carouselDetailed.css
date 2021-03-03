@@ -1,125 +1,123 @@
-.ais-Hits-list{
-    flex-wrap: nowrap !important;
-    display: -webkit-box !important;
-    overflow-x: scroll !important;
-    padding: 2rem;
-    list-style-type: none;
+.ais-Hits-list {
+  flex-wrap: nowrap !important;
+  display: -webkit-box !important;
+  overflow-x: scroll !important;
+  padding: 2rem;
+  list-style-type: none;
 }
 
 /* HORIZONTAL SCROLLBAR */
 
 .ais-Hits-list::-webkit-scrollbar {
-    -webkit-appearance: none;
-  }
-  
-.ais-Hits-list::-webkit-scrollbar:horizontal {
-    height: 4px;
-  
-  }
-  
-.ais-Hits-list::-webkit-scrollbar-thumb {
-    border-radius: 8px;
-    border: 1px solid white;
-    background-color: rgba(0, 0, 0, .9);
-    
-  }
-.ais-Hits-list::-webkit-scrollbar-track { 
-    background-color: #fff; 
-    border-radius: 8px;
-  }
-  
-  
-.ais-Hits-item{
-    height: 550px;
-    padding: 1.5rem;
-    margin: auto 1rem;
-    width: 380px;
-    background-color: white;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border: 1px solid rgba(240,240,239, 0.9);
-    box-shadow: none;
-    transition: 0.2s ease-in-out;
+  -webkit-appearance: none;
 }
-.ais-Hits-item:hover{  
-  box-shadow: 4px 4px 20px rgba(240, 240, 239, 1) ;
+
+.ais-Hits-list::-webkit-scrollbar:horizontal {
+  height: 4px;
+}
+
+.ais-Hits-list::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 1px solid white;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+.ais-Hits-list::-webkit-scrollbar-track {
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.ais-Hits-item {
+  height: 550px;
+  padding: 1.5rem;
+  margin: auto 1rem;
+  width: 380px;
+  background-color: white;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid rgba(240, 240, 239, 0.9);
+  box-shadow: none;
+  transition: 0.2s ease-in-out;
+}
+.ais-Hits-item:hover {
+  box-shadow: 4px 4px 20px rgba(240, 240, 239, 1);
   transition: 0.2s ease-in-out;
 }
 
-.image-wrapper{
-    max-width: 90%;
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-    padding: 1rem;
+.image-wrapper {
+  max-width: 90%;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 1rem;
+  position: relative;
+  cursor: pointer;
 }
 
 .hit-img {
-    width: 70%;
-    object-fit: contain;
-    align-self: center;
-    filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
-    transition: 0.2s ease-in-out;
-    padding-bottom: 2rem;
-  }
-  .hit-img:hover {
-  transform: scale(1.1);
-  filter: drop-shadow(16px 16px 20px rgb(240,240,239));
+  width: 70%;
+  object-fit: contain;
+  align-self: center;
+  filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
   transition: 0.2s ease-in-out;
-  }
-
-.carousel-detailed-display-info{
-    text-align: center;
-    color: black;
+  padding-bottom: 1rem;
 }
-.carousel-detailed-display-info .hit-name{
-    font-weight: bold;
-    font-size: 1rem;
-    margin: 1rem auto;
-   
+.hit-img:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(16px 16px 20px rgb(240, 240, 239));
+  transition: 0.2s ease-in-out;
 }
 
-.hit-description{
-    margin: 0.5rem auto;
-    font-size: 0.7rem;
-    font-style: italic;
-    font-weight: 100;
+.carousel-detailed-display-info {
+  text-align: center;
+  color: black;
 }
-.hit-rating-price{
-    display: flex;
-    justify-content: center;
-    height: auto;
-}
-.hit-price{
-    position: absolute;
-    bottom: 0.5rem;
-    font-weight: 300;
+.carousel-detailed-display-info .hit-name {
+  font-weight: bold;
+  font-size: 1rem;
+  margin: 1rem auto;
 }
 
-  .detailedCarousel-infos{
-      font-family: "Roboto";
-      width: 100%;
-      margin: 4rem auto;
-      text-align: center;
-  }
-  .detailedCarousel-infos h2{
-    font-family: 'Castoro', serif;
-    font-size: 2rem;
-  }
-  .detailedCarousel-infos p{
-    font-size: 0.8rem;
-  }
-  
-  .fa-heart{
-      color: rgb(240, 240, 239);
-      position: absolute;
-      right: 1rem;
-      top: 1rem;
-      transition: 0.2 ease-in-out;
-  }
-  .active-heart{
-      color: rgb(250, 76, 76);
-      transition: 0.2 ease-in-out;
-  }
+.hit-description {
+  margin: 0.5rem auto;
+  font-size: 0.7rem;
+  font-style: italic;
+  font-weight: 100;
+}
+.hit-rating-price {
+  display: flex;
+  justify-content: center;
+  height: auto;
+}
+.hit-price {
+  position: absolute;
+  bottom: 0.5rem;
+  font-weight: 300;
+}
+
+.detailedCarousel-infos {
+  font-family: "Roboto";
+  width: 100%;
+  margin: 4rem auto;
+  text-align: center;
+}
+.detailedCarousel-infos h2 {
+  font-family: "Castoro", serif;
+  font-size: 2rem;
+}
+.detailedCarousel-infos p {
+  font-size: 0.8rem;
+}
+
+.fa-heart {
+  color: rgb(240, 240, 239);
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  transition: 0.2 ease-in-out;
+}
+.active-heart {
+  color: rgb(250, 76, 76);
+  transition: 0.2 ease-in-out;
+}

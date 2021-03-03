@@ -37250,36 +37250,7 @@ module.exports = reloadCSS;
         module.hot.dispose(reloadCSS);
         module.hot.accept(reloadCSS);
       
-},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/Homepage/displayCarousel.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.carousel = void 0;
-
-var _connectors = require("instantsearch.js/es/connectors");
-
-const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirstRender) {
-  let {
-    widgetParams: {
-      container,
-      title
-    },
-    hits
-  } = _ref;
-
-  if (isFirstRender) {
-    container.insertAdjacentHTML('afterbegin', "<div class=\"title-carousel-winter\"><h2>".concat(title, "</h2><a href=\"/searchResults.html\" class=\"btn-carousel-winter\">See All</a></div>"));
-    const ul = document.createElement('ul');
-    ul.classList.add('carousel-list-container');
-    container.appendChild(ul);
-  }
-
-  container.querySelector('ul').innerHTML = hits.map(hit => "\n        <li>\n          <div class=\"image-wrapper\">\n            <img src=\"".concat(hit.image_link, "\" alt=\"").concat(hit.name, "\">\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ")).join('');
-});
-exports.carousel = carousel;
-},{"instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js"}],"../node_modules/stream-http/lib/capability.js":[function(require,module,exports) {
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../node_modules/stream-http/lib/capability.js":[function(require,module,exports) {
 var global = arguments[3];
 exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableStream)
 
@@ -45259,7 +45230,117 @@ Object.keys(_createRouterMiddleware).forEach(function (key) {
     }
   });
 });
-},{"./createInsightsMiddleware":"../node_modules/instantsearch.js/es/middlewares/createInsightsMiddleware.js","./createRouterMiddleware":"../node_modules/instantsearch.js/es/middlewares/createRouterMiddleware.js"}],"../src/SearchResultPage/searchResults.js":[function(require,module,exports) {
+},{"./createInsightsMiddleware":"../node_modules/instantsearch.js/es/middlewares/createInsightsMiddleware.js","./createRouterMiddleware":"../node_modules/instantsearch.js/es/middlewares/createRouterMiddleware.js"}],"../src/Homepage/displayCarousel.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.carousel = void 0;
+
+var _algoliasearch = _interopRequireDefault(require("algoliasearch"));
+
+var _instantsearch = _interopRequireDefault(require("instantsearch.js"));
+
+var _connectors = require("instantsearch.js/es/connectors");
+
+var _searchInsights = _interopRequireDefault(require("search-insights"));
+
+var _middlewares = require("instantsearch.js/es/middlewares");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFirstRender) {
+  let {
+    bindEvent,
+    instantSearchInstance,
+    widgetParams: {
+      container,
+      title
+    },
+    hits
+  } = _ref;
+  const searchClient = (0, _algoliasearch.default)('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+  const search = (0, _instantsearch.default)({
+    indexName: 'gstar_demo_test',
+    searchClient,
+    routing: true
+  }); // CONFIG TO SEND INSIGHT EVENT TO THE DASHBOARD FOR PERSONALISATION
+
+  const insightsMiddleware = (0, _middlewares.createInsightsMiddleware)({
+    insightsClient: _searchInsights.default
+  });
+  search.use(insightsMiddleware);
+
+  const findInsightsTarget = (startElement, endElement, validator) => {
+    let element = startElement;
+
+    while (element && !validator(element)) {
+      if (element === endElement) {
+        return null;
+      }
+
+      element = element.parentElement;
+    }
+
+    return element;
+  };
+
+  const parseInsightsEvent = element => {
+    const serializedPayload = element.getAttribute('data-insights-event');
+
+    if (typeof serializedPayload !== 'string') {
+      throw new Error('The insights middleware expects `data-insights-event` to be a base64-encoded JSON string.');
+    }
+
+    try {
+      return JSON.parse(atob(serializedPayload));
+    } catch (error) {
+      throw new Error('The insights middleware was unable to parse `data-insights-event`.');
+    }
+  };
+
+  if (isFirstRender) {
+    container.insertAdjacentHTML('afterbegin', "<div class=\"title-carousel-winter\"><h2>".concat(title, "</h2><a href=\"/searchResults.html\" class=\"btn-carousel-winter\">See All</a></div>"));
+    const ul = document.createElement('ul');
+    ul.classList.add('carousel-list-container');
+    container.appendChild(ul);
+    container.addEventListener('click', event => {
+      const targetWithEvent = findInsightsTarget(event.target, event.currentTarget, element => element.hasAttribute('data-insights-event'));
+
+      if (targetWithEvent) {
+        const payload = parseInsightsEvent(targetWithEvent);
+        instantSearchInstance.sendEventToInsights(payload);
+        popUpEventClick(payload.payload.eventName, payload.payload.objectIDs[0]); // popUpEventCart(payload.payload.eventName, payload.payload.objectIDs[0])
+      }
+    });
+  }
+
+  function popUpEventClick(event, object) {
+    const index = searchClient.initIndex('gstar_demo_test');
+    let popUpWrapper = document.querySelector('.popUp-wrapper');
+    index.getObject(object).then(object => {
+      let div = document.createElement('div');
+
+      if (event === 'Product Clicked') {
+        div.classList.add('popUpEventClick');
+        div.innerHTML = "Open product details, on ".concat(object.name);
+      } else if (event === 'Product Added') {
+        div.classList.add('popUpEventCart');
+        div.innerHTML = "Add to cart product, on ".concat(object.name);
+      }
+
+      popUpWrapper.appendChild(div);
+      div.addEventListener('animationend', () => {
+        div.remove();
+      });
+    });
+  }
+
+  container.querySelector('ul').innerHTML = hits.map(hit => "\n        <li data-id=\"".concat(hit.objectID, "\">\n          <div class=\"image-wrapper\" ").concat(bindEvent('click', hit, 'Product Clicked'), " data-id=\"").concat(hit.objectID, "\">\n            <img src=\"").concat(hit.image_link, "\" alt=\"").concat(hit.name, "\">\n            <div class=\"img-overlay\" data-id=\"").concat(hit.objectID, "\"></div>\n          </div>\n          <div class=\"hit-addToCart\">\n            <a ").concat(bindEvent('click', hit, 'Product Added'), "><i class=\"fas fa-cart-arrow-down\"></i></a>\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ")).join('');
+});
+exports.carousel = carousel;
+},{"algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js":"../node_modules/instantsearch.js/es/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","search-insights":"../node_modules/search-insights/index.cjs.js","instantsearch.js/es/middlewares":"../node_modules/instantsearch.js/es/middlewares/index.js"}],"../src/SearchResultPage/searchResults.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -45942,7 +46023,6 @@ function searchResults() {
         const targetWithEvent = findInsightsTarget(event.target, event.currentTarget, element => element.hasAttribute('data-insights-event'));
 
         if (targetWithEvent) {
-          console.log(targetWithEvent);
           const payload = parseInsightsEvent(targetWithEvent);
           instantSearchInstance.sendEventToInsights(payload);
           popUpEventClick(payload.payload.eventName, payload.payload.objectIDs[0]); // popUpEventCart(payload.payload.eventName, payload.payload.objectIDs[0])
@@ -45966,7 +46046,8 @@ function searchResults() {
         }
 
         popUpWrapper.appendChild(div);
-        div.addEventListener('animationend', () => {// div.remove()
+        div.addEventListener('animationend', () => {
+          div.remove();
         });
       });
     }
@@ -46487,13 +46568,14 @@ function relatedResultModal() {
           }
 
           popUpWrapper.appendChild(div);
-          div.addEventListener('animationend', () => {// div.remove()
+          div.addEventListener('animationend', () => {
+            div.remove();
           });
         });
       }
 
       document.querySelector('#carousel-relatedItems ul').innerHTML = "\n      ".concat(hits.map(hit => {
-        return "         \n            \n            <li class=\"ais-Hits-item carousel-list-item\">   \n              <div class=\"image-wrapper\" ".concat(bindEvent('click', hit, 'Product Clicked'), ">\n                <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                <div class=\"result-img-overlay\"></div>\n                <div class=\"hit-addToCart\">\n                  <a ").concat(bindEvent('click', hit, 'Product Added'), "><i class=\"fas fa-cart-arrow-down\"></i></a>\n                </div>\n                <div class=\"hit-sizeFilter\">\n                    <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                </div>\n              </div>\n              <div class=\"hit-name\">\n                  <div class=\"hit-infos\">\n                    <div>").concat(hit.name, "</div>\n                        <div class=\"hit-colors\">").concat(hit.colourFilter, "</div>\n                  </div>\n                  <div class=\"hit-price\">$").concat(hit.price, "</div>\n              </div>\n            </li>\n                              ");
+        return "         \n            \n            <li class=\"ais-Hits-item carousel-list-item\">   \n              <div class=\"image-wrapper\" ".concat(bindEvent('click', hit, 'Product Clicked'), ">\n                <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                <div class=\"result-img-overlay\"></div>\n                <div class=\"hit-addToCart\">\n                  <a ").concat(bindEvent('click', hit, 'Product Added'), "><i class=\"fas fa-cart-arrow-down\"></i></a>\n                </div>\n                <div class=\"hit-sizeFilter\">\n                    <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                </div>\n              </div>\n              <div class=\"hit-name\">\n                  <div class=\"hit-infos\">\n                    <div>").concat(hit.name, "</div>\n                        <div class=\"hit-colors\">").concat(hit.colourFilter, "</div>\n                  </div>\n                  <div class=\"related-hit-price\">$").concat(hit.price, "</div>\n              </div>\n            </li>\n                              ");
       }).join(''));
       document.querySelector('#carousel-relatedItemsSecond ul').innerHTML = "\n          ".concat(hits.map(hit => {
         return "         \n                \n                <li class=\"ais-Hits-item carousel-list-item\">   \n                  <div class=\"image-wrapper\" ".concat(bindEvent('click', hit, 'Product Clicked'), ">\n                    <img src=\"").concat(hit.image_link, "\" align=\"left\" alt=\"").concat(hit.name, "\" class=\"result-img\" />\n                    <div class=\"result-img-overlay\"></div>\n                    <div class=\"hit-addToCart\">\n                      <a ").concat(bindEvent('click', hit, 'Product Added'), "><i class=\"fas fa-cart-arrow-down\"></i></a>\n                    </div>\n                    <div class=\"hit-sizeFilter\">\n                        <p>Sizes available: <span>").concat(hit.sizeFilter, "</span></p>\n                    </div>\n                  </div>\n                  <div class=\"hit-name\">\n                      <div class=\"hit-infos\">\n                        <div>").concat(hit.name, "</div>\n                            <div class=\"hit-colors\">").concat(hit.colourFilter, "</div>\n                      </div>\n                      <div class=\"hit-price\">$").concat(hit.price, "</div>\n                  </div>\n                </li>\n                                  ");
@@ -46721,7 +46803,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49811" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53242" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
