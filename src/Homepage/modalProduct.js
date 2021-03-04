@@ -66,7 +66,7 @@ export function modalProduct() {
     cardProduct.forEach((product) => {
         // detailProduct(product)
         product.addEventListener('click', (e) => {
-            console.log(e.target.dataset.id)
+
             let productID = e.target.dataset.id
 
             // Retrieves all attributes
@@ -88,11 +88,8 @@ export function modalProduct() {
             modalWrapper.classList.add('fade')
         }
 
-        console.log(modalWrapper)
         modalWrapper.addEventListener('click', (e) => {
-            console.log(e.target)
             if (e.target !== modalProduct && !modalProduct.contains(e.target)) {
-                console.log('coucou')
                 modalWrapper.classList.remove('fade')
                 modalWrapper.classList.remove('fadeIn')
                 modalWrapper.classList.add('fadeOut')
@@ -104,6 +101,10 @@ export function modalProduct() {
 
 
     function displayProduct(product) {
+
+
+
+
         let modalProduct = document.querySelector('.modalProduct')
         modalProduct.innerHTML = `
         <i class="fas fa-heart heart"></i>
@@ -131,13 +132,33 @@ export function modalProduct() {
                             <div class="productModal-hit-price">$${product.price}</div>
                         </div>
                         </div>
-                        <div class="productModal-hit-addToCart">
-                            <a class="productModal-btn">Add to cart  <i class="fas fa-angle-down"></i></a>
+                        <div class="productModal-hit-addToCart" data-id=${product.objectID}>
+                            <a href="#"class="productModal-btn" data-id=${product.objectID}>Add to cart  <i class="fas fa-angle-down"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
         `
+
+
+        let btnAddtoCart = document.querySelector('.productModal-btn')
+        btnAddtoCart.addEventListener('click', (e) => {
+
+
+            index.search('', {
+                clickAnalytics: true
+            }).then(({ hits }) => {
+                aa('clickedObjectIDs', {
+
+                    index: 'gstar_demo_test',
+                    eventName: "Product Added Tesssssst",
+                    objectIDs: [e.target.dataset.id],
+                });
+            });
+
+        });
+
+
     }
 
     function relatedItems(object) {
@@ -274,22 +295,5 @@ export function modalProduct() {
 
     })
 
-    // function detailProduct(product) {
-
-    //     console.log(product)
-    //     let modalWrapper = document.querySelector('.modalProduct-wrapper')
-    //     let modalProduct = document.querySelector('.modalProduct')
-    //     // product.addEventlistener('click', callModal)
-    //     // modalWrapper.addEventListener('click', closeModal)
-
-    //     function closeModal(e) {
-
-    //     }
-
-    //     function callModal(e) {
-    //         console.log(e)
-    //         modalWrapper.style.visibility = 'visible'
-    //     }
-    // }
     search.start();
 }

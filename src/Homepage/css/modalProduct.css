@@ -24,7 +24,7 @@
     border-radius: 5px;
 }
 
-.modalProduct i {
+.modalProduct .fa-heart {
     font-size: 2rem;
 }
 
@@ -61,12 +61,16 @@
 }
 
 .productModal-hit-description {
-    margin: 2rem auto;
-    font-size: 1rem;
+    margin: 2rem 0rem;
+    font-size: 0.9rem;
     font-style: italic;
     font-weight: 100;
+    width: 70%;
 }
 
+.productModal-hit-rating-price {
+    font-family: "Castoro";
+}
 .productModal-hit-addToCart {
     margin: 2rem auto;
 }
@@ -88,7 +92,7 @@
     transition: 0.3s ease-in-out;
 }
 
-.productModal-hit-addToCart i {
+.productModal-hit-addToCart .fa-angle-down {
     margin-left: 1rem;
 }
 
@@ -158,7 +162,7 @@
 /* ANIMATION */
 
 .fadeIn {
-    animation: fadeIn 0.5s forwards;
+    animation: fadeIn 1s forwards;
 }
 .fadeOut {
     animation: fadeOut 0.5s forwards;

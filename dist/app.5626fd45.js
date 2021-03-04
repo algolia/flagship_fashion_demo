@@ -31890,7 +31890,7 @@ const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFi
     });
   }
 
-  container.querySelector('ul').innerHTML = hits.map(hit => "\n        <li data-id=\"".concat(hit.objectID, "\">\n          <div class=\"image-wrapper\" ").concat(bindEvent('click', hit, 'Product Clicked'), " data-id=\"").concat(hit.objectID, "\">\n            <img src=\"").concat(hit.image_link, "\" alt=\"").concat(hit.name, "\">\n            <div class=\"img-overlay\" data-id=\"").concat(hit.objectID, "\"></div>\n          </div>\n          <div class=\"hit-addToCart\">\n            <a ").concat(bindEvent('click', hit, 'Product Added'), "><i class=\"fas fa-cart-arrow-down\"></i></a>\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ")).join('');
+  container.querySelector('ul').innerHTML = hits.map(hit => "\n        <li data-id=\"".concat(hit.objectID, "\">\n          <div class=\"image-wrapper\" ").concat(bindEvent('click', hit, 'Product Clicked'), " data-id=\"").concat(hit.objectID, "\">\n            <img src=\"").concat(hit.image_link, "\" alt=\"").concat(hit.name, "\" data-id=\"").concat(hit.objectID, "\">\n            <div class=\"img-overlay\" data-id=\"").concat(hit.objectID, "\"></div>\n          </div>\n          <div class=\"hit-addToCart\">\n            <a ").concat(bindEvent('click', hit, 'Product Added'), "><i class=\"fas fa-cart-arrow-down\"></i></a>\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ")).join('');
 });
 exports.carousel = carousel;
 },{"algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js":"../node_modules/instantsearch.js/es/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","search-insights":"../node_modules/search-insights/index.cjs.js","instantsearch.js/es/middlewares":"../node_modules/instantsearch.js/es/middlewares/index.js"}],"../node_modules/classnames/index.js":[function(require,module,exports) {
@@ -49482,7 +49482,6 @@ function modalProduct() {
   cardProduct.forEach(product => {
     // detailProduct(product)
     product.addEventListener('click', e => {
-      console.log(e.target.dataset.id);
       let productID = e.target.dataset.id; // Retrieves all attributes
 
       index.getObject(productID).then(object => {
@@ -49503,12 +49502,8 @@ function modalProduct() {
       modalWrapper.classList.add('fade');
     }
 
-    console.log(modalWrapper);
     modalWrapper.addEventListener('click', e => {
-      console.log(e.target);
-
       if (e.target !== modalProduct && !modalProduct.contains(e.target)) {
-        console.log('coucou');
         modalWrapper.classList.remove('fade');
         modalWrapper.classList.remove('fadeIn');
         modalWrapper.classList.add('fadeOut');
@@ -49518,7 +49513,22 @@ function modalProduct() {
 
   function displayProduct(product) {
     let modalProduct = document.querySelector('.modalProduct');
-    modalProduct.innerHTML = "\n        <i class=\"fas fa-heart heart\"></i>\n        <div class=\"productModal-global-Wrapper\">\n            <div class=\"productModal-infos-Wrapper\">\n                <div class=\"productModal-image-wrapper\">\n                    <img src=\"".concat(product.image_link, "\" align=\"left\" alt=\"").concat(product.name, "\" class=\"productModal-hit-img\" />\n                    <div class=\"productModal-img-overlay\"></div>\n                </div>\n                <div class=\"productModal-info-wrapper\">\n                    \n                    <div class=\"productModal-carousel-detailed-display-info\">\n                        <div class=\"productModal-hit-category\">\n                        ").concat(product.category, "\n                        </div>\n                        <div class=\"productModal-hit-name\">\n                        ").concat(product.name, "\n                        </div>\n                        <div class=\"productModal-hit-color\">\n                            <div class=\"productModal-hit-color-text\">").concat(product.hexColorCode ? product.hexColorCode.split('//')[0] : '', "</div>\n                            <div style=\"background: ").concat(product.hexColorCode ? product.hexColorCode.split('//')[1] : '', "\" class=\"product-colorsHex\"></div>\n                        </div>\n                        <div class=\"productModal-hit-description\">").concat(product.description, "</div>\n                        <div class=\"productModal-hit-rating-price\">\n                            <div class=\"productModal-hit-price\">$").concat(product.price, "</div>\n                        </div>\n                        </div>\n                        <div class=\"productModal-hit-addToCart\">\n                            <a class=\"productModal-btn\">Add to cart  <i class=\"fas fa-angle-down\"></i></a>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ");
+    modalProduct.innerHTML = "\n        <i class=\"fas fa-heart heart\"></i>\n        <div class=\"productModal-global-Wrapper\">\n            <div class=\"productModal-infos-Wrapper\">\n                <div class=\"productModal-image-wrapper\">\n                    <img src=\"".concat(product.image_link, "\" align=\"left\" alt=\"").concat(product.name, "\" class=\"productModal-hit-img\" />\n                    <div class=\"productModal-img-overlay\"></div>\n                </div>\n                <div class=\"productModal-info-wrapper\">\n                    \n                    <div class=\"productModal-carousel-detailed-display-info\">\n                        <div class=\"productModal-hit-category\">\n                        ").concat(product.category, "\n                        </div>\n                        <div class=\"productModal-hit-name\">\n                        ").concat(product.name, "\n                        </div>\n                        <div class=\"productModal-hit-color\">\n                            <div class=\"productModal-hit-color-text\">").concat(product.hexColorCode ? product.hexColorCode.split('//')[0] : '', "</div>\n                            <div style=\"background: ").concat(product.hexColorCode ? product.hexColorCode.split('//')[1] : '', "\" class=\"product-colorsHex\"></div>\n                        </div>\n                        <div class=\"productModal-hit-description\">").concat(product.description, "</div>\n                        <div class=\"productModal-hit-rating-price\">\n                            <div class=\"productModal-hit-price\">$").concat(product.price, "</div>\n                        </div>\n                        </div>\n                        <div class=\"productModal-hit-addToCart\" data-id=").concat(product.objectID, ">\n                            <a href=\"#\"class=\"productModal-btn\" data-id=").concat(product.objectID, ">Add to cart  <i class=\"fas fa-angle-down\"></i></a>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        ");
+    let btnAddtoCart = document.querySelector('.productModal-btn');
+    btnAddtoCart.addEventListener('click', e => {
+      index.search('', {
+        clickAnalytics: true
+      }).then((_ref) => {
+        let {
+          hits
+        } = _ref;
+        (0, _searchInsights.default)('clickedObjectIDs', {
+          index: 'gstar_demo_test',
+          eventName: "Product Added Tesssssst",
+          objectIDs: [e.target.dataset.id]
+        });
+      });
+    });
   }
 
   function relatedItems(object) {
@@ -49620,20 +49630,7 @@ function modalProduct() {
   }
 
   cardProductSecondCarousel.forEach(product => {// detailProduct(product)
-  }); // function detailProduct(product) {
-  //     console.log(product)
-  //     let modalWrapper = document.querySelector('.modalProduct-wrapper')
-  //     let modalProduct = document.querySelector('.modalProduct')
-  //     // product.addEventlistener('click', callModal)
-  //     // modalWrapper.addEventListener('click', closeModal)
-  //     function closeModal(e) {
-  //     }
-  //     function callModal(e) {
-  //         console.log(e)
-  //         modalWrapper.style.visibility = 'visible'
-  //     }
-  // }
-
+  });
   search.start();
 }
 },{"algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js":"../node_modules/instantsearch.js/es/index.js","instantsearch.js/es/widgets/configure-related-items/configure-related-items":"../node_modules/instantsearch.js/es/widgets/configure-related-items/configure-related-items.js","instantsearch.js/es/widgets":"../node_modules/instantsearch.js/es/widgets/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","instantsearch.js/es/middlewares":"../node_modules/instantsearch.js/es/middlewares/index.js","search-insights":"../node_modules/search-insights/index.cjs.js"}],"../src/Homepage/app.js":[function(require,module,exports) {
@@ -49696,7 +49693,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53242" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56728" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

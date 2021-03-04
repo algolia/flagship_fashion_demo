@@ -100,7 +100,7 @@ export const carousel = connectHits(function renderCarousel(
       hit => `
         <li data-id="${hit.objectID}">
           <div class="image-wrapper" ${bindEvent('click', hit, 'Product Clicked')} data-id="${hit.objectID}">
-            <img src="${hit.image_link}" alt="${hit.name}">
+            <img src="${hit.image_link}" alt="${hit.name}" data-id="${hit.objectID}">
             <div class="img-overlay" data-id="${hit.objectID}"></div>
           </div>
           <div class="hit-addToCart">

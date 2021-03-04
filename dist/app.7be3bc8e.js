@@ -45337,7 +45337,7 @@ const carousel = (0, _connectors.connectHits)(function renderCarousel(_ref, isFi
     });
   }
 
-  container.querySelector('ul').innerHTML = hits.map(hit => "\n        <li data-id=\"".concat(hit.objectID, "\">\n          <div class=\"image-wrapper\" ").concat(bindEvent('click', hit, 'Product Clicked'), " data-id=\"").concat(hit.objectID, "\">\n            <img src=\"").concat(hit.image_link, "\" alt=\"").concat(hit.name, "\">\n            <div class=\"img-overlay\" data-id=\"").concat(hit.objectID, "\"></div>\n          </div>\n          <div class=\"hit-addToCart\">\n            <a ").concat(bindEvent('click', hit, 'Product Added'), "><i class=\"fas fa-cart-arrow-down\"></i></a>\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ")).join('');
+  container.querySelector('ul').innerHTML = hits.map(hit => "\n        <li data-id=\"".concat(hit.objectID, "\">\n          <div class=\"image-wrapper\" ").concat(bindEvent('click', hit, 'Product Clicked'), " data-id=\"").concat(hit.objectID, "\">\n            <img src=\"").concat(hit.image_link, "\" alt=\"").concat(hit.name, "\" data-id=\"").concat(hit.objectID, "\">\n            <div class=\"img-overlay\" data-id=\"").concat(hit.objectID, "\"></div>\n          </div>\n          <div class=\"hit-addToCart\">\n            <a ").concat(bindEvent('click', hit, 'Product Added'), "><i class=\"fas fa-cart-arrow-down\"></i></a>\n          </div>\n          <div class=\"info\">\n            <h3 class=\"title\">").concat(hit.name, "</h3>\n          </div>\n        </li>\n      ")).join('');
 });
 exports.carousel = carousel;
 },{"algoliasearch":"../node_modules/algoliasearch/dist/algoliasearch.umd.js","instantsearch.js":"../node_modules/instantsearch.js/es/index.js","instantsearch.js/es/connectors":"../node_modules/instantsearch.js/es/connectors/index.js","search-insights":"../node_modules/search-insights/index.cjs.js","instantsearch.js/es/middlewares":"../node_modules/instantsearch.js/es/middlewares/index.js"}],"../src/SearchResultPage/searchResults.js":[function(require,module,exports) {
@@ -46803,7 +46803,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53242" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56728" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
