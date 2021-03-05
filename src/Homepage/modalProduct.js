@@ -82,7 +82,7 @@ export function modalProduct() {
         let modalWrapper = document.querySelector('.modalProduct-wrapper')
         let modalProduct = document.querySelector('.modalProduct')
 
-        if (modalWrapper.classList.contains('fadeOut')) {
+        if (modalWrapper.classList.contains('fadeOut') || !modalWrapper.classList.contains('fadeIn')) {
             modalWrapper.classList.add('fadeIn')
             modalWrapper.classList.remove('fadeOut')
             modalWrapper.classList.add('fade')
@@ -143,17 +143,27 @@ export function modalProduct() {
 
         let btnAddtoCart = document.querySelector('.productModal-btn')
         btnAddtoCart.addEventListener('click', (e) => {
-
+            e.preventDefault()
 
             index.search('', {
                 clickAnalytics: true
             }).then(({ hits }) => {
                 aa('clickedObjectIDs', {
-
                     index: 'gstar_demo_test',
-                    eventName: "Product Added Tesssssst",
+                    eventName: "Product Added",
                     objectIDs: [e.target.dataset.id],
                 });
+
+                let popUpWrapper = document.querySelector('.popUp-wrapper')
+                let div = document.createElement('div')
+                div.classList.add('popUpEventCart')
+                div.innerHTML = `Add to cart product, on ${product.name}`
+                popUpWrapper.appendChild(div)
+                div.addEventListener('animationend', () => {
+                    div.remove()
+
+                });
+
             });
 
         });
@@ -199,7 +209,6 @@ export function modalProduct() {
                 let popUpWrapper = document.querySelector('.popUp-wrapper')
                 index.getObject(object).then(object => {
                     let div = document.createElement('div')
-
                     if (event === 'Product Clicked') {
                         div.classList.add('popUpEventClick')
                         div.innerHTML = `Open product details, on ${object.name}`
