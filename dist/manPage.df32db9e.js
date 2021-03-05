@@ -4053,7 +4053,7 @@ module.exports = requestBuilder;
 },{"./functions/merge":"../node_modules/algoliasearch-helper/src/functions/merge.js"}],"../node_modules/algoliasearch-helper/src/version.js":[function(require,module,exports) {
 'use strict';
 
-module.exports = '3.3.4';
+module.exports = '3.4.4';
 
 },{}],"../node_modules/algoliasearch-helper/src/algoliasearch.helper.js":[function(require,module,exports) {
 'use strict';
@@ -4066,6 +4066,8 @@ var requestBuilder = require('./requestBuilder');
 var events = require('events');
 var inherits = require('./functions/inherits');
 var objectHasKeys = require('./functions/objectHasKeys');
+var omit = require('./functions/omit');
+var merge = require('./functions/merge');
 
 var version = require('./version');
 
@@ -4304,6 +4306,49 @@ AlgoliaSearchHelper.prototype.searchOnce = function(options, cb) {
     if (self._currentNbQueries === 0) self.emit('searchQueueEmpty');
     throw e;
   });
+};
+
+ /**
+ * Start the search for answers with the parameters set in the state.
+ * This method returns a promise.
+ * @param {Object} options - the options for answers API call
+ * @param {string[]} options.attributesForPrediction - Attributes to use for predictions. If empty, `searchableAttributes` is used instead.
+ * @param {string[]} options.queryLanguages - The languages in the query. Currently only supports ['en'].
+ * @param {number} options.nbHits - Maximum number of answers to retrieve from the Answers Engine. Cannot be greater than 1000.
+ *
+ * @return {promise} the answer results
+ */
+AlgoliaSearchHelper.prototype.findAnswers = function(options) {
+  var state = this.state;
+  var derivedHelper = this.derivedHelpers[0];
+  if (!derivedHelper) {
+    return Promise.resolve([]);
+  }
+  var derivedState = derivedHelper.getModifiedState(state);
+  var data = merge(
+    {
+      attributesForPrediction: options.attributesForPrediction,
+      nbHits: options.nbHits
+    },
+    {
+      params: omit(requestBuilder._getHitsSearchParams(derivedState), [
+        'attributesToSnippet',
+        'hitsPerPage',
+        'restrictSearchableAttributes',
+        'snippetEllipsisText' // FIXME remove this line once the engine is fixed.
+      ])
+    }
+  );
+
+  var errorMessage = 'search for answers was called, but this client does not have a function client.initIndex(index).findAnswers';
+  if (typeof this.client.initIndex !== 'function') {
+    throw new Error(errorMessage);
+  }
+  var index = this.client.initIndex(derivedState.index);
+  if (typeof index.findAnswers !== 'function') {
+    throw new Error(errorMessage);
+  }
+  return index.findAnswers(derivedState.query, options.queryLanguages, data);
 };
 
 /**
@@ -5479,7 +5524,7 @@ AlgoliaSearchHelper.prototype.hasPendingRequests = function() {
 
 module.exports = AlgoliaSearchHelper;
 
-},{"./SearchParameters":"../node_modules/algoliasearch-helper/src/SearchParameters/index.js","./SearchResults":"../node_modules/algoliasearch-helper/src/SearchResults/index.js","./DerivedHelper":"../node_modules/algoliasearch-helper/src/DerivedHelper/index.js","./requestBuilder":"../node_modules/algoliasearch-helper/src/requestBuilder.js","events":"../node_modules/node-libs-browser/node_modules/events/events.js","./functions/inherits":"../node_modules/algoliasearch-helper/src/functions/inherits.js","./functions/objectHasKeys":"../node_modules/algoliasearch-helper/src/functions/objectHasKeys.js","./version":"../node_modules/algoliasearch-helper/src/version.js"}],"../node_modules/algoliasearch-helper/index.js":[function(require,module,exports) {
+},{"./SearchParameters":"../node_modules/algoliasearch-helper/src/SearchParameters/index.js","./SearchResults":"../node_modules/algoliasearch-helper/src/SearchResults/index.js","./DerivedHelper":"../node_modules/algoliasearch-helper/src/DerivedHelper/index.js","./requestBuilder":"../node_modules/algoliasearch-helper/src/requestBuilder.js","events":"../node_modules/node-libs-browser/node_modules/events/events.js","./functions/inherits":"../node_modules/algoliasearch-helper/src/functions/inherits.js","./functions/objectHasKeys":"../node_modules/algoliasearch-helper/src/functions/objectHasKeys.js","./functions/omit":"../node_modules/algoliasearch-helper/src/functions/omit.js","./functions/merge":"../node_modules/algoliasearch-helper/src/functions/merge.js","./version":"../node_modules/algoliasearch-helper/src/version.js"}],"../node_modules/algoliasearch-helper/index.js":[function(require,module,exports) {
 'use strict';
 
 var AlgoliaSearchHelper = require('./src/algoliasearch.helper');
@@ -5768,36 +5813,50 @@ function _defineProperty(obj, key, value) {
 }
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
 }
 
-function prepareTemplates() {
-  var defaultTemplates = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
+}
+
+function prepareTemplates( // can not use = {} here, since the template could have different constraints
+defaultTemplates) {
   var templates = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var allKeys = (0, _uniq.default)([].concat(_toConsumableArray(Object.keys(defaultTemplates)), _toConsumableArray(Object.keys(templates))));
+  var allKeys = (0, _uniq.default)([].concat(_toConsumableArray(Object.keys(defaultTemplates || {})), _toConsumableArray(Object.keys(templates))));
   return allKeys.reduce(function (config, key) {
-    var defaultTemplate = defaultTemplates[key];
+    var defaultTemplate = defaultTemplates ? defaultTemplates[key] : undefined;
     var customTemplate = templates[key];
     var isCustomTemplate = customTemplate !== undefined && customTemplate !== defaultTemplate;
-    config.templates[key] = isCustomTemplate ? customTemplate : defaultTemplate;
+    config.templates[key] = isCustomTemplate ? customTemplate // typescript doesn't recognize that this condition asserts customTemplate is defined
+    : defaultTemplate;
     config.useCustomCompileOptions[key] = isCustomTemplate;
     return config;
   }, {
@@ -6626,6 +6685,8 @@ var _hogan = _interopRequireDefault(require("hogan.js"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -6697,7 +6758,7 @@ function transformHelpersToHogan() {
   var compileOptions = arguments.length > 1 ? arguments[1] : undefined;
   var data = arguments.length > 2 ? arguments[2] : undefined;
   return Object.keys(helpers).reduce(function (acc, helperKey) {
-    return _objectSpread({}, acc, _defineProperty({}, helperKey, function () {
+    return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, helperKey, function () {
       var _this = this;
 
       return function (text) {
@@ -6734,7 +6795,7 @@ function renderTemplate(_ref) {
   }
 
   var transformedHelpers = transformHelpersToHogan(helpers, compileOptions, data);
-  return _hogan.default.compile(template, compileOptions).render(_objectSpread({}, data, {
+  return _hogan.default.compile(template, compileOptions).render(_objectSpread(_objectSpread({}, data), {}, {
     helpers: transformedHelpers
   })).replace(/[ \n\r\t\f\xA0]+/g, function (spaces) {
     return spaces.replace(/(^|\xA0+)[^\xA0]+/g, '$1 ');
@@ -6854,7 +6915,7 @@ function getRefinement(state, type, attribute, name) {
 }
 
 function getRefinements(results, state) {
-  var clearsQuery = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var includesQuery = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
   var refinements = [];
   var _state$facetsRefineme = state.facetsRefinements,
       facetsRefinements = _state$facetsRefineme === void 0 ? {} : _state$facetsRefineme,
@@ -6924,7 +6985,7 @@ function getRefinements(results, state) {
     });
   });
 
-  if (clearsQuery && state.query && state.query.trim()) {
+  if (includesQuery && state.query && state.query.trim()) {
     refinements.push({
       attribute: 'query',
       type: 'query',
@@ -7121,7 +7182,21 @@ if ("development" === 'development') {
 
   _warning.cache = {};
 }
-},{"./noop":"../node_modules/instantsearch.js/es/lib/utils/noop.js"}],"../node_modules/instantsearch.js/es/lib/utils/checkIndexUiState.js":[function(require,module,exports) {
+},{"./noop":"../node_modules/instantsearch.js/es/lib/utils/noop.js"}],"../node_modules/instantsearch.js/es/lib/utils/typedObject.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.keys = void 0;
+
+/**
+ * A typed version of Object.keys, to use when looping over a static object
+ * inspired from https://stackoverflow.com/a/65117465/3185307
+ */
+var keys = Object.keys;
+exports.keys = keys;
+},{}],"../node_modules/instantsearch.js/es/lib/utils/checkIndexUiState.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7133,43 +7208,55 @@ var _capitalize = _interopRequireDefault(require("./capitalize"));
 
 var _logger = require("./logger");
 
+var _typedObject = require("./typedObject");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
 }
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
 }
 
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -7279,15 +7366,21 @@ function checkIndexUiState(_ref) {
   var mountedWidgets = index.getWidgets().map(function (widget) {
     return widget.$$type;
   }).filter(Boolean);
-  var missingWidgets = Object.keys(indexUiState).reduce(function (acc, parameter) {
-    var requiredWidgets = stateToWidgetsMap[parameter] && stateToWidgetsMap[parameter].widgets;
+  var missingWidgets = (0, _typedObject.keys)(indexUiState).reduce(function (acc, parameter) {
+    var widgetUiState = stateToWidgetsMap[parameter];
+
+    if (!widgetUiState) {
+      return acc;
+    }
+
+    var requiredWidgets = widgetUiState.widgets;
 
     if (requiredWidgets && !requiredWidgets.some(function (requiredWidget) {
       return mountedWidgets.includes(requiredWidget);
     })) {
       acc.push([parameter, {
-        connectors: stateToWidgetsMap[parameter].connectors,
-        widgets: stateToWidgetsMap[parameter].widgets.map(function (widgetIdentifier) {
+        connectors: widgetUiState.connectors,
+        widgets: widgetUiState.widgets.map(function (widgetIdentifier) {
           return widgetIdentifier.split('ais.')[1];
         })
       }]);
@@ -7338,7 +7431,7 @@ function checkIndexUiState(_ref) {
     return "virtual".concat(capitalizedWidget, "({ /* ... */ })");
   }).join(',\n  '), "\n]);\n```\n\nIf you're using custom widgets that do set these query parameters, we recommend using connectors instead.\n\nSee https://www.algolia.com/doc/guides/building-search-ui/widgets/customize-an-existing-widget/js/#customize-the-complete-ui-of-the-widgets")) : void 0;
 }
-},{"./capitalize":"../node_modules/instantsearch.js/es/lib/utils/capitalize.js","./logger":"../node_modules/instantsearch.js/es/lib/utils/logger.js"}],"../node_modules/instantsearch.js/es/lib/utils/getPropertyByPath.js":[function(require,module,exports) {
+},{"./capitalize":"../node_modules/instantsearch.js/es/lib/utils/capitalize.js","./logger":"../node_modules/instantsearch.js/es/lib/utils/logger.js","./typedObject":"../node_modules/instantsearch.js/es/lib/utils/typedObject.js"}],"../node_modules/instantsearch.js/es/lib/utils/getPropertyByPath.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7381,6 +7474,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -7447,25 +7542,38 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
 
-    return arr2;
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
   }
+
+  return arr2;
 }
 
 function range(_ref) {
@@ -7600,17 +7708,21 @@ function unescape(value) {
     return htmlEscapes[character];
   }) : value;
 }
-},{}],"../node_modules/instantsearch.js/es/lib/escape-highlight.js":[function(require,module,exports) {
+},{}],"../node_modules/instantsearch.js/es/lib/utils/escape-highlight.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = escapeHits;
+exports.escapeHits = escapeHits;
 exports.escapeFacets = escapeFacets;
 exports.TAG_REPLACEMENT = exports.TAG_PLACEHOLDER = void 0;
 
-var _utils = require("../lib/utils");
+var _escape = _interopRequireDefault(require("./escape"));
+
+var _isPlainObject = _interopRequireDefault(require("./isPlainObject"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _extends() {
   _extends = Object.assign || function (target) {
@@ -7691,13 +7803,13 @@ var TAG_REPLACEMENT = {
 exports.TAG_REPLACEMENT = TAG_REPLACEMENT;
 
 function replaceTagsAndEscape(value) {
-  return (0, _utils.escape)(value).replace(new RegExp(TAG_PLACEHOLDER.highlightPreTag, 'g'), TAG_REPLACEMENT.highlightPreTag).replace(new RegExp(TAG_PLACEHOLDER.highlightPostTag, 'g'), TAG_REPLACEMENT.highlightPostTag);
+  return (0, _escape.default)(value).replace(new RegExp(TAG_PLACEHOLDER.highlightPreTag, 'g'), TAG_REPLACEMENT.highlightPreTag).replace(new RegExp(TAG_PLACEHOLDER.highlightPostTag, 'g'), TAG_REPLACEMENT.highlightPostTag);
 }
 
 function recursiveEscape(input) {
-  if ((0, _utils.isPlainObject)(input) && typeof input.value !== 'string') {
+  if ((0, _isPlainObject.default)(input) && typeof input.value !== 'string') {
     return Object.keys(input).reduce(function (acc, key) {
-      return _objectSpread({}, acc, _defineProperty({}, key, recursiveEscape(input[key])));
+      return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, key, recursiveEscape(input[key])));
     }, {});
   }
 
@@ -7705,7 +7817,7 @@ function recursiveEscape(input) {
     return input.map(recursiveEscape);
   }
 
-  return _objectSpread({}, input, {
+  return _objectSpread(_objectSpread({}, input), {}, {
     value: replaceTagsAndEscape(input.value)
   });
 }
@@ -7735,12 +7847,12 @@ function escapeHits(hits) {
 
 function escapeFacets(facetHits) {
   return facetHits.map(function (h) {
-    return _objectSpread({}, h, {
+    return _objectSpread(_objectSpread({}, h), {}, {
       highlighted: replaceTagsAndEscape(h.highlighted)
     });
   });
 }
-},{"../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/lib/utils/concatHighlightedParts.js":[function(require,module,exports) {
+},{"./escape":"../node_modules/instantsearch.js/es/lib/utils/escape.js","./isPlainObject":"../node_modules/instantsearch.js/es/lib/utils/isPlainObject.js"}],"../node_modules/instantsearch.js/es/lib/utils/concatHighlightedParts.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7748,7 +7860,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = concatHighlightedParts;
 
-var _escapeHighlight = require("../escape-highlight");
+var _escapeHighlight = require("./escape-highlight");
 
 function concatHighlightedParts(parts) {
   var highlightPreTag = _escapeHighlight.TAG_REPLACEMENT.highlightPreTag,
@@ -7757,7 +7869,7 @@ function concatHighlightedParts(parts) {
     return part.isHighlighted ? highlightPreTag + part.value + highlightPostTag : part.value;
   }).join('');
 }
-},{"../escape-highlight":"../node_modules/instantsearch.js/es/lib/escape-highlight.js"}],"../node_modules/instantsearch.js/es/lib/utils/getHighlightedParts.js":[function(require,module,exports) {
+},{"./escape-highlight":"../node_modules/instantsearch.js/es/lib/utils/escape-highlight.js"}],"../node_modules/instantsearch.js/es/lib/utils/getHighlightedParts.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7765,7 +7877,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = getHighlightedParts;
 
-var _escapeHighlight = require("../../lib/escape-highlight");
+var _escapeHighlight = require("./escape-highlight");
 
 function getHighlightedParts(highlightedValue) {
   var highlightPostTag = _escapeHighlight.TAG_REPLACEMENT.highlightPostTag,
@@ -7792,7 +7904,7 @@ function getHighlightedParts(highlightedValue) {
   });
   return elements;
 }
-},{"../../lib/escape-highlight":"../node_modules/instantsearch.js/es/lib/escape-highlight.js"}],"../node_modules/instantsearch.js/es/lib/utils/getHighlightFromSiblings.js":[function(require,module,exports) {
+},{"./escape-highlight":"../node_modules/instantsearch.js/es/lib/utils/escape-highlight.js"}],"../node_modules/instantsearch.js/es/lib/utils/getHighlightFromSiblings.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7885,14 +7997,14 @@ function reverseHighlightedParts(parts) {
     return part.isHighlighted;
   })) {
     return parts.map(function (part) {
-      return _objectSpread({}, part, {
+      return _objectSpread(_objectSpread({}, part), {}, {
         isHighlighted: false
       });
     });
   }
 
   return parts.map(function (part, i) {
-    return _objectSpread({}, part, {
+    return _objectSpread(_objectSpread({}, part), {}, {
       isHighlighted: !(0, _getHighlightFromSiblings.default)(parts, i)
     });
   });
@@ -8082,31 +8194,31 @@ var mergeTagRefinements = function mergeTagRefinements(left, right) {
 
 var mergeFacetRefinements = function mergeFacetRefinements(left, right) {
   return left.setQueryParameters({
-    facetsRefinements: _objectSpread({}, left.facetsRefinements, {}, right.facetsRefinements)
+    facetsRefinements: _objectSpread(_objectSpread({}, left.facetsRefinements), right.facetsRefinements)
   });
 };
 
 var mergeFacetsExcludes = function mergeFacetsExcludes(left, right) {
   return left.setQueryParameters({
-    facetsExcludes: _objectSpread({}, left.facetsExcludes, {}, right.facetsExcludes)
+    facetsExcludes: _objectSpread(_objectSpread({}, left.facetsExcludes), right.facetsExcludes)
   });
 };
 
 var mergeDisjunctiveFacetsRefinements = function mergeDisjunctiveFacetsRefinements(left, right) {
   return left.setQueryParameters({
-    disjunctiveFacetsRefinements: _objectSpread({}, left.disjunctiveFacetsRefinements, {}, right.disjunctiveFacetsRefinements)
+    disjunctiveFacetsRefinements: _objectSpread(_objectSpread({}, left.disjunctiveFacetsRefinements), right.disjunctiveFacetsRefinements)
   });
 };
 
 var mergeNumericRefinements = function mergeNumericRefinements(left, right) {
   return left.setQueryParameters({
-    numericRefinements: _objectSpread({}, left.numericRefinements, {}, right.numericRefinements)
+    numericRefinements: _objectSpread(_objectSpread({}, left.numericRefinements), right.numericRefinements)
   });
 };
 
 var mergeHierarchicalFacetsRefinements = function mergeHierarchicalFacetsRefinements(left, right) {
   return left.setQueryParameters({
-    hierarchicalFacetsRefinements: _objectSpread({}, left.hierarchicalFacetsRefinements, {}, right.hierarchicalFacetsRefinements)
+    hierarchicalFacetsRefinements: _objectSpread(_objectSpread({}, left.hierarchicalFacetsRefinements), right.hierarchicalFacetsRefinements)
   });
 };
 
@@ -8223,18 +8335,34 @@ exports.insideBoundingBoxStringToBoundingBox = insideBoundingBoxStringToBounding
 exports.insideBoundingBoxToBoundingBox = insideBoundingBoxToBoundingBox;
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
 }
 
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -8402,7 +8530,7 @@ function _defineProperty(obj, key, value) {
 
 var addAbsolutePosition = function addAbsolutePosition(hits, page, hitsPerPage) {
   return hits.map(function (hit, idx) {
-    return _objectSpread({}, hit, {
+    return _objectSpread(_objectSpread({}, hit), {}, {
       __position: hitsPerPage * page + idx + 1
     });
   });
@@ -8472,7 +8600,7 @@ var addQueryID = function addQueryID(hits, queryID) {
   }
 
   return hits.map(function (hit) {
-    return _objectSpread({}, hit, {
+    return _objectSpread(_objectSpread({}, hit), {}, {
       __queryID: queryID
     });
   });
@@ -8509,6 +8637,8 @@ var _isFacetRefined = _interopRequireDefault(require("./isFacetRefined"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -8550,7 +8680,7 @@ function createSendEventForFacet(_ref) {
           payload: {
             eventName: eventName,
             index: helper.getIndex(),
-            filters: ["".concat(attribute, ":").concat(JSON.stringify(facetValue))]
+            filters: ["".concat(attribute, ":").concat(facetValue)]
           }
         });
       }
@@ -8571,6 +8701,8 @@ exports.createSendEventForHits = createSendEventForHits;
 exports.createBindEventForHits = createBindEventForHits;
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -8813,6 +8945,10 @@ var _exportNames = {
   toArray: true,
   warning: true,
   deprecate: true,
+  escapeHits: true,
+  TAG_PLACEHOLDER: true,
+  TAG_REPLACEMENT: true,
+  escapeFacets: true,
   createDocumentationLink: true,
   createDocumentationMessageGenerator: true,
   aroundLatLngToPosition: true,
@@ -9027,6 +9163,30 @@ Object.defineProperty(exports, "deprecate", {
     return _logger.deprecate;
   }
 });
+Object.defineProperty(exports, "escapeHits", {
+  enumerable: true,
+  get: function () {
+    return _escapeHighlight.escapeHits;
+  }
+});
+Object.defineProperty(exports, "TAG_PLACEHOLDER", {
+  enumerable: true,
+  get: function () {
+    return _escapeHighlight.TAG_PLACEHOLDER;
+  }
+});
+Object.defineProperty(exports, "TAG_REPLACEMENT", {
+  enumerable: true,
+  get: function () {
+    return _escapeHighlight.TAG_REPLACEMENT;
+  }
+});
+Object.defineProperty(exports, "escapeFacets", {
+  enumerable: true,
+  get: function () {
+    return _escapeHighlight.escapeFacets;
+  }
+});
 Object.defineProperty(exports, "createDocumentationLink", {
   enumerable: true,
   get: function () {
@@ -9148,6 +9308,8 @@ var _toArray = _interopRequireDefault(require("./toArray"));
 
 var _logger = require("./logger");
 
+var _escapeHighlight = require("./escape-highlight");
+
 var _documentation = require("./documentation");
 
 var _geoSearch = require("./geo-search");
@@ -9191,7 +9353,7 @@ var _getAppIdAndApiKey = require("./getAppIdAndApiKey");
 var _convertNumericRefinementsToFilters = require("./convertNumericRefinementsToFilters");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./capitalize":"../node_modules/instantsearch.js/es/lib/utils/capitalize.js","./defer":"../node_modules/instantsearch.js/es/lib/utils/defer.js","./isDomElement":"../node_modules/instantsearch.js/es/lib/utils/isDomElement.js","./getContainerNode":"../node_modules/instantsearch.js/es/lib/utils/getContainerNode.js","./isSpecialClick":"../node_modules/instantsearch.js/es/lib/utils/isSpecialClick.js","./prepareTemplateProps":"../node_modules/instantsearch.js/es/lib/utils/prepareTemplateProps.js","./renderTemplate":"../node_modules/instantsearch.js/es/lib/utils/renderTemplate.js","./getRefinements":"../node_modules/instantsearch.js/es/lib/utils/getRefinements.js","./clearRefinements":"../node_modules/instantsearch.js/es/lib/utils/clearRefinements.js","./escapeRefinement":"../node_modules/instantsearch.js/es/lib/utils/escapeRefinement.js","./unescapeRefinement":"../node_modules/instantsearch.js/es/lib/utils/unescapeRefinement.js","./checkRendering":"../node_modules/instantsearch.js/es/lib/utils/checkRendering.js","./checkIndexUiState":"../node_modules/instantsearch.js/es/lib/utils/checkIndexUiState.js","./getPropertyByPath":"../node_modules/instantsearch.js/es/lib/utils/getPropertyByPath.js","./getObjectType":"../node_modules/instantsearch.js/es/lib/utils/getObjectType.js","./noop":"../node_modules/instantsearch.js/es/lib/utils/noop.js","./isFiniteNumber":"../node_modules/instantsearch.js/es/lib/utils/isFiniteNumber.js","./isPlainObject":"../node_modules/instantsearch.js/es/lib/utils/isPlainObject.js","./uniq":"../node_modules/instantsearch.js/es/lib/utils/uniq.js","./range":"../node_modules/instantsearch.js/es/lib/utils/range.js","./isEqual":"../node_modules/instantsearch.js/es/lib/utils/isEqual.js","./escape":"../node_modules/instantsearch.js/es/lib/utils/escape.js","./unescape":"../node_modules/instantsearch.js/es/lib/utils/unescape.js","./concatHighlightedParts":"../node_modules/instantsearch.js/es/lib/utils/concatHighlightedParts.js","./getHighlightedParts":"../node_modules/instantsearch.js/es/lib/utils/getHighlightedParts.js","./getHighlightFromSiblings":"../node_modules/instantsearch.js/es/lib/utils/getHighlightFromSiblings.js","./reverseHighlightedParts":"../node_modules/instantsearch.js/es/lib/utils/reverseHighlightedParts.js","./find":"../node_modules/instantsearch.js/es/lib/utils/find.js","./findIndex":"../node_modules/instantsearch.js/es/lib/utils/findIndex.js","./mergeSearchParameters":"../node_modules/instantsearch.js/es/lib/utils/mergeSearchParameters.js","./resolveSearchParameters":"../node_modules/instantsearch.js/es/lib/utils/resolveSearchParameters.js","./toArray":"../node_modules/instantsearch.js/es/lib/utils/toArray.js","./logger":"../node_modules/instantsearch.js/es/lib/utils/logger.js","./documentation":"../node_modules/instantsearch.js/es/lib/utils/documentation.js","./geo-search":"../node_modules/instantsearch.js/es/lib/utils/geo-search.js","./hits-absolute-position":"../node_modules/instantsearch.js/es/lib/utils/hits-absolute-position.js","./hits-query-id":"../node_modules/instantsearch.js/es/lib/utils/hits-query-id.js","./isFacetRefined":"../node_modules/instantsearch.js/es/lib/utils/isFacetRefined.js","./createSendEventForFacet":"../node_modules/instantsearch.js/es/lib/utils/createSendEventForFacet.js","./createSendEventForHits":"../node_modules/instantsearch.js/es/lib/utils/createSendEventForHits.js","./getAppIdAndApiKey":"../node_modules/instantsearch.js/es/lib/utils/getAppIdAndApiKey.js","./convertNumericRefinementsToFilters":"../node_modules/instantsearch.js/es/lib/utils/convertNumericRefinementsToFilters.js"}],"../node_modules/instantsearch.js/es/widgets/index/index.js":[function(require,module,exports) {
+},{"./capitalize":"../node_modules/instantsearch.js/es/lib/utils/capitalize.js","./defer":"../node_modules/instantsearch.js/es/lib/utils/defer.js","./isDomElement":"../node_modules/instantsearch.js/es/lib/utils/isDomElement.js","./getContainerNode":"../node_modules/instantsearch.js/es/lib/utils/getContainerNode.js","./isSpecialClick":"../node_modules/instantsearch.js/es/lib/utils/isSpecialClick.js","./prepareTemplateProps":"../node_modules/instantsearch.js/es/lib/utils/prepareTemplateProps.js","./renderTemplate":"../node_modules/instantsearch.js/es/lib/utils/renderTemplate.js","./getRefinements":"../node_modules/instantsearch.js/es/lib/utils/getRefinements.js","./clearRefinements":"../node_modules/instantsearch.js/es/lib/utils/clearRefinements.js","./escapeRefinement":"../node_modules/instantsearch.js/es/lib/utils/escapeRefinement.js","./unescapeRefinement":"../node_modules/instantsearch.js/es/lib/utils/unescapeRefinement.js","./checkRendering":"../node_modules/instantsearch.js/es/lib/utils/checkRendering.js","./checkIndexUiState":"../node_modules/instantsearch.js/es/lib/utils/checkIndexUiState.js","./getPropertyByPath":"../node_modules/instantsearch.js/es/lib/utils/getPropertyByPath.js","./getObjectType":"../node_modules/instantsearch.js/es/lib/utils/getObjectType.js","./noop":"../node_modules/instantsearch.js/es/lib/utils/noop.js","./isFiniteNumber":"../node_modules/instantsearch.js/es/lib/utils/isFiniteNumber.js","./isPlainObject":"../node_modules/instantsearch.js/es/lib/utils/isPlainObject.js","./uniq":"../node_modules/instantsearch.js/es/lib/utils/uniq.js","./range":"../node_modules/instantsearch.js/es/lib/utils/range.js","./isEqual":"../node_modules/instantsearch.js/es/lib/utils/isEqual.js","./escape":"../node_modules/instantsearch.js/es/lib/utils/escape.js","./unescape":"../node_modules/instantsearch.js/es/lib/utils/unescape.js","./concatHighlightedParts":"../node_modules/instantsearch.js/es/lib/utils/concatHighlightedParts.js","./getHighlightedParts":"../node_modules/instantsearch.js/es/lib/utils/getHighlightedParts.js","./getHighlightFromSiblings":"../node_modules/instantsearch.js/es/lib/utils/getHighlightFromSiblings.js","./reverseHighlightedParts":"../node_modules/instantsearch.js/es/lib/utils/reverseHighlightedParts.js","./find":"../node_modules/instantsearch.js/es/lib/utils/find.js","./findIndex":"../node_modules/instantsearch.js/es/lib/utils/findIndex.js","./mergeSearchParameters":"../node_modules/instantsearch.js/es/lib/utils/mergeSearchParameters.js","./resolveSearchParameters":"../node_modules/instantsearch.js/es/lib/utils/resolveSearchParameters.js","./toArray":"../node_modules/instantsearch.js/es/lib/utils/toArray.js","./logger":"../node_modules/instantsearch.js/es/lib/utils/logger.js","./escape-highlight":"../node_modules/instantsearch.js/es/lib/utils/escape-highlight.js","./documentation":"../node_modules/instantsearch.js/es/lib/utils/documentation.js","./geo-search":"../node_modules/instantsearch.js/es/lib/utils/geo-search.js","./hits-absolute-position":"../node_modules/instantsearch.js/es/lib/utils/hits-absolute-position.js","./hits-query-id":"../node_modules/instantsearch.js/es/lib/utils/hits-query-id.js","./isFacetRefined":"../node_modules/instantsearch.js/es/lib/utils/isFacetRefined.js","./createSendEventForFacet":"../node_modules/instantsearch.js/es/lib/utils/createSendEventForFacet.js","./createSendEventForHits":"../node_modules/instantsearch.js/es/lib/utils/createSendEventForHits.js","./getAppIdAndApiKey":"../node_modules/instantsearch.js/es/lib/utils/getAppIdAndApiKey.js","./convertNumericRefinementsToFilters":"../node_modules/instantsearch.js/es/lib/utils/convertNumericRefinementsToFilters.js"}],"../node_modules/instantsearch.js/es/widgets/index/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9256,25 +9418,38 @@ function _defineProperty(obj, key, value) {
 }
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
 
-    return arr2;
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
   }
+
+  return arr2;
 }
 
 function _objectWithoutProperties(source, excluded) {
@@ -9419,6 +9594,7 @@ var index = function index(props) {
   var derivedHelper = null;
   return {
     $$type: 'ais.index',
+    $$widgetType: 'ais.index',
     getIndexName: function getIndexName() {
       return indexName;
     },
@@ -9567,6 +9743,13 @@ var index = function index(props) {
       var instantSearchInstance = _ref2.instantSearchInstance,
           parent = _ref2.parent,
           uiState = _ref2.uiState;
+
+      if (helper !== null) {
+        // helper is already initialized, therefore we do not need to set up
+        // any listeners
+        return;
+      }
+
       localInstantSearchInstance = instantSearchInstance;
       localParent = parent;
       localUiState = uiState[indexId] || {}; // The `mainHelper` is already defined at this point. The instance is created
@@ -9678,7 +9861,9 @@ var index = function index(props) {
         }
       });
       localWidgets.forEach(function (widget) {
-        "development" === 'development' ? (0, _utils.warning)(!widget.getWidgetState, 'The `getWidgetState` method is renamed `getWidgetUiState` and will no longer exist under that name in InstantSearch.js 5.x. Please use `getWidgetUiState` instead.') : void 0;
+        "development" === 'development' ? (0, _utils.warning)( // if it has NO getWidgetState or if it has getWidgetUiState, we don't warn
+        // aka we warn if there's _only_ getWidgetState
+        !widget.getWidgetState || Boolean(widget.getWidgetUiState), 'The `getWidgetState` method is renamed `getWidgetUiState` and will no longer exist under that name in InstantSearch.js 5.x. Please use `getWidgetUiState` instead.') : void 0;
 
         if (widget.init) {
           widget.init({
@@ -9800,7 +9985,7 @@ var index = function index(props) {
     getWidgetUiState: function getWidgetUiState(uiState) {
       return localWidgets.filter(isIndexWidget).reduce(function (previousUiState, innerIndex) {
         return innerIndex.getWidgetUiState(previousUiState);
-      }, _objectSpread({}, uiState, _defineProperty({}, this.getIndexId(), localUiState)));
+      }, _objectSpread(_objectSpread({}, uiState), {}, _defineProperty({}, this.getIndexId(), localUiState)));
     },
     getWidgetState: function getWidgetState(uiState) {
       "development" === 'development' ? (0, _utils.warning)(false, 'The `getWidgetState` method is renamed `getWidgetUiState` and will no longer exist under that name in InstantSearch.js 5.x. Please use `getWidgetUiState` instead.') : void 0;
@@ -9830,7 +10015,7 @@ function storeRenderState(_ref7) {
       instantSearchInstance = _ref7.instantSearchInstance,
       parent = _ref7.parent;
   var parentIndexName = parent ? parent.getIndexId() : instantSearchInstance.mainIndex.getIndexId();
-  instantSearchInstance.renderState = _objectSpread({}, instantSearchInstance.renderState, _defineProperty({}, parentIndexName, _objectSpread({}, instantSearchInstance.renderState[parentIndexName], {}, renderState)));
+  instantSearchInstance.renderState = _objectSpread(_objectSpread({}, instantSearchInstance.renderState), {}, _defineProperty({}, parentIndexName, _objectSpread(_objectSpread({}, instantSearchInstance.renderState[parentIndexName]), renderState)));
 }
 },{"algoliasearch-helper":"../node_modules/algoliasearch-helper/index.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/lib/version.js":[function(require,module,exports) {
 "use strict";
@@ -9839,7 +10024,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-var _default = '4.10.0';
+var _default = '4.15.0';
 exports.default = _default;
 },{}],"../node_modules/instantsearch.js/es/lib/suit.js":[function(require,module,exports) {
 "use strict";
@@ -9871,11 +10056,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = highlight;
 
-var _utils = require("../lib/utils");
-
-var _escapeHighlight = require("../lib/escape-highlight");
-
 var _suit = require("../lib/suit");
+
+var _utils = require("../lib/utils");
 
 var suit = (0, _suit.component)('Highlight');
 
@@ -9895,9 +10078,9 @@ function highlight(_ref) {
   var className = suit({
     descendantName: 'highlighted'
   }) + (cssClasses.highlighted ? " ".concat(cssClasses.highlighted) : '');
-  return attributeValue.replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
+  return attributeValue.replace(new RegExp(_utils.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_utils.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
 }
-},{"../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../lib/escape-highlight":"../node_modules/instantsearch.js/es/lib/escape-highlight.js","../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/helpers/reverseHighlight.js":[function(require,module,exports) {
+},{"../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js","../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/helpers/reverseHighlight.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9906,8 +10089,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = reverseHighlight;
 
 var _utils = require("../lib/utils");
-
-var _escapeHighlight = require("../lib/escape-highlight");
 
 var _suit = require("../lib/suit");
 
@@ -9930,9 +10111,9 @@ function reverseHighlight(_ref) {
     descendantName: 'highlighted'
   }) + (cssClasses.highlighted ? " ".concat(cssClasses.highlighted) : '');
   var reverseHighlightedValue = (0, _utils.concatHighlightedParts)((0, _utils.reverseHighlightedParts)((0, _utils.getHighlightedParts)(attributeValue)));
-  return reverseHighlightedValue.replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
+  return reverseHighlightedValue.replace(new RegExp(_utils.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_utils.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
 }
-},{"../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../lib/escape-highlight":"../node_modules/instantsearch.js/es/lib/escape-highlight.js","../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/helpers/snippet.js":[function(require,module,exports) {
+},{"../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/helpers/snippet.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9940,11 +10121,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = snippet;
 
-var _utils = require("../lib/utils");
-
-var _escapeHighlight = require("../lib/escape-highlight");
-
 var _suit = require("../lib/suit");
+
+var _utils = require("../lib/utils");
 
 var suit = (0, _suit.component)('Snippet');
 
@@ -9964,9 +10143,9 @@ function snippet(_ref) {
   var className = suit({
     descendantName: 'highlighted'
   }) + (cssClasses.highlighted ? " ".concat(cssClasses.highlighted) : '');
-  return attributeValue.replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
+  return attributeValue.replace(new RegExp(_utils.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_utils.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
 }
-},{"../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../lib/escape-highlight":"../node_modules/instantsearch.js/es/lib/escape-highlight.js","../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/helpers/reverseSnippet.js":[function(require,module,exports) {
+},{"../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js","../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/helpers/reverseSnippet.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9975,8 +10154,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = reverseSnippet;
 
 var _utils = require("../lib/utils");
-
-var _escapeHighlight = require("../lib/escape-highlight");
 
 var _suit = require("../lib/suit");
 
@@ -9999,9 +10176,9 @@ function reverseSnippet(_ref) {
     descendantName: 'highlighted'
   }) + (cssClasses.highlighted ? " ".concat(cssClasses.highlighted) : '');
   var reverseHighlightedValue = (0, _utils.concatHighlightedParts)((0, _utils.reverseHighlightedParts)((0, _utils.getHighlightedParts)(attributeValue)));
-  return reverseHighlightedValue.replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_escapeHighlight.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
+  return reverseHighlightedValue.replace(new RegExp(_utils.TAG_REPLACEMENT.highlightPreTag, 'g'), "<".concat(highlightedTagName, " class=\"").concat(className, "\">")).replace(new RegExp(_utils.TAG_REPLACEMENT.highlightPostTag, 'g'), "</".concat(highlightedTagName, ">"));
 }
-},{"../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../lib/escape-highlight":"../node_modules/instantsearch.js/es/lib/escape-highlight.js","../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/helpers/insights.js":[function(require,module,exports) {
+},{"../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/helpers/insights.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10015,6 +10192,8 @@ exports.default = insights;
 var _utils = require("../lib/utils");
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -10318,7 +10497,7 @@ function hoganHelpers(_ref) {
     highlight: function highlight(options, render) {
       try {
         var highlightOptions = JSON.parse(options);
-        return render((0, _helpers.highlight)(_objectSpread({}, highlightOptions, {
+        return render((0, _helpers.highlight)(_objectSpread(_objectSpread({}, highlightOptions), {}, {
           hit: this
         })));
       } catch (error) {
@@ -10328,7 +10507,7 @@ function hoganHelpers(_ref) {
     reverseHighlight: function reverseHighlight(options, render) {
       try {
         var reverseHighlightOptions = JSON.parse(options);
-        return render((0, _helpers.reverseHighlight)(_objectSpread({}, reverseHighlightOptions, {
+        return render((0, _helpers.reverseHighlight)(_objectSpread(_objectSpread({}, reverseHighlightOptions), {}, {
           hit: this
         })));
       } catch (error) {
@@ -10338,7 +10517,7 @@ function hoganHelpers(_ref) {
     snippet: function snippet(options, render) {
       try {
         var snippetOptions = JSON.parse(options);
-        return render((0, _helpers.snippet)(_objectSpread({}, snippetOptions, {
+        return render((0, _helpers.snippet)(_objectSpread(_objectSpread({}, snippetOptions), {}, {
           hit: this
         })));
       } catch (error) {
@@ -10348,7 +10527,7 @@ function hoganHelpers(_ref) {
     reverseSnippet: function reverseSnippet(options, render) {
       try {
         var reverseSnippetOptions = JSON.parse(options);
-        return render((0, _helpers.reverseSnippet)(_objectSpread({}, reverseSnippetOptions, {
+        return render((0, _helpers.reverseSnippet)(_objectSpread(_objectSpread({}, reverseSnippetOptions), {}, {
           hit: this
         })));
       } catch (error) {
@@ -10477,19 +10656,43 @@ function simpleStateMapping() {
   return {
     stateToRoute: function stateToRoute(uiState) {
       return Object.keys(uiState).reduce(function (state, indexId) {
-        return _objectSpread({}, state, _defineProperty({}, indexId, getIndexStateWithoutConfigure(uiState[indexId])));
+        return _objectSpread(_objectSpread({}, state), {}, _defineProperty({}, indexId, getIndexStateWithoutConfigure(uiState[indexId])));
       }, {});
     },
     routeToState: function routeToState() {
       var routeState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       return Object.keys(routeState).reduce(function (state, indexId) {
-        return _objectSpread({}, state, _defineProperty({}, indexId, getIndexStateWithoutConfigure(routeState[indexId])));
+        return _objectSpread(_objectSpread({}, state), {}, _defineProperty({}, indexId, getIndexStateWithoutConfigure(routeState[indexId])));
       }, {});
     }
   };
 }
+},{}],"../node_modules/qs/lib/formats.js":[function(require,module,exports) {
+'use strict';
+
+var replace = String.prototype.replace;
+var percentTwenties = /%20/g;
+var Format = {
+  RFC1738: 'RFC1738',
+  RFC3986: 'RFC3986'
+};
+module.exports = {
+  'default': Format.RFC3986,
+  formatters: {
+    RFC1738: function (value) {
+      return replace.call(value, percentTwenties, '+');
+    },
+    RFC3986: function (value) {
+      return String(value);
+    }
+  },
+  RFC1738: Format.RFC1738,
+  RFC3986: Format.RFC3986
+};
 },{}],"../node_modules/qs/lib/utils.js":[function(require,module,exports) {
 'use strict';
+
+var formats = require('./formats');
 
 var has = Object.prototype.hasOwnProperty;
 var isArray = Array.isArray;
@@ -10618,7 +10821,7 @@ var decode = function (str, decoder, charset) {
   }
 };
 
-var encode = function encode(str, defaultEncoder, charset) {
+var encode = function encode(str, defaultEncoder, charset, kind, format) {
   // This code was originally written by Brian White (mscdex) for the io.js core querystring library.
   // It has been adapted here for stricter adherence to RFC 3986
   if (str.length === 0) {
@@ -10651,6 +10854,7 @@ var encode = function encode(str, defaultEncoder, charset) {
     || c >= 0x30 && c <= 0x39 // 0-9
     || c >= 0x41 && c <= 0x5A // a-z
     || c >= 0x61 && c <= 0x7A // A-Z
+    || format === formats.RFC1738 && (c === 0x28 || c === 0x29) // ( )
     ) {
         out += string.charAt(i);
         continue;
@@ -10753,30 +10957,7 @@ module.exports = {
   maybeMap: maybeMap,
   merge: merge
 };
-},{}],"../node_modules/qs/lib/formats.js":[function(require,module,exports) {
-'use strict';
-
-var replace = String.prototype.replace;
-var percentTwenties = /%20/g;
-
-var util = require('./utils');
-
-var Format = {
-  RFC1738: 'RFC1738',
-  RFC3986: 'RFC3986'
-};
-module.exports = util.assign({
-  'default': Format.RFC3986,
-  formatters: {
-    RFC1738: function (value) {
-      return replace.call(value, percentTwenties, '+');
-    },
-    RFC3986: function (value) {
-      return String(value);
-    }
-  }
-}, Format);
-},{"./utils":"../node_modules/qs/lib/utils.js"}],"../node_modules/qs/lib/stringify.js":[function(require,module,exports) {
+},{"./formats":"../node_modules/qs/lib/formats.js"}],"../node_modules/qs/lib/stringify.js":[function(require,module,exports) {
 'use strict';
 
 var utils = require('./utils');
@@ -10829,7 +11010,7 @@ var isNonNullishPrimitive = function isNonNullishPrimitive(v) {
   return typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' || typeof v === 'symbol' || typeof v === 'bigint';
 };
 
-var stringify = function stringify(object, prefix, generateArrayPrefix, strictNullHandling, skipNulls, encoder, filter, sort, allowDots, serializeDate, formatter, encodeValuesOnly, charset) {
+var stringify = function stringify(object, prefix, generateArrayPrefix, strictNullHandling, skipNulls, encoder, filter, sort, allowDots, serializeDate, format, formatter, encodeValuesOnly, charset) {
   var obj = object;
 
   if (typeof filter === 'function') {
@@ -10843,12 +11024,12 @@ var stringify = function stringify(object, prefix, generateArrayPrefix, strictNu
       }
 
       return value;
-    }).join(',');
+    });
   }
 
   if (obj === null) {
     if (strictNullHandling) {
-      return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder, charset, 'key') : prefix;
+      return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder, charset, 'key', format) : prefix;
     }
 
     obj = '';
@@ -10856,8 +11037,8 @@ var stringify = function stringify(object, prefix, generateArrayPrefix, strictNu
 
   if (isNonNullishPrimitive(obj) || utils.isBuffer(obj)) {
     if (encoder) {
-      var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset, 'key');
-      return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder, charset, 'value'))];
+      var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset, 'key', format);
+      return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder, charset, 'value', format))];
     }
 
     return [formatter(prefix) + '=' + formatter(String(obj))];
@@ -10871,7 +11052,12 @@ var stringify = function stringify(object, prefix, generateArrayPrefix, strictNu
 
   var objKeys;
 
-  if (isArray(filter)) {
+  if (generateArrayPrefix === 'comma' && isArray(obj)) {
+    // we need to join elements in
+    objKeys = [{
+      value: obj.length > 0 ? obj.join(',') || null : undefined
+    }];
+  } else if (isArray(filter)) {
     objKeys = filter;
   } else {
     var keys = Object.keys(obj);
@@ -10880,14 +11066,14 @@ var stringify = function stringify(object, prefix, generateArrayPrefix, strictNu
 
   for (var i = 0; i < objKeys.length; ++i) {
     var key = objKeys[i];
-    var value = obj[key];
+    var value = typeof key === 'object' && key.value !== undefined ? key.value : obj[key];
 
     if (skipNulls && value === null) {
       continue;
     }
 
     var keyPrefix = isArray(obj) ? typeof generateArrayPrefix === 'function' ? generateArrayPrefix(prefix, key) : prefix : prefix + (allowDots ? '.' + key : '[' + key + ']');
-    pushToArray(values, stringify(value, keyPrefix, generateArrayPrefix, strictNullHandling, skipNulls, encoder, filter, sort, allowDots, serializeDate, formatter, encodeValuesOnly, charset));
+    pushToArray(values, stringify(value, keyPrefix, generateArrayPrefix, strictNullHandling, skipNulls, encoder, filter, sort, allowDots, serializeDate, format, formatter, encodeValuesOnly, charset));
   }
 
   return values;
@@ -10935,6 +11121,7 @@ var normalizeStringifyOptions = function normalizeStringifyOptions(opts) {
     encoder: typeof opts.encoder === 'function' ? opts.encoder : defaults.encoder,
     encodeValuesOnly: typeof opts.encodeValuesOnly === 'boolean' ? opts.encodeValuesOnly : defaults.encodeValuesOnly,
     filter: filter,
+    format: format,
     formatter: formatter,
     serializeDate: typeof opts.serializeDate === 'function' ? opts.serializeDate : defaults.serializeDate,
     skipNulls: typeof opts.skipNulls === 'boolean' ? opts.skipNulls : defaults.skipNulls,
@@ -10990,7 +11177,7 @@ module.exports = function (object, opts) {
       continue;
     }
 
-    pushToArray(keys, stringify(obj[key], key, generateArrayPrefix, options.strictNullHandling, options.skipNulls, options.encode ? options.encoder : null, options.filter, options.sort, options.allowDots, options.serializeDate, options.formatter, options.encodeValuesOnly, options.charset));
+    pushToArray(keys, stringify(obj[key], key, generateArrayPrefix, options.strictNullHandling, options.skipNulls, options.encode ? options.encoder : null, options.filter, options.sort, options.allowDots, options.serializeDate, options.format, options.formatter, options.encodeValuesOnly, options.charset));
   }
 
   var joined = keys.join(options.delimiter);
@@ -11146,7 +11333,7 @@ var parseObject = function (chain, val, options, valuesParsed) {
       }
     }
 
-    leaf = obj; // eslint-disable-line no-param-reassign
+    leaf = obj;
   }
 
   return leaf;
@@ -11580,14 +11767,14 @@ var createRouterMiddleware = function createRouterMiddleware() {
 
     function topLevelCreateURL(nextState) {
       var uiState = Object.keys(nextState).reduce(function (acc, indexId) {
-        return _objectSpread({}, acc, _defineProperty({}, indexId, nextState[indexId]));
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, indexId, nextState[indexId]));
       }, instantSearchInstance.mainIndex.getWidgetUiState({}));
       var route = stateMapping.stateToRoute(uiState);
       return router.createURL(route);
     }
 
     instantSearchInstance._createURL = topLevelCreateURL;
-    instantSearchInstance._initialUiState = _objectSpread({}, instantSearchInstance._initialUiState, {}, stateMapping.routeToState(router.read()));
+    instantSearchInstance._initialUiState = _objectSpread(_objectSpread({}, instantSearchInstance._initialUiState), stateMapping.routeToState(router.read()));
     var lastRouteState = undefined;
     return {
       onStateChange: function onStateChange(_ref2) {
@@ -11612,7 +11799,98 @@ var createRouterMiddleware = function createRouterMiddleware() {
 };
 
 exports.createRouterMiddleware = createRouterMiddleware;
-},{"../lib/stateMappings/simple":"../node_modules/instantsearch.js/es/lib/stateMappings/simple.js","../lib/routers/history":"../node_modules/instantsearch.js/es/lib/routers/history.js","../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/lib/InstantSearch.js":[function(require,module,exports) {
+},{"../lib/stateMappings/simple":"../node_modules/instantsearch.js/es/lib/stateMappings/simple.js","../lib/routers/history":"../node_modules/instantsearch.js/es/lib/routers/history.js","../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/middlewares/createMetadataMiddleware.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.isMetadataEnabled = isMetadataEnabled;
+exports.createMetadataMiddleware = createMetadataMiddleware;
+
+function extractPayload(widgets, instantSearchInstance, payload) {
+  var parent = instantSearchInstance.mainIndex;
+  var initOptions = {
+    instantSearchInstance: instantSearchInstance,
+    parent: parent,
+    scopedResults: [],
+    state: parent.getHelper().state,
+    helper: parent.getHelper(),
+    createURL: parent.createURL,
+    uiState: instantSearchInstance._initialUiState,
+    renderState: instantSearchInstance.renderState,
+    templatesConfig: instantSearchInstance.templatesConfig,
+    searchMetadata: {
+      isSearchStalled: instantSearchInstance._isSearchStalled
+    }
+  };
+  widgets.forEach(function (widget) {
+    var widgetParams = {};
+
+    if (widget.getWidgetRenderState) {
+      var renderState = widget.getWidgetRenderState(initOptions);
+
+      if (renderState && renderState.widgetParams) {
+        widgetParams = renderState.widgetParams;
+      }
+    } // since we destructure in all widgets, the parameters with defaults are set to "undefined"
+
+
+    var params = Object.keys(widgetParams).filter(function (key) {
+      return widgetParams[key] !== undefined;
+    });
+    payload.widgets.push({
+      type: widget.$$type,
+      widgetType: widget.$$widgetType,
+      params: params
+    });
+
+    if (widget.$$type === 'ais.index') {
+      extractPayload(widget.getWidgets(), instantSearchInstance, payload);
+    }
+  });
+}
+
+function isMetadataEnabled() {
+  return typeof window !== 'undefined' && window.navigator.userAgent.indexOf('Algolia Crawler') > -1;
+}
+/**
+ * Exposes the metadata of mounted widgets in a custom
+ * `<meta name="instantsearch:widgets" />` tag. The metadata per widget is:
+ * - applied parameters
+ * - widget name
+ * - connector name
+ */
+
+
+function createMetadataMiddleware() {
+  return function (_ref) {
+    var instantSearchInstance = _ref.instantSearchInstance;
+    var payload = {
+      widgets: []
+    };
+    var payloadContainer = document.createElement('meta');
+    var refNode = document.querySelector('head');
+    payloadContainer.name = 'instantsearch:widgets';
+    return {
+      onStateChange: function onStateChange() {},
+      subscribe: function subscribe() {
+        // using setTimeout here to delay extraction until widgets have been added in a tick (e.g. Vue)
+        setTimeout(function () {
+          extractPayload(instantSearchInstance.mainIndex.getWidgets(), instantSearchInstance, payload);
+          payloadContainer.content = JSON.stringify(payload);
+          refNode.appendChild(payloadContainer);
+        }, 0);
+      },
+      unsubscribe: function unsubscribe() {
+        var _payloadContainer$par;
+
+        (_payloadContainer$par = payloadContainer.parentNode) === null || _payloadContainer$par === void 0 ? void 0 : _payloadContainer$par.removeChild(payloadContainer);
+      }
+    };
+  };
+}
+},{}],"../node_modules/instantsearch.js/es/lib/InstantSearch.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11634,6 +11912,8 @@ var _utils = require("./utils");
 
 var _createRouterMiddleware = require("../middlewares/createRouterMiddleware");
 
+var _createMetadataMiddleware = require("../middlewares/createMetadataMiddleware");
+
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
@@ -11641,6 +11921,8 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -11676,29 +11958,6 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -11721,6 +11980,61 @@ function _setPrototypeOf(o, p) {
   };
 
   return _setPrototypeOf(o, p);
+}
+
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
 }
 
 function _defineProperty(obj, key, value) {
@@ -11759,12 +12073,14 @@ function defaultCreateURL() {
 var InstantSearch = /*#__PURE__*/function (_EventEmitter) {
   _inherits(InstantSearch, _EventEmitter);
 
+  var _super = _createSuper(InstantSearch);
+
   function InstantSearch(options) {
     var _this;
 
     _classCallCheck(this, InstantSearch);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(InstantSearch).call(this));
+    _this = _super.call(this);
 
     _defineProperty(_assertThisInitialized(_this), "client", void 0);
 
@@ -11908,6 +12224,10 @@ var InstantSearch = /*#__PURE__*/function (_EventEmitter) {
       var routerOptions = typeof routing === 'boolean' ? undefined : routing;
 
       _this.use((0, _createRouterMiddleware.createRouterMiddleware)(routerOptions));
+    }
+
+    if ((0, _createMetadataMiddleware.isMetadataEnabled)()) {
+      _this.use((0, _createMetadataMiddleware.createMetadataMiddleware)());
     }
 
     return _this;
@@ -12214,7 +12534,7 @@ var InstantSearch = /*#__PURE__*/function (_EventEmitter) {
 
 var _default = InstantSearch;
 exports.default = _default;
-},{"algoliasearch-helper":"../node_modules/algoliasearch-helper/index.js","events":"../node_modules/node-libs-browser/node_modules/events/events.js","../widgets/index/index":"../node_modules/instantsearch.js/es/widgets/index/index.js","./version":"../node_modules/instantsearch.js/es/lib/version.js","./createHelpers":"../node_modules/instantsearch.js/es/lib/createHelpers.js","./utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../middlewares/createRouterMiddleware":"../node_modules/instantsearch.js/es/middlewares/createRouterMiddleware.js"}],"../node_modules/instantsearch.js/es/lib/infiniteHitsCache/sessionStorage.js":[function(require,module,exports) {
+},{"algoliasearch-helper":"../node_modules/algoliasearch-helper/index.js","events":"../node_modules/node-libs-browser/node_modules/events/events.js","../widgets/index/index":"../node_modules/instantsearch.js/es/widgets/index/index.js","./version":"../node_modules/instantsearch.js/es/lib/version.js","./createHelpers":"../node_modules/instantsearch.js/es/lib/createHelpers.js","./utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../middlewares/createRouterMiddleware":"../node_modules/instantsearch.js/es/middlewares/createRouterMiddleware.js","../middlewares/createMetadataMiddleware":"../node_modules/instantsearch.js/es/middlewares/createMetadataMiddleware.js"}],"../node_modules/instantsearch.js/es/lib/infiniteHitsCache/sessionStorage.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12376,8 +12696,8 @@ var _default = instantsearch;
 exports.default = _default;
 },{"./lib/InstantSearch":"../node_modules/instantsearch.js/es/lib/InstantSearch.js","./lib/version":"../node_modules/instantsearch.js/es/lib/version.js","./helpers":"../node_modules/instantsearch.js/es/helpers/index.js","./lib/infiniteHitsCache":"../node_modules/instantsearch.js/es/lib/infiniteHitsCache/index.js"}],"../node_modules/algoliasearch/dist/algoliasearch.umd.js":[function(require,module,exports) {
 var define;
-/*! algoliasearch.umd.js | 4.8.3 | © Algolia, inc. | https://github.com/algolia/algoliasearch-client-javascript */
-!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e=e||self).algoliasearch=t()}(this,(function(){"use strict";function e(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function t(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function r(r){for(var n=1;n<arguments.length;n++){var a=null!=arguments[n]?arguments[n]:{};n%2?t(Object(a),!0).forEach((function(t){e(r,t,a[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(r,Object.getOwnPropertyDescriptors(a)):t(Object(a)).forEach((function(e){Object.defineProperty(r,e,Object.getOwnPropertyDescriptor(a,e))}))}return r}function n(e,t){if(null==e)return{};var r,n,a=function(e,t){if(null==e)return{};var r,n,a={},o=Object.keys(e);for(n=0;n<o.length;n++)r=o[n],t.indexOf(r)>=0||(a[r]=e[r]);return a}(e,t);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(e);for(n=0;n<o.length;n++)r=o[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(a[r]=e[r])}return a}function a(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){if(!(Symbol.iterator in Object(e)||"[object Arguments]"===Object.prototype.toString.call(e)))return;var r=[],n=!0,a=!1,o=void 0;try{for(var u,i=e[Symbol.iterator]();!(n=(u=i.next()).done)&&(r.push(u.value),!t||r.length!==t);n=!0);}catch(e){a=!0,o=e}finally{try{n||null==i.return||i.return()}finally{if(a)throw o}}return r}(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}()}function o(e){return function(e){if(Array.isArray(e)){for(var t=0,r=new Array(e.length);t<e.length;t++)r[t]=e[t];return r}}(e)||function(e){if(Symbol.iterator in Object(e)||"[object Arguments]"===Object.prototype.toString.call(e))return Array.from(e)}(e)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance")}()}function u(e){var t,r="algoliasearch-client-js-".concat(e.key),n=function(){return void 0===t&&(t=e.localStorage||window.localStorage),t},o=function(){return JSON.parse(n().getItem(r)||"{}")};return{get:function(e,t){var r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{miss:function(){return Promise.resolve()}};return Promise.resolve().then((function(){var r=JSON.stringify(e),n=o()[r];return Promise.all([n||t(),void 0!==n])})).then((function(e){var t=a(e,2),n=t[0],o=t[1];return Promise.all([n,o||r.miss(n)])})).then((function(e){return a(e,1)[0]}))},set:function(e,t){return Promise.resolve().then((function(){var a=o();return a[JSON.stringify(e)]=t,n().setItem(r,JSON.stringify(a)),t}))},delete:function(e){return Promise.resolve().then((function(){var t=o();delete t[JSON.stringify(e)],n().setItem(r,JSON.stringify(t))}))},clear:function(){return Promise.resolve().then((function(){n().removeItem(r)}))}}}function i(e){var t=o(e.caches),r=t.shift();return void 0===r?{get:function(e,t){var r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{miss:function(){return Promise.resolve()}},n=t();return n.then((function(e){return Promise.all([e,r.miss(e)])})).then((function(e){return a(e,1)[0]}))},set:function(e,t){return Promise.resolve(t)},delete:function(e){return Promise.resolve()},clear:function(){return Promise.resolve()}}:{get:function(e,n){var a=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{miss:function(){return Promise.resolve()}};return r.get(e,n,a).catch((function(){return i({caches:t}).get(e,n,a)}))},set:function(e,n){return r.set(e,n).catch((function(){return i({caches:t}).set(e,n)}))},delete:function(e){return r.delete(e).catch((function(){return i({caches:t}).delete(e)}))},clear:function(){return r.clear().catch((function(){return i({caches:t}).clear()}))}}}function s(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{serializable:!0},t={};return{get:function(r,n){var a=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{miss:function(){return Promise.resolve()}},o=JSON.stringify(r);if(o in t)return Promise.resolve(e.serializable?JSON.parse(t[o]):t[o]);var u=n(),i=a&&a.miss||function(){return Promise.resolve()};return u.then((function(e){return i(e)})).then((function(){return u}))},set:function(r,n){return t[JSON.stringify(r)]=e.serializable?JSON.stringify(n):n,Promise.resolve(n)},delete:function(e){return delete t[JSON.stringify(e)],Promise.resolve()},clear:function(){return t={},Promise.resolve()}}}function c(e,t,r){var n={"x-algolia-api-key":r,"x-algolia-application-id":t};return{headers:function(){return e===m.WithinHeaders?n:{}},queryParameters:function(){return e===m.WithinQueryParameters?n:{}}}}function f(e){var t=0;return e((function r(){return t++,new Promise((function(n){setTimeout((function(){n(e(r))}),Math.min(100*t,1e3))}))}))}function d(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:function(e,t){return Promise.resolve()};return Object.assign(e,{wait:function(r){return d(e.then((function(e){return Promise.all([t(e,r),e])})).then((function(e){return e[1]})))}})}function l(e){for(var t=e.length-1;t>0;t--){var r=Math.floor(Math.random()*(t+1)),n=e[t];e[t]=e[r],e[r]=n}return e}function p(e,t){return t?(Object.keys(t).forEach((function(r){e[r]=t[r](e)})),e):e}function h(e){for(var t=arguments.length,r=new Array(t>1?t-1:0),n=1;n<t;n++)r[n-1]=arguments[n];var a=0;return e.replace(/%s/g,(function(){return encodeURIComponent(r[a++])}))}var m={WithinQueryParameters:0,WithinHeaders:1};function y(e,t){var r=e||{},n=r.data||{};return Object.keys(r).forEach((function(e){-1===["timeout","headers","queryParameters","data","cacheable"].indexOf(e)&&(n[e]=r[e])})),{data:Object.entries(n).length>0?n:void 0,timeout:r.timeout||t,headers:r.headers||{},queryParameters:r.queryParameters||{},cacheable:r.cacheable}}var g={Read:1,Write:2,Any:3},v=1,b=2,P=3;function O(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:v;return r(r({},e),{},{status:t,lastUpdate:Date.now()})}function w(e){return"string"==typeof e?{protocol:"https",url:e,accept:g.Any}:{protocol:e.protocol||"https",url:e.url,accept:e.accept||g.Any}}var j="DELETE",I="GET",x="POST",q="PUT";function D(e,t){return Promise.all(t.map((function(t){return e.get(t,(function(){return Promise.resolve(O(t))}))}))).then((function(e){var r=e.filter((function(e){return function(e){return e.status===v||Date.now()-e.lastUpdate>12e4}(e)})),n=e.filter((function(e){return function(e){return e.status===P&&Date.now()-e.lastUpdate<=12e4}(e)})),a=[].concat(o(r),o(n));return{getTimeout:function(e,t){return(0===n.length&&0===e?1:n.length+3+e)*t},statelessHosts:a.length>0?a.map((function(e){return w(e)})):t}}))}function S(e,t,n,a){var u=[],i=function(e,t){if(e.method===I||void 0===e.data&&void 0===t.data)return;var n=Array.isArray(e.data)?e.data:r(r({},e.data),t.data);return JSON.stringify(n)}(n,a),s=function(e,t){var n=r(r({},e.headers),t.headers),a={};return Object.keys(n).forEach((function(e){var t=n[e];a[e.toLowerCase()]=t})),a}(e,a),c=n.method,f=n.method!==I?{}:r(r({},n.data),a.data),d=r(r(r({"x-algolia-agent":e.userAgent.value},e.queryParameters),f),a.queryParameters),l=0,p=function t(r,o){var f=r.pop();if(void 0===f)throw{name:"RetryError",message:"Unreachable hosts - your application id may be incorrect. If the error persists, contact support@algolia.com.",transporterStackTrace:A(u)};var p={data:i,headers:s,method:c,url:N(f,n.path,d),connectTimeout:o(l,e.timeouts.connect),responseTimeout:o(l,a.timeout)},h=function(e){var t={request:p,response:e,host:f,triesLeft:r.length};return u.push(t),t},m={onSucess:function(e){return function(e){try{return JSON.parse(e.content)}catch(t){throw function(e,t){return{name:"DeserializationError",message:e,response:t}}(t.message,e)}}(e)},onRetry:function(n){var a=h(n);return n.isTimedOut&&l++,Promise.all([e.logger.info("Retryable failure",E(a)),e.hostsCache.set(f,O(f,n.isTimedOut?P:b))]).then((function(){return t(r,o)}))},onFail:function(e){throw h(e),function(e,t){var r=e.content,n=e.status,a=r;try{a=JSON.parse(r).message}catch(e){}return function(e,t,r){return{name:"ApiError",message:e,status:t,transporterStackTrace:r}}(a,n,t)}(e,A(u))}};return e.requester.send(p).then((function(e){return function(e,t){return function(e){var t=e.status;return e.isTimedOut||function(e){var t=e.isTimedOut,r=e.status;return!t&&0==~~r}(e)||2!=~~(t/100)&&4!=~~(t/100)}(e)?t.onRetry(e):2==~~(e.status/100)?t.onSucess(e):t.onFail(e)}(e,m)}))};return D(e.hostsCache,t).then((function(e){return p(o(e.statelessHosts).reverse(),e.getTimeout)}))}function k(e){var t=e.hostsCache,r=e.logger,n=e.requester,o=e.requestsCache,u=e.responsesCache,i=e.timeouts,s=e.userAgent,c=e.hosts,f=e.queryParameters,d={hostsCache:t,logger:r,requester:n,requestsCache:o,responsesCache:u,timeouts:i,userAgent:s,headers:e.headers,queryParameters:f,hosts:c.map((function(e){return w(e)})),read:function(e,t){var r=y(t,d.timeouts.read),n=function(){return S(d,d.hosts.filter((function(e){return 0!=(e.accept&g.Read)})),e,r)};if(!0!==(void 0!==r.cacheable?r.cacheable:e.cacheable))return n();var o={request:e,mappedRequestOptions:r,transporter:{queryParameters:d.queryParameters,headers:d.headers}};return d.responsesCache.get(o,(function(){return d.requestsCache.get(o,(function(){return d.requestsCache.set(o,n()).then((function(e){return Promise.all([d.requestsCache.delete(o),e])}),(function(e){return Promise.all([d.requestsCache.delete(o),Promise.reject(e)])})).then((function(e){var t=a(e,2);t[0];return t[1]}))}))}),{miss:function(e){return d.responsesCache.set(o,e)}})},write:function(e,t){return S(d,d.hosts.filter((function(e){return 0!=(e.accept&g.Write)})),e,y(t,d.timeouts.write))}};return d}function T(e){var t={value:"Algolia for JavaScript (".concat(e,")"),add:function(e){var r="; ".concat(e.segment).concat(void 0!==e.version?" (".concat(e.version,")"):"");return-1===t.value.indexOf(r)&&(t.value="".concat(t.value).concat(r)),t}};return t}function N(e,t,r){var n=R(r),a="".concat(e.protocol,"://").concat(e.url,"/").concat("/"===t.charAt(0)?t.substr(1):t);return n.length&&(a+="?".concat(n)),a}function R(e){return Object.keys(e).map((function(t){return h("%s=%s",t,(r=e[t],"[object Object]"===Object.prototype.toString.call(r)||"[object Array]"===Object.prototype.toString.call(r)?JSON.stringify(e[t]):e[t]));var r})).join("&")}function A(e){return e.map((function(e){return E(e)}))}function E(e){var t=e.request.headers["x-algolia-api-key"]?{"x-algolia-api-key":"*****"}:{};return r(r({},e),{},{request:r(r({},e.request),{},{headers:r(r({},e.request.headers),t)})})}var C=function(e){return function(t,r){return e.transporter.write({method:x,path:"2/abtests",data:t},r)}},U=function(e){return function(t,r){return e.transporter.write({method:j,path:h("2/abtests/%s",t)},r)}},J=function(e){return function(t,r){return e.transporter.read({method:I,path:h("2/abtests/%s",t)},r)}},z=function(e){return function(t){return e.transporter.read({method:I,path:"2/abtests"},t)}},F=function(e){return function(t,r){return e.transporter.write({method:x,path:h("2/abtests/%s/stop",t)},r)}},H=function(e){return function(t){return e.transporter.read({method:I,path:"1/strategies/personalization"},t)}},M=function(e){return function(t,r){return e.transporter.write({method:x,path:"1/strategies/personalization",data:t},r)}};function K(e){return function t(r){return e.request(r).then((function(n){if(void 0!==e.batch&&e.batch(n.hits),!e.shouldStop(n))return n.cursor?t({cursor:n.cursor}):t({page:(r.page||0)+1})}))}({})}var W=function(e){return function(t,a){var o=a||{},u=o.queryParameters,i=n(o,["queryParameters"]),s=r({acl:t},void 0!==u?{queryParameters:u}:{});return d(e.transporter.write({method:x,path:"1/keys",data:s},i),(function(t,r){return f((function(n){return Y(e)(t.key,r).catch((function(e){if(404!==e.status)throw e;return n()}))}))}))}},B=function(e){return function(t,r,n){var a=y(n);return a.queryParameters["X-Algolia-User-ID"]=t,e.transporter.write({method:x,path:"1/clusters/mapping",data:{cluster:r}},a)}},Q=function(e){return function(t,r,n){return e.transporter.write({method:x,path:"1/clusters/mapping/batch",data:{users:t,cluster:r}},n)}},G=function(e){return function(t,r,n){return d(e.transporter.write({method:x,path:h("1/indexes/%s/operation",t),data:{operation:"copy",destination:r}},n),(function(r,n){return re(e)(t,{methods:{waitTask:tt}}).waitTask(r.taskID,n)}))}},L=function(e){return function(t,n,a){return G(e)(t,n,r(r({},a),{},{scope:[nt.Rules]}))}},V=function(e){return function(t,n,a){return G(e)(t,n,r(r({},a),{},{scope:[nt.Settings]}))}},_=function(e){return function(t,n,a){return G(e)(t,n,r(r({},a),{},{scope:[nt.Synonyms]}))}},X=function(e){return function(t,r){return d(e.transporter.write({method:j,path:h("1/keys/%s",t)},r),(function(r,n){return f((function(r){return Y(e)(t,n).then(r).catch((function(e){if(404!==e.status)throw e}))}))}))}},Y=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/keys/%s",t)},r)}},Z=function(e){return function(t){return e.transporter.read({method:I,path:"1/logs"},t)}},$=function(e){return function(t){return e.transporter.read({method:I,path:"1/clusters/mapping/top"},t)}},ee=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/clusters/mapping/%s",t)},r)}},te=function(e){return function(t){var r=t||{},a=r.retrieveMappings,o=n(r,["retrieveMappings"]);return!0===a&&(o.getClusters=!0),e.transporter.read({method:I,path:"1/clusters/mapping/pending"},o)}},re=function(e){return function(t){var r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n={transporter:e.transporter,appId:e.appId,indexName:t};return p(n,r.methods)}},ne=function(e){return function(t){return e.transporter.read({method:I,path:"1/keys"},t)}},ae=function(e){return function(t){return e.transporter.read({method:I,path:"1/clusters"},t)}},oe=function(e){return function(t){return e.transporter.read({method:I,path:"1/indexes"},t)}},ue=function(e){return function(t){return e.transporter.read({method:I,path:"1/clusters/mapping"},t)}},ie=function(e){return function(t,r,n){return d(e.transporter.write({method:x,path:h("1/indexes/%s/operation",t),data:{operation:"move",destination:r}},n),(function(r,n){return re(e)(t,{methods:{waitTask:tt}}).waitTask(r.taskID,n)}))}},se=function(e){return function(t,r){return d(e.transporter.write({method:x,path:"1/indexes/*/batch",data:{requests:t}},r),(function(t,r){return Promise.all(Object.keys(t.taskID).map((function(n){return re(e)(n,{methods:{waitTask:tt}}).waitTask(t.taskID[n],r)})))}))}},ce=function(e){return function(t,r){return e.transporter.read({method:x,path:"1/indexes/*/objects",data:{requests:t}},r)}},fe=function(e){return function(t,n){var a=t.map((function(e){return r(r({},e),{},{params:R(e.params||{})})}));return e.transporter.read({method:x,path:"1/indexes/*/queries",data:{requests:a},cacheable:!0},n)}},de=function(e){return function(t,a){return Promise.all(t.map((function(t){var o=t.params,u=o.facetName,i=o.facetQuery,s=n(o,["facetName","facetQuery"]);return re(e)(t.indexName,{methods:{searchForFacetValues:Ye}}).searchForFacetValues(u,i,r(r({},a),s))})))}},le=function(e){return function(t,r){var n=y(r);return n.queryParameters["X-Algolia-User-ID"]=t,e.transporter.write({method:j,path:"1/clusters/mapping"},n)}},pe=function(e){return function(t,r){return d(e.transporter.write({method:x,path:h("1/keys/%s/restore",t)},r),(function(r,n){return f((function(r){return Y(e)(t,n).catch((function(e){if(404!==e.status)throw e;return r()}))}))}))}},he=function(e){return function(t,r){return e.transporter.read({method:x,path:"1/clusters/mapping/search",data:{query:t}},r)}},me=function(e){return function(t,r){var a=Object.assign({},r),o=r||{},u=o.queryParameters,i=n(o,["queryParameters"]),s=u?{queryParameters:u}:{},c=["acl","indexes","referers","restrictSources","queryParameters","description","maxQueriesPerIPPerHour","maxHitsPerQuery"];return d(e.transporter.write({method:q,path:h("1/keys/%s",t),data:s},i),(function(r,n){return f((function(r){return Y(e)(t,n).then((function(e){return function(e){return Object.keys(a).filter((function(e){return-1!==c.indexOf(e)})).every((function(t){return e[t]===a[t]}))}(e)?Promise.resolve():r()}))}))}))}},ye=function(e){return function(t,r){return d(e.transporter.write({method:x,path:h("1/indexes/%s/batch",e.indexName),data:{requests:t}},r),(function(t,r){return tt(e)(t.taskID,r)}))}},ge=function(e){return function(t){return K(r(r({shouldStop:function(e){return void 0===e.cursor}},t),{},{request:function(r){return e.transporter.read({method:x,path:h("1/indexes/%s/browse",e.indexName),data:r},t)}}))}},ve=function(e){return function(t){var n=r({hitsPerPage:1e3},t);return K(r(r({shouldStop:function(e){return e.hits.length<n.hitsPerPage}},n),{},{request:function(t){return Ze(e)("",r(r({},n),t)).then((function(e){return r(r({},e),{},{hits:e.hits.map((function(e){return delete e._highlightResult,e}))})}))}}))}},be=function(e){return function(t){var n=r({hitsPerPage:1e3},t);return K(r(r({shouldStop:function(e){return e.hits.length<n.hitsPerPage}},n),{},{request:function(t){return $e(e)("",r(r({},n),t)).then((function(e){return r(r({},e),{},{hits:e.hits.map((function(e){return delete e._highlightResult,e}))})}))}}))}},Pe=function(e){return function(t,r,a){var o=a||{},u=o.batchSize,i=n(o,["batchSize"]),s={taskIDs:[],objectIDs:[]};return d(function n(){var a,o=arguments.length>0&&void 0!==arguments[0]?arguments[0]:0,c=[];for(a=o;a<t.length&&(c.push(t[a]),c.length!==(u||1e3));a++);return 0===c.length?Promise.resolve(s):ye(e)(c.map((function(e){return{action:r,body:e}})),i).then((function(e){return s.objectIDs=s.objectIDs.concat(e.objectIDs),s.taskIDs.push(e.taskID),a++,n(a)}))}(),(function(t,r){return Promise.all(t.taskIDs.map((function(t){return tt(e)(t,r)})))}))}},Oe=function(e){return function(t){return d(e.transporter.write({method:x,path:h("1/indexes/%s/clear",e.indexName)},t),(function(t,r){return tt(e)(t.taskID,r)}))}},we=function(e){return function(t){var r=t||{},a=r.forwardToReplicas,o=y(n(r,["forwardToReplicas"]));return a&&(o.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:x,path:h("1/indexes/%s/rules/clear",e.indexName)},o),(function(t,r){return tt(e)(t.taskID,r)}))}},je=function(e){return function(t){var r=t||{},a=r.forwardToReplicas,o=y(n(r,["forwardToReplicas"]));return a&&(o.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:x,path:h("1/indexes/%s/synonyms/clear",e.indexName)},o),(function(t,r){return tt(e)(t.taskID,r)}))}},Ie=function(e){return function(t,r){return d(e.transporter.write({method:x,path:h("1/indexes/%s/deleteByQuery",e.indexName),data:t},r),(function(t,r){return tt(e)(t.taskID,r)}))}},xe=function(e){return function(t){return d(e.transporter.write({method:j,path:h("1/indexes/%s",e.indexName)},t),(function(t,r){return tt(e)(t.taskID,r)}))}},qe=function(e){return function(t,r){return d(De(e)([t],r).then((function(e){return{taskID:e.taskIDs[0]}})),(function(t,r){return tt(e)(t.taskID,r)}))}},De=function(e){return function(t,r){var n=t.map((function(e){return{objectID:e}}));return Pe(e)(n,rt.DeleteObject,r)}},Se=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=y(n(a,["forwardToReplicas"]));return o&&(u.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:j,path:h("1/indexes/%s/rules/%s",e.indexName,t)},u),(function(t,r){return tt(e)(t.taskID,r)}))}},ke=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=y(n(a,["forwardToReplicas"]));return o&&(u.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:j,path:h("1/indexes/%s/synonyms/%s",e.indexName,t)},u),(function(t,r){return tt(e)(t.taskID,r)}))}},Te=function(e){return function(t){return Je(e)(t).then((function(){return!0})).catch((function(e){if(404!==e.status)throw e;return!1}))}},Ne=function(e){return function(t,r,n){return e.transporter.read({method:x,path:h("1/answers/%s/prediction",e.indexName),data:{query:t,queryLanguages:r},cacheable:!0},n)}},Re=function(e){return function(t,o){var u=o||{},i=u.query,s=u.paginate,c=n(u,["query","paginate"]),f=0;return function n(){return Xe(e)(i||"",r(r({},c),{},{page:f})).then((function(e){for(var r=0,o=Object.entries(e.hits);r<o.length;r++){var u=a(o[r],2),i=u[0],c=u[1];if(t(c))return{object:c,position:parseInt(i,10),page:f}}if(f++,!1===s||f>=e.nbPages)throw{name:"ObjectNotFoundError",message:"Object not found."};return n()}))}()}},Ae=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/indexes/%s/%s",e.indexName,t)},r)}},Ee=function(){return function(e,t){for(var r=0,n=Object.entries(e.hits);r<n.length;r++){var o=a(n[r],2),u=o[0];if(o[1].objectID===t)return parseInt(u,10)}return-1}},Ce=function(e){return function(t,a){var o=a||{},u=o.attributesToRetrieve,i=n(o,["attributesToRetrieve"]),s=t.map((function(t){return r({indexName:e.indexName,objectID:t},u?{attributesToRetrieve:u}:{})}));return e.transporter.read({method:x,path:"1/indexes/*/objects",data:{requests:s}},i)}},Ue=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/indexes/%s/rules/%s",e.indexName,t)},r)}},Je=function(e){return function(t){return e.transporter.read({method:I,path:h("1/indexes/%s/settings",e.indexName),data:{getVersion:2}},t)}},ze=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/indexes/%s/synonyms/%s",e.indexName,t)},r)}},Fe=function(e){return function(t,r){return d(He(e)([t],r).then((function(e){return{objectID:e.objectIDs[0],taskID:e.taskIDs[0]}})),(function(t,r){return tt(e)(t.taskID,r)}))}},He=function(e){return function(t,r){var a=r||{},o=a.createIfNotExists,u=n(a,["createIfNotExists"]),i=o?rt.PartialUpdateObject:rt.PartialUpdateObjectNoCreate;return Pe(e)(t,i,u)}},Me=function(e){return function(t,u){var i=u||{},s=i.safe,c=i.autoGenerateObjectIDIfNotExist,f=i.batchSize,l=n(i,["safe","autoGenerateObjectIDIfNotExist","batchSize"]),p=function(t,r,n,a){return d(e.transporter.write({method:x,path:h("1/indexes/%s/operation",t),data:{operation:n,destination:r}},a),(function(t,r){return tt(e)(t.taskID,r)}))},m=Math.random().toString(36).substring(7),y="".concat(e.indexName,"_tmp_").concat(m),g=Qe({appId:e.appId,transporter:e.transporter,indexName:y}),v=[],b=p(e.indexName,y,"copy",r(r({},l),{},{scope:["settings","synonyms","rules"]}));return v.push(b),d((s?b.wait(l):b).then((function(){var e=g(t,r(r({},l),{},{autoGenerateObjectIDIfNotExist:c,batchSize:f}));return v.push(e),s?e.wait(l):e})).then((function(){var t=p(y,e.indexName,"move",l);return v.push(t),s?t.wait(l):t})).then((function(){return Promise.all(v)})).then((function(e){var t=a(e,3),r=t[0],n=t[1],u=t[2];return{objectIDs:n.objectIDs,taskIDs:[r.taskID].concat(o(n.taskIDs),[u.taskID])}})),(function(e,t){return Promise.all(v.map((function(e){return e.wait(t)})))}))}},Ke=function(e){return function(t,n){return Le(e)(t,r(r({},n),{},{clearExistingRules:!0}))}},We=function(e){return function(t,n){return _e(e)(t,r(r({},n),{},{clearExistingSynonyms:!0}))}},Be=function(e){return function(t,r){return d(Qe(e)([t],r).then((function(e){return{objectID:e.objectIDs[0],taskID:e.taskIDs[0]}})),(function(t,r){return tt(e)(t.taskID,r)}))}},Qe=function(e){return function(t,r){var a=r||{},o=a.autoGenerateObjectIDIfNotExist,u=n(a,["autoGenerateObjectIDIfNotExist"]),i=o?rt.AddObject:rt.UpdateObject;if(i===rt.UpdateObject){var s=!0,c=!1,f=void 0;try{for(var l,p=t[Symbol.iterator]();!(s=(l=p.next()).done);s=!0){if(void 0===l.value.objectID)return d(Promise.reject({name:"MissingObjectIDError",message:"All objects must have an unique objectID (like a primary key) to be valid. Algolia is also able to generate objectIDs automatically but *it's not recommended*. To do it, use the `{'autoGenerateObjectIDIfNotExist': true}` option."}))}}catch(e){c=!0,f=e}finally{try{s||null==p.return||p.return()}finally{if(c)throw f}}}return Pe(e)(t,i,u)}},Ge=function(e){return function(t,r){return Le(e)([t],r)}},Le=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=a.clearExistingRules,i=y(n(a,["forwardToReplicas","clearExistingRules"]));return o&&(i.queryParameters.forwardToReplicas=1),u&&(i.queryParameters.clearExistingRules=1),d(e.transporter.write({method:x,path:h("1/indexes/%s/rules/batch",e.indexName),data:t},i),(function(t,r){return tt(e)(t.taskID,r)}))}},Ve=function(e){return function(t,r){return _e(e)([t],r)}},_e=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=a.clearExistingSynonyms,i=a.replaceExistingSynonyms,s=y(n(a,["forwardToReplicas","clearExistingSynonyms","replaceExistingSynonyms"]));return o&&(s.queryParameters.forwardToReplicas=1),(i||u)&&(s.queryParameters.replaceExistingSynonyms=1),d(e.transporter.write({method:x,path:h("1/indexes/%s/synonyms/batch",e.indexName),data:t},s),(function(t,r){return tt(e)(t.taskID,r)}))}},Xe=function(e){return function(t,r){return e.transporter.read({method:x,path:h("1/indexes/%s/query",e.indexName),data:{query:t},cacheable:!0},r)}},Ye=function(e){return function(t,r,n){return e.transporter.read({method:x,path:h("1/indexes/%s/facets/%s/query",e.indexName,t),data:{facetQuery:r},cacheable:!0},n)}},Ze=function(e){return function(t,r){return e.transporter.read({method:x,path:h("1/indexes/%s/rules/search",e.indexName),data:{query:t}},r)}},$e=function(e){return function(t,r){return e.transporter.read({method:x,path:h("1/indexes/%s/synonyms/search",e.indexName),data:{query:t}},r)}},et=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=y(n(a,["forwardToReplicas"]));return o&&(u.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:q,path:h("1/indexes/%s/settings",e.indexName),data:t},u),(function(t,r){return tt(e)(t.taskID,r)}))}},tt=function(e){return function(t,r){return f((function(n){return function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/indexes/%s/task/%s",e.indexName,t.toString())},r)}}(e)(t,r).then((function(e){return"published"!==e.status?n():void 0}))}))}},rt={AddObject:"addObject",UpdateObject:"updateObject",PartialUpdateObject:"partialUpdateObject",PartialUpdateObjectNoCreate:"partialUpdateObjectNoCreate",DeleteObject:"deleteObject",DeleteIndex:"delete",ClearIndex:"clear"},nt={Settings:"settings",Synonyms:"synonyms",Rules:"rules"},at=1,ot=2,ut=3;function it(e,t,n){var a,o={appId:e,apiKey:t,timeouts:{connect:1,read:2,write:30},requester:{send:function(e){return new Promise((function(t){var r=new XMLHttpRequest;r.open(e.method,e.url,!0),Object.keys(e.headers).forEach((function(t){return r.setRequestHeader(t,e.headers[t])}));var n,a=function(e,n){return setTimeout((function(){r.abort(),t({status:0,content:n,isTimedOut:!0})}),1e3*e)},o=a(e.connectTimeout,"Connection timeout");r.onreadystatechange=function(){r.readyState>r.OPENED&&void 0===n&&(clearTimeout(o),n=a(e.responseTimeout,"Socket timeout"))},r.onerror=function(){0===r.status&&(clearTimeout(o),clearTimeout(n),t({content:r.responseText||"Network request failed",status:r.status,isTimedOut:!1}))},r.onload=function(){clearTimeout(o),clearTimeout(n),t({content:r.responseText,status:r.status,isTimedOut:!1})},r.send(e.data)}))}},logger:(a=ut,{debug:function(e,t){return at>=a&&console.debug(e,t),Promise.resolve()},info:function(e,t){return ot>=a&&console.info(e,t),Promise.resolve()},error:function(e,t){return console.error(e,t),Promise.resolve()}}),responsesCache:s(),requestsCache:s({serializable:!1}),hostsCache:i({caches:[u({key:"".concat("4.8.3","-").concat(e)}),s()]}),userAgent:T("4.8.3").add({segment:"Browser"})};return function(e){var t=e.appId,n=c(void 0!==e.authMode?e.authMode:m.WithinHeaders,t,e.apiKey),a=k(r(r({hosts:[{url:"".concat(t,"-dsn.algolia.net"),accept:g.Read},{url:"".concat(t,".algolia.net"),accept:g.Write}].concat(l([{url:"".concat(t,"-1.algolianet.com")},{url:"".concat(t,"-2.algolianet.com")},{url:"".concat(t,"-3.algolianet.com")}]))},e),{},{headers:r(r(r({},n.headers()),{"content-type":"application/x-www-form-urlencoded"}),e.headers),queryParameters:r(r({},n.queryParameters()),e.queryParameters)}));return p({transporter:a,appId:t,addAlgoliaAgent:function(e,t){a.userAgent.add({segment:e,version:t})},clearCache:function(){return Promise.all([a.requestsCache.clear(),a.responsesCache.clear()]).then((function(){}))}},e.methods)}(r(r(r({},o),n),{},{methods:{search:fe,searchForFacetValues:de,multipleBatch:se,multipleGetObjects:ce,multipleQueries:fe,copyIndex:G,copySettings:V,copySynonyms:_,copyRules:L,moveIndex:ie,listIndices:oe,getLogs:Z,listClusters:ae,multipleSearchForFacetValues:de,getApiKey:Y,addApiKey:W,listApiKeys:ne,updateApiKey:me,deleteApiKey:X,restoreApiKey:pe,assignUserID:B,assignUserIDs:Q,getUserID:ee,searchUserIDs:he,listUserIDs:ue,getTopUserIDs:$,removeUserID:le,hasPendingMappings:te,initIndex:function(e){return function(t){return re(e)(t,{methods:{batch:ye,delete:xe,findAnswers:Ne,getObject:Ae,getObjects:Ce,saveObject:Be,saveObjects:Qe,search:Xe,searchForFacetValues:Ye,waitTask:tt,setSettings:et,getSettings:Je,partialUpdateObject:Fe,partialUpdateObjects:He,deleteObject:qe,deleteObjects:De,deleteBy:Ie,clearObjects:Oe,browseObjects:ge,getObjectPosition:Ee,findObject:Re,exists:Te,saveSynonym:Ve,saveSynonyms:_e,getSynonym:ze,searchSynonyms:$e,browseSynonyms:be,deleteSynonym:ke,clearSynonyms:je,replaceAllObjects:Me,replaceAllSynonyms:We,searchRules:Ze,getRule:Ue,deleteRule:Se,saveRule:Ge,saveRules:Le,replaceAllRules:Ke,browseRules:ve,clearRules:we}})}},initAnalytics:function(){return function(e){return function(e){var t=e.region||"us",n=c(m.WithinHeaders,e.appId,e.apiKey),a=k(r(r({hosts:[{url:"analytics.".concat(t,".algolia.com")}]},e),{},{headers:r(r(r({},n.headers()),{"content-type":"application/json"}),e.headers),queryParameters:r(r({},n.queryParameters()),e.queryParameters)}));return p({appId:e.appId,transporter:a},e.methods)}(r(r(r({},o),e),{},{methods:{addABTest:C,getABTest:J,getABTests:z,stopABTest:F,deleteABTest:U}}))}},initRecommendation:function(){return function(e){return function(e){var t=e.region||"us",n=c(m.WithinHeaders,e.appId,e.apiKey),a=k(r(r({hosts:[{url:"recommendation.".concat(t,".algolia.com")}]},e),{},{headers:r(r(r({},n.headers()),{"content-type":"application/json"}),e.headers),queryParameters:r(r({},n.queryParameters()),e.queryParameters)}));return p({appId:e.appId,transporter:a},e.methods)}(r(r(r({},o),e),{},{methods:{getPersonalizationStrategy:H,setPersonalizationStrategy:M}}))}}}}))}return it.version="4.8.3",it}));
+/*! algoliasearch.umd.js | 4.8.5 | © Algolia, inc. | https://github.com/algolia/algoliasearch-client-javascript */
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e=e||self).algoliasearch=t()}(this,(function(){"use strict";function e(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function t(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function r(r){for(var n=1;n<arguments.length;n++){var a=null!=arguments[n]?arguments[n]:{};n%2?t(Object(a),!0).forEach((function(t){e(r,t,a[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(r,Object.getOwnPropertyDescriptors(a)):t(Object(a)).forEach((function(e){Object.defineProperty(r,e,Object.getOwnPropertyDescriptor(a,e))}))}return r}function n(e,t){if(null==e)return{};var r,n,a=function(e,t){if(null==e)return{};var r,n,a={},o=Object.keys(e);for(n=0;n<o.length;n++)r=o[n],t.indexOf(r)>=0||(a[r]=e[r]);return a}(e,t);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(e);for(n=0;n<o.length;n++)r=o[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(a[r]=e[r])}return a}function a(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){if(!(Symbol.iterator in Object(e)||"[object Arguments]"===Object.prototype.toString.call(e)))return;var r=[],n=!0,a=!1,o=void 0;try{for(var u,i=e[Symbol.iterator]();!(n=(u=i.next()).done)&&(r.push(u.value),!t||r.length!==t);n=!0);}catch(e){a=!0,o=e}finally{try{n||null==i.return||i.return()}finally{if(a)throw o}}return r}(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance")}()}function o(e){return function(e){if(Array.isArray(e)){for(var t=0,r=new Array(e.length);t<e.length;t++)r[t]=e[t];return r}}(e)||function(e){if(Symbol.iterator in Object(e)||"[object Arguments]"===Object.prototype.toString.call(e))return Array.from(e)}(e)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance")}()}function u(e){var t,r="algoliasearch-client-js-".concat(e.key),n=function(){return void 0===t&&(t=e.localStorage||window.localStorage),t},o=function(){return JSON.parse(n().getItem(r)||"{}")};return{get:function(e,t){var r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{miss:function(){return Promise.resolve()}};return Promise.resolve().then((function(){var r=JSON.stringify(e),n=o()[r];return Promise.all([n||t(),void 0!==n])})).then((function(e){var t=a(e,2),n=t[0],o=t[1];return Promise.all([n,o||r.miss(n)])})).then((function(e){return a(e,1)[0]}))},set:function(e,t){return Promise.resolve().then((function(){var a=o();return a[JSON.stringify(e)]=t,n().setItem(r,JSON.stringify(a)),t}))},delete:function(e){return Promise.resolve().then((function(){var t=o();delete t[JSON.stringify(e)],n().setItem(r,JSON.stringify(t))}))},clear:function(){return Promise.resolve().then((function(){n().removeItem(r)}))}}}function i(e){var t=o(e.caches),r=t.shift();return void 0===r?{get:function(e,t){var r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{miss:function(){return Promise.resolve()}},n=t();return n.then((function(e){return Promise.all([e,r.miss(e)])})).then((function(e){return a(e,1)[0]}))},set:function(e,t){return Promise.resolve(t)},delete:function(e){return Promise.resolve()},clear:function(){return Promise.resolve()}}:{get:function(e,n){var a=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{miss:function(){return Promise.resolve()}};return r.get(e,n,a).catch((function(){return i({caches:t}).get(e,n,a)}))},set:function(e,n){return r.set(e,n).catch((function(){return i({caches:t}).set(e,n)}))},delete:function(e){return r.delete(e).catch((function(){return i({caches:t}).delete(e)}))},clear:function(){return r.clear().catch((function(){return i({caches:t}).clear()}))}}}function s(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{serializable:!0},t={};return{get:function(r,n){var a=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{miss:function(){return Promise.resolve()}},o=JSON.stringify(r);if(o in t)return Promise.resolve(e.serializable?JSON.parse(t[o]):t[o]);var u=n(),i=a&&a.miss||function(){return Promise.resolve()};return u.then((function(e){return i(e)})).then((function(){return u}))},set:function(r,n){return t[JSON.stringify(r)]=e.serializable?JSON.stringify(n):n,Promise.resolve(n)},delete:function(e){return delete t[JSON.stringify(e)],Promise.resolve()},clear:function(){return t={},Promise.resolve()}}}function c(e,t,r){var n={"x-algolia-api-key":r,"x-algolia-application-id":t};return{headers:function(){return e===m.WithinHeaders?n:{}},queryParameters:function(){return e===m.WithinQueryParameters?n:{}}}}function f(e){var t=0;return e((function r(){return t++,new Promise((function(n){setTimeout((function(){n(e(r))}),Math.min(100*t,1e3))}))}))}function d(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:function(e,t){return Promise.resolve()};return Object.assign(e,{wait:function(r){return d(e.then((function(e){return Promise.all([t(e,r),e])})).then((function(e){return e[1]})))}})}function l(e){for(var t=e.length-1;t>0;t--){var r=Math.floor(Math.random()*(t+1)),n=e[t];e[t]=e[r],e[r]=n}return e}function p(e,t){return t?(Object.keys(t).forEach((function(r){e[r]=t[r](e)})),e):e}function h(e){for(var t=arguments.length,r=new Array(t>1?t-1:0),n=1;n<t;n++)r[n-1]=arguments[n];var a=0;return e.replace(/%s/g,(function(){return encodeURIComponent(r[a++])}))}var m={WithinQueryParameters:0,WithinHeaders:1};function y(e,t){var r=e||{},n=r.data||{};return Object.keys(r).forEach((function(e){-1===["timeout","headers","queryParameters","data","cacheable"].indexOf(e)&&(n[e]=r[e])})),{data:Object.entries(n).length>0?n:void 0,timeout:r.timeout||t,headers:r.headers||{},queryParameters:r.queryParameters||{},cacheable:r.cacheable}}var g={Read:1,Write:2,Any:3},v=1,b=2,P=3;function O(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:v;return r(r({},e),{},{status:t,lastUpdate:Date.now()})}function w(e){return"string"==typeof e?{protocol:"https",url:e,accept:g.Any}:{protocol:e.protocol||"https",url:e.url,accept:e.accept||g.Any}}var j="DELETE",I="GET",x="POST",q="PUT";function D(e,t){return Promise.all(t.map((function(t){return e.get(t,(function(){return Promise.resolve(O(t))}))}))).then((function(e){var r=e.filter((function(e){return function(e){return e.status===v||Date.now()-e.lastUpdate>12e4}(e)})),n=e.filter((function(e){return function(e){return e.status===P&&Date.now()-e.lastUpdate<=12e4}(e)})),a=[].concat(o(r),o(n));return{getTimeout:function(e,t){return(0===n.length&&0===e?1:n.length+3+e)*t},statelessHosts:a.length>0?a.map((function(e){return w(e)})):t}}))}function S(e,t,n,a){var u=[],i=function(e,t){if(e.method===I||void 0===e.data&&void 0===t.data)return;var n=Array.isArray(e.data)?e.data:r(r({},e.data),t.data);return JSON.stringify(n)}(n,a),s=function(e,t){var n=r(r({},e.headers),t.headers),a={};return Object.keys(n).forEach((function(e){var t=n[e];a[e.toLowerCase()]=t})),a}(e,a),c=n.method,f=n.method!==I?{}:r(r({},n.data),a.data),d=r(r(r({"x-algolia-agent":e.userAgent.value},e.queryParameters),f),a.queryParameters),l=0,p=function t(r,o){var f=r.pop();if(void 0===f)throw{name:"RetryError",message:"Unreachable hosts - your application id may be incorrect. If the error persists, contact support@algolia.com.",transporterStackTrace:A(u)};var p={data:i,headers:s,method:c,url:N(f,n.path,d),connectTimeout:o(l,e.timeouts.connect),responseTimeout:o(l,a.timeout)},h=function(e){var t={request:p,response:e,host:f,triesLeft:r.length};return u.push(t),t},m={onSucess:function(e){return function(e){try{return JSON.parse(e.content)}catch(t){throw function(e,t){return{name:"DeserializationError",message:e,response:t}}(t.message,e)}}(e)},onRetry:function(n){var a=h(n);return n.isTimedOut&&l++,Promise.all([e.logger.info("Retryable failure",E(a)),e.hostsCache.set(f,O(f,n.isTimedOut?P:b))]).then((function(){return t(r,o)}))},onFail:function(e){throw h(e),function(e,t){var r=e.content,n=e.status,a=r;try{a=JSON.parse(r).message}catch(e){}return function(e,t,r){return{name:"ApiError",message:e,status:t,transporterStackTrace:r}}(a,n,t)}(e,A(u))}};return e.requester.send(p).then((function(e){return function(e,t){return function(e){var t=e.status;return e.isTimedOut||function(e){var t=e.isTimedOut,r=e.status;return!t&&0==~~r}(e)||2!=~~(t/100)&&4!=~~(t/100)}(e)?t.onRetry(e):2==~~(e.status/100)?t.onSucess(e):t.onFail(e)}(e,m)}))};return D(e.hostsCache,t).then((function(e){return p(o(e.statelessHosts).reverse(),e.getTimeout)}))}function k(e){var t=e.hostsCache,r=e.logger,n=e.requester,o=e.requestsCache,u=e.responsesCache,i=e.timeouts,s=e.userAgent,c=e.hosts,f=e.queryParameters,d={hostsCache:t,logger:r,requester:n,requestsCache:o,responsesCache:u,timeouts:i,userAgent:s,headers:e.headers,queryParameters:f,hosts:c.map((function(e){return w(e)})),read:function(e,t){var r=y(t,d.timeouts.read),n=function(){return S(d,d.hosts.filter((function(e){return 0!=(e.accept&g.Read)})),e,r)};if(!0!==(void 0!==r.cacheable?r.cacheable:e.cacheable))return n();var o={request:e,mappedRequestOptions:r,transporter:{queryParameters:d.queryParameters,headers:d.headers}};return d.responsesCache.get(o,(function(){return d.requestsCache.get(o,(function(){return d.requestsCache.set(o,n()).then((function(e){return Promise.all([d.requestsCache.delete(o),e])}),(function(e){return Promise.all([d.requestsCache.delete(o),Promise.reject(e)])})).then((function(e){var t=a(e,2);t[0];return t[1]}))}))}),{miss:function(e){return d.responsesCache.set(o,e)}})},write:function(e,t){return S(d,d.hosts.filter((function(e){return 0!=(e.accept&g.Write)})),e,y(t,d.timeouts.write))}};return d}function T(e){var t={value:"Algolia for JavaScript (".concat(e,")"),add:function(e){var r="; ".concat(e.segment).concat(void 0!==e.version?" (".concat(e.version,")"):"");return-1===t.value.indexOf(r)&&(t.value="".concat(t.value).concat(r)),t}};return t}function N(e,t,r){var n=R(r),a="".concat(e.protocol,"://").concat(e.url,"/").concat("/"===t.charAt(0)?t.substr(1):t);return n.length&&(a+="?".concat(n)),a}function R(e){return Object.keys(e).map((function(t){return h("%s=%s",t,(r=e[t],"[object Object]"===Object.prototype.toString.call(r)||"[object Array]"===Object.prototype.toString.call(r)?JSON.stringify(e[t]):e[t]));var r})).join("&")}function A(e){return e.map((function(e){return E(e)}))}function E(e){var t=e.request.headers["x-algolia-api-key"]?{"x-algolia-api-key":"*****"}:{};return r(r({},e),{},{request:r(r({},e.request),{},{headers:r(r({},e.request.headers),t)})})}var C=function(e){return function(t,r){return e.transporter.write({method:x,path:"2/abtests",data:t},r)}},U=function(e){return function(t,r){return e.transporter.write({method:j,path:h("2/abtests/%s",t)},r)}},J=function(e){return function(t,r){return e.transporter.read({method:I,path:h("2/abtests/%s",t)},r)}},z=function(e){return function(t){return e.transporter.read({method:I,path:"2/abtests"},t)}},F=function(e){return function(t,r){return e.transporter.write({method:x,path:h("2/abtests/%s/stop",t)},r)}},H=function(e){return function(t){return e.transporter.read({method:I,path:"1/strategies/personalization"},t)}},M=function(e){return function(t,r){return e.transporter.write({method:x,path:"1/strategies/personalization",data:t},r)}};function K(e){return function t(r){return e.request(r).then((function(n){if(void 0!==e.batch&&e.batch(n.hits),!e.shouldStop(n))return n.cursor?t({cursor:n.cursor}):t({page:(r.page||0)+1})}))}({})}var W=function(e){return function(t,a){var o=a||{},u=o.queryParameters,i=n(o,["queryParameters"]),s=r({acl:t},void 0!==u?{queryParameters:u}:{});return d(e.transporter.write({method:x,path:"1/keys",data:s},i),(function(t,r){return f((function(n){return Y(e)(t.key,r).catch((function(e){if(404!==e.status)throw e;return n()}))}))}))}},B=function(e){return function(t,r,n){var a=y(n);return a.queryParameters["X-Algolia-User-ID"]=t,e.transporter.write({method:x,path:"1/clusters/mapping",data:{cluster:r}},a)}},Q=function(e){return function(t,r,n){return e.transporter.write({method:x,path:"1/clusters/mapping/batch",data:{users:t,cluster:r}},n)}},G=function(e){return function(t,r,n){return d(e.transporter.write({method:x,path:h("1/indexes/%s/operation",t),data:{operation:"copy",destination:r}},n),(function(r,n){return re(e)(t,{methods:{waitTask:tt}}).waitTask(r.taskID,n)}))}},L=function(e){return function(t,n,a){return G(e)(t,n,r(r({},a),{},{scope:[nt.Rules]}))}},V=function(e){return function(t,n,a){return G(e)(t,n,r(r({},a),{},{scope:[nt.Settings]}))}},_=function(e){return function(t,n,a){return G(e)(t,n,r(r({},a),{},{scope:[nt.Synonyms]}))}},X=function(e){return function(t,r){return d(e.transporter.write({method:j,path:h("1/keys/%s",t)},r),(function(r,n){return f((function(r){return Y(e)(t,n).then(r).catch((function(e){if(404!==e.status)throw e}))}))}))}},Y=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/keys/%s",t)},r)}},Z=function(e){return function(t){return e.transporter.read({method:I,path:"1/logs"},t)}},$=function(e){return function(t){return e.transporter.read({method:I,path:"1/clusters/mapping/top"},t)}},ee=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/clusters/mapping/%s",t)},r)}},te=function(e){return function(t){var r=t||{},a=r.retrieveMappings,o=n(r,["retrieveMappings"]);return!0===a&&(o.getClusters=!0),e.transporter.read({method:I,path:"1/clusters/mapping/pending"},o)}},re=function(e){return function(t){var r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n={transporter:e.transporter,appId:e.appId,indexName:t};return p(n,r.methods)}},ne=function(e){return function(t){return e.transporter.read({method:I,path:"1/keys"},t)}},ae=function(e){return function(t){return e.transporter.read({method:I,path:"1/clusters"},t)}},oe=function(e){return function(t){return e.transporter.read({method:I,path:"1/indexes"},t)}},ue=function(e){return function(t){return e.transporter.read({method:I,path:"1/clusters/mapping"},t)}},ie=function(e){return function(t,r,n){return d(e.transporter.write({method:x,path:h("1/indexes/%s/operation",t),data:{operation:"move",destination:r}},n),(function(r,n){return re(e)(t,{methods:{waitTask:tt}}).waitTask(r.taskID,n)}))}},se=function(e){return function(t,r){return d(e.transporter.write({method:x,path:"1/indexes/*/batch",data:{requests:t}},r),(function(t,r){return Promise.all(Object.keys(t.taskID).map((function(n){return re(e)(n,{methods:{waitTask:tt}}).waitTask(t.taskID[n],r)})))}))}},ce=function(e){return function(t,r){return e.transporter.read({method:x,path:"1/indexes/*/objects",data:{requests:t}},r)}},fe=function(e){return function(t,n){var a=t.map((function(e){return r(r({},e),{},{params:R(e.params||{})})}));return e.transporter.read({method:x,path:"1/indexes/*/queries",data:{requests:a},cacheable:!0},n)}},de=function(e){return function(t,a){return Promise.all(t.map((function(t){var o=t.params,u=o.facetName,i=o.facetQuery,s=n(o,["facetName","facetQuery"]);return re(e)(t.indexName,{methods:{searchForFacetValues:Ye}}).searchForFacetValues(u,i,r(r({},a),s))})))}},le=function(e){return function(t,r){var n=y(r);return n.queryParameters["X-Algolia-User-ID"]=t,e.transporter.write({method:j,path:"1/clusters/mapping"},n)}},pe=function(e){return function(t,r){return d(e.transporter.write({method:x,path:h("1/keys/%s/restore",t)},r),(function(r,n){return f((function(r){return Y(e)(t,n).catch((function(e){if(404!==e.status)throw e;return r()}))}))}))}},he=function(e){return function(t,r){return e.transporter.read({method:x,path:"1/clusters/mapping/search",data:{query:t}},r)}},me=function(e){return function(t,r){var a=Object.assign({},r),o=r||{},u=o.queryParameters,i=n(o,["queryParameters"]),s=u?{queryParameters:u}:{},c=["acl","indexes","referers","restrictSources","queryParameters","description","maxQueriesPerIPPerHour","maxHitsPerQuery"];return d(e.transporter.write({method:q,path:h("1/keys/%s",t),data:s},i),(function(r,n){return f((function(r){return Y(e)(t,n).then((function(e){return function(e){return Object.keys(a).filter((function(e){return-1!==c.indexOf(e)})).every((function(t){return e[t]===a[t]}))}(e)?Promise.resolve():r()}))}))}))}},ye=function(e){return function(t,r){return d(e.transporter.write({method:x,path:h("1/indexes/%s/batch",e.indexName),data:{requests:t}},r),(function(t,r){return tt(e)(t.taskID,r)}))}},ge=function(e){return function(t){return K(r(r({shouldStop:function(e){return void 0===e.cursor}},t),{},{request:function(r){return e.transporter.read({method:x,path:h("1/indexes/%s/browse",e.indexName),data:r},t)}}))}},ve=function(e){return function(t){var n=r({hitsPerPage:1e3},t);return K(r(r({shouldStop:function(e){return e.hits.length<n.hitsPerPage}},n),{},{request:function(t){return Ze(e)("",r(r({},n),t)).then((function(e){return r(r({},e),{},{hits:e.hits.map((function(e){return delete e._highlightResult,e}))})}))}}))}},be=function(e){return function(t){var n=r({hitsPerPage:1e3},t);return K(r(r({shouldStop:function(e){return e.hits.length<n.hitsPerPage}},n),{},{request:function(t){return $e(e)("",r(r({},n),t)).then((function(e){return r(r({},e),{},{hits:e.hits.map((function(e){return delete e._highlightResult,e}))})}))}}))}},Pe=function(e){return function(t,r,a){var o=a||{},u=o.batchSize,i=n(o,["batchSize"]),s={taskIDs:[],objectIDs:[]};return d(function n(){var a,o=arguments.length>0&&void 0!==arguments[0]?arguments[0]:0,c=[];for(a=o;a<t.length&&(c.push(t[a]),c.length!==(u||1e3));a++);return 0===c.length?Promise.resolve(s):ye(e)(c.map((function(e){return{action:r,body:e}})),i).then((function(e){return s.objectIDs=s.objectIDs.concat(e.objectIDs),s.taskIDs.push(e.taskID),a++,n(a)}))}(),(function(t,r){return Promise.all(t.taskIDs.map((function(t){return tt(e)(t,r)})))}))}},Oe=function(e){return function(t){return d(e.transporter.write({method:x,path:h("1/indexes/%s/clear",e.indexName)},t),(function(t,r){return tt(e)(t.taskID,r)}))}},we=function(e){return function(t){var r=t||{},a=r.forwardToReplicas,o=y(n(r,["forwardToReplicas"]));return a&&(o.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:x,path:h("1/indexes/%s/rules/clear",e.indexName)},o),(function(t,r){return tt(e)(t.taskID,r)}))}},je=function(e){return function(t){var r=t||{},a=r.forwardToReplicas,o=y(n(r,["forwardToReplicas"]));return a&&(o.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:x,path:h("1/indexes/%s/synonyms/clear",e.indexName)},o),(function(t,r){return tt(e)(t.taskID,r)}))}},Ie=function(e){return function(t,r){return d(e.transporter.write({method:x,path:h("1/indexes/%s/deleteByQuery",e.indexName),data:t},r),(function(t,r){return tt(e)(t.taskID,r)}))}},xe=function(e){return function(t){return d(e.transporter.write({method:j,path:h("1/indexes/%s",e.indexName)},t),(function(t,r){return tt(e)(t.taskID,r)}))}},qe=function(e){return function(t,r){return d(De(e)([t],r).then((function(e){return{taskID:e.taskIDs[0]}})),(function(t,r){return tt(e)(t.taskID,r)}))}},De=function(e){return function(t,r){var n=t.map((function(e){return{objectID:e}}));return Pe(e)(n,rt.DeleteObject,r)}},Se=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=y(n(a,["forwardToReplicas"]));return o&&(u.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:j,path:h("1/indexes/%s/rules/%s",e.indexName,t)},u),(function(t,r){return tt(e)(t.taskID,r)}))}},ke=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=y(n(a,["forwardToReplicas"]));return o&&(u.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:j,path:h("1/indexes/%s/synonyms/%s",e.indexName,t)},u),(function(t,r){return tt(e)(t.taskID,r)}))}},Te=function(e){return function(t){return Je(e)(t).then((function(){return!0})).catch((function(e){if(404!==e.status)throw e;return!1}))}},Ne=function(e){return function(t,r,n){return e.transporter.read({method:x,path:h("1/answers/%s/prediction",e.indexName),data:{query:t,queryLanguages:r},cacheable:!0},n)}},Re=function(e){return function(t,o){var u=o||{},i=u.query,s=u.paginate,c=n(u,["query","paginate"]),f=0;return function n(){return Xe(e)(i||"",r(r({},c),{},{page:f})).then((function(e){for(var r=0,o=Object.entries(e.hits);r<o.length;r++){var u=a(o[r],2),i=u[0],c=u[1];if(t(c))return{object:c,position:parseInt(i,10),page:f}}if(f++,!1===s||f>=e.nbPages)throw{name:"ObjectNotFoundError",message:"Object not found."};return n()}))}()}},Ae=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/indexes/%s/%s",e.indexName,t)},r)}},Ee=function(){return function(e,t){for(var r=0,n=Object.entries(e.hits);r<n.length;r++){var o=a(n[r],2),u=o[0];if(o[1].objectID===t)return parseInt(u,10)}return-1}},Ce=function(e){return function(t,a){var o=a||{},u=o.attributesToRetrieve,i=n(o,["attributesToRetrieve"]),s=t.map((function(t){return r({indexName:e.indexName,objectID:t},u?{attributesToRetrieve:u}:{})}));return e.transporter.read({method:x,path:"1/indexes/*/objects",data:{requests:s}},i)}},Ue=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/indexes/%s/rules/%s",e.indexName,t)},r)}},Je=function(e){return function(t){return e.transporter.read({method:I,path:h("1/indexes/%s/settings",e.indexName),data:{getVersion:2}},t)}},ze=function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/indexes/%s/synonyms/%s",e.indexName,t)},r)}},Fe=function(e){return function(t,r){return d(He(e)([t],r).then((function(e){return{objectID:e.objectIDs[0],taskID:e.taskIDs[0]}})),(function(t,r){return tt(e)(t.taskID,r)}))}},He=function(e){return function(t,r){var a=r||{},o=a.createIfNotExists,u=n(a,["createIfNotExists"]),i=o?rt.PartialUpdateObject:rt.PartialUpdateObjectNoCreate;return Pe(e)(t,i,u)}},Me=function(e){return function(t,u){var i=u||{},s=i.safe,c=i.autoGenerateObjectIDIfNotExist,f=i.batchSize,l=n(i,["safe","autoGenerateObjectIDIfNotExist","batchSize"]),p=function(t,r,n,a){return d(e.transporter.write({method:x,path:h("1/indexes/%s/operation",t),data:{operation:n,destination:r}},a),(function(t,r){return tt(e)(t.taskID,r)}))},m=Math.random().toString(36).substring(7),y="".concat(e.indexName,"_tmp_").concat(m),g=Qe({appId:e.appId,transporter:e.transporter,indexName:y}),v=[],b=p(e.indexName,y,"copy",r(r({},l),{},{scope:["settings","synonyms","rules"]}));return v.push(b),d((s?b.wait(l):b).then((function(){var e=g(t,r(r({},l),{},{autoGenerateObjectIDIfNotExist:c,batchSize:f}));return v.push(e),s?e.wait(l):e})).then((function(){var t=p(y,e.indexName,"move",l);return v.push(t),s?t.wait(l):t})).then((function(){return Promise.all(v)})).then((function(e){var t=a(e,3),r=t[0],n=t[1],u=t[2];return{objectIDs:n.objectIDs,taskIDs:[r.taskID].concat(o(n.taskIDs),[u.taskID])}})),(function(e,t){return Promise.all(v.map((function(e){return e.wait(t)})))}))}},Ke=function(e){return function(t,n){return Le(e)(t,r(r({},n),{},{clearExistingRules:!0}))}},We=function(e){return function(t,n){return _e(e)(t,r(r({},n),{},{clearExistingSynonyms:!0}))}},Be=function(e){return function(t,r){return d(Qe(e)([t],r).then((function(e){return{objectID:e.objectIDs[0],taskID:e.taskIDs[0]}})),(function(t,r){return tt(e)(t.taskID,r)}))}},Qe=function(e){return function(t,r){var a=r||{},o=a.autoGenerateObjectIDIfNotExist,u=n(a,["autoGenerateObjectIDIfNotExist"]),i=o?rt.AddObject:rt.UpdateObject;if(i===rt.UpdateObject){var s=!0,c=!1,f=void 0;try{for(var l,p=t[Symbol.iterator]();!(s=(l=p.next()).done);s=!0){if(void 0===l.value.objectID)return d(Promise.reject({name:"MissingObjectIDError",message:"All objects must have an unique objectID (like a primary key) to be valid. Algolia is also able to generate objectIDs automatically but *it's not recommended*. To do it, use the `{'autoGenerateObjectIDIfNotExist': true}` option."}))}}catch(e){c=!0,f=e}finally{try{s||null==p.return||p.return()}finally{if(c)throw f}}}return Pe(e)(t,i,u)}},Ge=function(e){return function(t,r){return Le(e)([t],r)}},Le=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=a.clearExistingRules,i=y(n(a,["forwardToReplicas","clearExistingRules"]));return o&&(i.queryParameters.forwardToReplicas=1),u&&(i.queryParameters.clearExistingRules=1),d(e.transporter.write({method:x,path:h("1/indexes/%s/rules/batch",e.indexName),data:t},i),(function(t,r){return tt(e)(t.taskID,r)}))}},Ve=function(e){return function(t,r){return _e(e)([t],r)}},_e=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=a.clearExistingSynonyms,i=a.replaceExistingSynonyms,s=y(n(a,["forwardToReplicas","clearExistingSynonyms","replaceExistingSynonyms"]));return o&&(s.queryParameters.forwardToReplicas=1),(i||u)&&(s.queryParameters.replaceExistingSynonyms=1),d(e.transporter.write({method:x,path:h("1/indexes/%s/synonyms/batch",e.indexName),data:t},s),(function(t,r){return tt(e)(t.taskID,r)}))}},Xe=function(e){return function(t,r){return e.transporter.read({method:x,path:h("1/indexes/%s/query",e.indexName),data:{query:t},cacheable:!0},r)}},Ye=function(e){return function(t,r,n){return e.transporter.read({method:x,path:h("1/indexes/%s/facets/%s/query",e.indexName,t),data:{facetQuery:r},cacheable:!0},n)}},Ze=function(e){return function(t,r){return e.transporter.read({method:x,path:h("1/indexes/%s/rules/search",e.indexName),data:{query:t}},r)}},$e=function(e){return function(t,r){return e.transporter.read({method:x,path:h("1/indexes/%s/synonyms/search",e.indexName),data:{query:t}},r)}},et=function(e){return function(t,r){var a=r||{},o=a.forwardToReplicas,u=y(n(a,["forwardToReplicas"]));return o&&(u.queryParameters.forwardToReplicas=1),d(e.transporter.write({method:q,path:h("1/indexes/%s/settings",e.indexName),data:t},u),(function(t,r){return tt(e)(t.taskID,r)}))}},tt=function(e){return function(t,r){return f((function(n){return function(e){return function(t,r){return e.transporter.read({method:I,path:h("1/indexes/%s/task/%s",e.indexName,t.toString())},r)}}(e)(t,r).then((function(e){return"published"!==e.status?n():void 0}))}))}},rt={AddObject:"addObject",UpdateObject:"updateObject",PartialUpdateObject:"partialUpdateObject",PartialUpdateObjectNoCreate:"partialUpdateObjectNoCreate",DeleteObject:"deleteObject",DeleteIndex:"delete",ClearIndex:"clear"},nt={Settings:"settings",Synonyms:"synonyms",Rules:"rules"},at=1,ot=2,ut=3;function it(e,t,n){var a,o={appId:e,apiKey:t,timeouts:{connect:1,read:2,write:30},requester:{send:function(e){return new Promise((function(t){var r=new XMLHttpRequest;r.open(e.method,e.url,!0),Object.keys(e.headers).forEach((function(t){return r.setRequestHeader(t,e.headers[t])}));var n,a=function(e,n){return setTimeout((function(){r.abort(),t({status:0,content:n,isTimedOut:!0})}),1e3*e)},o=a(e.connectTimeout,"Connection timeout");r.onreadystatechange=function(){r.readyState>r.OPENED&&void 0===n&&(clearTimeout(o),n=a(e.responseTimeout,"Socket timeout"))},r.onerror=function(){0===r.status&&(clearTimeout(o),clearTimeout(n),t({content:r.responseText||"Network request failed",status:r.status,isTimedOut:!1}))},r.onload=function(){clearTimeout(o),clearTimeout(n),t({content:r.responseText,status:r.status,isTimedOut:!1})},r.send(e.data)}))}},logger:(a=ut,{debug:function(e,t){return at>=a&&console.debug(e,t),Promise.resolve()},info:function(e,t){return ot>=a&&console.info(e,t),Promise.resolve()},error:function(e,t){return console.error(e,t),Promise.resolve()}}),responsesCache:s(),requestsCache:s({serializable:!1}),hostsCache:i({caches:[u({key:"".concat("4.8.5","-").concat(e)}),s()]}),userAgent:T("4.8.5").add({segment:"Browser"})};return function(e){var t=e.appId,n=c(void 0!==e.authMode?e.authMode:m.WithinHeaders,t,e.apiKey),a=k(r(r({hosts:[{url:"".concat(t,"-dsn.algolia.net"),accept:g.Read},{url:"".concat(t,".algolia.net"),accept:g.Write}].concat(l([{url:"".concat(t,"-1.algolianet.com")},{url:"".concat(t,"-2.algolianet.com")},{url:"".concat(t,"-3.algolianet.com")}]))},e),{},{headers:r(r(r({},n.headers()),{"content-type":"application/x-www-form-urlencoded"}),e.headers),queryParameters:r(r({},n.queryParameters()),e.queryParameters)}));return p({transporter:a,appId:t,addAlgoliaAgent:function(e,t){a.userAgent.add({segment:e,version:t})},clearCache:function(){return Promise.all([a.requestsCache.clear(),a.responsesCache.clear()]).then((function(){}))}},e.methods)}(r(r(r({},o),n),{},{methods:{search:fe,searchForFacetValues:de,multipleBatch:se,multipleGetObjects:ce,multipleQueries:fe,copyIndex:G,copySettings:V,copySynonyms:_,copyRules:L,moveIndex:ie,listIndices:oe,getLogs:Z,listClusters:ae,multipleSearchForFacetValues:de,getApiKey:Y,addApiKey:W,listApiKeys:ne,updateApiKey:me,deleteApiKey:X,restoreApiKey:pe,assignUserID:B,assignUserIDs:Q,getUserID:ee,searchUserIDs:he,listUserIDs:ue,getTopUserIDs:$,removeUserID:le,hasPendingMappings:te,initIndex:function(e){return function(t){return re(e)(t,{methods:{batch:ye,delete:xe,findAnswers:Ne,getObject:Ae,getObjects:Ce,saveObject:Be,saveObjects:Qe,search:Xe,searchForFacetValues:Ye,waitTask:tt,setSettings:et,getSettings:Je,partialUpdateObject:Fe,partialUpdateObjects:He,deleteObject:qe,deleteObjects:De,deleteBy:Ie,clearObjects:Oe,browseObjects:ge,getObjectPosition:Ee,findObject:Re,exists:Te,saveSynonym:Ve,saveSynonyms:_e,getSynonym:ze,searchSynonyms:$e,browseSynonyms:be,deleteSynonym:ke,clearSynonyms:je,replaceAllObjects:Me,replaceAllSynonyms:We,searchRules:Ze,getRule:Ue,deleteRule:Se,saveRule:Ge,saveRules:Le,replaceAllRules:Ke,browseRules:ve,clearRules:we}})}},initAnalytics:function(){return function(e){return function(e){var t=e.region||"us",n=c(m.WithinHeaders,e.appId,e.apiKey),a=k(r(r({hosts:[{url:"analytics.".concat(t,".algolia.com")}]},e),{},{headers:r(r(r({},n.headers()),{"content-type":"application/json"}),e.headers),queryParameters:r(r({},n.queryParameters()),e.queryParameters)}));return p({appId:e.appId,transporter:a},e.methods)}(r(r(r({},o),e),{},{methods:{addABTest:C,getABTest:J,getABTests:z,stopABTest:F,deleteABTest:U}}))}},initRecommendation:function(){return function(e){return function(e){var t=e.region||"us",n=c(m.WithinHeaders,e.appId,e.apiKey),a=k(r(r({hosts:[{url:"recommendation.".concat(t,".algolia.com")}]},e),{},{headers:r(r(r({},n.headers()),{"content-type":"application/json"}),e.headers),queryParameters:r(r({},n.queryParameters()),e.queryParameters)}));return p({appId:e.appId,transporter:a},e.methods)}(r(r(r({},o),e),{},{methods:{getPersonalizationStrategy:H,setPersonalizationStrategy:M}}))}}}}))}return it.version="4.8.5",it}));
 
 },{}],"../node_modules/preact/dist/preact.module.js":[function(require,module,exports) {
 "use strict";
@@ -12385,56 +12705,55 @@ var define;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.render = O;
-exports.hydrate = S;
-exports.h = exports.createElement = v;
-exports.Fragment = p;
-exports.createRef = y;
-exports.Component = d;
-exports.cloneElement = q;
-exports.createContext = B;
-exports.toChildArray = x;
+exports.render = N;
+exports.hydrate = O;
+exports.h = exports.createElement = a;
+exports.Fragment = y;
+exports.createRef = h;
+exports.Component = p;
+exports.cloneElement = S;
+exports.createContext = q;
+exports.toChildArray = w;
 exports.options = exports.isValidElement = void 0;
 var n,
     l,
     u,
     i,
     t,
-    o,
     r,
-    f = {},
-    e = [],
-    c = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;
+    o = {},
+    f = [],
+    e = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;
 exports.isValidElement = l;
 exports.options = n;
 
-function s(n, l) {
+function c(n, l) {
   for (var u in l) n[u] = l[u];
 
   return n;
 }
 
-function a(n) {
+function s(n) {
   var l = n.parentNode;
   l && l.removeChild(n);
 }
 
-function v(n, l, u) {
+function a(n, l, u) {
   var i,
       t,
-      o,
-      r = arguments,
+      r,
+      o = arguments,
       f = {};
 
-  for (o in l) "key" == o ? i = l[o] : "ref" == o ? t = l[o] : f[o] = l[o];
+  for (r in l) "key" == r ? i = l[r] : "ref" == r ? t = l[r] : f[r] = l[r];
 
-  if (arguments.length > 3) for (u = [u], o = 3; o < arguments.length; o++) u.push(r[o]);
-  if (null != u && (f.children = u), "function" == typeof n && null != n.defaultProps) for (o in n.defaultProps) void 0 === f[o] && (f[o] = n.defaultProps[o]);
-  return h(n, f, i, t, null);
+  if (arguments.length > 3) for (u = [u], r = 3; r < arguments.length; r++) u.push(o[r]);
+  if (null != u && (f.children = u), "function" == typeof n && null != n.defaultProps) for (r in n.defaultProps) void 0 === f[r] && (f[r] = n.defaultProps[r]);
+  return v(n, f, i, t, null);
 }
 
-function h(l, u, i, t, o) {
-  var r = {
+function v(l, u, i, t, r) {
+  var o = {
     type: l,
     props: u,
     key: i,
@@ -12447,34 +12766,34 @@ function h(l, u, i, t, o) {
     __c: null,
     __h: null,
     constructor: void 0,
-    __v: null == o ? ++n.__v : o
+    __v: null == r ? ++n.__v : r
   };
-  return null != n.vnode && n.vnode(r), r;
+  return null != n.vnode && n.vnode(o), o;
 }
 
-function y() {
+function h() {
   return {
     current: null
   };
 }
 
-function p(n) {
+function y(n) {
   return n.children;
 }
 
-function d(n, l) {
+function p(n, l) {
   this.props = n, this.context = l;
 }
 
-function _(n, l) {
-  if (null == l) return n.__ ? _(n.__, n.__.__k.indexOf(n) + 1) : null;
+function d(n, l) {
+  if (null == l) return n.__ ? d(n.__, n.__.__k.indexOf(n) + 1) : null;
 
   for (var u; l < n.__k.length; l++) if (null != (u = n.__k[l]) && null != u.__e) return u.__e;
 
-  return "function" == typeof n.type ? _(n) : null;
+  return "function" == typeof n.type ? d(n) : null;
 }
 
-function w(n) {
+function _(n) {
   var l, u;
 
   if (null != (n = n.__) && null != n.__c) {
@@ -12483,144 +12802,149 @@ function w(n) {
       break;
     }
 
-    return w(n);
+    return _(n);
   }
 }
 
 function k(l) {
-  (!l.__d && (l.__d = !0) && u.push(l) && !g.__r++ || t !== n.debounceRendering) && ((t = n.debounceRendering) || i)(g);
+  (!l.__d && (l.__d = !0) && u.push(l) && !m.__r++ || t !== n.debounceRendering) && ((t = n.debounceRendering) || i)(m);
 }
 
-function g() {
-  for (var n; g.__r = u.length;) n = u.sort(function (n, l) {
+function m() {
+  for (var n; m.__r = u.length;) n = u.sort(function (n, l) {
     return n.__v.__b - l.__v.__b;
   }), u = [], n.some(function (n) {
-    var l, u, i, t, o, r;
-    n.__d && (o = (t = (l = n).__v).__e, (r = l.__P) && (u = [], (i = s({}, t)).__v = t.__v + 1, $(r, t, i, l.__n, void 0 !== r.ownerSVGElement, null != t.__h ? [o] : null, u, null == o ? _(t) : o, t.__h), j(u, t), t.__e != o && w(t)));
+    var l, u, i, t, r, o;
+    n.__d && (r = (t = (l = n).__v).__e, (o = l.__P) && (u = [], (i = c({}, t)).__v = t.__v + 1, T(o, t, i, l.__n, void 0 !== o.ownerSVGElement, null != t.__h ? [r] : null, u, null == r ? d(t) : r, t.__h), j(u, t), t.__e != r && _(t)));
   });
 }
 
-function m(n, l, u, i, t, o, r, c, s, v) {
-  var y,
-      d,
-      w,
+function b(n, l, u, i, t, r, e, c, s, a) {
+  var h,
+      p,
+      _,
       k,
-      g,
       m,
-      x,
-      P = i && i.__k || e,
-      C = P.length;
+      b,
+      w,
+      A = i && i.__k || f,
+      P = A.length;
 
-  for (s == f && (s = null != r ? r[0] : C ? _(i, 0) : null), u.__k = [], y = 0; y < l.length; y++) if (null != (k = u.__k[y] = null == (k = l[y]) || "boolean" == typeof k ? null : "string" == typeof k || "number" == typeof k ? h(null, k, null, null, k) : Array.isArray(k) ? h(p, {
+  for (u.__k = [], h = 0; h < l.length; h++) if (null != (k = u.__k[h] = null == (k = l[h]) || "boolean" == typeof k ? null : "string" == typeof k || "number" == typeof k ? v(null, k, null, null, k) : Array.isArray(k) ? v(y, {
     children: k
-  }, null, null, null) : k.__b > 0 ? h(k.type, k.props, k.key, null, k.__v) : k)) {
-    if (k.__ = u, k.__b = u.__b + 1, null === (w = P[y]) || w && k.key == w.key && k.type === w.type) P[y] = void 0;else for (d = 0; d < C; d++) {
-      if ((w = P[d]) && k.key == w.key && k.type === w.type) {
-        P[d] = void 0;
+  }, null, null, null) : k.__b > 0 ? v(k.type, k.props, k.key, null, k.__v) : k)) {
+    if (k.__ = u, k.__b = u.__b + 1, null === (_ = A[h]) || _ && k.key == _.key && k.type === _.type) A[h] = void 0;else for (p = 0; p < P; p++) {
+      if ((_ = A[p]) && k.key == _.key && k.type === _.type) {
+        A[p] = void 0;
         break;
       }
 
-      w = null;
+      _ = null;
     }
-    $(n, k, w = w || f, t, o, r, c, s, v), g = k.__e, (d = k.ref) && w.ref != d && (x || (x = []), w.ref && x.push(w.ref, null, k), x.push(d, k.__c || g, k)), null != g ? (null == m && (m = g), "function" == typeof k.type && null != k.__k && k.__k === w.__k ? k.__d = s = b(k, s, n) : s = A(n, k, w, P, r, g, s), v || "option" !== u.type ? "function" == typeof u.type && (u.__d = s) : n.value = "") : s && w.__e == s && s.parentNode != n && (s = _(w));
+    T(n, k, _ = _ || o, t, r, e, c, s, a), m = k.__e, (p = k.ref) && _.ref != p && (w || (w = []), _.ref && w.push(_.ref, null, k), w.push(p, k.__c || m, k)), null != m ? (null == b && (b = m), "function" == typeof k.type && null != k.__k && k.__k === _.__k ? k.__d = s = g(k, s, n) : s = x(n, k, _, A, m, s), a || "option" !== u.type ? "function" == typeof u.type && (u.__d = s) : n.value = "") : s && _.__e == s && s.parentNode != n && (s = d(_));
   }
 
-  if (u.__e = m, null != r && "function" != typeof u.type) for (y = r.length; y--;) null != r[y] && a(r[y]);
+  for (u.__e = b, h = P; h--;) null != A[h] && ("function" == typeof u.type && null != A[h].__e && A[h].__e == u.__d && (u.__d = d(i, h + 1)), L(A[h], A[h]));
 
-  for (y = C; y--;) null != P[y] && ("function" == typeof u.type && null != P[y].__e && P[y].__e == u.__d && (u.__d = _(i, y + 1)), L(P[y], P[y]));
-
-  if (x) for (y = 0; y < x.length; y++) I(x[y], x[++y], x[++y]);
+  if (w) for (h = 0; h < w.length; h++) I(w[h], w[++h], w[++h]);
 }
 
-function b(n, l, u) {
+function g(n, l, u) {
   var i, t;
 
-  for (i = 0; i < n.__k.length; i++) (t = n.__k[i]) && (t.__ = n, l = "function" == typeof t.type ? b(t, l, u) : A(u, t, t, n.__k, null, t.__e, l));
+  for (i = 0; i < n.__k.length; i++) (t = n.__k[i]) && (t.__ = n, l = "function" == typeof t.type ? g(t, l, u) : x(u, t, t, n.__k, t.__e, l));
 
   return l;
 }
 
-function x(n, l) {
+function w(n, l) {
   return l = l || [], null == n || "boolean" == typeof n || (Array.isArray(n) ? n.some(function (n) {
-    x(n, l);
+    w(n, l);
   }) : l.push(n)), l;
 }
 
-function A(n, l, u, i, t, o, r) {
-  var f, e, c;
-  if (void 0 !== l.__d) f = l.__d, l.__d = void 0;else if (t == u || o != r || null == o.parentNode) n: if (null == r || r.parentNode !== n) n.appendChild(o), f = null;else {
-    for (e = r, c = 0; (e = e.nextSibling) && c < i.length; c += 2) if (e == o) break n;
+function x(n, l, u, i, t, r) {
+  var o, f, e;
+  if (void 0 !== l.__d) o = l.__d, l.__d = void 0;else if (null == u || t != r || null == t.parentNode) n: if (null == r || r.parentNode !== n) n.appendChild(t), o = null;else {
+    for (f = r, e = 0; (f = f.nextSibling) && e < i.length; e += 2) if (f == t) break n;
 
-    n.insertBefore(o, r), f = r;
+    n.insertBefore(t, r), o = r;
   }
-  return void 0 !== f ? f : o.nextSibling;
+  return void 0 !== o ? o : t.nextSibling;
 }
 
-function P(n, l, u, i, t) {
-  var o;
+function A(n, l, u, i, t) {
+  var r;
 
-  for (o in u) "children" === o || "key" === o || o in l || z(n, o, null, u[o], i);
+  for (r in u) "children" === r || "key" === r || r in l || C(n, r, null, u[r], i);
 
-  for (o in l) t && "function" != typeof l[o] || "children" === o || "key" === o || "value" === o || "checked" === o || u[o] === l[o] || z(n, o, l[o], u[o], i);
+  for (r in l) t && "function" != typeof l[r] || "children" === r || "key" === r || "value" === r || "checked" === r || u[r] === l[r] || C(n, r, l[r], u[r], i);
 }
 
-function C(n, l, u) {
-  "-" === l[0] ? n.setProperty(l, u) : n[l] = null == u ? "" : "number" != typeof u || c.test(l) ? u : u + "px";
+function P(n, l, u) {
+  "-" === l[0] ? n.setProperty(l, u) : n[l] = null == u ? "" : "number" != typeof u || e.test(l) ? u : u + "px";
 }
 
-function z(n, l, u, i, t) {
-  var o, r, f;
-  if (t && "className" == l && (l = "class"), "style" === l) {
+function C(n, l, u, i, t) {
+  var r;
+
+  n: if ("style" === l) {
     if ("string" == typeof u) n.style.cssText = u;else {
-      if ("string" == typeof i && (n.style.cssText = i = ""), i) for (l in i) u && l in u || C(n.style, l, "");
-      if (u) for (l in u) i && u[l] === i[l] || C(n.style, l, u[l]);
+      if ("string" == typeof i && (n.style.cssText = i = ""), i) for (l in i) u && l in u || P(n.style, l, "");
+      if (u) for (l in u) i && u[l] === i[l] || P(n.style, l, u[l]);
     }
-  } else "o" === l[0] && "n" === l[1] ? (o = l !== (l = l.replace(/Capture$/, "")), (r = l.toLowerCase()) in n && (l = r), l = l.slice(2), n.l || (n.l = {}), n.l[l + o] = u, f = o ? T : N, u ? i || n.addEventListener(l, f, o) : n.removeEventListener(l, f, o)) : "list" !== l && "tagName" !== l && "form" !== l && "type" !== l && "size" !== l && "download" !== l && "href" !== l && !t && l in n ? n[l] = null == u ? "" : u : "function" != typeof u && "dangerouslySetInnerHTML" !== l && (l !== (l = l.replace(/xlink:?/, "")) ? null == u || !1 === u ? n.removeAttributeNS("http://www.w3.org/1999/xlink", l.toLowerCase()) : n.setAttributeNS("http://www.w3.org/1999/xlink", l.toLowerCase(), u) : null == u || !1 === u && !/^ar/.test(l) ? n.removeAttribute(l) : n.setAttribute(l, u));
+  } else if ("o" === l[0] && "n" === l[1]) r = l !== (l = l.replace(/Capture$/, "")), l = l.toLowerCase() in n ? l.toLowerCase().slice(2) : l.slice(2), n.l || (n.l = {}), n.l[l + r] = u, u ? i || n.addEventListener(l, r ? H : $, r) : n.removeEventListener(l, r ? H : $, r);else if ("dangerouslySetInnerHTML" !== l) {
+    if (t) l = l.replace(/xlink[H:h]/, "h").replace(/sName$/, "s");else if ("href" !== l && "list" !== l && "form" !== l && "download" !== l && l in n) try {
+      n[l] = null == u ? "" : u;
+      break n;
+    } catch (n) {}
+    "function" == typeof u || (null != u && (!1 !== u || "a" === l[0] && "r" === l[1]) ? n.setAttribute(l, u) : n.removeAttribute(l));
+  }
 }
 
-function N(l) {
+function $(l) {
   this.l[l.type + !1](n.event ? n.event(l) : l);
 }
 
-function T(l) {
+function H(l) {
   this.l[l.type + !0](n.event ? n.event(l) : l);
 }
 
-function $(l, u, i, t, o, r, f, e, c) {
+function T(l, u, i, t, r, o, f, e, s) {
   var a,
       v,
       h,
-      y,
+      d,
       _,
-      w,
       k,
+      m,
       g,
-      b,
+      w,
       x,
       A,
       P = u.type;
 
   if (void 0 !== u.constructor) return null;
-  null != i.__h && (c = i.__h, e = u.__e = i.__e, u.__h = null, r = [e]), (a = n.__b) && a(u);
+  null != i.__h && (s = i.__h, e = u.__e = i.__e, u.__h = null, o = [e]), (a = n.__b) && a(u);
 
   try {
     n: if ("function" == typeof P) {
-      if (g = u.props, b = (a = P.contextType) && t[a.__c], x = a ? b ? b.props.value : a.__ : t, i.__c ? k = (v = u.__c = i.__c).__ = v.__E : ("prototype" in P && P.prototype.render ? u.__c = v = new P(g, x) : (u.__c = v = new d(g, x), v.constructor = P, v.render = M), b && b.sub(v), v.props = g, v.state || (v.state = {}), v.context = x, v.__n = t, h = v.__d = !0, v.__h = []), null == v.__s && (v.__s = v.state), null != P.getDerivedStateFromProps && (v.__s == v.state && (v.__s = s({}, v.__s)), s(v.__s, P.getDerivedStateFromProps(g, v.__s))), y = v.props, _ = v.state, h) null == P.getDerivedStateFromProps && null != v.componentWillMount && v.componentWillMount(), null != v.componentDidMount && v.__h.push(v.componentDidMount);else {
-        if (null == P.getDerivedStateFromProps && g !== y && null != v.componentWillReceiveProps && v.componentWillReceiveProps(g, x), !v.__e && null != v.shouldComponentUpdate && !1 === v.shouldComponentUpdate(g, v.__s, x) || u.__v === i.__v) {
+      if (g = u.props, w = (a = P.contextType) && t[a.__c], x = a ? w ? w.props.value : a.__ : t, i.__c ? m = (v = u.__c = i.__c).__ = v.__E : ("prototype" in P && P.prototype.render ? u.__c = v = new P(g, x) : (u.__c = v = new p(g, x), v.constructor = P, v.render = M), w && w.sub(v), v.props = g, v.state || (v.state = {}), v.context = x, v.__n = t, h = v.__d = !0, v.__h = []), null == v.__s && (v.__s = v.state), null != P.getDerivedStateFromProps && (v.__s == v.state && (v.__s = c({}, v.__s)), c(v.__s, P.getDerivedStateFromProps(g, v.__s))), d = v.props, _ = v.state, h) null == P.getDerivedStateFromProps && null != v.componentWillMount && v.componentWillMount(), null != v.componentDidMount && v.__h.push(v.componentDidMount);else {
+        if (null == P.getDerivedStateFromProps && g !== d && null != v.componentWillReceiveProps && v.componentWillReceiveProps(g, x), !v.__e && null != v.shouldComponentUpdate && !1 === v.shouldComponentUpdate(g, v.__s, x) || u.__v === i.__v) {
           v.props = g, v.state = v.__s, u.__v !== i.__v && (v.__d = !1), v.__v = u, u.__e = i.__e, u.__k = i.__k, v.__h.length && f.push(v);
           break n;
         }
 
         null != v.componentWillUpdate && v.componentWillUpdate(g, v.__s, x), null != v.componentDidUpdate && v.__h.push(function () {
-          v.componentDidUpdate(y, _, w);
+          v.componentDidUpdate(d, _, k);
         });
       }
-      v.context = x, v.props = g, v.state = v.__s, (a = n.__r) && a(u), v.__d = !1, v.__v = u, v.__P = l, a = v.render(v.props, v.state, v.context), v.state = v.__s, null != v.getChildContext && (t = s(s({}, t), v.getChildContext())), h || null == v.getSnapshotBeforeUpdate || (w = v.getSnapshotBeforeUpdate(y, _)), A = null != a && a.type === p && null == a.key ? a.props.children : a, m(l, Array.isArray(A) ? A : [A], u, i, t, o, r, f, e, c), v.base = u.__e, u.__h = null, v.__h.length && f.push(v), k && (v.__E = v.__ = null), v.__e = !1;
-    } else null == r && u.__v === i.__v ? (u.__k = i.__k, u.__e = i.__e) : u.__e = H(i.__e, u, i, t, o, r, f, c);
+      v.context = x, v.props = g, v.state = v.__s, (a = n.__r) && a(u), v.__d = !1, v.__v = u, v.__P = l, a = v.render(v.props, v.state, v.context), v.state = v.__s, null != v.getChildContext && (t = c(c({}, t), v.getChildContext())), h || null == v.getSnapshotBeforeUpdate || (k = v.getSnapshotBeforeUpdate(d, _)), A = null != a && a.type === y && null == a.key ? a.props.children : a, b(l, Array.isArray(A) ? A : [A], u, i, t, r, o, f, e, s), v.base = u.__e, u.__h = null, v.__h.length && f.push(v), m && (v.__E = v.__ = null), v.__e = !1;
+    } else null == o && u.__v === i.__v ? (u.__k = i.__k, u.__e = i.__e) : u.__e = z(i.__e, u, i, t, r, o, f, s);
 
     (a = n.diffed) && a(u);
   } catch (l) {
-    u.__v = null, (c || null != r) && (u.__e = e, u.__h = !!c, r[r.indexOf(e)] = null), n.__e(l, u, i);
+    u.__v = null, (s || null != o) && (u.__e = e, u.__h = !!s, o[o.indexOf(e)] = null), n.__e(l, u, i);
   }
 }
 
@@ -12636,33 +12960,33 @@ function j(l, u) {
   });
 }
 
-function H(n, l, u, i, t, o, r, c) {
-  var s,
-      a,
+function z(n, l, u, i, t, r, e, c) {
+  var a,
       v,
       h,
       y,
       p = u.props,
-      d = l.props;
-  if (t = "svg" === l.type || t, null != o) for (s = 0; s < o.length; s++) if (null != (a = o[s]) && ((null === l.type ? 3 === a.nodeType : a.localName === l.type) || n == a)) {
-    n = a, o[s] = null;
+      d = l.props,
+      _ = l.type,
+      k = 0;
+  if ("svg" === _ && (t = !0), null != r) for (; k < r.length; k++) if ((a = r[k]) && (a === n || (_ ? a.localName == _ : 3 == a.nodeType))) {
+    n = a, r[k] = null;
     break;
   }
 
   if (null == n) {
-    if (null === l.type) return document.createTextNode(d);
-    n = t ? document.createElementNS("http://www.w3.org/2000/svg", l.type) : document.createElement(l.type, d.is && {
-      is: d.is
-    }), o = null, c = !1;
+    if (null === _) return document.createTextNode(d);
+    n = t ? document.createElementNS("http://www.w3.org/2000/svg", _) : document.createElement(_, d.is && d), r = null, c = !1;
   }
 
-  if (null === l.type) p === d || c && n.data === d || (n.data = d);else {
-    if (null != o && (o = e.slice.call(n.childNodes)), v = (p = u.props || f).dangerouslySetInnerHTML, h = d.dangerouslySetInnerHTML, !c) {
-      if (null != o) for (p = {}, y = 0; y < n.attributes.length; y++) p[n.attributes[y].name] = n.attributes[y].value;
+  if (null === _) p === d || c && n.data === d || (n.data = d);else {
+    if (r = r && f.slice.call(n.childNodes), v = (p = u.props || o).dangerouslySetInnerHTML, h = d.dangerouslySetInnerHTML, !c) {
+      if (null != r) for (p = {}, y = 0; y < n.attributes.length; y++) p[n.attributes[y].name] = n.attributes[y].value;
       (h || v) && (h && (v && h.__html == v.__html || h.__html === n.innerHTML) || (n.innerHTML = h && h.__html || ""));
     }
 
-    P(n, d, p, t, c), h ? l.__k = [] : (s = l.props.children, m(n, Array.isArray(s) ? s : [s], l, u, i, "foreignObject" !== l.type && t, o, r, f, c)), c || ("value" in d && void 0 !== (s = d.value) && (s !== n.value || "progress" === l.type && !s) && z(n, "value", s, p.value, !1), "checked" in d && void 0 !== (s = d.checked) && s !== n.checked && z(n, "checked", s, p.checked, !1));
+    if (A(n, d, p, t, c), h) l.__k = [];else if (k = l.props.children, b(n, Array.isArray(k) ? k : [k], l, u, i, t && "foreignObject" !== _, r, e, n.firstChild, c), null != r) for (k = r.length; k--;) null != r[k] && s(r[k]);
+    c || ("value" in d && void 0 !== (k = d.value) && (k !== n.value || "progress" === _ && !k) && C(n, "value", k, p.value, !1), "checked" in d && void 0 !== (k = d.checked) && k !== n.checked && C(n, "checked", k, p.checked, !1));
   }
   return n;
 }
@@ -12676,9 +13000,9 @@ function I(l, u, i) {
 }
 
 function L(l, u, i) {
-  var t, o, r;
+  var t, r, o;
 
-  if (n.unmount && n.unmount(l), (t = l.ref) && (t.current && t.current !== l.__e || I(t, null, u)), i || "function" == typeof l.type || (i = null != (o = l.__e)), l.__e = l.__d = void 0, null != (t = l.__c)) {
+  if (n.unmount && n.unmount(l), (t = l.ref) && (t.current && t.current !== l.__e || I(t, null, u)), i || "function" == typeof l.type || (i = null != (r = l.__e)), l.__e = l.__d = void 0, null != (t = l.__c)) {
     if (t.componentWillUnmount) try {
       t.componentWillUnmount();
     } catch (l) {
@@ -12687,37 +13011,37 @@ function L(l, u, i) {
     t.base = t.__P = null;
   }
 
-  if (t = l.__k) for (r = 0; r < t.length; r++) t[r] && L(t[r], u, i);
-  null != o && a(o);
+  if (t = l.__k) for (o = 0; o < t.length; o++) t[o] && L(t[o], u, i);
+  null != r && s(r);
 }
 
 function M(n, l, u) {
   return this.constructor(n, u);
 }
 
-function O(l, u, i) {
-  var t, r, c;
-  n.__ && n.__(l, u), r = (t = i === o) ? null : i && i.__k || u.__k, l = v(p, null, [l]), c = [], $(u, (t ? u : i || u).__k = l, r || f, f, void 0 !== u.ownerSVGElement, i && !t ? [i] : r ? null : u.childNodes.length ? e.slice.call(u.childNodes) : null, c, i || f, t), j(c, l);
+function N(l, u, i) {
+  var t, r, e;
+  n.__ && n.__(l, u), r = (t = "function" == typeof i) ? null : i && i.__k || u.__k, e = [], T(u, l = (!t && i || u).__k = a(y, null, [l]), r || o, o, void 0 !== u.ownerSVGElement, !t && i ? [i] : r ? null : u.firstChild ? f.slice.call(u.childNodes) : null, e, !t && i ? i : r ? r.__e : u.firstChild, t), j(e, l);
 }
 
-function S(n, l) {
-  O(n, l, o);
+function O(n, l) {
+  N(n, l, O);
 }
 
-function q(n, l, u) {
+function S(n, l, u) {
   var i,
       t,
-      o,
-      r = arguments,
-      f = s({}, n.props);
+      r,
+      o = arguments,
+      f = c({}, n.props);
 
-  for (o in l) "key" == o ? i = l[o] : "ref" == o ? t = l[o] : f[o] = l[o];
+  for (r in l) "key" == r ? i = l[r] : "ref" == r ? t = l[r] : f[r] = l[r];
 
-  if (arguments.length > 3) for (u = [u], o = 3; o < arguments.length; o++) u.push(r[o]);
-  return null != u && (f.children = u), h(n.type, f, i || n.key, t || n.ref, null);
+  if (arguments.length > 3) for (u = [u], r = 3; r < arguments.length; r++) u.push(o[r]);
+  return null != u && (f.children = u), v(n.type, f, i || n.key, t || n.ref, null);
 }
 
-function B(n, l) {
+function q(n, l) {
   var u = {
     __c: l = "__cC" + r++,
     __: n,
@@ -12745,8 +13069,8 @@ function B(n, l) {
 
 exports.options = n = {
   __e: function (n, l) {
-    for (var u, i, t, o = l.__h; l = l.__;) if ((u = l.__c) && !u.__) try {
-      if ((i = u.constructor) && null != i.getDerivedStateFromError && (u.setState(i.getDerivedStateFromError(n)), t = u.__d), null != u.componentDidCatch && (u.componentDidCatch(n), t = u.__d), t) return l.__h = o, u.__E = u;
+    for (var u, i, t; l = l.__;) if ((u = l.__c) && !u.__) try {
+      if ((i = u.constructor) && null != i.getDerivedStateFromError && (u.setState(i.getDerivedStateFromError(n)), t = u.__d), null != u.componentDidCatch && (u.componentDidCatch(n), t = u.__d), t) return u.__E = u;
     } catch (l) {
       n = l;
     }
@@ -12756,12 +13080,12 @@ exports.options = n = {
   __v: 0
 }, exports.isValidElement = l = function (n) {
   return null != n && void 0 === n.constructor;
-}, d.prototype.setState = function (n, l) {
+}, p.prototype.setState = function (n, l) {
   var u;
-  u = null != this.__s && this.__s !== this.state ? this.__s : this.__s = s({}, this.state), "function" == typeof n && (n = n(s({}, u), this.props)), n && s(u, n), null != n && this.__v && (l && this.__h.push(l), k(this));
-}, d.prototype.forceUpdate = function (n) {
+  u = null != this.__s && this.__s !== this.state ? this.__s : this.__s = c({}, this.state), "function" == typeof n && (n = n(c({}, u), this.props)), n && c(u, n), null != n && this.__v && (l && this.__h.push(l), k(this));
+}, p.prototype.forceUpdate = function (n) {
   this.__v && (this.__e = !0, n && this.__h.push(n), k(this));
-}, d.prototype.render = p, u = [], i = "function" == typeof Promise ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout, g.__r = 0, o = f, r = 0;
+}, p.prototype.render = y, u = [], i = "function" == typeof Promise ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout, m.__r = 0, r = 0;
 },{}],"../node_modules/classnames/index.js":[function(require,module,exports) {
 var define;
 /*!
@@ -12830,6 +13154,8 @@ var _preact = require("preact");
 var _utils = require("../../lib/utils");
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -12883,29 +13209,6 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -12929,16 +13232,73 @@ function _setPrototypeOf(o, p) {
 
   return _setPrototypeOf(o, p);
 }
+
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
 /** @jsx h */
 
 
 var Template = /*#__PURE__*/function (_Component) {
   _inherits(Template, _Component);
 
+  var _super = _createSuper(Template);
+
   function Template() {
     _classCallCheck(this, Template);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Template).apply(this, arguments));
+    return _super.apply(this, arguments);
   }
 
   _createClass(Template, [{
@@ -13072,25 +13432,38 @@ exports.default = void 0;
 var _utils = require("../../lib/utils");
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
 
-    return arr2;
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
   }
+
+  return arr2;
 }
 
 function ownKeys(object, enumerableOnly) {
@@ -13185,13 +13558,13 @@ var connectClearRefinements = function connectClearRefinements(renderFn) {
       $$type: 'ais.clearRefinements',
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -13199,7 +13572,7 @@ var connectClearRefinements = function connectClearRefinements(renderFn) {
         unmountFn();
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           clearRefinements: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -13255,10 +13628,10 @@ function getAttributesToClear(_ref5) {
       includedAttributes = _ref5.includedAttributes,
       excludedAttributes = _ref5.excludedAttributes,
       transformItems = _ref5.transformItems;
-  var clearsQuery = includedAttributes.indexOf('query') !== -1 || excludedAttributes.indexOf('query') === -1;
+  var includesQuery = includedAttributes.indexOf('query') !== -1 || excludedAttributes.indexOf('query') === -1;
   return {
     helper: scopedResult.helper,
-    items: transformItems((0, _utils.uniq)((0, _utils.getRefinements)(scopedResult.results, scopedResult.helper.state, clearsQuery).map(function (refinement) {
+    items: transformItems((0, _utils.uniq)((0, _utils.getRefinements)(scopedResult.results, scopedResult.helper.state, includesQuery).map(function (refinement) {
       return refinement.attribute;
     }).filter(function (attribute) {
       return (// If the array is empty (default case), we keep all the attributes
@@ -13267,7 +13640,7 @@ function getAttributesToClear(_ref5) {
       );
     }).filter(function (attribute) {
       return (// If the query is included, we ignore the default `excludedAttributes = ['query']`
-        attribute === 'query' && clearsQuery || // Otherwise, ignore the excluded attributes
+        attribute === 'query' && includesQuery || // Otherwise, ignore the excluded attributes
         excludedAttributes.indexOf(attribute) === -1
       );
     })))
@@ -13311,7 +13684,57 @@ var _suit = require("../../lib/suit");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'clear-refinements'
 });
@@ -13345,8 +13768,8 @@ var renderer = function renderer(_ref) {
   };
 };
 
-var clearRefinements = function clearRefinements(widgetOptions) {
-  var _ref3 = widgetOptions || {},
+var clearRefinements = function clearRefinements(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       _ref3$templates = _ref3.templates,
       templates = _ref3$templates === void 0 ? _defaultTemplates.default : _ref3$templates,
@@ -13380,10 +13803,12 @@ var clearRefinements = function clearRefinements(widgetOptions) {
   var makeWidget = (0, _connectClearRefinements.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     includedAttributes: includedAttributes,
     excludedAttributes: excludedAttributes,
     transformItems: transformItems
+  })), {}, {
+    $$widgetType: 'ais.clearRefinements'
   });
 };
 
@@ -13465,7 +13890,7 @@ function getInitialSearchParameters(state, widgetParams) {
   // the state. The function `setQueryParameters` omits the values that
   // are `undefined` on the next state.
   return state.setQueryParameters(Object.keys(widgetParams.searchParameters).reduce(function (acc, key) {
-    return _objectSpread({}, acc, _defineProperty({}, key, undefined));
+    return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, key, undefined));
   }, {}));
 }
 
@@ -13495,13 +13920,13 @@ var connectConfigure = function connectConfigure() {
       $$type: 'ais.configure',
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -13514,9 +13939,9 @@ var connectConfigure = function connectConfigure() {
         var _renderState$configur;
 
         var widgetRenderState = this.getWidgetRenderState(renderOptions);
-        return _objectSpread({}, renderState, {
-          configure: _objectSpread({}, widgetRenderState, {
-            widgetParams: _objectSpread({}, widgetRenderState.widgetParams, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
+          configure: _objectSpread(_objectSpread({}, widgetRenderState), {}, {
+            widgetParams: _objectSpread(_objectSpread({}, widgetRenderState.widgetParams), {}, {
               searchParameters: (0, _utils.mergeSearchParameters)(new _algoliasearchHelper.default.SearchParameters((_renderState$configur = renderState.configure) === null || _renderState$configur === void 0 ? void 0 : _renderState$configur.widgetParams.searchParameters), new _algoliasearchHelper.default.SearchParameters(widgetRenderState.widgetParams.searchParameters)).getQueryParams()
             })
           })
@@ -13536,11 +13961,11 @@ var connectConfigure = function connectConfigure() {
       },
       getWidgetSearchParameters: function getWidgetSearchParameters(state, _ref3) {
         var uiState = _ref3.uiState;
-        return (0, _utils.mergeSearchParameters)(state, new _algoliasearchHelper.default.SearchParameters(_objectSpread({}, uiState.configure, {}, widgetParams.searchParameters)));
+        return (0, _utils.mergeSearchParameters)(state, new _algoliasearchHelper.default.SearchParameters(_objectSpread(_objectSpread({}, uiState.configure), widgetParams.searchParameters)));
       },
       getWidgetUiState: function getWidgetUiState(uiState) {
-        return _objectSpread({}, uiState, {
-          configure: _objectSpread({}, uiState.configure, {}, widgetParams.searchParameters)
+        return _objectSpread(_objectSpread({}, uiState), {}, {
+          configure: _objectSpread(_objectSpread({}, uiState.configure), widgetParams.searchParameters)
         });
       }
     };
@@ -13563,6 +13988,55 @@ var _utils = require("../../lib/utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
 /**
  * A list of [search parameters](https://www.algolia.com/doc/api-reference/search-api-parameters/)
  * to enable when the widget mounts.
@@ -13571,8 +14045,10 @@ var configure = function configure(widgetParams) {
   // This is a renderless widget that falls back to the connector's
   // noop render and unmount functions.
   var makeWidget = (0, _connectConfigure.default)(_utils.noop);
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     searchParameters: widgetParams
+  })), {}, {
+    $$widgetType: 'ais.configure'
   });
 };
 
@@ -13644,25 +14120,38 @@ function _defineProperty(obj, key, value) {
 }
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
 
-    return arr2;
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
   }
+
+  return arr2;
 }
 
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
@@ -13728,10 +14217,10 @@ var connectConfigureRelatedItems = function connectConfigureRelatedItems(renderF
       optionalFilters: optionalFilters
     })));
 
-    var makeConfigure = (0, _connectConfigure.default)(renderFn, unmountFn);
-    return _objectSpread({}, makeConfigure({
+    var makeWidget = (0, _connectConfigure.default)(renderFn, unmountFn);
+    return _objectSpread(_objectSpread({}, makeWidget({
       searchParameters: searchParameters
-    }), {
+    })), {}, {
       $$type: 'ais.configureRelatedItems'
     });
   };
@@ -13753,9 +14242,60 @@ var _connectConfigureRelatedItems = _interopRequireDefault(require("../../connec
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
 var configureRelatedItems = function configureRelatedItems(widgetParams) {
   var makeWidget = (0, _connectConfigureRelatedItems.default)(_utils.noop);
-  return makeWidget(widgetParams);
+  return _objectSpread(_objectSpread({}, makeWidget(widgetParams)), {}, {
+    $$widgetType: 'ais.configureRelatedItems'
+  });
 };
 
 var _default = configureRelatedItems;
@@ -13834,25 +14374,38 @@ exports.default = void 0;
 var _utils = require("../../lib/utils");
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
 
-    return arr2;
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
   }
+
+  return arr2;
 }
 
 function ownKeys(object, enumerableOnly) {
@@ -13930,13 +14483,13 @@ var connectCurrentRefinements = function connectCurrentRefinements(renderFn) {
       $$type: 'ais.currentRefinements',
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -13944,7 +14497,7 @@ var connectCurrentRefinements = function connectCurrentRefinements(renderFn) {
         unmountFn();
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           currentRefinements: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -13994,13 +14547,13 @@ function getRefinementsItems(_ref3) {
       helper = _ref3.helper,
       includedAttributes = _ref3.includedAttributes,
       excludedAttributes = _ref3.excludedAttributes;
-  var clearsQuery = (includedAttributes || []).indexOf('query') !== -1 || (excludedAttributes || []).indexOf('query') === -1;
+  var includesQuery = (includedAttributes || []).indexOf('query') !== -1 || (excludedAttributes || []).indexOf('query') === -1;
   var filterFunction = includedAttributes ? function (item) {
     return includedAttributes.indexOf(item.attribute) !== -1;
   } : function (item) {
     return excludedAttributes.indexOf(item.attribute) === -1;
   };
-  var items = (0, _utils.getRefinements)(results, helper.state, clearsQuery).map(normalizeRefinement).filter(filterFunction);
+  var items = (0, _utils.getRefinements)(results, helper.state, includesQuery).map(normalizeRefinement).filter(filterFunction);
   return items.reduce(function (allItems, currentItem) {
     return [].concat(_toConsumableArray(allItems.filter(function (item) {
       return item.attribute !== currentItem.attribute;
@@ -14116,7 +14669,57 @@ var _suit = require("../../lib/suit");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'current-refinements'
 });
@@ -14176,12 +14779,14 @@ var currentRefinements = function currentRefinements(widgetParams) {
   var makeWidget = (0, _connectCurrentRefinements.default)(renderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     container: containerNode,
     cssClasses: cssClasses,
     includedAttributes: includedAttributes,
     excludedAttributes: excludedAttributes,
     transformItems: transformItems
+  })), {}, {
+    $$widgetType: 'ais.currentRefinements'
   });
 };
 
@@ -14264,7 +14869,7 @@ var $$type = 'ais.geoSearch';
  */
 
 /**
- * @typedef {Object} CustomGeoSearchWidgetOptions
+ * @typedef {Object} CustomGeoSearchWidgetParams
  * @property {boolean} [enableRefineOnMapMove=true] If true, refine will be triggered as you move the map.
  * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
  */
@@ -14281,7 +14886,7 @@ var $$type = 'ais.geoSearch';
  * @property {function(): boolean} isRefineOnMapMove Return true if the user is able to refine on map move.
  * @property {function()} setMapMoveSinceLastRefine Set the fact that the map has moved since the last refinement, should be call on each map move. The call to the function triggers a new rendering only when the value change.
  * @property {function(): boolean} hasMapMoveSinceLastRefine Return true if the map has move since the last refinement.
- * @property {Object} widgetParams All original `CustomGeoSearchWidgetOptions` forwarded to the `renderFn`.
+ * @property {Object} widgetParams All original `CustomGeoSearchWidgetParams` forwarded to the `renderFn`.
  * @property {LatLng} [position] The current position of the search.
  */
 
@@ -14296,7 +14901,7 @@ var $$type = 'ais.geoSearch';
  *
  * @param {function(GeoSearchRenderingOptions, boolean)} renderFn Rendering function for the custom **GeoSearch** widget.
  * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomGeoSearchWidgetOptions)} Re-usable widget factory for a custom **GeoSearch** widget.
+ * @return {function(CustomGeoSearchWidgetParams)} Re-usable widget factory for a custom **GeoSearch** widget.
  * @staticExample
  * // This example use Leaflet for the rendering, be sure to have the library correctly setup
  * // before trying the demo. You can find more details in their documentation (link below).
@@ -14435,7 +15040,7 @@ var connectGeoSearch = function connectGeoSearch(renderFn) {
         var isFirstRendering = true;
         widgetState.internalToggleRefineOnMapMove = createInternalToggleRefinementOnMapMove(_utils.noop, initArgs);
         widgetState.internalSetMapMoveSinceLastRefine = createInternalSetMapMoveSinceLastRefine(_utils.noop, initArgs);
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initArgs), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initArgs)), {}, {
           instantSearchInstance: instantSearchInstance
         }), isFirstRendering);
       },
@@ -14459,7 +15064,7 @@ var connectGeoSearch = function connectGeoSearch(renderFn) {
         widgetState.internalSetMapMoveSinceLastRefine = createInternalSetMapMoveSinceLastRefine(this.render.bind(this), renderArgs);
         var widgetRenderState = this.getWidgetRenderState(renderArgs);
         sendEvent('view', widgetRenderState.items);
-        renderFn(_objectSpread({}, widgetRenderState, {
+        renderFn(_objectSpread(_objectSpread({}, widgetRenderState), {}, {
           instantSearchInstance: instantSearchInstance
         }), isFirstRendering);
       },
@@ -14496,7 +15101,7 @@ var connectGeoSearch = function connectGeoSearch(renderFn) {
         };
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           geoSearch: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -14513,7 +15118,7 @@ var connectGeoSearch = function connectGeoSearch(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
+        return _objectSpread(_objectSpread({}, uiState), {}, {
           geoSearch: {
             boundingBox: boundingBox
           }
@@ -14761,18 +15366,34 @@ function _defineProperty(obj, key, value) {
 }
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
 }
 
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -15027,6 +15648,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -15062,29 +15685,6 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -15109,6 +15709,61 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -15129,6 +15784,8 @@ var createHTMLMarker = function createHTMLMarker(googleReference) {
   var HTMLMarker = /*#__PURE__*/function (_googleReference$maps) {
     _inherits(HTMLMarker, _googleReference$maps);
 
+    var _super = _createSuper(HTMLMarker);
+
     function HTMLMarker(_ref) {
       var _this;
 
@@ -15145,7 +15802,7 @@ var createHTMLMarker = function createHTMLMarker(googleReference) {
 
       _classCallCheck(this, HTMLMarker);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(HTMLMarker).call(this));
+      _this = _super.call(this);
 
       _defineProperty(_assertThisInitialized(_this), "__id", void 0);
 
@@ -15404,7 +16061,7 @@ var suit = (0, _suit.component)('GeoSearch');
  */
 
 /**
- * @typedef {object} GeoSearchWidgetOptions
+ * @typedef {object} GeoSearchWidgetParams
  * @property {string|HTMLElement} container CSS Selector or HTMLElement to insert the widget.
  * @property {object} googleReference Reference to the global `window.google` object. <br />
  * See [the documentation](https://developers.google.com/maps/documentation/javascript/tutorial) for more information.
@@ -15437,7 +16094,7 @@ var suit = (0, _suit.component)('GeoSearch');
  * Don't forget to explicitly set the `height` of the map container (default class `.ais-geo-search--map`), otherwise it won't be shown (it's a requirement of Google Maps).
  *
  * @devNovel GeoSearch
- * @param {GeoSearchWidgetOptions} $0 Options of the GeoSearch widget.
+ * @param {GeoSearchWidgetParams} widgetParams Options of the GeoSearch widget.
  * @return {Widget} A new instance of GeoSearch widget.
  * @staticExample
  * search.addWidgets([
@@ -15448,8 +16105,8 @@ var suit = (0, _suit.component)('GeoSearch');
  * ]);
  */
 
-var geoSearch = function geoSearch() {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+var geoSearch = function geoSearch(widgetParams) {
+  var _ref = widgetParams || {},
       _ref$initialZoom = _ref.initialZoom,
       initialZoom = _ref$initialZoom === void 0 ? 1 : _ref$initialZoom,
       _ref$initialPosition = _ref.initialPosition,
@@ -15472,7 +16129,7 @@ var geoSearch = function geoSearch() {
       enableRefineControl = _ref$enableRefineCont === void 0 ? true : _ref$enableRefineCont,
       container = _ref.container,
       googleReference = _ref.googleReference,
-      widgetParams = _objectWithoutProperties(_ref, ["initialZoom", "initialPosition", "templates", "cssClasses", "builtInMarker", "customHTMLMarker", "enableRefine", "enableClearMapRefinement", "enableRefineControl", "container", "googleReference"]);
+      otherWidgetParams = _objectWithoutProperties(_ref, ["initialZoom", "initialPosition", "templates", "cssClasses", "builtInMarker", "customHTMLMarker", "enableRefine", "enableClearMapRefinement", "enableRefineControl", "container", "googleReference"]);
 
   var defaultBuiltInMarker = {
     createOptions: _utils.noop,
@@ -15526,19 +16183,19 @@ var geoSearch = function geoSearch() {
     }), userCssClasses.reset)
   };
 
-  var templates = _objectSpread({}, _defaultTemplates.default, {}, userTemplates);
+  var templates = _objectSpread(_objectSpread({}, _defaultTemplates.default), userTemplates);
 
-  var builtInMarker = _objectSpread({}, defaultBuiltInMarker, {}, userBuiltInMarker);
+  var builtInMarker = _objectSpread(_objectSpread({}, defaultBuiltInMarker), userBuiltInMarker);
 
   var isCustomHTMLMarker = Boolean(userCustomHTMLMarker) || Boolean(userTemplates.HTMLMarker);
 
-  var customHTMLMarker = isCustomHTMLMarker && _objectSpread({}, defaultCustomHTMLMarker, {}, userCustomHTMLMarker);
+  var customHTMLMarker = isCustomHTMLMarker && _objectSpread(_objectSpread({}, defaultCustomHTMLMarker), userCustomHTMLMarker);
 
   var createBuiltInMarker = function createBuiltInMarker(_ref2) {
     var item = _ref2.item,
         rest = _objectWithoutProperties(_ref2, ["item"]);
 
-    return new googleReference.maps.Marker(_objectSpread({}, builtInMarker.createOptions(item), {}, rest, {
+    return new googleReference.maps.Marker(_objectSpread(_objectSpread(_objectSpread({}, builtInMarker.createOptions(item)), rest), {}, {
       __id: item.objectID,
       position: item._geoloc
     }));
@@ -15550,7 +16207,7 @@ var geoSearch = function geoSearch() {
     var item = _ref3.item,
         rest = _objectWithoutProperties(_ref3, ["item"]);
 
-    return new HTMLMarker(_objectSpread({}, customHTMLMarker.createOptions(item), {}, rest, {
+    return new HTMLMarker(_objectSpread(_objectSpread(_objectSpread({}, customHTMLMarker.createOptions(item)), rest), {}, {
       __id: item.objectID,
       position: item._geoloc,
       className: (0, _classnames.default)(suit({
@@ -15567,10 +16224,10 @@ var geoSearch = function geoSearch() {
   var createMarker = !customHTMLMarker ? createBuiltInMarker : createCustomHTMLMarker; // prettier-ignore
 
   var markerOptions = !customHTMLMarker ? builtInMarker : customHTMLMarker;
-  var makeGeoSearch = (0, _connectGeoSearch.default)(_GeoSearchRenderer.default, function () {
+  var makeWidget = (0, _connectGeoSearch.default)(_GeoSearchRenderer.default, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeGeoSearch(_objectSpread({}, widgetParams, {
+  return _objectSpread(_objectSpread({}, makeWidget(_objectSpread(_objectSpread({}, otherWidgetParams), {}, {
     renderState: {},
     container: containerNode,
     googleReference: googleReference,
@@ -15583,7 +16240,9 @@ var geoSearch = function geoSearch() {
     enableRefine: enableRefine,
     enableClearMapRefinement: enableClearMapRefinement,
     enableRefineControl: enableRefineControl
-  }));
+  }))), {}, {
+    $$widgetType: 'ais.geoSearch'
+  });
 };
 
 var _default = geoSearch;
@@ -15665,6 +16324,8 @@ var _Template = _interopRequireDefault(require("../Template/Template"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -15700,29 +16361,6 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -15747,6 +16385,61 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -15767,9 +16460,9 @@ function _defineProperty(obj, key, value) {
 var SearchBox = /*#__PURE__*/function (_Component) {
   _inherits(SearchBox, _Component);
 
-  function SearchBox() {
-    var _getPrototypeOf2;
+  var _super = _createSuper(SearchBox);
 
+  function SearchBox() {
     var _this;
 
     _classCallCheck(this, SearchBox);
@@ -15778,7 +16471,7 @@ var SearchBox = /*#__PURE__*/function (_Component) {
       args[_key] = arguments[_key];
     }
 
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(SearchBox)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this = _super.call.apply(_super, [this].concat(args));
 
     _defineProperty(_assertThisInitialized(_this), "state", {
       query: _this.props.query,
@@ -15855,7 +16548,7 @@ var SearchBox = /*#__PURE__*/function (_Component) {
 
   _createClass(SearchBox, [{
     key: "resetInput",
-
+    value:
     /**
      * This public method is used in the RefinementList SFFV search box
      * to reset the input state when an item is selected.
@@ -15863,7 +16556,7 @@ var SearchBox = /*#__PURE__*/function (_Component) {
      * @see RefinementList#componentWillReceiveProps
      * @return {undefined}
      */
-    value: function resetInput() {
+    function resetInput() {
       this.setState({
         query: ''
       });
@@ -16007,6 +16700,8 @@ var _SearchBox = _interopRequireDefault(require("../SearchBox/SearchBox"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -16145,29 +16840,6 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -16191,18 +16863,75 @@ function _setPrototypeOf(o, p) {
 
   return _setPrototypeOf(o, p);
 }
+
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
 /** @jsx h */
 
 
 var RefinementList = /*#__PURE__*/function (_Component) {
   _inherits(RefinementList, _Component);
 
+  var _super = _createSuper(RefinementList);
+
   function RefinementList(props) {
     var _this;
 
     _classCallCheck(this, RefinementList);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(RefinementList).call(this, props));
+    _this = _super.call(this, props);
     _this.handleItemClick = _this.handleItemClick.bind(_assertThisInitialized(_this));
     return _this;
   }
@@ -16243,7 +16972,7 @@ var RefinementList = /*#__PURE__*/function (_Component) {
 
       var url = this.props.createURL(facetValue.value);
 
-      var templateData = _objectSpread({}, facetValue, {
+      var templateData = _objectSpread(_objectSpread({}, facetValue), {}, {
         url: url,
         attribute: this.props.attribute,
         cssClasses: this.props.cssClasses,
@@ -16508,18 +17237,34 @@ function _defineProperty(obj, key, value) {
 }
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
 }
 
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -16563,7 +17308,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  */
 
 /**
- * @typedef {Object} CustomHierarchicalMenuWidgetOptions
+ * @typedef {Object} CustomHierarchicalMenuWidgetParams
  * @property {string[]} attributes Attributes to use to generate the hierarchy of the menu.
  * @property {string} [separator = '>'] Separator used in the attributes to separate level values.
  * @property {string} [rootPath = null] Prefix path to use if the first level is not the root level.
@@ -16583,7 +17328,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  * @property {function(item.value): string} createURL Creates an url for the next state for a clicked item.
  * @property {HierarchicalMenuItem[]} items Values to be rendered.
  * @property {function(item.value)} refine Sets the path of the hierarchical filter and triggers a new search.
- * @property {Object} widgetParams All original `CustomHierarchicalMenuWidgetOptions` forwarded to the `renderFn`.
+ * @property {Object} widgetParams All original `CustomHierarchicalMenuWidgetParams` forwarded to the `renderFn`.
  */
 
 /**
@@ -16597,7 +17342,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  * @type {Connector}
  * @param {function(HierarchicalMenuRenderingOptions, boolean)} renderFn Rendering function for the custom **HierarchicalMenu** widget.
  * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomHierarchicalMenuWidgetOptions)} Re-usable widget factory for a custom **HierarchicalMenu** widget.
+ * @return {function(CustomHierarchicalMenuWidgetParams)} Re-usable widget factory for a custom **HierarchicalMenu** widget.
  */
 
 function connectHierarchicalMenu(renderFn) {
@@ -16665,7 +17410,7 @@ function connectHierarchicalMenu(renderFn) {
       },
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
@@ -16681,7 +17426,7 @@ function connectHierarchicalMenu(renderFn) {
             subValue.data = _this2._prepareFacetValues(subValue.data);
           }
 
-          return _objectSpread({}, subValue, {
+          return _objectSpread(_objectSpread({}, subValue), {}, {
             label: label,
             value: value
           });
@@ -16690,7 +17435,7 @@ function connectHierarchicalMenu(renderFn) {
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
         toggleShowMore = this.createToggleShowMore(renderOptions);
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -16706,8 +17451,8 @@ function connectHierarchicalMenu(renderFn) {
         return state.removeHierarchicalFacet(hierarchicalFacetName).setQueryParameter('maxValuesPerFacet', undefined);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          hierarchicalMenu: _objectSpread({}, renderState.hierarchicalMenu, _defineProperty({}, hierarchicalFacetName, this.getWidgetRenderState(renderOptions)))
+        return _objectSpread(_objectSpread({}, renderState), {}, {
+          hierarchicalMenu: _objectSpread(_objectSpread({}, renderState.hierarchicalMenu), {}, _defineProperty({}, hierarchicalFacetName, this.getWidgetRenderState(renderOptions)))
         });
       },
       getWidgetRenderState: function getWidgetRenderState(_ref3) {
@@ -16779,8 +17524,8 @@ function connectHierarchicalMenu(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
-          hierarchicalMenu: _objectSpread({}, uiState.hierarchicalMenu, _defineProperty({}, hierarchicalFacetName, path))
+        return _objectSpread(_objectSpread({}, uiState), {}, {
+          hierarchicalMenu: _objectSpread(_objectSpread({}, uiState.hierarchicalMenu), {}, _defineProperty({}, hierarchicalFacetName, path))
         });
       },
       getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref5) {
@@ -16805,7 +17550,7 @@ function connectHierarchicalMenu(renderFn) {
 
         if (!values) {
           return withMaxValuesPerFacet.setQueryParameters({
-            hierarchicalFacetsRefinements: _objectSpread({}, withMaxValuesPerFacet.hierarchicalFacetsRefinements, _defineProperty({}, hierarchicalFacetName, []))
+            hierarchicalFacetsRefinements: _objectSpread(_objectSpread({}, withMaxValuesPerFacet.hierarchicalFacetsRefinements), {}, _defineProperty({}, hierarchicalFacetName, []))
           });
         }
 
@@ -16850,7 +17595,57 @@ var _suit = require("../../lib/suit");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'hierarchical-menu'
 });
@@ -16916,7 +17711,7 @@ var renderer = function renderer(_ref) {
  */
 
 /**
- * @typedef {Object} HierarchicalMenuWidgetOptions
+ * @typedef {Object} HierarchicalMenuWidgetParams
  * @property {string|HTMLElement} container CSS Selector or HTMLElement to insert the widget.
  * @property {string[]} attributes Array of attributes to use to generate the hierarchy of the menu.
  * @property {string} [separator = " > "] Separator used in the attributes to separate level values.
@@ -16995,7 +17790,7 @@ var renderer = function renderer(_ref) {
  * @type {WidgetFactory}
  * @devNovel HierarchicalMenu
  * @category filter
- * @param {HierarchicalMenuWidgetOptions} $0 The HierarchicalMenu widget options.
+ * @param {HierarchicalMenuWidgetParams} widgetParams The HierarchicalMenu widget options.
  * @return {Widget} A new HierarchicalMenu widget instance.
  * @example
  * search.addWidgets([
@@ -17007,8 +17802,8 @@ var renderer = function renderer(_ref) {
  */
 
 
-function hierarchicalMenu() {
-  var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+function hierarchicalMenu(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       attributes = _ref3.attributes,
       separator = _ref3.separator,
@@ -17077,10 +17872,10 @@ function hierarchicalMenu() {
     showMore: showMore,
     renderState: {}
   });
-  var makeHierarchicalMenu = (0, _connectHierarchicalMenu.default)(specializedRenderer, function () {
+  var makeWidget = (0, _connectHierarchicalMenu.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeHierarchicalMenu({
+  return _objectSpread(_objectSpread({}, makeWidget({
     attributes: attributes,
     separator: separator,
     rootPath: rootPath,
@@ -17090,6 +17885,8 @@ function hierarchicalMenu() {
     showMoreLimit: showMoreLimit,
     sortBy: sortBy,
     transformItems: transformItems
+  })), {}, {
+    $$widgetType: 'ais.hierarchicalMenu'
   });
 }
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../components/RefinementList/RefinementList":"../node_modules/instantsearch.js/es/components/RefinementList/RefinementList.js","../../connectors/hierarchical-menu/connectHierarchicalMenu":"../node_modules/instantsearch.js/es/connectors/hierarchical-menu/connectHierarchicalMenu.js","./defaultTemplates":"../node_modules/instantsearch.js/es/widgets/hierarchical-menu/defaultTemplates.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/connectors/hits/connectHits.js":[function(require,module,exports) {
@@ -17100,13 +17897,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _escapeHighlight = _interopRequireWildcard(require("../../lib/escape-highlight"));
-
 var _utils = require("../../lib/utils");
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -17179,19 +17970,19 @@ var connectHits = function connectHits(renderFn) {
     return {
       $$type: 'ais.hits',
       init: function init(initOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: initOptions.instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var renderState = this.getWidgetRenderState(renderOptions);
         renderState.sendEvent('view', renderState.hits);
-        renderFn(_objectSpread({}, renderState, {
+        renderFn(_objectSpread(_objectSpread({}, renderState), {}, {
           instantSearchInstance: renderOptions.instantSearchInstance
         }), false);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           hits: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -17226,7 +18017,7 @@ var connectHits = function connectHits(renderFn) {
         }
 
         if (escapeHTML && results.hits.length > 0) {
-          results.hits = (0, _escapeHighlight.default)(results.hits);
+          results.hits = (0, _utils.escapeHits)(results.hits);
         }
 
         var initialEscaped = results.hits.__escaped;
@@ -17253,8 +18044,8 @@ var connectHits = function connectHits(renderFn) {
           return state;
         }
 
-        return state.setQueryParameters(Object.keys(_escapeHighlight.TAG_PLACEHOLDER).reduce(function (acc, key) {
-          return _objectSpread({}, acc, _defineProperty({}, key, undefined));
+        return state.setQueryParameters(Object.keys(_utils.TAG_PLACEHOLDER).reduce(function (acc, key) {
+          return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, key, undefined));
         }, {}));
       },
       getWidgetSearchParameters: function getWidgetSearchParameters(state) {
@@ -17262,7 +18053,7 @@ var connectHits = function connectHits(renderFn) {
           return state;
         }
 
-        return state.setQueryParameters(_escapeHighlight.TAG_PLACEHOLDER);
+        return state.setQueryParameters(_utils.TAG_PLACEHOLDER);
       }
     };
   };
@@ -17270,7 +18061,7 @@ var connectHits = function connectHits(renderFn) {
 
 var _default = connectHits;
 exports.default = _default;
-},{"../../lib/escape-highlight":"../node_modules/instantsearch.js/es/lib/escape-highlight.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/components/Hits/Hits.js":[function(require,module,exports) {
+},{"../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/components/Hits/Hits.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17384,7 +18175,7 @@ var Hits = function Hits(_ref) {
         className: cssClasses.item
       },
       key: hit.objectID,
-      data: _objectSpread({}, hit, {
+      data: _objectSpread(_objectSpread({}, hit), {}, {
         __hitIndex: position
       }),
       bindEvent: bindEvent
@@ -17568,7 +18359,7 @@ var wrapInsightsClient = function wrapInsightsClient(aa, results, hits) {
       hits: hits,
       objectIDs: payload.objectIDs
     });
-    aa(method, _objectSpread({}, inferredPayload, {}, payload));
+    aa(method, _objectSpread(_objectSpread({}, inferredPayload), payload));
   };
 };
 /**
@@ -17586,7 +18377,7 @@ function withInsights(connector) {
 
       if (results && hits && instantSearchInstance) {
         var insights = wrapInsightsClient(instantSearchInstance.insightsClient, results, hits);
-        return renderFn(_objectSpread({}, renderOptions, {
+        return renderFn(_objectSpread(_objectSpread({}, renderOptions), {}, {
           insights: insights
         }), isFirstRender);
       }
@@ -17739,7 +18530,57 @@ var _insights = require("../../lib/insights");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'hits'
 });
@@ -17781,8 +18622,8 @@ var renderer = function renderer(_ref) {
   };
 };
 
-var hits = function hits(widgetOptions) {
-  var _ref3 = widgetOptions || {},
+var hits = function hits(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       escapeHTML = _ref3.escapeHTML,
       transformItems = _ref3.transformItems,
@@ -17814,12 +18655,14 @@ var hits = function hits(widgetOptions) {
     renderState: {},
     templates: templates
   });
-  var makeHits = (0, _insights.withInsights)(_connectHits.default)(specializedRenderer, function () {
+  var makeWidget = (0, _insights.withInsights)(_connectHits.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeHits({
+  return _objectSpread(_objectSpread({}, makeWidget({
     escapeHTML: escapeHTML,
     transformItems: transformItems
+  })), {}, {
+    $$widgetType: 'ais.hits'
   });
 };
 
@@ -17873,25 +18716,38 @@ exports.default = void 0;
 var _utils = require("../../lib/utils");
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
 
-    return arr2;
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
   }
+
+  return arr2;
 }
 
 function ownKeys(object, enumerableOnly) {
@@ -17982,7 +18838,7 @@ var connectHitsPerPage = function connectHitsPerPage(renderFn) {
     var normalizeItems = function normalizeItems(_ref2) {
       var hitsPerPage = _ref2.hitsPerPage;
       return items.map(function (item) {
-        return _objectSpread({}, item, {
+        return _objectSpread(_objectSpread({}, item), {}, {
           isRefined: Number(item.value) === Number(hitsPerPage)
         });
       });
@@ -18021,13 +18877,13 @@ var connectHitsPerPage = function connectHitsPerPage(renderFn) {
           }].concat(_toConsumableArray(items));
         }
 
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -18037,7 +18893,7 @@ var connectHitsPerPage = function connectHitsPerPage(renderFn) {
         return state.setQueryParameter('hitsPerPage', undefined);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           hitsPerPage: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -18065,7 +18921,7 @@ var connectHitsPerPage = function connectHitsPerPage(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
+        return _objectSpread(_objectSpread({}, uiState), {}, {
           hitsPerPage: hitsPerPage
         });
       },
@@ -18103,7 +18959,57 @@ var _suit = require("../../lib/suit");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'hits-per-page'
 });
@@ -18134,8 +19040,8 @@ var renderer = function renderer(_ref) {
   };
 };
 
-var hitsPerPage = function hitsPerPage(widgetOptions) {
-  var _ref5 = widgetOptions || {},
+var hitsPerPage = function hitsPerPage(widgetParams) {
+  var _ref5 = widgetParams || {},
       container = _ref5.container,
       items = _ref5.items,
       _ref5$cssClasses = _ref5.cssClasses,
@@ -18160,12 +19066,14 @@ var hitsPerPage = function hitsPerPage(widgetOptions) {
     containerNode: containerNode,
     cssClasses: cssClasses
   });
-  var makeHitsPerPage = (0, _connectHitsPerPage.default)(specializedRenderer, function () {
+  var makeWidget = (0, _connectHitsPerPage.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeHitsPerPage({
+  return _objectSpread(_objectSpread({}, makeWidget({
     items: items,
     transformItems: transformItems
+  })), {}, {
+    $$widgetType: 'ais.hitsPerPage'
   });
 };
 
@@ -18298,7 +19206,7 @@ var InfiniteHits = function InfiniteHits(_ref) {
         className: cssClasses.item
       },
       key: hit.objectID,
-      data: _objectSpread({}, hit, {
+      data: _objectSpread(_objectSpread({}, hit), {}, {
         __hitIndex: position
       }),
       bindEvent: bindEvent
@@ -18324,13 +19232,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _escapeHighlight = _interopRequireWildcard(require("../../lib/escape-highlight"));
-
 var _utils = require("../../lib/utils");
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -18382,25 +19284,38 @@ function _defineProperty(obj, key, value) {
 }
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
 
-    return arr2;
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
   }
+
+  return arr2;
 }
 
 function _objectWithoutProperties(source, excluded) {
@@ -18524,7 +19439,7 @@ var connectInfiniteHits = function connectInfiniteHits(renderFn) {
       return function () {
         // Using the helper's `overrideStateWithoutTriggeringChangeEvent` method
         // avoid updating the browser URL when the user displays the previous page.
-        helper.overrideStateWithoutTriggeringChangeEvent(_objectSpread({}, helper.state, {
+        helper.overrideStateWithoutTriggeringChangeEvent(_objectSpread(_objectSpread({}, helper.state), {}, {
           page: getFirstReceivedPage(helper.state, cachedHits) - 1
         })).searchWithoutTriggeringOnStateChange();
       };
@@ -18539,7 +19454,7 @@ var connectInfiniteHits = function connectInfiniteHits(renderFn) {
     return {
       $$type: 'ais.infiniteHits',
       init: function init(initOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: initOptions.instantSearchInstance
         }), true);
       },
@@ -18547,12 +19462,12 @@ var connectInfiniteHits = function connectInfiniteHits(renderFn) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
         var widgetRenderState = this.getWidgetRenderState(renderOptions);
         sendEvent('view', widgetRenderState.currentPageHits);
-        renderFn(_objectSpread({}, widgetRenderState, {
+        renderFn(_objectSpread(_objectSpread({}, widgetRenderState), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           infiniteHits: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -18585,7 +19500,7 @@ var connectInfiniteHits = function connectInfiniteHits(renderFn) {
               _page = _state$page3 === void 0 ? 0 : _state$page3;
 
           if (escapeHTML && results.hits.length > 0) {
-            results.hits = (0, _escapeHighlight.default)(results.hits);
+            results.hits = (0, _utils.escapeHits)(results.hits);
           }
 
           var initialEscaped = results.hits.__escaped;
@@ -18633,8 +19548,8 @@ var connectInfiniteHits = function connectInfiniteHits(renderFn) {
           return stateWithoutPage;
         }
 
-        return stateWithoutPage.setQueryParameters(Object.keys(_escapeHighlight.TAG_PLACEHOLDER).reduce(function (acc, key) {
-          return _objectSpread({}, acc, _defineProperty({}, key, undefined));
+        return stateWithoutPage.setQueryParameters(Object.keys(_utils.TAG_PLACEHOLDER).reduce(function (acc, key) {
+          return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, key, undefined));
         }, {}));
       },
       getWidgetUiState: function getWidgetUiState(uiState, _ref7) {
@@ -18647,7 +19562,7 @@ var connectInfiniteHits = function connectInfiniteHits(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
+        return _objectSpread(_objectSpread({}, uiState), {}, {
           // The page in the UI state is incremented by one
           // to expose the user value (not `0`).
           page: page + 1
@@ -18658,7 +19573,7 @@ var connectInfiniteHits = function connectInfiniteHits(renderFn) {
         var widgetSearchParameters = searchParameters;
 
         if (escapeHTML) {
-          widgetSearchParameters = searchParameters.setQueryParameters(_escapeHighlight.TAG_PLACEHOLDER);
+          widgetSearchParameters = searchParameters.setQueryParameters(_utils.TAG_PLACEHOLDER);
         } // The page in the search parameters is decremented by one
         // to get to the actual parameter value from the UI state.
 
@@ -18672,7 +19587,7 @@ var connectInfiniteHits = function connectInfiniteHits(renderFn) {
 
 var _default = connectInfiniteHits;
 exports.default = _default;
-},{"../../lib/escape-highlight":"../node_modules/instantsearch.js/es/lib/escape-highlight.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/widgets/infinite-hits/defaultTemplates.js":[function(require,module,exports) {
+},{"../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/widgets/infinite-hits/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18714,7 +19629,57 @@ var _defaultTemplates = _interopRequireDefault(require("./defaultTemplates"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'infinite-hits'
 });
@@ -18766,8 +19731,8 @@ var renderer = function renderer(_ref) {
   };
 };
 
-var infiniteHits = function infiniteHits() {
-  var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+var infiniteHits = function infiniteHits(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       escapeHTML = _ref3.escapeHTML,
       transformItems = _ref3.transformItems,
@@ -18816,14 +19781,16 @@ var infiniteHits = function infiniteHits() {
     showPrevious: showPrevious,
     renderState: {}
   });
-  var makeInfiniteHits = (0, _insights.withInsights)(_connectInfiniteHits.default)(specializedRenderer, function () {
+  var makeWidget = (0, _insights.withInsights)(_connectInfiniteHits.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeInfiniteHits({
+  return _objectSpread(_objectSpread({}, makeWidget({
     escapeHTML: escapeHTML,
     transformItems: transformItems,
     showPrevious: showPrevious,
     cache: cache
+  })), {}, {
+    $$widgetType: 'ais.infiniteHits'
   });
 };
 
@@ -18835,7 +19802,7 @@ exports.default = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = connectMenu;
+exports.default = void 0;
 
 var _utils = require("../../lib/utils");
 
@@ -18876,18 +19843,34 @@ function _objectWithoutPropertiesLoose(source, excluded) {
 }
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
 }
 
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -18971,39 +19954,6 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   connector: true
 });
 /**
- * @typedef {Object} MenuItem
- * @property {string} value The value of the menu item.
- * @property {string} label Human-readable value of the menu item.
- * @property {number} count Number of results matched after refinement is applied.
- * @property {boolean} isRefined Indicates if the refinement is applied.
- */
-
-/**
- * @typedef {Object} CustomMenuWidgetOptions
- * @property {string} attribute Name of the attribute for faceting (eg. "free_shipping").
- * @property {number} [limit = 10] How many facets values to retrieve.
- * @property {boolean} [showMore = false] Whether to display a button that expands the number of items.
- * @property {number} [showMoreLimit = 20] How many facets values to retrieve when `toggleShowMore` is called, this value is meant to be greater than `limit` option.
- * @property {string[]|function} [sortBy = ['isRefined', 'name:asc']] How to sort refinements. Possible values: `count|isRefined|name:asc|name:desc`.
- *
- * You can also use a sort function that behaves like the standard Javascript [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Syntax).
- * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
- */
-
-/**
- * @typedef {Object} MenuRenderingOptions
- * @property {MenuItem[]} items The elements that can be refined for the current search results.
- * @property {function(item.value): string} createURL Creates the URL for a single item name in the list.
- * @property {function(item.value)} refine Filter the search to item value.
- * @property {boolean} canRefine True if refinement can be applied.
- * @property {Object} widgetParams All original `CustomMenuWidgetOptions` forwarded to the `renderFn`.
- * @property {boolean} isShowingMore True if the menu is displaying all the menu items.
- * @property {function} toggleShowMore Toggles the number of values displayed between `limit` and `showMore.limit`.
- * @property {boolean} canToggleShowMore `true` if the toggleShowMore button can be activated (enough items to display more or
- * already displaying more than `limit` items)
- */
-
-/**
  * **Menu** connector provides the logic to build a widget that will give the user the ability to choose a single value for a specific facet. The typical usage of menu is for navigation in categories.
  *
  * This connector provides a `toggleShowMore()` function to display more or less items and a `refine()`
@@ -19011,66 +19961,26 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  * one that is currently selected.
  *
  * **Requirement:** the attribute passed as `attribute` must be present in "attributes for faceting" on the Algolia dashboard or configured as attributesForFaceting via a set settings call to the Algolia API.
- * @type {Connector}
- * @param {function(MenuRenderingOptions, boolean)} renderFn Rendering function for the custom **Menu** widget. widget.
- * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomMenuWidgetOptions)} Re-usable widget factory for a custom **Menu** widget.
- * @example
- * // custom `renderFn` to render the custom Menu widget
- * function renderFn(MenuRenderingOptions, isFirstRendering) {
- *   if (isFirstRendering) {
- *     MenuRenderingOptions.widgetParams.containerNode
- *       .html('<select></select');
- *
- *     MenuRenderingOptions.widgetParams.containerNode
- *       .find('select')
- *       .on('change', function(event) {
- *         MenuRenderingOptions.refine(event.target.value);
- *       });
- *   }
- *
- *   var options = MenuRenderingOptions.items.map(function(item) {
- *     return item.isRefined
- *       ? '<option value="' + item.value + '" selected>' + item.label + '</option>'
- *       : '<option value="' + item.value + '">' + item.label + '</option>';
- *   });
- *
- *   MenuRenderingOptions.widgetParams.containerNode
- *     .find('select')
- *     .html(options);
- * }
- *
- * // connect `renderFn` to Menu logic
- * var customMenu = instantsearch.connectors.connectMenu(renderFn);
- *
- * // mount widget on the page
- * search.addWidgets([
- *   customMenu({
- *     containerNode: $('#custom-menu-container'),
- *     attribute: 'categories',
- *     limit: 10,
- *   })
- * ]);
  */
 
-function connectMenu(renderFn) {
+var connectMenu = function connectMenu(renderFn) {
   var unmountFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _utils.noop;
   (0, _utils.checkRendering)(renderFn, withUsage());
-  return function () {
-    var widgetParams = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    var attribute = widgetParams.attribute,
-        _widgetParams$limit = widgetParams.limit,
-        limit = _widgetParams$limit === void 0 ? 10 : _widgetParams$limit,
-        _widgetParams$showMor = widgetParams.showMore,
-        showMore = _widgetParams$showMor === void 0 ? false : _widgetParams$showMor,
-        _widgetParams$showMor2 = widgetParams.showMoreLimit,
-        showMoreLimit = _widgetParams$showMor2 === void 0 ? 20 : _widgetParams$showMor2,
-        _widgetParams$sortBy = widgetParams.sortBy,
-        sortBy = _widgetParams$sortBy === void 0 ? ['isRefined', 'name:asc'] : _widgetParams$sortBy,
-        _widgetParams$transfo = widgetParams.transformItems,
-        transformItems = _widgetParams$transfo === void 0 ? function (items) {
+  return function (widgetParams) {
+    var _ref = widgetParams || {},
+        attribute = _ref.attribute,
+        _ref$limit = _ref.limit,
+        limit = _ref$limit === void 0 ? 10 : _ref$limit,
+        _ref$showMore = _ref.showMore,
+        showMore = _ref$showMore === void 0 ? false : _ref$showMore,
+        _ref$showMoreLimit = _ref.showMoreLimit,
+        showMoreLimit = _ref$showMoreLimit === void 0 ? 20 : _ref$showMoreLimit,
+        _ref$sortBy = _ref.sortBy,
+        sortBy = _ref$sortBy === void 0 ? ['isRefined', 'name:asc'] : _ref$sortBy,
+        _ref$transformItems = _ref.transformItems,
+        transformItems = _ref$transformItems === void 0 ? function (items) {
       return items;
-    } : _widgetParams$transfo;
+    } : _ref$transformItems;
 
     if (!attribute) {
       throw new Error(withUsage('The `attribute` option is required.'));
@@ -19080,44 +19990,44 @@ function connectMenu(renderFn) {
       throw new Error(withUsage('The `showMoreLimit` option must be greater than `limit`.'));
     }
 
-    var sendEvent; // Provide the same function to the `renderFn` so that way the user
+    var sendEvent;
+
+    var _createURL;
+
+    var _refine; // Provide the same function to the `renderFn` so that way the user
     // has to only bind it once when `isFirstRendering` for instance
 
+
+    var isShowingMore = false;
+
     var toggleShowMore = function toggleShowMore() {};
+
+    function createToggleShowMore(renderOptions, widget) {
+      return function () {
+        isShowingMore = !isShowingMore;
+        widget.render(renderOptions);
+      };
+    }
 
     function cachedToggleShowMore() {
       toggleShowMore();
     }
 
+    function getLimit() {
+      return isShowingMore ? showMoreLimit : limit;
+    }
+
     return {
       $$type: 'ais.menu',
-      isShowingMore: false,
-      createToggleShowMore: function createToggleShowMore(_ref) {
-        var _this = this;
-
-        var results = _ref.results,
-            instantSearchInstance = _ref.instantSearchInstance;
-        return function () {
-          _this.isShowingMore = !_this.isShowingMore;
-
-          _this.render({
-            results: results,
-            instantSearchInstance: instantSearchInstance
-          });
-        };
-      },
-      getLimit: function getLimit() {
-        return this.isShowingMore ? showMoreLimit : limit;
-      },
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -19127,15 +20037,15 @@ function connectMenu(renderFn) {
         return state.removeHierarchicalFacet(attribute).setQueryParameter('maxValuesPerFacet', undefined);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          menu: this.getWidgetRenderState(renderOptions)
+        return _objectSpread(_objectSpread({}, renderState), {}, {
+          menu: _objectSpread(_objectSpread({}, renderState.menu), {}, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
         });
       },
-      getWidgetRenderState: function getWidgetRenderState(_ref3) {
-        var results = _ref3.results,
-            createURL = _ref3.createURL,
-            instantSearchInstance = _ref3.instantSearchInstance,
-            helper = _ref3.helper;
+      getWidgetRenderState: function getWidgetRenderState(renderOptions) {
+        var results = renderOptions.results,
+            createURL = renderOptions.createURL,
+            instantSearchInstance = renderOptions.instantSearchInstance,
+            helper = renderOptions.helper;
         var items = [];
         var canToggleShowMore = false;
 
@@ -19148,40 +20058,39 @@ function connectMenu(renderFn) {
           });
         }
 
-        if (!this._createURL) {
-          this._createURL = function (facetValue) {
-            return createURL(helper.state.toggleRefinement(attribute, facetValue));
+        if (!_createURL) {
+          _createURL = function _createURL(facetValue) {
+            return createURL(helper.state.toggleFacetRefinement(attribute, facetValue));
           };
         }
 
-        if (!this._refine) {
-          this._refine = function (facetValue) {
+        if (!_refine) {
+          _refine = function _refine(facetValue) {
             var _helper$getHierarchic = helper.getHierarchicalFacetBreadcrumb(attribute),
                 _helper$getHierarchic2 = _slicedToArray(_helper$getHierarchic, 1),
                 refinedItem = _helper$getHierarchic2[0];
 
             sendEvent('click', facetValue ? facetValue : refinedItem);
-            helper.toggleRefinement(attribute, facetValue ? facetValue : refinedItem).search();
+            helper.toggleFacetRefinement(attribute, facetValue ? facetValue : refinedItem).search();
           };
         }
 
-        toggleShowMore = this.createToggleShowMore({
-          results: results,
-          instantSearchInstance: instantSearchInstance
-        });
+        if (renderOptions.results) {
+          toggleShowMore = createToggleShowMore(renderOptions, this);
+        }
 
         if (results) {
           var facetValues = results.getFacetValues(attribute, {
             sortBy: sortBy
           });
-          var facetItems = facetValues && facetValues.data ? facetValues.data : [];
-          canToggleShowMore = showMore && (this.isShowingMore || facetItems.length > this.getLimit());
-          items = transformItems(facetItems.slice(0, this.getLimit()).map(function (_ref4) {
-            var label = _ref4.name,
-                value = _ref4.path,
-                item = _objectWithoutProperties(_ref4, ["name", "path"]);
+          var facetItems = facetValues && !Array.isArray(facetValues) && facetValues.data ? facetValues.data : [];
+          canToggleShowMore = showMore && (isShowingMore || facetItems.length > getLimit());
+          items = transformItems(facetItems.slice(0, getLimit()).map(function (_ref3) {
+            var label = _ref3.name,
+                value = _ref3.path,
+                item = _objectWithoutProperties(_ref3, ["name", "path"]);
 
-            return _objectSpread({}, item, {
+            return _objectSpread(_objectSpread({}, item), {}, {
               label: label,
               value: value
             });
@@ -19190,18 +20099,18 @@ function connectMenu(renderFn) {
 
         return {
           items: items,
-          createURL: this._createURL,
-          refine: this._refine,
+          createURL: _createURL,
+          refine: _refine,
           sendEvent: sendEvent,
           canRefine: items.length > 0,
           widgetParams: widgetParams,
-          isShowingMore: this.isShowingMore,
+          isShowingMore: isShowingMore,
           toggleShowMore: cachedToggleShowMore,
           canToggleShowMore: canToggleShowMore
         };
       },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref5) {
-        var searchParameters = _ref5.searchParameters;
+      getWidgetUiState: function getWidgetUiState(uiState, _ref4) {
+        var searchParameters = _ref4.searchParameters;
 
         var _searchParameters$get = searchParameters.getHierarchicalFacetBreadcrumb(attribute),
             _searchParameters$get2 = _slicedToArray(_searchParameters$get, 1),
@@ -19211,12 +20120,12 @@ function connectMenu(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
-          menu: _objectSpread({}, uiState.menu, _defineProperty({}, attribute, value))
+        return _objectSpread(_objectSpread({}, uiState), {}, {
+          menu: _objectSpread(_objectSpread({}, uiState.menu), {}, _defineProperty({}, attribute, value))
         });
       },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
-        var uiState = _ref6.uiState;
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref5) {
+        var uiState = _ref5.uiState;
         var value = uiState.menu && uiState.menu[attribute];
         var withFacetConfiguration = searchParameters.removeHierarchicalFacet(attribute).addHierarchicalFacet({
           name: attribute,
@@ -19228,7 +20137,7 @@ function connectMenu(renderFn) {
 
         if (!value) {
           return withMaxValuesPerFacet.setQueryParameters({
-            hierarchicalFacetsRefinements: _objectSpread({}, withMaxValuesPerFacet.hierarchicalFacetsRefinements, _defineProperty({}, attribute, []))
+            hierarchicalFacetsRefinements: _objectSpread(_objectSpread({}, withMaxValuesPerFacet.hierarchicalFacetsRefinements), {}, _defineProperty({}, attribute, []))
           });
         }
 
@@ -19236,7 +20145,10 @@ function connectMenu(renderFn) {
       }
     };
   };
-}
+};
+
+var _default = connectMenu;
+exports.default = _default;
 },{"../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/widgets/menu/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
@@ -19257,7 +20169,7 @@ exports.default = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = menu;
+exports.default = void 0;
 
 var _preact = require("preact");
 
@@ -19356,8 +20268,8 @@ var renderer = function renderer(_ref) {
     }
 
     var facetValues = items.map(function (facetValue) {
-      return _objectSpread({}, facetValue, {
-        url: createURL(facetValue.name)
+      return _objectSpread(_objectSpread({}, facetValue), {}, {
+        url: createURL(facetValue.value)
       });
     });
     (0, _preact.render)((0, _preact.h)(_RefinementList.default, {
@@ -19373,67 +20285,10 @@ var renderer = function renderer(_ref) {
     }), containerNode);
   };
 };
-/**
- * @typedef {Object} MenuCSSClasses
- * @property {string|string[]} [root] CSS class to add to the root element.
- * @property {string|string[]} [noRefinementRoot] CSS class to add to the root element when no refinements.
- * @property {string|string[]} [list] CSS class to add to the list element.
- * @property {string|string[]} [item] CSS class to add to each item element.
- * @property {string|string[]} [selectedItem] CSS class to add to each selected item element.
- * @property {string|string[]} [link] CSS class to add to each link (when using the default template).
- * @property {string|string[]} [label] CSS class to add to each label (when using the default template).
- * @property {string|string[]} [count] CSS class to add to each count element (when using the default template).
- * @property {string|string[]} [showMore] CSS class to add to the show more button.
- * @property {string|string[]} [disabledShowMore] CSS class to add to the disabled show more button.
- */
 
-/**
- * @typedef {Object} MenuTemplates
- * @property {string|function({count: number, cssClasses: object, isRefined: boolean, label: string, url: string, value: string}):string} [item] Item template. The string template gets the same values as the function.
- * @property {string} [showMoreText] Template used for the show more text, provided with `isShowingMore` data property.
- */
-
-/**
- * @typedef {Object} MenuWidgetOptions
- * @property {string|HTMLElement} container CSS Selector or HTMLElement to insert the widget.
- * @property {string} attribute Name of the attribute for faceting
- * @property {string[]|function} [sortBy=['isRefined', 'name:asc']] How to sort refinements. Possible values: `count|isRefined|name:asc|name:desc`.
- *
- * You can also use a sort function that behaves like the standard Javascript [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Syntax).
- * @property {MenuTemplates} [templates] Customize the output through templating.
- * @property {number} [limit=10] How many facets values to retrieve.
- * @property {boolean} [showMore=false] Limit the number of results and display a showMore button.
- * @property {number} [showMoreLimit=20] Max number of values to display when showing more.
- * @property {MenuCSSClasses} [cssClasses] CSS classes to add to the wrapping elements.
- * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
- */
-
-/**
- * Create a menu based on a facet. A menu displays facet values and let the user selects only one value at a time.
- * It also displays an empty value which lets the user "unselect" any previous selection.
- *
- * @requirements
- * The attribute passed to `attribute` must be declared as an
- * [attribute for faceting](https://www.algolia.com/doc/guides/searching/faceting/#declaring-attributes-for-faceting)
- * in your Algolia settings.
- * @type {WidgetFactory}
- * @devNovel Menu
- * @category filter
- * @param {MenuWidgetOptions} $0 The Menu widget options.
- * @return {Widget} Creates a new instance of the Menu widget.
- * @example
- * search.addWidgets([
- *   instantsearch.widgets.menu({
- *     container: '#categories',
- *     attribute: 'hierarchicalCategories.lvl0',
- *     limit: 10,
- *   })
- * ]);
- */
-
-
-function menu(_ref3) {
-  var container = _ref3.container,
+var menu = function menu(widgetParams) {
+  var _ref3 = widgetParams || {},
+      container = _ref3.container,
       attribute = _ref3.attribute,
       sortBy = _ref3.sortBy,
       limit = _ref3.limit,
@@ -19492,15 +20347,20 @@ function menu(_ref3) {
   var makeWidget = (0, _connectMenu.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     attribute: attribute,
     limit: limit,
     showMore: showMore,
     showMoreLimit: showMoreLimit,
     sortBy: sortBy,
     transformItems: transformItems
+  })), {}, {
+    $$widgetType: 'ais.menu'
   });
-}
+};
+
+var _default = menu;
+exports.default = _default;
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../components/RefinementList/RefinementList":"../node_modules/instantsearch.js/es/components/RefinementList/RefinementList.js","../../connectors/menu/connectMenu":"../node_modules/instantsearch.js/es/connectors/menu/connectMenu.js","./defaultTemplates":"../node_modules/instantsearch.js/es/widgets/menu/defaultTemplates.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/connectors/refinement-list/connectRefinementList.js":[function(require,module,exports) {
 "use strict";
 
@@ -19510,8 +20370,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = connectRefinementList;
 
 var _utils = require("../../lib/utils");
-
-var _escapeHighlight = require("../../lib/escape-highlight");
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -19611,7 +20469,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  */
 
 /**
- * @typedef {Object} CustomRefinementListWidgetOptions
+ * @typedef {Object} CustomRefinementListWidgetParams
  * @property {string} attribute The name of the attribute in the records.
  * @property {"and"|"or"} [operator = 'or'] How the filters are combined together.
  * @property {number} [limit = 10] The max number of items to display when
@@ -19634,7 +20492,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  * @property {boolean} canRefine `true` if a refinement can be applied.
  * @property {boolean} canToggleShowMore `true` if the toggleShowMore button can be activated (enough items to display more or
  * already displaying more than `limit` items)
- * @property {Object} widgetParams All original `CustomRefinementListWidgetOptions` forwarded to the `renderFn`.
+ * @property {Object} widgetParams All original `CustomRefinementListWidgetParams` forwarded to the `renderFn`.
  * @property {boolean} isShowingMore True if the menu is displaying all the menu items.
  * @property {function} toggleShowMore Toggles the number of values displayed between `limit` and `showMoreLimit`.
  */
@@ -19648,7 +20506,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  * @type {Connector}
  * @param {function(RefinementListRenderingOptions, boolean)} renderFn Rendering function for the custom **RefinementList** widget.
  * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomRefinementListWidgetOptions)} Re-usable widget factory for a custom **RefinementList** widget.
+ * @return {function(CustomRefinementListWidgetParams)} Re-usable widget factory for a custom **RefinementList** widget.
  * @example
  * // custom `renderFn` to render the custom RefinementList widget
  * function renderFn(RefinementListRenderingOptions, isFirstRendering) {
@@ -19741,7 +20599,7 @@ function connectRefinementList(renderFn) {
       var label = _ref.name,
           item = _objectWithoutProperties(_ref, ["name"]);
 
-      return _objectSpread({}, item, {
+      return _objectSpread(_objectSpread({}, item), {}, {
         label: label,
         value: label,
         highlighted: label
@@ -19770,34 +20628,34 @@ function connectRefinementList(renderFn) {
 
           if (query === '' && lastItemsFromMainSearch) {
             // render with previous data from the helper.
-            renderFn(_objectSpread({}, _this.getWidgetRenderState(_objectSpread({}, renderOptions, {
+            renderFn(_objectSpread(_objectSpread({}, _this.getWidgetRenderState(_objectSpread(_objectSpread({}, renderOptions), {}, {
               results: lastResultsFromMainSearch
-            })), {
+            }))), {}, {
               instantSearchInstance: instantSearchInstance
             }));
           } else {
             var tags = {
-              highlightPreTag: escapeFacetValues ? _escapeHighlight.TAG_PLACEHOLDER.highlightPreTag : _escapeHighlight.TAG_REPLACEMENT.highlightPreTag,
-              highlightPostTag: escapeFacetValues ? _escapeHighlight.TAG_PLACEHOLDER.highlightPostTag : _escapeHighlight.TAG_REPLACEMENT.highlightPostTag
+              highlightPreTag: escapeFacetValues ? _utils.TAG_PLACEHOLDER.highlightPreTag : _utils.TAG_REPLACEMENT.highlightPreTag,
+              highlightPostTag: escapeFacetValues ? _utils.TAG_PLACEHOLDER.highlightPostTag : _utils.TAG_REPLACEMENT.highlightPostTag
             };
             helper.searchForFacetValues(attribute, query, // We cap the `maxFacetHits` value to 100 because the Algolia API
             // doesn't support a greater number.
             // See https://www.algolia.com/doc/api-reference/api-parameters/maxFacetHits/
             Math.min(_getLimit(_this.isShowingMore), 100), tags).then(function (results) {
-              var facetValues = escapeFacetValues ? (0, _escapeHighlight.escapeFacets)(results.facetHits) : results.facetHits;
+              var facetValues = escapeFacetValues ? (0, _utils.escapeFacets)(results.facetHits) : results.facetHits;
               var normalizedFacetValues = transformItems(facetValues.map(function (_ref2) {
                 var value = _ref2.value,
                     item = _objectWithoutProperties(_ref2, ["value"]);
 
-                return _objectSpread({}, item, {
+                return _objectSpread(_objectSpread({}, item), {}, {
                   value: value,
                   label: value
                 });
               }));
               var canToggleShowMore = _this.isShowingMore && lastItemsFromMainSearch.length > limit;
-              renderFn(_objectSpread({}, _this.getWidgetRenderState(_objectSpread({}, renderOptions, {
+              renderFn(_objectSpread(_objectSpread({}, _this.getWidgetRenderState(_objectSpread(_objectSpread({}, renderOptions), {}, {
                 results: lastResultsFromMainSearch
-              })), {
+              }))), {}, {
                 items: normalizedFacetValues,
                 canToggleShowMore: canToggleShowMore,
                 canRefine: true,
@@ -19834,18 +20692,18 @@ function connectRefinementList(renderFn) {
         return _getLimit(this.isShowingMore);
       },
       init: function init(initOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: initOptions.instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: renderOptions.instantSearchInstance
         }), false);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          refinementList: _objectSpread({}, renderState.refinementList, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
+        return _objectSpread(_objectSpread({}, renderState), {}, {
+          refinementList: _objectSpread(_objectSpread({}, renderState.refinementList), {}, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
         });
       },
       getWidgetRenderState: function getWidgetRenderState(renderOptions) {
@@ -19882,12 +20740,12 @@ function connectRefinementList(renderFn) {
             }) || [];
             items = transformItems(facetValues.slice(0, this.getLimit()).map(formatItems));
           } else {
-            facetValues = escapeFacetValues ? (0, _escapeHighlight.escapeFacets)(results.facetHits) : results.facetHits;
+            facetValues = escapeFacetValues ? (0, _utils.escapeFacets)(results.facetHits) : results.facetHits;
             items = transformItems(facetValues.map(function (_ref3) {
               var value = _ref3.value,
                   item = _objectWithoutProperties(_ref3, ["value"]);
 
-              return _objectSpread({}, item, {
+              return _objectSpread(_objectSpread({}, item), {}, {
                 value: value,
                 label: value
               });
@@ -19953,8 +20811,8 @@ function connectRefinementList(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
-          refinementList: _objectSpread({}, uiState.refinementList, _defineProperty({}, attribute, values))
+        return _objectSpread(_objectSpread({}, uiState), {}, {
+          refinementList: _objectSpread(_objectSpread({}, uiState.refinementList), {}, _defineProperty({}, attribute, values))
         });
       },
       getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
@@ -19969,7 +20827,7 @@ function connectRefinementList(renderFn) {
 
         if (!values) {
           var key = isDisjunctive ? 'disjunctiveFacetsRefinements' : 'facetsRefinements';
-          return withMaxValuesPerFacet.setQueryParameters(_defineProperty({}, key, _objectSpread({}, withMaxValuesPerFacet[key], _defineProperty({}, attribute, []))));
+          return withMaxValuesPerFacet.setQueryParameters(_defineProperty({}, key, _objectSpread(_objectSpread({}, withMaxValuesPerFacet[key]), {}, _defineProperty({}, attribute, []))));
         }
 
         return values.reduce(function (parameters, value) {
@@ -19979,7 +20837,7 @@ function connectRefinementList(renderFn) {
     };
   };
 }
-},{"../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/escape-highlight":"../node_modules/instantsearch.js/es/lib/escape-highlight.js"}],"../node_modules/instantsearch.js/es/widgets/search-box/defaultTemplates.js":[function(require,module,exports) {
+},{"../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/widgets/search-box/defaultTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20141,7 +20999,7 @@ var searchBoxSuit = (0, _suit.component)('SearchBox');
  */
 
 function transformTemplates(templates) {
-  var allTemplates = _objectSpread({}, templates, {
+  var allTemplates = _objectSpread(_objectSpread({}, templates), {}, {
     submit: templates.searchableSubmit,
     reset: templates.searchableReset,
     loadingIndicator: templates.searchableLoadingIndicator
@@ -20237,7 +21095,7 @@ var renderer = function renderer(_ref) {
  */
 
 /**
- * @typedef {Object} RefinementListWidgetOptions
+ * @typedef {Object} RefinementListWidgetParams
  * @property {string|HTMLElement} container CSS Selector or HTMLElement to insert the widget.
  * @property {string} attribute Name of the attribute for faceting.
  * @property {"and"|"or"} [operator="or"] How to apply refinements. Possible values: `or`, `and`
@@ -20280,7 +21138,7 @@ var renderer = function renderer(_ref) {
  * @type {WidgetFactory}
  * @devNovel RefinementList
  * @category filter
- * @param {RefinementListWidgetOptions} $0 The RefinementList widget options that you use to customize the widget.
+ * @param {RefinementListWidgetParams} widgetParams The RefinementList widget options that you use to customize the widget.
  * @return {Widget} Creates a new instance of the RefinementList widget.
  * @example
  * search.addWidgets([
@@ -20294,8 +21152,8 @@ var renderer = function renderer(_ref) {
  */
 
 
-function refinementList() {
-  var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+function refinementList(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       attribute = _ref3.attribute,
       operator = _ref3.operator,
@@ -20323,7 +21181,7 @@ function refinementList() {
 
   var escapeFacetValues = searchable ? Boolean(searchableEscapeFacetValues) : false;
   var containerNode = (0, _utils.getContainerNode)(container);
-  var templates = transformTemplates(_objectSpread({}, _defaultTemplates.default, {}, userTemplates));
+  var templates = transformTemplates(_objectSpread(_objectSpread({}, _defaultTemplates.default), userTemplates));
   var cssClasses = {
     root: (0, _classnames.default)(suit(), userCssClasses.root),
     noRefinementRoot: (0, _classnames.default)(suit({
@@ -20405,7 +21263,7 @@ function refinementList() {
   var makeWidget = (0, _connectRefinementList.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     attribute: attribute,
     operator: operator,
     limit: limit,
@@ -20414,6 +21272,8 @@ function refinementList() {
     sortBy: sortBy,
     escapeFacetValues: escapeFacetValues,
     transformItems: transformItems
+  })), {}, {
+    $$widgetType: 'ais.refinementList'
   });
 }
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../components/RefinementList/RefinementList":"../node_modules/instantsearch.js/es/components/RefinementList/RefinementList.js","../../connectors/refinement-list/connectRefinementList":"../node_modules/instantsearch.js/es/connectors/refinement-list/connectRefinementList.js","./defaultTemplates":"../node_modules/instantsearch.js/es/widgets/refinement-list/defaultTemplates.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/connectors/numeric-menu/connectNumericMenu.js":[function(require,module,exports) {
@@ -20427,18 +21287,34 @@ exports.default = void 0;
 var _utils = require("../../lib/utils");
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
 }
 
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -20596,7 +21472,7 @@ var connectNumericMenu = function connectNumericMenu(renderFn) {
             label = _ref3.label;
         return {
           label: label,
-          value: window.encodeURI(JSON.stringify({
+          value: encodeURI(JSON.stringify({
             start: start,
             end: end
           })),
@@ -20614,13 +21490,13 @@ var connectNumericMenu = function connectNumericMenu(renderFn) {
       $$type: $$type,
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -20635,8 +21511,8 @@ var connectNumericMenu = function connectNumericMenu(renderFn) {
         var equal = values['='] && values['='][0];
 
         if (equal || equal === 0) {
-          return _objectSpread({}, uiState, {
-            numericMenu: _objectSpread({}, uiState.numericMenu, _defineProperty({}, attribute, "".concat(values['='])))
+          return _objectSpread(_objectSpread({}, uiState), {}, {
+            numericMenu: _objectSpread(_objectSpread({}, uiState.numericMenu), {}, _defineProperty({}, attribute, "".concat(values['='])))
           });
         }
 
@@ -20647,8 +21523,8 @@ var connectNumericMenu = function connectNumericMenu(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
-          numericMenu: _objectSpread({}, uiState.numericMenu, _defineProperty({}, attribute, "".concat(min, ":").concat(max)))
+        return _objectSpread(_objectSpread({}, uiState), {}, {
+          numericMenu: _objectSpread(_objectSpread({}, uiState.numericMenu), {}, _defineProperty({}, attribute, "".concat(min, ":").concat(max)))
         });
       },
       getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
@@ -20658,7 +21534,7 @@ var connectNumericMenu = function connectNumericMenu(renderFn) {
 
         if (!value) {
           return withoutRefinements.setQueryParameters({
-            numericRefinements: _objectSpread({}, withoutRefinements.numericRefinements, _defineProperty({}, attribute, {}))
+            numericRefinements: _objectSpread(_objectSpread({}, withoutRefinements.numericRefinements), {}, _defineProperty({}, attribute, {}))
           });
         }
 
@@ -20678,8 +21554,8 @@ var connectNumericMenu = function connectNumericMenu(renderFn) {
         return withMaxRefinement;
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          numericMenu: _objectSpread({}, renderState.numericMenu, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
+        return _objectSpread(_objectSpread({}, renderState), {}, {
+          numericMenu: _objectSpread(_objectSpread({}, renderState.numericMenu), {}, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
         });
       },
       getWidgetRenderState: function getWidgetRenderState(_ref7) {
@@ -20755,7 +21631,7 @@ function isRefined(state, attribute, option) {
 
 function getRefinedState(state, attribute, facetValue) {
   var resolvedState = state;
-  var refinedOption = JSON.parse(window.decodeURI(facetValue)); // @TODO: why is array / element mixed here & hasRefinements; seems wrong?
+  var refinedOption = JSON.parse(decodeURI(facetValue)); // @TODO: why is array / element mixed here & hasRefinements; seems wrong?
 
   var currentRefinements = resolvedState.getNumericRefinements(attribute);
 
@@ -20849,7 +21725,57 @@ var _suit = require("../../lib/suit");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'numeric-menu'
 });
@@ -20887,8 +21813,8 @@ var renderer = function renderer(_ref) {
   };
 };
 
-var numericMenu = function numericMenu(widgetOptions) {
-  var _ref3 = widgetOptions || {},
+var numericMenu = function numericMenu(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       attribute = _ref3.attribute,
       items = _ref3.items,
@@ -20935,13 +21861,15 @@ var numericMenu = function numericMenu(widgetOptions) {
     renderState: {},
     templates: templates
   });
-  var makeNumericMenu = (0, _connectNumericMenu.default)(specializedRenderer, function () {
+  var makeWidget = (0, _connectNumericMenu.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeNumericMenu({
+  return _objectSpread(_objectSpread({}, makeWidget({
     attribute: attribute,
     items: items,
     transformItems: transformItems
+  })), {}, {
+    $$widgetType: 'ais.numericMenu'
   });
 };
 
@@ -21014,6 +21942,8 @@ var _utils = require("../../lib/utils");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -21049,29 +21979,6 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -21096,6 +22003,61 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -21116,9 +22078,9 @@ function _defineProperty(obj, key, value) {
 var Pagination = /*#__PURE__*/function (_Component) {
   _inherits(Pagination, _Component);
 
-  function Pagination() {
-    var _getPrototypeOf2;
+  var _super = _createSuper(Pagination);
 
+  function Pagination() {
     var _this;
 
     _classCallCheck(this, Pagination);
@@ -21127,7 +22089,7 @@ var Pagination = /*#__PURE__*/function (_Component) {
       args[_key] = arguments[_key];
     }
 
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Pagination)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this = _super.call.apply(_super, [this].concat(args));
 
     _defineProperty(_assertThisInitialized(_this), "handleClick", function (pageNumber, event) {
       if ((0, _utils.isSpecialClick)(event)) {
@@ -21500,13 +22462,13 @@ var connectPagination = function connectPagination(renderFn) {
       $$type: 'ais.pagination',
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -21523,7 +22485,7 @@ var connectPagination = function connectPagination(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
+        return _objectSpread(_objectSpread({}, uiState), {}, {
           page: page + 1
         });
       },
@@ -21572,7 +22534,7 @@ var connectPagination = function connectPagination(renderFn) {
         };
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           pagination: this.getWidgetRenderState(renderOptions)
         });
       }
@@ -21739,7 +22701,7 @@ var renderer = function renderer(_ref) {
  */
 
 /**
- * @typedef {Object} PaginationWidgetOptions
+ * @typedef {Object} PaginationWidgetParams
  * @property  {string|HTMLElement} container CSS Selector or HTMLElement to insert the widget.
  * @property  {number} [totalPages] The max number of pages to browse.
  * @property  {number} [padding=3] The number of pages to display on each side of the current page.
@@ -21766,7 +22728,7 @@ var renderer = function renderer(_ref) {
  * @type {WidgetFactory}
  * @devNovel Pagination
  * @category navigation
- * @param {PaginationWidgetOptions} $0 Options for the Pagination widget.
+ * @param {PaginationWidgetParams} widgetParams Options for the Pagination widget.
  * @return {Widget} A new instance of Pagination widget.
  * @example
  * search.addWidgets([
@@ -21782,8 +22744,8 @@ var renderer = function renderer(_ref) {
  */
 
 
-function pagination() {
-  var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+function pagination(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       _ref3$templates = _ref3.templates,
       userTemplates = _ref3$templates === void 0 ? {} : _ref3$templates,
@@ -21853,7 +22815,7 @@ function pagination() {
     }), userCssClasses.link)
   };
 
-  var templates = _objectSpread({}, defaultTemplates, {}, userTemplates);
+  var templates = _objectSpread(_objectSpread({}, defaultTemplates), userTemplates);
 
   var specializedRenderer = renderer({
     containerNode: containerNode,
@@ -21869,9 +22831,11 @@ function pagination() {
   var makeWidget = (0, _connectPagination.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     totalPages: totalPages,
     padding: padding
+  })), {}, {
+    $$widgetType: 'ais.pagination'
   });
 }
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../components/Pagination/Pagination":"../node_modules/instantsearch.js/es/components/Pagination/Pagination.js","../../connectors/pagination/connectPagination":"../node_modules/instantsearch.js/es/connectors/pagination/connectPagination.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/components/RangeInput/RangeInput.js":[function(require,module,exports) {
@@ -21891,6 +22855,8 @@ var _Template = _interopRequireDefault(require("../Template/Template"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -21944,29 +22910,6 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -21991,6 +22934,61 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -22011,12 +23009,14 @@ function _defineProperty(obj, key, value) {
 var RangeInput = /*#__PURE__*/function (_Component) {
   _inherits(RangeInput, _Component);
 
+  var _super = _createSuper(RangeInput);
+
   function RangeInput(props) {
     var _this;
 
     _classCallCheck(this, RangeInput);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(RangeInput).call(this, props));
+    _this = _super.call(this, props);
 
     _defineProperty(_assertThisInitialized(_this), "onInput", function (name) {
       return function (event) {
@@ -22172,18 +23172,34 @@ function _defineProperty(obj, key, value) {
 }
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
 }
 
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -22450,18 +23466,18 @@ var connectRange = function connectRange(renderFn) {
     return {
       $$type: $$type,
       init: function init(initOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: initOptions.instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: renderOptions.instantSearchInstance
         }), false);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          range: _objectSpread({}, renderState.range, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
+        return _objectSpread(_objectSpread({}, renderState), {}, {
+          range: _objectSpread(_objectSpread({}, renderState.range), {}, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
         });
       },
       getWidgetRenderState: function getWidgetRenderState(_ref13) {
@@ -22500,7 +23516,7 @@ var connectRange = function connectRange(renderFn) {
           format: rangeFormatter,
           range: currentRange,
           sendEvent: createSendEvent(instantSearchInstance, helper, currentRange),
-          widgetParams: _objectSpread({}, widgetParams, {
+          widgetParams: _objectSpread(_objectSpread({}, widgetParams), {}, {
             precision: precision
           }),
           start: start
@@ -22524,14 +23540,14 @@ var connectRange = function connectRange(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
-          range: _objectSpread({}, uiState.range, _defineProperty({}, attribute, "".concat(min, ":").concat(max)))
+        return _objectSpread(_objectSpread({}, uiState), {}, {
+          range: _objectSpread(_objectSpread({}, uiState.range), {}, _defineProperty({}, attribute, "".concat(min, ":").concat(max)))
         });
       },
       getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref16) {
         var uiState = _ref16.uiState;
         var widgetSearchParameters = searchParameters.addDisjunctiveFacet(attribute).setQueryParameters({
-          numericRefinements: _objectSpread({}, searchParameters.numericRefinements, _defineProperty({}, attribute, {}))
+          numericRefinements: _objectSpread(_objectSpread({}, searchParameters.numericRefinements), {}, _defineProperty({}, attribute, {}))
         });
 
         if ((0, _utils.isFiniteNumber)(minBound)) {
@@ -22553,11 +23569,13 @@ var connectRange = function connectRange(renderFn) {
             lowerBound = _value$split$map2[0],
             upperBound = _value$split$map2[1];
 
-        if ((0, _utils.isFiniteNumber)(lowerBound)) {
+        if ((0, _utils.isFiniteNumber)(lowerBound) && (!(0, _utils.isFiniteNumber)(minBound) || minBound < lowerBound)) {
+          widgetSearchParameters = widgetSearchParameters.removeNumericRefinement(attribute, '>=');
           widgetSearchParameters = widgetSearchParameters.addNumericRefinement(attribute, '>=', lowerBound);
         }
 
-        if ((0, _utils.isFiniteNumber)(upperBound)) {
+        if ((0, _utils.isFiniteNumber)(upperBound) && (!(0, _utils.isFiniteNumber)(maxBound) || upperBound < maxBound)) {
+          widgetSearchParameters = widgetSearchParameters.removeNumericRefinement(attribute, '<=');
           widgetSearchParameters = widgetSearchParameters.addNumericRefinement(attribute, '<=', upperBound);
         }
 
@@ -22641,18 +23659,34 @@ function _defineProperty(obj, key, value) {
 }
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
 }
 
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -22752,7 +23786,7 @@ var renderer = function renderer(_ref) {
  */
 
 /**
- * @typedef {Object} RangeInputWidgetOptions
+ * @typedef {Object} RangeInputWidgetParams
  * @property {string|HTMLElement} container Valid CSS Selector as a string or DOMElement.
  * @property {string} attribute Name of the attribute for faceting.
  * @property {number} [min] Minimal slider value, default to automatically computed from the result set.
@@ -22774,7 +23808,7 @@ var renderer = function renderer(_ref) {
  * @type {WidgetFactory}
  * @devNovel RangeInput
  * @category filter
- * @param {RangeInputWidgetOptions} $0 The RangeInput widget options.
+ * @param {RangeInputWidgetParams} widgetParams The RangeInput widget options.
  * @return {Widget} A new instance of RangeInput widget.
  * @example
  * search.addWidgets([
@@ -22790,8 +23824,8 @@ var renderer = function renderer(_ref) {
  */
 
 
-function rangeInput() {
-  var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+function rangeInput(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       attribute = _ref3.attribute,
       min = _ref3.min,
@@ -22852,13 +23886,14 @@ function rangeInput() {
   var makeWidget = (0, _connectRange.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return _objectSpread({}, makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     attribute: attribute,
     min: min,
     max: max,
     precision: precision
-  }), {
-    $$type: 'ais.rangeInput'
+  })), {}, {
+    $$type: 'ais.rangeInput',
+    $$widgetType: 'ais.rangeInput'
   });
 }
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../components/RangeInput/RangeInput":"../node_modules/instantsearch.js/es/components/RangeInput/RangeInput.js","../../connectors/range/connectRange":"../node_modules/instantsearch.js/es/connectors/range/connectRange.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/connectors/search-box/connectSearchBox.js":[function(require,module,exports) {
@@ -22925,7 +23960,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   connector: true
 });
 /**
- * @typedef {Object} CustomSearchBoxWidgetOptions
+ * @typedef {Object} CustomSearchBoxWidgetParams
  * @property {function(string, function(string))} [queryHook = undefined] A function that will be called every time
  * a new value for the query is set. The first parameter is the query and the second is a
  * function to actually trigger the search. The function takes the query as the parameter.
@@ -22938,7 +23973,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  * @property {string} query The query from the last search.
  * @property {function(string)} refine Sets a new query and searches.
  * @property {function()} clear Remove the query and perform search.
- * @property {Object} widgetParams All original `CustomSearchBoxWidgetOptions` forwarded to the `renderFn`.
+ * @property {Object} widgetParams All original `CustomSearchBoxWidgetParams` forwarded to the `renderFn`.
  * @property {boolean} isSearchStalled `true` if the search results takes more than a certain time to come back
  * from Algolia servers. This can be configured on the InstantSearch constructor with the attribute
  * `stalledSearchDelay` which is 200ms, by default.
@@ -22952,7 +23987,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  * @type {Connector}
  * @param {function(SearchBoxRenderingOptions, boolean)} renderFn Rendering function for the custom **SearchBox** widget.
  * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomSearchBoxWidgetOptions)} Re-usable widget factory for a custom **SearchBox** widget.
+ * @return {function(CustomSearchBoxWidgetParams)} Re-usable widget factory for a custom **SearchBox** widget.
  * @example
  * // custom `renderFn` to render the custom SearchBox widget
  * function renderFn(SearchBoxRenderingOptions, isFirstRendering) {
@@ -23003,13 +24038,13 @@ function connectSearchBox(renderFn) {
       $$type: 'ais.searchBox',
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -23019,7 +24054,7 @@ function connectSearchBox(renderFn) {
         return state.setQueryParameter('query', undefined);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           searchBox: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -23061,7 +24096,7 @@ function connectSearchBox(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
+        return _objectSpread(_objectSpread({}, uiState), {}, {
           query: query
         });
       },
@@ -23202,7 +24237,7 @@ var renderer = function renderer(_ref) {
  */
 
 /**
- * @typedef {Object} SearchBoxWidgetOptions
+ * @typedef {Object} SearchBoxWidgetParams
  * @property {string|HTMLElement} container CSS Selector or HTMLElement to insert the widget
  * @property {string} [placeholder] The placeholder of the input
  * @property {boolean} [autofocus=false] Whether the input should be autofocused
@@ -23229,7 +24264,7 @@ var renderer = function renderer(_ref) {
  * @type {WidgetFactory}
  * @devNovel SearchBox
  * @category basic
- * @param {SearchBoxWidgetOptions} $0 Options used to configure a SearchBox widget.
+ * @param {SearchBoxWidgetParams} widgetParams Options used to configure a SearchBox widget.
  * @return {Widget} Creates a new instance of the SearchBox widget.
  * @example
  * search.addWidgets([
@@ -23241,8 +24276,8 @@ var renderer = function renderer(_ref) {
  */
 
 
-function searchBox() {
-  var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+function searchBox(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       _ref3$placeholder = _ref3.placeholder,
       placeholder = _ref3$placeholder === void 0 ? '' : _ref3$placeholder,
@@ -23297,7 +24332,7 @@ function searchBox() {
     containerNode: containerNode,
     cssClasses: cssClasses,
     placeholder: placeholder,
-    templates: _objectSpread({}, _defaultTemplates.default, {}, templates),
+    templates: _objectSpread(_objectSpread({}, _defaultTemplates.default), templates),
     autofocus: autofocus,
     searchAsYouType: searchAsYouType,
     showReset: showReset,
@@ -23307,8 +24342,10 @@ function searchBox() {
   var makeWidget = (0, _connectSearchBox.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     queryHook: queryHook
+  })), {}, {
+    $$widgetType: 'ais.searchBox'
   });
 }
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js","../../connectors/search-box/connectSearchBox":"../node_modules/instantsearch.js/es/connectors/search-box/connectSearchBox.js","../../components/SearchBox/SearchBox":"../node_modules/instantsearch.js/es/components/SearchBox/SearchBox.js","./defaultTemplates":"../node_modules/instantsearch.js/es/widgets/search-box/defaultTemplates.js"}],"../node_modules/instantsearch.js/es/components/Slider/Rheostat.js":[function(require,module,exports) {
@@ -23320,6 +24357,22 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 var _preact = require("preact");
+
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -23334,20 +24387,6 @@ function _defineProperty(obj, key, value) {
   }
 
   return obj;
-}
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
 }
 
 function _extends() {
@@ -23390,29 +24429,6 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -23435,6 +24451,61 @@ function _setPrototypeOf(o, p) {
   };
 
   return _setPrototypeOf(o, p);
+}
+
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
 }
 /**
  * This is a fork of Rheostat for Preact X.
@@ -23492,10 +24563,12 @@ function killEvent(ev) {
 var Button = /*#__PURE__*/function (_Component) {
   _inherits(Button, _Component);
 
+  var _super = _createSuper(Button);
+
   function Button() {
     _classCallCheck(this, Button);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Button).apply(this, arguments));
+    return _super.apply(this, arguments);
   }
 
   _createClass(Button, [{
@@ -23510,19 +24583,21 @@ var Button = /*#__PURE__*/function (_Component) {
   return Button;
 }(_preact.Component);
 
-var _ref2 = /*#__PURE__*/(0, _preact.h)("div", {
+var _ref2 = (0, _preact.h)("div", {
   className: "rheostat-background"
 });
 
 var Rheostat = /*#__PURE__*/function (_Component2) {
   _inherits(Rheostat, _Component2);
 
+  var _super2 = _createSuper(Rheostat);
+
   function Rheostat(props) {
     var _this;
 
     _classCallCheck(this, Rheostat);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Rheostat).call(this, props));
+    _this = _super2.call(this, props);
 
     _defineProperty(_assertThisInitialized(_this), "state", {
       className: getClassName(_this.props),
@@ -24211,7 +25286,7 @@ var Pit = function Pit(_ref) {
   var value = Array.isArray(children) ? children[0] : children;
   var pitValue = Math.round(parseInt(value, 10) * 100) / 100;
   return (0, _preact.h)("div", {
-    style: _objectSpread({}, style, {
+    style: _objectSpread(_objectSpread({}, style), {}, {
       marginLeft: positionValue === 100 ? '-2px' : 0
     }),
     className: (0, _classnames.default)('rheostat-marker', 'rheostat-marker-horizontal', {
@@ -24245,6 +25320,8 @@ var _Pit = _interopRequireDefault(require("./Pit"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -24259,25 +25336,38 @@ function _typeof(obj) {
 }
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
 
-    return arr2;
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
   }
+
+  return arr2;
 }
 
 function _extends() {
@@ -24320,29 +25410,6 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return _assertThisInitialized(self);
-}
-
-function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -24367,6 +25434,61 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -24387,9 +25509,9 @@ function _defineProperty(obj, key, value) {
 var Slider = /*#__PURE__*/function (_Component) {
   _inherits(Slider, _Component);
 
-  function Slider() {
-    var _getPrototypeOf2;
+  var _super = _createSuper(Slider);
 
+  function Slider() {
     var _this;
 
     _classCallCheck(this, Slider);
@@ -24398,7 +25520,7 @@ var Slider = /*#__PURE__*/function (_Component) {
       args[_key] = arguments[_key];
     }
 
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Slider)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this = _super.call.apply(_super, [this].concat(args));
 
     _defineProperty(_assertThisInitialized(_this), "handleChange", function (_ref) {
       var values = _ref.values;
@@ -24430,9 +25552,14 @@ var Slider = /*#__PURE__*/function (_Component) {
   }
 
   _createClass(Slider, [{
+    key: "isDisabled",
+    get: function get() {
+      return this.props.min >= this.props.max;
+    }
+  }, {
     key: "computeDefaultPitPoints",
-    // creates an array number where to display a pit point on the slider
-    value: function computeDefaultPitPoints(_ref2) {
+    value: // creates an array number where to display a pit point on the slider
+    function computeDefaultPitPoints(_ref2) {
       var min = _ref2.min,
           max = _ref2.max;
       var totalLength = max - min;
@@ -24499,11 +25626,6 @@ var Slider = /*#__PURE__*/function (_Component) {
         values: this.isDisabled ? [min, max] : values,
         disabled: this.isDisabled
       }));
-    }
-  }, {
-    key: "isDisabled",
-    get: function get() {
-      return this.props.min >= this.props.max;
     }
   }]);
 
@@ -24584,18 +25706,34 @@ function _defineProperty(obj, key, value) {
 }
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
 }
 
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -24687,7 +25825,7 @@ var renderer = function renderer(_ref) {
  */
 
 /**
- * @typedef {Object} RangeSliderWidgetOptions
+ * @typedef {Object} RangeSliderWidgetParams
  * @property  {string|HTMLElement} container CSS Selector or DOMElement to insert the widget.
  * @property  {string} attribute Name of the attribute for faceting.
  * @property  {boolean|RangeSliderTooltipOptions} [tooltips=true] Should we show tooltips or not.
@@ -24716,7 +25854,7 @@ var renderer = function renderer(_ref) {
  * @type {WidgetFactory}
  * @devNovel RangeSlider
  * @category filter
- * @param {RangeSliderWidgetOptions} $0 RangeSlider widget options.
+ * @param {RangeSliderWidgetParams} widgetParams RangeSlider widget options.
  * @return {Widget} A new RangeSlider widget instance.
  * @example
  * search.addWidgets([
@@ -24733,8 +25871,8 @@ var renderer = function renderer(_ref) {
  */
 
 
-function rangeSlider() {
-  var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+function rangeSlider(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       attribute = _ref3.attribute,
       min = _ref3.min,
@@ -24771,13 +25909,14 @@ function rangeSlider() {
   var makeWidget = (0, _connectRange.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return _objectSpread({}, makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     attribute: attribute,
     min: min,
     max: max,
     precision: precision
-  }), {
-    $$type: 'ais.rangeSlider'
+  })), {}, {
+    $$type: 'ais.rangeSlider',
+    $$widgetType: 'ais.rangeSlider'
   });
 }
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../components/Slider/Slider":"../node_modules/instantsearch.js/es/components/Slider/Slider.js","../../connectors/range/connectRange":"../node_modules/instantsearch.js/es/connectors/range/connectRange.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/connectors/sort-by/connectSortBy.js":[function(require,module,exports) {
@@ -24850,7 +25989,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  */
 
 /**
- * @typedef {Object} CustomSortByWidgetOptions
+ * @typedef {Object} CustomSortByWidgetParams
  * @property {SortByItem[]} items Array of objects defining the different indices to choose from.
  * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
  */
@@ -24861,7 +26000,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  * @property {SortByItem[]} options All the available indices
  * @property {function(string)} refine Switches indices and triggers a new search.
  * @property {boolean} hasNoResults `true` if the last search contains no result.
- * @property {Object} widgetParams All original `CustomSortByWidgetOptions` forwarded to the `renderFn`.
+ * @property {Object} widgetParams All original `CustomSortByWidgetParams` forwarded to the `renderFn`.
  */
 
 /**
@@ -24876,7 +26015,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  * @type {Connector}
  * @param {function(SortByRenderingOptions, boolean)} renderFn Rendering function for the custom **SortBy** widget.
  * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomSortByWidgetOptions)} Re-usable widget factory for a custom **SortBy** widget.
+ * @return {function(CustomSortByWidgetParams)} Re-usable widget factory for a custom **SortBy** widget.
  * @example
  * // custom `renderFn` to render the custom SortBy widget
  * function renderFn(SortByRenderingOptions, isFirstRendering) {
@@ -24946,13 +26085,13 @@ function connectSortBy(renderFn) {
           return item.value === currentIndex;
         });
         "development" === 'development' ? (0, _utils.warning)(isCurrentIndexInItems, "The index named \"".concat(currentIndex, "\" is not listed in the `items` of `sortBy`.")) : void 0;
-        renderFn(_objectSpread({}, widgetRenderState, {
+        renderFn(_objectSpread(_objectSpread({}, widgetRenderState), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -24962,7 +26101,7 @@ function connectSortBy(renderFn) {
         return state.setIndex(this.initialIndex);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           sortBy: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -24998,7 +26137,7 @@ function connectSortBy(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
+        return _objectSpread(_objectSpread({}, uiState), {}, {
           sortBy: currentIndex
         });
       },
@@ -25031,7 +26170,57 @@ var _suit = require("../../lib/suit");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'sort-by'
 });
@@ -25073,7 +26262,7 @@ var renderer = function renderer(_ref) {
  */
 
 /**
- * @typedef {Object} SortByWidgetOptions
+ * @typedef {Object} SortByWidgetParams
  * @property {string|HTMLElement} container CSS Selector or HTMLElement to insert the widget.
  * @property {SortByIndexDefinition[]} items Array of objects defining the different indices to choose from.
  * @property {SortByWidgetCssClasses} [cssClasses] CSS classes to be added.
@@ -25088,7 +26277,7 @@ var renderer = function renderer(_ref) {
  * @type {WidgetFactory}
  * @devNovel SortBy
  * @category sort
- * @param {SortByWidgetOptions} $0 Options for the SortBy widget
+ * @param {SortByWidgetParams} widgetParams Options for the SortBy widget
  * @return {Widget} Creates a new instance of the SortBy widget.
  * @example
  * search.addWidgets([
@@ -25104,8 +26293,8 @@ var renderer = function renderer(_ref) {
  */
 
 
-function sortBy() {
-  var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+function sortBy(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       items = _ref3.items,
       _ref3$cssClasses = _ref3.cssClasses,
@@ -25133,9 +26322,11 @@ function sortBy() {
   var makeWidget = (0, _connectSortBy.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     items: items,
     transformItems: transformItems
+  })), {}, {
+    $$widgetType: 'ais.sortBy'
   });
 }
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../components/Selector/Selector":"../node_modules/instantsearch.js/es/components/Selector/Selector.js","../../connectors/sort-by/connectSortBy":"../node_modules/instantsearch.js/es/connectors/sort-by/connectSortBy.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/connectors/rating-menu/connectRatingMenu.js":[function(require,module,exports) {
@@ -25147,6 +26338,22 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = connectRatingMenu;
 
 var _utils = require("../../lib/utils");
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -25197,26 +26404,62 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
 
-    return arr2;
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
   }
+
+  return arr2;
+}
+
+function _iterableToArrayLimit(arr, i) {
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
 }
 
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
@@ -25224,6 +26467,8 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   connector: true
 });
 var $$type = 'ais.ratingMenu';
+var MAX_VALUES_PER_FACET_API_LIMIT = 1000;
+var STEP = 1;
 
 var createSendEvent = function createSendEvent(_ref) {
   var instantSearchInstance = _ref.instantSearchInstance,
@@ -25275,7 +26520,7 @@ var createSendEvent = function createSendEvent(_ref) {
  */
 
 /**
- * @typedef {Object} CustomStarRatingWidgetOptions
+ * @typedef {Object} CustomStarRatingWidgetParams
  * @property {string} attribute Name of the attribute for faceting (eg. "free_shipping").
  * @property {number} [max = 5] The maximum rating value.
  */
@@ -25288,7 +26533,7 @@ var createSendEvent = function createSendEvent(_ref) {
  * @property {function(string)} refine Selects a rating to filter the results
  * (takes the filter value as parameter). Takes the value of an item as parameter.
  * @property {boolean} hasNoResults `true` if the last search contains no result.
- * @property {Object} widgetParams All original `CustomStarRatingWidgetOptions` forwarded to the `renderFn`.
+ * @property {Object} widgetParams All original `CustomStarRatingWidgetParams` forwarded to the `renderFn`.
  */
 
 /**
@@ -25301,7 +26546,7 @@ var createSendEvent = function createSendEvent(_ref) {
  * @type {Connector}
  * @param {function(StarRatingRenderingOptions, boolean)} renderFn Rendering function for the custom **StarRating** widget.
  * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomStarRatingWidgetOptions)} Re-usable widget factory for a custom **StarRating** widget.
+ * @return {function(CustomStarRatingWidgetParams)} Re-usable widget factory for a custom **StarRating** widget.
  * @example
  * // custom `renderFn` to render the custom StarRating widget
  * function renderFn(StarRatingRenderingOptions, isFirstRendering) {
@@ -25368,24 +26613,58 @@ function connectRatingMenu(renderFn) {
     }
 
     var _getRefinedStar = function getRefinedStar(state) {
-      var refinements = state.getDisjunctiveRefinements(attribute);
+      var _values$;
 
-      if (!refinements.length) {
+      var values = state.getNumericRefinements(attribute);
+
+      if (!((_values$ = values['>=']) !== null && _values$ !== void 0 && _values$.length)) {
         return undefined;
       }
 
-      return Math.min.apply(Math, _toConsumableArray(refinements.map(Number)));
+      return values['>='][0];
+    };
+
+    var getFacetsMaxDecimalPlaces = function getFacetsMaxDecimalPlaces(facetResults) {
+      var maxDecimalPlaces = 0;
+      facetResults.forEach(function (facetResult) {
+        var _facetResult$name$spl = facetResult.name.split('.'),
+            _facetResult$name$spl2 = _slicedToArray(_facetResult$name$spl, 2),
+            _facetResult$name$spl3 = _facetResult$name$spl2[1],
+            decimal = _facetResult$name$spl3 === void 0 ? '' : _facetResult$name$spl3;
+
+        maxDecimalPlaces = Math.max(maxDecimalPlaces, decimal.length);
+      });
+      return maxDecimalPlaces;
+    };
+
+    var getFacetValuesWarningMessage = function getFacetValuesWarningMessage(_ref2) {
+      var maxDecimalPlaces = _ref2.maxDecimalPlaces,
+          maxFacets = _ref2.maxFacets,
+          maxValuesPerFacet = _ref2.maxValuesPerFacet;
+      var maxDecimalPlacesInRange = Math.max(0, Math.floor(Math.log10(MAX_VALUES_PER_FACET_API_LIMIT / max)));
+      var maxFacetsInRange = Math.min(MAX_VALUES_PER_FACET_API_LIMIT, Math.pow(10, maxDecimalPlacesInRange) * max);
+      var solutions = [];
+
+      if (maxFacets > MAX_VALUES_PER_FACET_API_LIMIT) {
+        solutions.push("- Update your records to lower the precision of the values in the \"".concat(attribute, "\" attribute (for example: ").concat(5.123456789.toPrecision(maxDecimalPlaces + 1), " to ").concat(5.123456789.toPrecision(maxDecimalPlacesInRange + 1), ")"));
+      }
+
+      if (maxValuesPerFacet < maxFacetsInRange) {
+        solutions.push("- Increase the maximum number of facet values to ".concat(maxFacetsInRange, " using the \"configure\" widget ").concat((0, _utils.createDocumentationLink)({
+          name: 'configure'
+        }), " and the \"maxValuesPerFacet\" parameter https://www.algolia.com/doc/api-reference/api-parameters/maxValuesPerFacet/"));
+      }
+
+      return "The ".concat(attribute, " attribute can have ").concat(maxFacets, " different values (0 to ").concat(max, " with a maximum of ").concat(maxDecimalPlaces, " decimals = ").concat(maxFacets, ") but you retrieved only ").concat(maxValuesPerFacet, " facet values. Therefore the number of results that match the refinements can be incorrect.\n").concat(solutions.length ? "To resolve this problem you can:\n".concat(solutions.join('\n')) : "");
     };
 
     var toggleRefinement = function toggleRefinement(helper, facetValue) {
       sendEvent('click', facetValue);
       var isRefined = _getRefinedStar(helper.state) === Number(facetValue);
-      helper.removeDisjunctiveFacetRefinement(attribute);
+      helper.removeNumericRefinement(attribute);
 
       if (!isRefined) {
-        for (var val = Number(facetValue); val <= max; ++val) {
-          helper.addDisjunctiveFacetRefinement(attribute, val);
-        }
+        helper.addNumericRefinement(attribute, '<=', max).addNumericRefinement(attribute, '>=', facetValue);
       }
 
       helper.search();
@@ -25395,11 +26674,11 @@ function connectRatingMenu(renderFn) {
       toggleRefinementFactory: function toggleRefinementFactory(helper) {
         return toggleRefinement.bind(_this, helper);
       },
-      createURLFactory: function createURLFactory(_ref2) {
-        var state = _ref2.state,
-            createURL = _ref2.createURL;
+      createURLFactory: function createURLFactory(_ref3) {
+        var state = _ref3.state,
+            createURL = _ref3.createURL;
         return function (value) {
-          return createURL(state.toggleRefinement(attribute, value));
+          return createURL(state.removeNumericRefinement(attribute).addNumericRefinement(attribute, '<=', max).addNumericRefinement(attribute, '>=', value));
         };
       }
     };
@@ -25407,27 +26686,27 @@ function connectRatingMenu(renderFn) {
       $$type: $$type,
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          ratingMenu: _objectSpread({}, renderState.ratingMenu, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
+        return _objectSpread(_objectSpread({}, renderState), {}, {
+          ratingMenu: _objectSpread(_objectSpread({}, renderState.ratingMenu), {}, _defineProperty({}, attribute, this.getWidgetRenderState(renderOptions)))
         });
       },
-      getWidgetRenderState: function getWidgetRenderState(_ref3) {
-        var helper = _ref3.helper,
-            results = _ref3.results,
-            state = _ref3.state,
-            instantSearchInstance = _ref3.instantSearchInstance,
-            createURL = _ref3.createURL;
+      getWidgetRenderState: function getWidgetRenderState(_ref4) {
+        var helper = _ref4.helper,
+            results = _ref4.results,
+            state = _ref4.state,
+            instantSearchInstance = _ref4.instantSearchInstance,
+            createURL = _ref4.createURL;
         var facetValues = [];
 
         if (!sendEvent) {
@@ -25442,51 +26721,55 @@ function connectRatingMenu(renderFn) {
         }
 
         if (results) {
-          var allValues = {};
-
-          for (var v = max; v >= 0; --v) {
-            allValues[v] = 0;
-          }
-
-          (results.getFacetValues(attribute) || []).forEach(function (facet) {
-            var val = Math.round(facet.name);
-
-            if (!val || val > max) {
-              return;
-            }
-
-            for (var _v = val; _v >= 1; --_v) {
-              allValues[_v] += facet.count;
-            }
-          });
+          var facetResults = results.getFacetValues(attribute);
+          var maxValuesPerFacet = facetResults.length;
+          var maxDecimalPlaces = getFacetsMaxDecimalPlaces(facetResults);
+          var maxFacets = Math.pow(10, maxDecimalPlaces) * max;
+          "development" === 'development' ? (0, _utils.warning)(maxFacets <= maxValuesPerFacet, getFacetValuesWarningMessage({
+            maxDecimalPlaces: maxDecimalPlaces,
+            maxFacets: maxFacets,
+            maxValuesPerFacet: maxValuesPerFacet
+          })) : void 0;
 
           var refinedStar = _getRefinedStar(state);
 
-          for (var star = max - 1; star >= 1; --star) {
-            var count = allValues[star];
+          var _loop = function _loop(star) {
+            var isRefined = refinedStar === star;
+            var count = facetResults.filter(function (f) {
+              return Number(f.name) >= star && Number(f.name) <= max;
+            }).map(function (f) {
+              return f.count;
+            }).reduce(function (sum, current) {
+              return sum + current;
+            }, 0);
 
-            if (refinedStar && star !== refinedStar && count === 0) {
+            if (refinedStar && !isRefined && count === 0) {
               // skip count==0 when at least 1 refinement is enabled
               // eslint-disable-next-line no-continue
-              continue;
+              return "continue";
             }
 
-            var stars = [];
-
-            for (var i = 1; i <= max; ++i) {
-              stars.push(i <= star);
-            }
+            var stars = _toConsumableArray(new Array(Math.floor(max / STEP))).map(function (v, i) {
+              return i * STEP < star;
+            });
 
             facetValues.push({
               stars: stars,
               name: String(star),
               value: String(star),
               count: count,
-              isRefined: refinedStar === star
+              isRefined: isRefined
             });
+          };
+
+          for (var star = STEP; star < max; star += STEP) {
+            var _ret = _loop(star);
+
+            if (_ret === "continue") continue;
           }
         }
 
+        facetValues = facetValues.reverse();
         return {
           items: facetValues,
           hasNoResults: results ? results.nbHits === 0 : true,
@@ -25499,13 +26782,13 @@ function connectRatingMenu(renderFn) {
           widgetParams: widgetParams
         };
       },
-      dispose: function dispose(_ref4) {
-        var state = _ref4.state;
+      dispose: function dispose(_ref5) {
+        var state = _ref5.state;
         unmountFn();
-        return state.removeDisjunctiveFacet(attribute);
+        return state.removeNumericRefinement(attribute);
       },
-      getWidgetUiState: function getWidgetUiState(uiState, _ref5) {
-        var searchParameters = _ref5.searchParameters;
+      getWidgetUiState: function getWidgetUiState(uiState, _ref6) {
+        var searchParameters = _ref6.searchParameters;
 
         var value = _getRefinedStar(searchParameters);
 
@@ -25513,28 +26796,23 @@ function connectRatingMenu(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
-          ratingMenu: _objectSpread({}, uiState.ratingMenu, _defineProperty({}, attribute, value))
+        return _objectSpread(_objectSpread({}, uiState), {}, {
+          ratingMenu: _objectSpread(_objectSpread({}, uiState.ratingMenu), {}, _defineProperty({}, attribute, value))
         });
       },
-      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref6) {
-        var uiState = _ref6.uiState;
+      getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref7) {
+        var uiState = _ref7.uiState;
         var value = uiState.ratingMenu && uiState.ratingMenu[attribute];
         var withoutRefinements = searchParameters.clearRefinements(attribute);
         var withDisjunctiveFacet = withoutRefinements.addDisjunctiveFacet(attribute);
 
         if (!value) {
           return withDisjunctiveFacet.setQueryParameters({
-            disjunctiveFacetsRefinements: _objectSpread({}, withDisjunctiveFacet.disjunctiveFacetsRefinements, _defineProperty({}, attribute, []))
+            numericRefinements: _objectSpread(_objectSpread({}, withDisjunctiveFacet.numericRefinements), {}, _defineProperty({}, attribute, []))
           });
         }
 
-        return (0, _utils.range)({
-          start: Number(value),
-          end: max + 1
-        }).reduce(function (parameters, number) {
-          return parameters.addDisjunctiveFacetRefinement(attribute, number);
-        }, withDisjunctiveFacet);
+        return withDisjunctiveFacet.addNumericRefinement(attribute, '<=', max).addNumericRefinement(attribute, '>=', value);
       }
     };
   };
@@ -25574,17 +26852,67 @@ var _suit = require("../../lib/suit");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'rating-menu'
 });
 var suit = (0, _suit.component)('RatingMenu');
 
-var _ref3 = /*#__PURE__*/(0, _preact.h)("path", {
+var _ref3 = (0, _preact.h)("path", {
   d: "M12 .288l2.833 8.718h9.167l-7.417 5.389 2.833 8.718-7.416-5.388-7.417 5.388 2.833-8.718-7.416-5.389h9.167z"
 });
 
-var _ref4 = /*#__PURE__*/(0, _preact.h)("path", {
+var _ref4 = (0, _preact.h)("path", {
   d: "M12 6.76l1.379 4.246h4.465l-3.612 2.625 1.379 4.246-3.611-2.625-3.612 2.625 1.379-4.246-3.612-2.625h4.465l1.38-4.246zm0-6.472l-2.833 8.718h-9.167l7.416 5.389-2.833 8.718 7.417-5.388 7.416 5.388-2.833-8.718 7.417-5.389h-9.167l-2.833-8.718z"
 });
 
@@ -25652,7 +26980,7 @@ var renderer = function renderer(_ref) {
  */
 
 /**
- * @typedef {Object} RatingMenuWidgetOptions
+ * @typedef {Object} RatingMenuWidgetParams
  * @property {string|HTMLElement} container Place where to insert the widget in your webpage.
  * @property {string} attribute Name of the attribute in your records that contains the ratings.
  * @property {number} [max = 5] The maximum rating value.
@@ -25675,7 +27003,7 @@ var renderer = function renderer(_ref) {
  * @type {WidgetFactory}
  * @devNovel RatingMenu
  * @category filter
- * @param {RatingMenuWidgetOptions} $0 RatingMenu widget options.
+ * @param {RatingMenuWidgetParams} widgetParams RatingMenu widget options.
  * @return {Widget} A new RatingMenu widget instance.
  * @example
  * search.addWidgets([
@@ -25688,8 +27016,8 @@ var renderer = function renderer(_ref) {
  */
 
 
-function ratingMenu() {
-  var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+function ratingMenu(widgetParams) {
+  var _ref5 = widgetParams || {},
       container = _ref5.container,
       attribute = _ref5.attribute,
       _ref5$max = _ref5.max,
@@ -25753,9 +27081,11 @@ function ratingMenu() {
   var makeWidget = (0, _connectRatingMenu.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     attribute: attribute,
     max: max
+  })), {}, {
+    $$widgetType: 'ais.ratingMenu'
   });
 }
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../components/RefinementList/RefinementList":"../node_modules/instantsearch.js/es/components/RefinementList/RefinementList.js","../../connectors/rating-menu/connectRatingMenu":"../node_modules/instantsearch.js/es/connectors/rating-menu/connectRatingMenu.js","./defaultTemplates":"../node_modules/instantsearch.js/es/widgets/rating-menu/defaultTemplates.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/components/Stats/Stats.js":[function(require,module,exports) {
@@ -25794,6 +27124,8 @@ function _extends() {
 
 var Stats = function Stats(_ref) {
   var nbHits = _ref.nbHits,
+      nbSortedHits = _ref.nbSortedHits,
+      areHitsSorted = _ref.areHitsSorted,
       hitsPerPage = _ref.hitsPerPage,
       nbPages = _ref.nbPages,
       page = _ref.page,
@@ -25810,11 +27142,16 @@ var Stats = function Stats(_ref) {
       className: cssClasses.text
     },
     data: {
+      hasManySortedResults: nbSortedHits > 1,
+      hasNoSortedResults: nbSortedHits === 0,
+      hasOneSortedResults: nbSortedHits === 1,
       hasManyResults: nbHits > 1,
       hasNoResults: nbHits === 0,
       hasOneResult: nbHits === 1,
+      areHitsSorted: areHitsSorted,
       hitsPerPage: hitsPerPage,
       nbHits: nbHits,
+      nbSortedHits: nbSortedHits,
       nbPages: nbPages,
       page: page,
       processingTimeMS: processingTimeMS,
@@ -25897,11 +27234,11 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  * @property {number} page The current page.
  * @property {number} processingTimeMS The time taken to compute the results inside the Algolia engine.
  * @property {string} query The query used for the current search.
- * @property {object} widgetParams All original `CustomStatsWidgetOptions` forwarded to the `renderFn`.
+ * @property {object} widgetParams All original `CustomStatsWidgetParams` forwarded to the `renderFn`.
  */
 
 /**
- * @typedef {Object} CustomStatsWidgetOptions
+ * @typedef {Object} CustomStatsWidgetParams
  */
 
 /**
@@ -25911,7 +27248,7 @@ var withUsage = (0, _utils.createDocumentationMessageGenerator)({
  * @type {Connector}
  * @param {function(StatsRenderingOptions, boolean)} renderFn Rendering function for the custom **Stats** widget.
  * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomStatsWidgetOptions)} Re-usable widget factory for a custom **Stats** widget.
+ * @return {function(CustomStatsWidgetParams)} Re-usable widget factory for a custom **Stats** widget.
  * @example
  * // custom `renderFn` to render the custom Stats widget
  * function renderFn(StatsRenderingOptions, isFirstRendering) {
@@ -25941,13 +27278,13 @@ function connectStats(renderFn) {
       $$type: 'ais.stats',
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -25955,7 +27292,7 @@ function connectStats(renderFn) {
         unmountFn();
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           stats: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -25967,6 +27304,8 @@ function connectStats(renderFn) {
           return {
             hitsPerPage: helper.state.hitsPerPage,
             nbHits: 0,
+            nbSortedHits: undefined,
+            areHitsSorted: false,
             nbPages: 0,
             page: helper.state.page || 0,
             processingTimeMS: -1,
@@ -25978,6 +27317,8 @@ function connectStats(renderFn) {
         return {
           hitsPerPage: results.hitsPerPage,
           nbHits: results.nbHits,
+          nbSortedHits: results.nbSortedHits,
+          areHitsSorted: typeof results.appliedRelevancyStrictness !== 'undefined' && results.appliedRelevancyStrictness > 0 && results.nbSortedHits !== results.nbHits,
           nbPages: results.nbPages,
           page: results.page,
           processingTimeMS: results.processingTimeMS,
@@ -25996,7 +27337,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _default = {
-  text: "{{#hasNoResults}}No results{{/hasNoResults}}\n    {{#hasOneResult}}1 result{{/hasOneResult}}\n    {{#hasManyResults}}{{#helpers.formatNumber}}{{nbHits}}{{/helpers.formatNumber}} results{{/hasManyResults}} found in {{processingTimeMS}}ms"
+  text: "\n    {{#areHitsSorted}}\n      {{#hasNoSortedResults}}No relevant results{{/hasNoSortedResults}}\n      {{#hasOneSortedResults}}1 relevant result{{/hasOneSortedResults}}\n      {{#hasManySortedResults}}{{#helpers.formatNumber}}{{nbSortedHits}}{{/helpers.formatNumber}} relevant results{{/hasManySortedResults}}\n      sorted out of {{#helpers.formatNumber}}{{nbHits}}{{/helpers.formatNumber}}\n    {{/areHitsSorted}}\n    {{^areHitsSorted}}\n      {{#hasNoResults}}No results{{/hasNoResults}}\n      {{#hasOneResult}}1 result{{/hasOneResult}}\n      {{#hasManyResults}}{{#helpers.formatNumber}}{{nbHits}}{{/helpers.formatNumber}} results{{/hasManyResults}}\n    {{/areHitsSorted}}\n    found in {{processingTimeMS}}ms"
 };
 exports.default = _default;
 },{}],"../node_modules/instantsearch.js/es/widgets/stats/stats.js":[function(require,module,exports) {
@@ -26023,7 +27364,57 @@ var _suit = require("../../lib/suit");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'stats'
 });
@@ -26037,6 +27428,8 @@ var renderer = function renderer(_ref) {
   return function (_ref2, isFirstRendering) {
     var hitsPerPage = _ref2.hitsPerPage,
         nbHits = _ref2.nbHits,
+        nbSortedHits = _ref2.nbSortedHits,
+        areHitsSorted = _ref2.areHitsSorted,
         nbPages = _ref2.nbPages,
         page = _ref2.page,
         processingTimeMS = _ref2.processingTimeMS,
@@ -26056,6 +27449,8 @@ var renderer = function renderer(_ref) {
       cssClasses: cssClasses,
       hitsPerPage: hitsPerPage,
       nbHits: nbHits,
+      nbSortedHits: nbSortedHits,
+      areHitsSorted: areHitsSorted,
       nbPages: nbPages,
       page: page,
       processingTimeMS: processingTimeMS,
@@ -26067,7 +27462,7 @@ var renderer = function renderer(_ref) {
 /**
  * @typedef {Object} StatsWidgetTemplates
  * @property {string|function} [text] Text template, provided with `hasManyResults`,
- * `hasNoResults`, `hasOneResult`, `hitsPerPage`, `nbHits`, `nbPages`, `page`, `processingTimeMS`, `query`.
+ * `hasNoResults`, `hasOneResult`, `hitsPerPage`, `nbHits`, `nbSortedHits`, `nbPages`, `page`, `processingTimeMS`, `query`.
  */
 
 /**
@@ -26083,6 +27478,7 @@ var renderer = function renderer(_ref) {
  * @property {boolean} hasOneResult True if the result set has exactly one result.
  * @property {number} hitsPerPage Number of hits per page.
  * @property {number} nbHits Number of hit in the result set.
+ * @property {number} nbSortedHits Subset of hits selected when relevancyStrictness is applied
  * @property {number} nbPages Number of pages in the result set with regard to the hitsPerPage and number of hits.
  * @property {number} page Number of the current page. First page is 0.
  * @property {number} processingTimeMS Time taken to compute the results inside the engine.
@@ -26090,7 +27486,7 @@ var renderer = function renderer(_ref) {
  */
 
 /**
- * @typedef {Object} StatsWidgetOptions
+ * @typedef {Object} StatsWidgetParams
  * @property {string|HTMLElement} container Place where to insert the widget in your webpage.
  * @property {StatsWidgetTemplates} [templates] Templates to use for the widget.
  * @property {StatsWidgetCssClasses} [cssClasses] CSS classes to add.
@@ -26104,7 +27500,7 @@ var renderer = function renderer(_ref) {
  * @type {WidgetFactory}
  * @devNovel Stats
  * @category metadata
- * @param {StatsWidgetOptions} $0 Stats widget options. Some keys are mandatory: `container`,
+ * @param {StatsWidgetParams} widgetParams Stats widget options. Some keys are mandatory: `container`,
  * @return {Widget} A new stats widget instance
  * @example
  * search.addWidgets([
@@ -26115,8 +27511,8 @@ var renderer = function renderer(_ref) {
  */
 
 
-function stats() {
-  var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+function stats(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       _ref3$cssClasses = _ref3.cssClasses,
       userCssClasses = _ref3$cssClasses === void 0 ? {} : _ref3$cssClasses,
@@ -26143,7 +27539,9 @@ function stats() {
   var makeWidget = (0, _connectStats.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget();
+  return _objectSpread(_objectSpread({}, makeWidget()), {}, {
+    $$widgetType: 'ais.stats'
+  });
 }
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../components/Stats/Stats":"../node_modules/instantsearch.js/es/components/Stats/Stats.js","../../connectors/stats/connectStats":"../node_modules/instantsearch.js/es/connectors/stats/connectStats.js","./defaultTemplates":"../node_modules/instantsearch.js/es/widgets/stats/defaultTemplates.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/components/ToggleRefinement/ToggleRefinement.js":[function(require,module,exports) {
 "use strict";
@@ -26306,7 +27704,7 @@ var createSendEvent = function createSendEvent(_ref) {
           eventName: eventName,
           index: helper.getIndex(),
           filters: on.map(function (value) {
-            return "".concat(attribute, ":").concat(JSON.stringify(value));
+            return "".concat(attribute, ":").concat(value);
           })
         }
       });
@@ -26322,7 +27720,7 @@ var createSendEvent = function createSendEvent(_ref) {
  */
 
 /**
- * @typedef {Object} CustomToggleWidgetOptions
+ * @typedef {Object} CustomToggleWidgetParams
  * @property {string} attribute Name of the attribute for faceting (eg. "free_shipping").
  * @property {Object} [on = true] Value to filter on when toggled.
  * @property {Object} [off] Value to filter on when not toggled.
@@ -26333,7 +27731,7 @@ var createSendEvent = function createSendEvent(_ref) {
  * @property {ToggleValue} value The current toggle value.
  * @property {function():string} createURL Creates an URL for the next state.
  * @property {function(value)} refine Updates to the next state by applying the toggle refinement.
- * @property {Object} widgetParams All original `CustomToggleWidgetOptions` forwarded to the `renderFn`.
+ * @property {Object} widgetParams All original `CustomToggleWidgetParams` forwarded to the `renderFn`.
  */
 
 /**
@@ -26347,7 +27745,7 @@ var createSendEvent = function createSendEvent(_ref) {
  * @type {Connector}
  * @param {function(ToggleRenderingOptions, boolean)} renderFn Rendering function for the custom **Toggle** widget.
  * @param {function} unmountFn Unmount function called when the widget is disposed.
- * @return {function(CustomToggleWidgetOptions)} Re-usable widget factory for a custom **Toggle** widget.
+ * @return {function(CustomToggleWidgetParams)} Re-usable widget factory for a custom **Toggle** widget.
  * @example
  * // custom `renderFn` to render the custom ClearAll widget
  * function renderFn(ToggleRenderingOptions, isFirstRendering) {
@@ -26474,13 +27872,13 @@ function connectToggleRefinement(renderFn) {
       $$type: $$type,
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -26490,7 +27888,7 @@ function connectToggleRefinement(renderFn) {
         return state.removeDisjunctiveFacet(attribute);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           toggleRefinement: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -26600,8 +27998,8 @@ function connectToggleRefinement(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
-          toggle: _objectSpread({}, uiState.toggle, _defineProperty({}, attribute, isRefined))
+        return _objectSpread(_objectSpread({}, uiState), {}, {
+          toggle: _objectSpread(_objectSpread({}, uiState.toggle), {}, _defineProperty({}, attribute, isRefined))
         });
       },
       getWidgetSearchParameters: function getWidgetSearchParameters(searchParameters, _ref10) {
@@ -26632,7 +28030,7 @@ function connectToggleRefinement(renderFn) {
 
 
         return withFacetConfiguration.setQueryParameters({
-          disjunctiveFacetsRefinements: _objectSpread({}, searchParameters.disjunctiveFacetsRefinements, _defineProperty({}, attribute, []))
+          disjunctiveFacetsRefinements: _objectSpread(_objectSpread({}, searchParameters.disjunctiveFacetsRefinements), {}, _defineProperty({}, attribute, []))
         });
       }
     };
@@ -26673,7 +28071,57 @@ var _suit = require("../../lib/suit");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'toggle-refinement'
 });
@@ -26730,7 +28178,7 @@ var renderer = function renderer(_ref) {
  */
 
 /**
- * @typedef {Object} ToggleWidgetOptions
+ * @typedef {Object} ToggleWidgetParams
  * @property {string|HTMLElement} container Place where to insert the widget in your webpage.
  * @property {string} attribute Name of the attribute for faceting (eg. "free_shipping").
  * @property {string|number|boolean|array} on Value to filter on when checked.
@@ -26757,7 +28205,7 @@ var renderer = function renderer(_ref) {
  * @type {WidgetFactory}
  * @devNovel ToggleRefinement
  * @category filter
- * @param {ToggleWidgetOptions} $0 Options for the ToggleRefinement widget.
+ * @param {ToggleWidgetParams} widgetParams Options for the ToggleRefinement widget.
  * @return {Widget} A new instance of the ToggleRefinement widget
  * @example
  * search.addWidgets([
@@ -26773,8 +28221,8 @@ var renderer = function renderer(_ref) {
  */
 
 
-function toggleRefinement() {
-  var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+function toggleRefinement(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       attribute = _ref3.attribute,
       _ref3$cssClasses = _ref3.cssClasses,
@@ -26811,10 +28259,12 @@ function toggleRefinement() {
   var makeWidget = (0, _connectToggleRefinement.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     attribute: attribute,
     on: on,
     off: off
+  })), {}, {
+    $$widgetType: 'ais.toggleRefinement'
   });
 }
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../components/ToggleRefinement/ToggleRefinement":"../node_modules/instantsearch.js/es/components/ToggleRefinement/ToggleRefinement.js","../../connectors/toggle-refinement/connectToggleRefinement":"../node_modules/instantsearch.js/es/connectors/toggle-refinement/connectToggleRefinement.js","./defaultTemplates":"../node_modules/instantsearch.js/es/widgets/toggle-refinement/defaultTemplates.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/widgets/analytics/analytics.js":[function(require,module,exports) {
@@ -26955,7 +28405,7 @@ var analytics = function analytics(widgetParams) {
     }
 
     var serializedParams = [];
-    var serializedRefinements = serializeRefinements(_objectSpread({}, analyticsState.state.disjunctiveFacetsRefinements, {}, analyticsState.state.facetsRefinements, {}, analyticsState.state.hierarchicalFacetsRefinements));
+    var serializedRefinements = serializeRefinements(_objectSpread(_objectSpread(_objectSpread({}, analyticsState.state.disjunctiveFacetsRefinements), analyticsState.state.facetsRefinements), analyticsState.state.hierarchicalFacetsRefinements));
     var serializedNumericRefinements = serializeNumericRefinements(analyticsState.state.numericRefinements);
 
     if (serializedRefinements !== '') {
@@ -26995,6 +28445,8 @@ var analytics = function analytics(widgetParams) {
   };
 
   return {
+    $$type: 'ais.analytics',
+    $$widgetType: 'ais.analytics',
     init: function init() {
       if (triggerOnUIInteraction === true) {
         document.addEventListener('click', onClick);
@@ -27030,7 +28482,7 @@ var analytics = function analytics(widgetParams) {
       }
     },
     getRenderState: function getRenderState(renderState, renderOptions) {
-      return _objectSpread({}, renderState, {
+      return _objectSpread(_objectSpread({}, renderState), {}, {
         analytics: this.getWidgetRenderState(renderOptions)
       });
     },
@@ -27203,18 +28655,34 @@ function _defineProperty(obj, key, value) {
 }
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
 }
 
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -27275,12 +28743,12 @@ var connectBreadcrumb = function connectBreadcrumb(renderFn) {
     return {
       $$type: 'ais.breadcrumb',
       init: function init(initOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: initOptions.instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: renderOptions.instantSearchInstance
         }), false);
       },
@@ -27288,8 +28756,8 @@ var connectBreadcrumb = function connectBreadcrumb(renderFn) {
         unmountFn();
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
-          breadcrumb: _objectSpread({}, renderState.breadcrumb, _defineProperty({}, hierarchicalFacetName, this.getWidgetRenderState(renderOptions)))
+        return _objectSpread(_objectSpread({}, renderState), {}, {
+          breadcrumb: _objectSpread(_objectSpread({}, renderState.breadcrumb), {}, _defineProperty({}, hierarchicalFacetName, this.getWidgetRenderState(renderOptions)))
         });
       },
       getWidgetRenderState: function getWidgetRenderState(_ref2) {
@@ -27432,7 +28900,57 @@ var _suit = require("../../lib/suit");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'breadcrumb'
 });
@@ -27470,8 +28988,8 @@ var renderer = function renderer(_ref) {
   };
 };
 
-var breadcrumb = function breadcrumb(widgetOptions) {
-  var _ref3 = widgetOptions || {},
+var breadcrumb = function breadcrumb(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       attributes = _ref3.attributes,
       separator = _ref3.separator,
@@ -27515,14 +29033,16 @@ var breadcrumb = function breadcrumb(widgetOptions) {
     renderState: {},
     templates: templates
   });
-  var makeBreadcrumb = (0, _connectBreadcrumb.default)(specializedRenderer, function () {
+  var makeWidget = (0, _connectBreadcrumb.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeBreadcrumb({
+  return _objectSpread(_objectSpread({}, makeWidget({
     attributes: attributes,
     separator: separator,
     rootPath: rootPath,
     transformItems: transformItems
+  })), {}, {
+    $$widgetType: 'ais.breadcrumb'
   });
 };
 
@@ -27643,7 +29163,7 @@ exports.default = _default;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = menuSelect;
+exports.default = void 0;
 
 var _preact = require("preact");
 
@@ -27661,7 +29181,57 @@ var _suit = require("../../lib/suit");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'menu-select'
 });
@@ -27675,7 +29245,6 @@ var renderer = function renderer(_ref) {
   return function (_ref2, isFirstRendering) {
     var refine = _ref2.refine,
         items = _ref2.items,
-        canRefine = _ref2.canRefine,
         instantSearchInstance = _ref2.instantSearchInstance;
 
     if (isFirstRendering) {
@@ -27691,58 +29260,14 @@ var renderer = function renderer(_ref) {
       cssClasses: cssClasses,
       items: items,
       refine: refine,
-      templateProps: renderState.templateProps,
-      canRefine: canRefine
+      templateProps: renderState.templateProps
     }), containerNode);
   };
 };
-/**
- * @typedef {Object} MenuSelectCSSClasses
- * @property {string|string[]} [root] CSS class to add to the root element.
- * @property {string|string[]} [noRefinementRoot] CSS class to add to the root when there are no items to display
- * @property {string|string[]} [select] CSS class to add to the select element.
- * @property {string|string[]} [option] CSS class to add to the option element.
- *
- */
 
-/**
- * @typedef {Object} MenuSelectTemplates
- * @property {string|function(label: string, count: number, isRefined: boolean, value: string)} [item] Item template, provided with `label`, `count`, `isRefined` and `value` data properties.
- * @property {string} [defaultOption = 'See all'] Label of the "see all" option in the select.
- */
-
-/**
- * @typedef {Object} MenuSelectWidgetOptions
- * @property {string|HTMLElement} container CSS Selector or HTMLElement to insert the widget.
- * @property {string} attribute Name of the attribute for faceting
- * @property {string[]|function} [sortBy=['name:asc']] How to sort refinements. Possible values: `count|isRefined|name:asc|name:desc`.
- *
- * You can also use a sort function that behaves like the standard Javascript [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Syntax).
- * @property {MenuSelectTemplates} [templates] Customize the output through templating.
- * @property {number} [limit=10] How many facets values to retrieve.
- * @property {MenuSelectCSSClasses} [cssClasses] CSS classes to add to the wrapping elements.
- * @property {function(object[]):object[]} [transformItems] Function to transform the items passed to the templates.
- */
-
-/**
- * Create a menu select out of a facet
- * @type {WidgetFactory}
- * @category filter
- * @param {MenuSelectWidgetOptions} $0 The Menu select widget options.
- * @return {Widget} Creates a new instance of the Menu select widget.
- * @example
- * search.addWidgets([
- *   instantsearch.widgets.menuSelect({
- *     container: '#categories-menuSelect',
- *     attribute: 'hierarchicalCategories.lvl0',
- *     limit: 10,
- *   })
- * ]);
- */
-
-
-function menuSelect(_ref3) {
-  var container = _ref3.container,
+var menuSelect = function menuSelect(widgetParams) {
+  var _ref3 = widgetParams || {},
+      container = _ref3.container,
       attribute = _ref3.attribute,
       _ref3$sortBy = _ref3.sortBy,
       sortBy = _ref3$sortBy === void 0 ? ['name:asc'] : _ref3$sortBy,
@@ -27780,13 +29305,18 @@ function menuSelect(_ref3) {
   var makeWidget = (0, _connectMenu.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     attribute: attribute,
     limit: limit,
     sortBy: sortBy,
     transformItems: transformItems
+  })), {}, {
+    $$widgetType: 'ais.menuSelect'
   });
-}
+};
+
+var _default = menuSelect;
+exports.default = _default;
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../connectors/menu/connectMenu":"../node_modules/instantsearch.js/es/connectors/menu/connectMenu.js","../../components/MenuSelect/MenuSelect":"../node_modules/instantsearch.js/es/components/MenuSelect/MenuSelect.js","./defaultTemplates":"../node_modules/instantsearch.js/es/widgets/menu-select/defaultTemplates.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/instantsearch.js/es/components/PoweredBy/PoweredBy.js":[function(require,module,exports) {
 "use strict";
 
@@ -27798,14 +29328,14 @@ exports.default = void 0;
 var _preact = require("preact");
 
 /** @jsx h */
-var _ref2 = /*#__PURE__*/(0, _preact.h)("path", {
+var _ref2 = (0, _preact.h)("path", {
   fill: "#5468FF",
-  d: "M78.99.94h16.6a2.97 2.97 0 0 1 2.96 2.96v16.6a2.97 2.97 0 0 1-2.97 2.96h-16.6a2.97 2.97 0 0 1-2.96-2.96V3.9A2.96 2.96 0 0 1 79 .94"
+  d: "M78.99.94h16.6a2.97 2.97 0 012.96 2.96v16.6a2.97 2.97 0 01-2.97 2.96h-16.6a2.97 2.97 0 01-2.96-2.96V3.9A2.96 2.96 0 0179 .94"
 });
 
-var _ref3 = /*#__PURE__*/(0, _preact.h)("path", {
+var _ref3 = (0, _preact.h)("path", {
   fill: "#FFF",
-  d: "M89.63 5.97v-.78a.98.98 0 0 0-.98-.97h-2.28a.98.98 0 0 0-.97.97V6c0 .09.08.15.17.13a7.13 7.13 0 0 1 3.9-.02c.08.02.16-.04.16-.13m-6.25 1L83 6.6a.98.98 0 0 0-1.38 0l-.46.46a.97.97 0 0 0 0 1.38l.38.39c.06.06.15.04.2-.02a7.49 7.49 0 0 1 1.63-1.62c.07-.04.08-.14.02-.2m4.16 2.45v3.34c0 .1.1.17.2.12l2.97-1.54c.06-.03.08-.12.05-.18a3.7 3.7 0 0 0-3.08-1.87c-.07 0-.14.06-.14.13m0 8.05a4.49 4.49 0 1 1 0-8.98 4.49 4.49 0 0 1 0 8.98m0-10.85a6.37 6.37 0 1 0 0 12.74 6.37 6.37 0 0 0 0-12.74"
+  d: "M89.63 5.97v-.78a.98.98 0 00-.98-.97h-2.28a.98.98 0 00-.97.97V6c0 .09.08.15.17.13a7.13 7.13 0 013.9-.02c.08.02.16-.04.16-.13m-6.25 1L83 6.6a.98.98 0 00-1.38 0l-.46.46a.97.97 0 000 1.38l.38.39c.06.06.15.04.2-.02a7.49 7.49 0 011.63-1.62c.07-.04.08-.14.02-.2m4.16 2.45v3.34c0 .1.1.17.2.12l2.97-1.54c.06-.03.08-.12.05-.18a3.7 3.7 0 00-3.08-1.87c-.07 0-.14.06-.14.13m0 8.05a4.49 4.49 0 110-8.98 4.49 4.49 0 010 8.98m0-10.85a6.37 6.37 0 100 12.74 6.37 6.37 0 000-12.74"
 });
 
 var PoweredBy = function PoweredBy(_ref) {
@@ -27831,10 +29361,10 @@ var PoweredBy = function PoweredBy(_ref) {
     }
   }, (0, _preact.h)("path", {
     fill: theme === 'dark' ? '#FFF' : '#5D6494',
-    d: "M6.97 6.68V8.3a4.47 4.47 0 0 0-2.42-.67 2.2 2.2 0 0 0-1.38.4c-.34.26-.5.6-.5 1.02 0 .43.16.77.49 1.03.33.25.83.53 1.51.83a7.04 7.04 0 0 1 1.9 1.08c.34.24.58.54.73.89.15.34.23.74.23 1.18 0 .95-.33 1.7-1 2.24a4 4 0 0 1-2.6.81 5.71 5.71 0 0 1-2.94-.68v-1.71c.84.63 1.81.94 2.92.94.58 0 1.05-.14 1.39-.4.34-.28.5-.65.5-1.13 0-.29-.1-.55-.3-.8a2.2 2.2 0 0 0-.65-.53 23.03 23.03 0 0 0-1.64-.78 13.67 13.67 0 0 1-1.11-.64c-.12-.1-.28-.22-.46-.4a1.72 1.72 0 0 1-.39-.5 4.46 4.46 0 0 1-.22-.6c-.07-.23-.1-.48-.1-.75 0-.91.33-1.63 1-2.17a4 4 0 0 1 2.57-.8c.97 0 1.8.18 2.47.52zm7.47 5.7v-.3a2.26 2.26 0 0 0-.5-1.44c-.3-.35-.74-.53-1.32-.53-.53 0-.99.2-1.37.58-.38.39-.62.95-.72 1.68h3.91zm1 2.79v1.4c-.6.34-1.38.51-2.36.51a4.02 4.02 0 0 1-3-1.13 4.04 4.04 0 0 1-1.11-2.97c0-1.3.34-2.32 1.02-3.06a3.38 3.38 0 0 1 2.6-1.1c1.03 0 1.85.32 2.46.96.6.64.9 1.57.9 2.78 0 .33-.03.68-.09 1.04h-5.31c.1.7.4 1.24.89 1.61.49.38 1.1.56 1.85.56.86 0 1.58-.2 2.15-.6zm6.61-1.78h-1.21c-.6 0-1.05.12-1.35.36-.3.23-.46.53-.46.89 0 .37.12.66.36.88.23.2.57.32 1.02.32.5 0 .9-.15 1.2-.43.3-.28.44-.65.44-1.1v-.92zm-4.07-2.55V9.33a4.96 4.96 0 0 1 2.5-.55c2.1 0 3.17 1.03 3.17 3.08V17H22.1v-.96c-.42.68-1.15 1.02-2.19 1.02-.76 0-1.38-.22-1.84-.66-.46-.44-.7-1-.7-1.68 0-.78.3-1.38.88-1.81.59-.43 1.4-.65 2.46-.65h1.34v-.46c0-.55-.13-.97-.4-1.25-.26-.29-.7-.43-1.32-.43-.86 0-1.65.24-2.35.72zm9.34-1.93v1.42c.39-1 1.1-1.5 2.12-1.5.15 0 .31.02.5.05v1.53c-.23-.1-.48-.14-.76-.14-.54 0-.99.24-1.34.71a2.8 2.8 0 0 0-.52 1.71V17h-1.57V8.91h1.57zm5 4.09a3 3 0 0 0 .76 2.01c.47.53 1.14.8 2 .8.64 0 1.24-.18 1.8-.53v1.4c-.53.32-1.2.48-2 .48a3.98 3.98 0 0 1-4.17-4.18c0-1.16.38-2.15 1.14-2.98a4 4 0 0 1 3.1-1.23c.7 0 1.34.15 1.92.44v1.44a3.24 3.24 0 0 0-1.77-.5A2.65 2.65 0 0 0 32.33 13zm7.92-7.28v4.58c.46-1 1.3-1.5 2.5-1.5.8 0 1.42.24 1.9.73.48.5.72 1.17.72 2.05V17H43.8v-5.1c0-.56-.14-.99-.43-1.29-.28-.3-.65-.45-1.1-.45-.54 0-1 .2-1.42.6-.4.4-.61 1.02-.61 1.85V17h-1.56V5.72h1.56zM55.2 15.74c.6 0 1.1-.25 1.5-.76.4-.5.6-1.16.6-1.95 0-.92-.2-1.62-.6-2.12-.4-.5-.92-.74-1.55-.74-.56 0-1.05.22-1.5.67-.44.45-.66 1.13-.66 2.06 0 .96.22 1.67.64 2.14.43.47.95.7 1.57.7zM53 5.72v4.42a2.74 2.74 0 0 1 2.43-1.34c1.03 0 1.86.38 2.51 1.15.65.76.97 1.78.97 3.05 0 1.13-.3 2.1-.92 2.9-.62.81-1.47 1.21-2.54 1.21s-1.9-.45-2.46-1.34V17h-1.58V5.72H53zm9.9 11.1l-3.22-7.9h1.74l1 2.62 1.26 3.42c.1-.32.48-1.46 1.15-3.42l.91-2.63h1.66l-2.92 7.87c-.78 2.07-1.96 3.1-3.56 3.1-.28 0-.53-.02-.73-.07v-1.34c.17.04.35.06.54.06 1.03 0 1.76-.57 2.17-1.7z"
+    d: "M6.97 6.68V8.3a4.47 4.47 0 00-2.42-.67 2.2 2.2 0 00-1.38.4c-.34.26-.5.6-.5 1.02 0 .43.16.77.49 1.03.33.25.83.53 1.51.83a7.04 7.04 0 011.9 1.08c.34.24.58.54.73.89.15.34.23.74.23 1.18 0 .95-.33 1.7-1 2.24a4 4 0 01-2.6.81 5.71 5.71 0 01-2.94-.68v-1.71c.84.63 1.81.94 2.92.94.58 0 1.05-.14 1.39-.4.34-.28.5-.65.5-1.13 0-.29-.1-.55-.3-.8a2.2 2.2 0 00-.65-.53 23.03 23.03 0 00-1.64-.78 13.67 13.67 0 01-1.11-.64c-.12-.1-.28-.22-.46-.4a1.72 1.72 0 01-.39-.5 4.46 4.46 0 01-.22-.6c-.07-.23-.1-.48-.1-.75 0-.91.33-1.63 1-2.17a4 4 0 012.57-.8c.97 0 1.8.18 2.47.52zm7.47 5.7v-.3a2.26 2.26 0 00-.5-1.44c-.3-.35-.74-.53-1.32-.53-.53 0-.99.2-1.37.58a2.9 2.9 0 00-.72 1.68h3.91zm1 2.79v1.4c-.6.34-1.38.51-2.36.51a4.02 4.02 0 01-3-1.13 4.04 4.04 0 01-1.11-2.97c0-1.3.34-2.32 1.02-3.06a3.38 3.38 0 012.6-1.1c1.03 0 1.85.32 2.46.96.6.64.9 1.57.9 2.78 0 .33-.03.68-.09 1.04h-5.31c.1.7.4 1.24.89 1.61.49.38 1.1.56 1.85.56.86 0 1.58-.2 2.15-.6zm6.61-1.78h-1.21c-.6 0-1.05.12-1.35.36-.3.23-.46.53-.46.89 0 .37.12.66.36.88.23.2.57.32 1.02.32.5 0 .9-.15 1.2-.43.3-.28.44-.65.44-1.1v-.92zm-4.07-2.55V9.33a4.96 4.96 0 012.5-.55c2.1 0 3.17 1.03 3.17 3.08V17H22.1v-.96c-.42.68-1.15 1.02-2.19 1.02-.76 0-1.38-.22-1.84-.66-.46-.44-.7-1-.7-1.68 0-.78.3-1.38.88-1.81.59-.43 1.4-.65 2.46-.65h1.34v-.46c0-.55-.13-.97-.4-1.25-.26-.29-.7-.43-1.32-.43-.86 0-1.65.24-2.35.72zm9.34-1.93v1.42c.39-1 1.1-1.5 2.12-1.5.15 0 .31.02.5.05v1.53c-.23-.1-.48-.14-.76-.14-.54 0-.99.24-1.34.71a2.8 2.8 0 00-.52 1.71V17h-1.57V8.91h1.57zm5 4.09a3 3 0 00.76 2.01c.47.53 1.14.8 2 .8.64 0 1.24-.18 1.8-.53v1.4c-.53.32-1.2.48-2 .48a3.98 3.98 0 01-4.17-4.18c0-1.16.38-2.15 1.14-2.98a4 4 0 013.1-1.23c.7 0 1.34.15 1.92.44v1.44a3.24 3.24 0 00-1.77-.5A2.65 2.65 0 0032.33 13zm7.92-7.28v4.58c.46-1 1.3-1.5 2.5-1.5.8 0 1.42.24 1.9.73.48.5.72 1.17.72 2.05V17H43.8v-5.1c0-.56-.14-.99-.43-1.29-.28-.3-.65-.45-1.1-.45-.54 0-1 .2-1.42.6-.4.4-.61 1.02-.61 1.85V17h-1.56V5.72h1.56zM55.2 15.74c.6 0 1.1-.25 1.5-.76.4-.5.6-1.16.6-1.95 0-.92-.2-1.62-.6-2.12-.4-.5-.92-.74-1.55-.74-.56 0-1.05.22-1.5.67-.44.45-.66 1.13-.66 2.06 0 .96.22 1.67.64 2.14.43.47.95.7 1.57.7zM53 5.72v4.42a2.74 2.74 0 012.43-1.34c1.03 0 1.86.38 2.51 1.15.65.76.97 1.78.97 3.05 0 1.13-.3 2.1-.92 2.9-.62.81-1.47 1.21-2.54 1.21s-1.9-.45-2.46-1.34V17h-1.58V5.72H53zm9.9 11.1l-3.22-7.9h1.74l1 2.62 1.26 3.42c.1-.32.48-1.46 1.15-3.42l.91-2.63h1.66l-2.92 7.87c-.78 2.07-1.96 3.1-3.56 3.1-.28 0-.53-.02-.73-.07v-1.34c.17.04.35.06.54.06 1.03 0 1.76-.57 2.17-1.7z"
   }), _ref2, _ref3, (0, _preact.h)("path", {
     fill: theme === 'dark' ? '#FFF' : '#5468FF',
-    d: "M120.92 18.8c-4.38.02-4.38-3.54-4.38-4.1V1.36l2.67-.42v13.25c0 .32 0 2.36 1.71 2.37v2.24zm-10.84-2.18c.82 0 1.43-.04 1.85-.12v-2.72a5.48 5.48 0 0 0-1.57-.2c-.3 0-.6.02-.9.07-.3.04-.57.12-.81.24-.24.11-.44.28-.58.49a.93.93 0 0 0-.22.65c0 .63.22 1 .61 1.23.4.24.94.36 1.62.36zm-.23-9.7c.88 0 1.62.11 2.23.33.6.22 1.09.53 1.44.92.36.4.61.92.76 1.48.16.56.23 1.17.23 1.85v6.87c-.4.1-1.03.2-1.86.32-.84.12-1.78.18-2.82.18-.69 0-1.32-.07-1.9-.2a4 4 0 0 1-1.46-.63c-.4-.3-.72-.67-.96-1.13a4.3 4.3 0 0 1-.34-1.8c0-.66.13-1.08.39-1.53.26-.45.6-.82 1.04-1.1.45-.3.95-.5 1.54-.62a8.8 8.8 0 0 1 3.79.05v-.44c0-.3-.04-.6-.11-.87a1.78 1.78 0 0 0-1.1-1.22c-.31-.12-.7-.2-1.15-.2a9.75 9.75 0 0 0-2.95.46l-.33-2.19c.34-.12.84-.23 1.48-.35.65-.12 1.34-.18 2.08-.18zm52.84 9.63c.82 0 1.43-.05 1.85-.13V13.7a5.42 5.42 0 0 0-1.57-.2c-.3 0-.6.02-.9.07-.3.04-.57.12-.81.24-.24.12-.44.28-.58.5a.93.93 0 0 0-.22.65c0 .63.22.99.61 1.23.4.24.94.36 1.62.36zm-.23-9.7c.88 0 1.63.11 2.23.33.6.22 1.1.53 1.45.92.35.39.6.92.76 1.48.15.56.23 1.18.23 1.85v6.88c-.41.08-1.03.19-1.87.31-.83.12-1.77.18-2.81.18-.7 0-1.33-.06-1.9-.2a4 4 0 0 1-1.47-.63c-.4-.3-.72-.67-.95-1.13a4.3 4.3 0 0 1-.34-1.8c0-.66.13-1.08.38-1.53.26-.45.61-.82 1.05-1.1.44-.3.95-.5 1.53-.62a8.8 8.8 0 0 1 3.8.05v-.43c0-.31-.04-.6-.12-.88-.07-.28-.2-.52-.38-.73a1.78 1.78 0 0 0-.73-.5c-.3-.1-.68-.2-1.14-.2a9.85 9.85 0 0 0-2.95.47l-.32-2.19a11.63 11.63 0 0 1 3.55-.53zm-8.03-1.27a1.62 1.62 0 0 0 0-3.24 1.62 1.62 0 1 0 0 3.24zm1.35 13.22h-2.7V7.27l2.7-.42V18.8zm-4.72 0c-4.38.02-4.38-3.54-4.38-4.1l-.01-13.34 2.67-.42v13.25c0 .32 0 2.36 1.72 2.37v2.24zm-8.7-5.9a4.7 4.7 0 0 0-.74-2.79 2.4 2.4 0 0 0-2.07-1 2.4 2.4 0 0 0-2.06 1 4.7 4.7 0 0 0-.74 2.8c0 1.16.25 1.94.74 2.62a2.4 2.4 0 0 0 2.07 1.02c.88 0 1.57-.34 2.07-1.02.49-.68.73-1.46.73-2.63zm2.74 0a6.46 6.46 0 0 1-1.52 4.23c-.49.53-1.07.94-1.76 1.22-.68.29-1.73.45-2.26.45-.53 0-1.58-.15-2.25-.45a5.1 5.1 0 0 1-2.88-3.13 7.3 7.3 0 0 1-.01-4.84 5.13 5.13 0 0 1 2.9-3.1 5.67 5.67 0 0 1 2.22-.42c.81 0 1.56.14 2.24.42.69.29 1.28.69 1.75 1.22.49.52.87 1.15 1.14 1.89a7 7 0 0 1 .43 2.5zm-20.14 0c0 1.11.25 2.36.74 2.88.5.52 1.13.78 1.91.78a4.07 4.07 0 0 0 2.12-.6V9.33c-.19-.04-.99-.2-1.76-.23a2.67 2.67 0 0 0-2.23 1 4.73 4.73 0 0 0-.78 2.8zm7.44 5.27c0 1.82-.46 3.16-1.4 4-.94.85-2.37 1.27-4.3 1.27-.7 0-2.17-.13-3.34-.4l.43-2.11c.98.2 2.27.26 2.95.26 1.08 0 1.84-.22 2.3-.66.46-.43.68-1.08.68-1.94v-.44a5.2 5.2 0 0 1-2.54.6 5.6 5.6 0 0 1-2.01-.36 4.2 4.2 0 0 1-2.58-2.71 9.88 9.88 0 0 1 .02-5.35 4.92 4.92 0 0 1 2.93-2.96 6.6 6.6 0 0 1 2.43-.46 19.64 19.64 0 0 1 4.43.66v10.6z"
+    d: "M120.92 18.8c-4.38.02-4.38-3.54-4.38-4.1V1.36l2.67-.42v13.25c0 .32 0 2.36 1.71 2.37v2.24zm-10.84-2.18c.82 0 1.43-.04 1.85-.12v-2.72a5.48 5.48 0 00-1.57-.2c-.3 0-.6.02-.9.07-.3.04-.57.12-.81.24-.24.11-.44.28-.58.49a.93.93 0 00-.22.65c0 .63.22 1 .61 1.23.4.24.94.36 1.62.36zm-.23-9.7c.88 0 1.62.11 2.23.33.6.22 1.09.53 1.44.92.36.4.61.92.76 1.48.16.56.23 1.17.23 1.85v6.87a21.69 21.69 0 01-4.68.5c-.69 0-1.32-.07-1.9-.2a4 4 0 01-1.46-.63 3.3 3.3 0 01-.96-1.13 4.3 4.3 0 01-.34-1.8 3.13 3.13 0 011.43-2.63c.45-.3.95-.5 1.54-.62a8.8 8.8 0 013.79.05v-.44c0-.3-.04-.6-.11-.87a1.78 1.78 0 00-1.1-1.22 3.2 3.2 0 00-1.15-.2 9.75 9.75 0 00-2.95.46l-.33-2.19a11.43 11.43 0 013.56-.53zm52.84 9.63c.82 0 1.43-.05 1.85-.13V13.7a5.42 5.42 0 00-1.57-.2c-.3 0-.6.02-.9.07-.3.04-.57.12-.81.24-.24.12-.44.28-.58.5a.93.93 0 00-.22.65c0 .63.22.99.61 1.23.4.24.94.36 1.62.36zm-.23-9.7c.88 0 1.63.11 2.23.33.6.22 1.1.53 1.45.92.35.39.6.92.76 1.48.15.56.23 1.18.23 1.85v6.88c-.41.08-1.03.19-1.87.31-.83.12-1.77.18-2.81.18-.7 0-1.33-.06-1.9-.2a4 4 0 01-1.47-.63c-.4-.3-.72-.67-.95-1.13a4.3 4.3 0 01-.34-1.8c0-.66.13-1.08.38-1.53.26-.45.61-.82 1.05-1.1.44-.3.95-.5 1.53-.62a8.8 8.8 0 013.8.05v-.43c0-.31-.04-.6-.12-.88-.07-.28-.2-.52-.38-.73a1.78 1.78 0 00-.73-.5c-.3-.1-.68-.2-1.14-.2a9.85 9.85 0 00-2.95.47l-.32-2.19a11.63 11.63 0 013.55-.53zm-8.03-1.27a1.62 1.62 0 000-3.24 1.62 1.62 0 100 3.24zm1.35 13.22h-2.7V7.27l2.7-.42V18.8zm-4.72 0c-4.38.02-4.38-3.54-4.38-4.1l-.01-13.34 2.67-.42v13.25c0 .32 0 2.36 1.72 2.37v2.24zm-8.7-5.9a4.7 4.7 0 00-.74-2.79 2.4 2.4 0 00-2.07-1 2.4 2.4 0 00-2.06 1 4.7 4.7 0 00-.74 2.8c0 1.16.25 1.94.74 2.62a2.4 2.4 0 002.07 1.02c.88 0 1.57-.34 2.07-1.02a4.2 4.2 0 00.73-2.63zm2.74 0a6.46 6.46 0 01-1.52 4.23c-.49.53-1.07.94-1.76 1.22-.68.29-1.73.45-2.26.45a6.6 6.6 0 01-2.25-.45 5.1 5.1 0 01-2.88-3.13 7.3 7.3 0 01-.01-4.84 5.13 5.13 0 012.9-3.1 5.67 5.67 0 012.22-.42c.81 0 1.56.14 2.24.42.69.29 1.28.69 1.75 1.22.49.52.87 1.15 1.14 1.89a7 7 0 01.43 2.5zm-20.14 0c0 1.11.25 2.36.74 2.88.5.52 1.13.78 1.91.78a4.07 4.07 0 002.12-.6V9.33c-.19-.04-.99-.2-1.76-.23a2.67 2.67 0 00-2.23 1 4.73 4.73 0 00-.78 2.8zm7.44 5.27c0 1.82-.46 3.16-1.4 4-.94.85-2.37 1.27-4.3 1.27-.7 0-2.17-.13-3.34-.4l.43-2.11c.98.2 2.27.26 2.95.26 1.08 0 1.84-.22 2.3-.66.46-.43.68-1.08.68-1.94v-.44a5.2 5.2 0 01-2.54.6 5.6 5.6 0 01-2.01-.36 4.2 4.2 0 01-2.58-2.71 9.88 9.88 0 01.02-5.35 4.92 4.92 0 012.93-2.96 6.6 6.6 0 012.43-.46 19.64 19.64 0 014.43.66v10.6z"
   }))));
 };
 
@@ -27921,18 +29451,18 @@ var connectPoweredBy = function connectPoweredBy(renderFn) {
       $$type: 'ais.poweredBy',
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           poweredBy: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -27973,7 +29503,57 @@ var _suit = require("../../lib/suit");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 /** @jsx h */
+
+
 var suit = (0, _suit.component)('PoweredBy');
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
   name: 'powered-by'
@@ -28005,7 +29585,7 @@ var renderer = function renderer(_ref) {
  */
 
 /**
- * @typedef {Object} PoweredByWidgetOptions
+ * @typedef {Object} PoweredByWidgetParams
  * @property {string|HTMLElement} container Place where to insert the widget in your webpage.
  * @property {string} [theme] The theme of the logo ("light" or "dark").
  * @property {PoweredByWidgetCssClasses} [cssClasses] CSS classes to add.
@@ -28016,7 +29596,7 @@ var renderer = function renderer(_ref) {
  * @type {WidgetFactory}
  * @devNovel PoweredBy
  * @category metadata
- * @param {PoweredByWidgetOptions} $0 PoweredBy widget options. Some keys are mandatory: `container`,
+ * @param {PoweredByWidgetParams} widgetParams PoweredBy widget options. Some keys are mandatory: `container`,
  * @return {Widget} A new poweredBy widget instance
  * @example
  * search.addWidgets([
@@ -28028,8 +29608,8 @@ var renderer = function renderer(_ref) {
  */
 
 
-function poweredBy() {
-  var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+function poweredBy(widgetParams) {
+  var _ref3 = widgetParams || {},
       container = _ref3.container,
       _ref3$cssClasses = _ref3.cssClasses,
       userCssClasses = _ref3$cssClasses === void 0 ? {} : _ref3$cssClasses,
@@ -28059,8 +29639,10 @@ function poweredBy() {
   var makeWidget = (0, _connectPoweredBy.default)(specializedRenderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     theme: theme
+  })), {}, {
+    $$widgetType: 'ais.poweredBy'
   });
 }
 },{"preact":"../node_modules/preact/dist/preact.module.js","classnames":"../node_modules/classnames/index.js","../../components/PoweredBy/PoweredBy":"../node_modules/instantsearch.js/es/components/PoweredBy/PoweredBy.js","../../connectors/powered-by/connectPoweredBy":"../node_modules/instantsearch.js/es/connectors/powered-by/connectPoweredBy.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js","../../lib/suit":"../node_modules/instantsearch.js/es/lib/suit.js"}],"../node_modules/preact/hooks/dist/hooks.module.js":[function(require,module,exports) {
@@ -28274,18 +29856,34 @@ function _defineProperty(obj, key, value) {
 }
 
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
 }
 
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -28491,8 +30089,8 @@ var renderer = function renderer(_ref) {
  */
 
 
-var panel = function panel(widgetParams) {
-  var _ref3 = widgetParams || {},
+var panel = function panel(panelWidgetParams) {
+  var _ref3 = panelWidgetParams || {},
       _ref3$templates = _ref3.templates,
       templates = _ref3$templates === void 0 ? {} : _ref3$templates,
       _ref3$hidden = _ref3.hidden,
@@ -28538,8 +30136,8 @@ var panel = function panel(widgetParams) {
     }), userCssClasses.footer)
   };
   return function (widgetFactory) {
-    return function (widgetOptions) {
-      var _ref4 = widgetOptions || {},
+    return function (widgetParams) {
+      var _ref4 = widgetParams || {},
           container = _ref4.container;
 
       if (!container) {
@@ -28558,7 +30156,7 @@ var panel = function panel(widgetParams) {
         containerNode: (0, _utils.getContainerNode)(container),
         bodyContainerNode: bodyContainerNode,
         cssClasses: cssClasses,
-        templates: _objectSpread({}, defaultTemplates, {}, templates)
+        templates: _objectSpread(_objectSpread({}, defaultTemplates), templates)
       });
       renderPanel({
         options: {},
@@ -28566,10 +30164,10 @@ var panel = function panel(widgetParams) {
         collapsible: collapsible,
         collapsed: false
       });
-      var widget = widgetFactory(_objectSpread({}, widgetOptions, {
+      var widget = widgetFactory(_objectSpread(_objectSpread({}, widgetParams), {}, {
         container: bodyContainerNode
       }));
-      return _objectSpread({}, widget, {
+      return _objectSpread(_objectSpread({}, widget), {}, {
         dispose: function dispose() {
           (0, _preact.render)(null, (0, _utils.getContainerNode)(container));
 
@@ -28592,7 +30190,7 @@ var panel = function panel(widgetParams) {
 
           var renderOptions = args[0];
 
-          var options = _objectSpread({}, widget.getWidgetRenderState ? widget.getWidgetRenderState(renderOptions) : {}, {}, renderOptions);
+          var options = _objectSpread(_objectSpread({}, widget.getWidgetRenderState ? widget.getWidgetRenderState(renderOptions) : {}), renderOptions);
 
           renderPanel({
             options: options,
@@ -28700,7 +30298,7 @@ var createVoiceSearchHelper = function createVoiceSearchHelper(_ref) {
 
   var setState = function setState() {
     var newState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    state = _objectSpread({}, state, {}, newState);
+    state = _objectSpread(_objectSpread({}, state), newState);
     onStateChange();
   };
 
@@ -28886,18 +30484,18 @@ var connectVoiceSearch = function connectVoiceSearch(renderFn) {
       $$type: 'ais.voiceSearch',
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           voiceSearch: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -28937,7 +30535,7 @@ var connectVoiceSearch = function connectVoiceSearch(renderFn) {
               return _this._refine(query);
             },
             onStateChange: function onStateChange() {
-              renderFn(_objectSpread({}, _this.getWidgetRenderState(renderOptions), {
+              renderFn(_objectSpread(_objectSpread({}, _this.getWidgetRenderState(renderOptions)), {}, {
                 instantSearchInstance: instantSearchInstance
               }), false);
             }
@@ -29003,7 +30601,7 @@ var connectVoiceSearch = function connectVoiceSearch(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
+        return _objectSpread(_objectSpread({}, uiState), {}, {
           query: query
         });
       },
@@ -29214,8 +30812,8 @@ var renderer = function renderer(_ref) {
   }), container);
 };
 
-var voiceSearch = function voiceSearch() {
-  var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+var voiceSearch = function voiceSearch(widgetParams) {
+  var _ref2 = widgetParams || {},
       container = _ref2.container,
       _ref2$cssClasses = _ref2.cssClasses,
       userCssClasses = _ref2$cssClasses === void 0 ? {} : _ref2$cssClasses,
@@ -29243,14 +30841,16 @@ var voiceSearch = function voiceSearch() {
   var makeWidget = (0, _connectVoiceSearch.default)(renderer, function () {
     return (0, _preact.render)(null, containerNode);
   });
-  return makeWidget({
+  return _objectSpread(_objectSpread({}, makeWidget({
     container: containerNode,
     cssClasses: cssClasses,
-    templates: _objectSpread({}, _defaultTemplates.default, {}, templates),
+    templates: _objectSpread(_objectSpread({}, _defaultTemplates.default), templates),
     searchAsYouSpeak: searchAsYouSpeak,
     language: language,
     additionalQueryParameters: additionalQueryParameters,
     createVoiceSearchHelper: createVoiceSearchHelper
+  })), {}, {
+    $$widgetType: 'ais.voiceSearch'
   });
 };
 
@@ -29316,25 +30916,38 @@ function _defineProperty(obj, key, value) {
 }
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
 
-    return arr2;
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
   }
+
+  return arr2;
 }
 
 var withUsage = (0, _utils.createDocumentationMessageGenerator)({
@@ -29361,7 +30974,7 @@ function getRuleContextsFromTrackedFilters(_ref) {
   var ruleContexts = Object.keys(trackedFilters).reduce(function (facets, facetName) {
     var facetRefinements = (0, _utils.getRefinements)( // An empty object is technically not a `SearchResults` but `getRefinements`
     // only accesses properties, meaning it will not throw with an empty object.
-    helper.lastResults || {}, sharedHelperState).filter(function (refinement) {
+    helper.lastResults || {}, sharedHelperState, true).filter(function (refinement) {
       return refinement.attribute === facetName;
     }).map(function (refinement) {
       return refinement.numericValue || refinement.name;
@@ -29394,7 +31007,7 @@ function applyRuleContexts(event) {
   var ruleContexts = transformRuleContexts(nextRuleContexts).slice(0, 10);
 
   if (!(0, _utils.isEqual)(previousRuleContexts, ruleContexts)) {
-    helper.overrideStateWithoutTriggeringChangeEvent(_objectSpread({}, sharedHelperState, {
+    helper.overrideStateWithoutTriggeringChangeEvent(_objectSpread(_objectSpread({}, sharedHelperState), {}, {
       ruleContexts: ruleContexts
     }));
   }
@@ -29456,14 +31069,14 @@ var connectQueryRules = function connectQueryRules(_render) {
           helper.on('change', onHelperChange);
         }
 
-        _render(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        _render(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
       render: function render(renderOptions) {
         var instantSearchInstance = renderOptions.instantSearchInstance;
 
-        _render(_objectSpread({}, this.getWidgetRenderState(renderOptions), {
+        _render(_objectSpread(_objectSpread({}, this.getWidgetRenderState(renderOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
@@ -29481,7 +31094,7 @@ var connectQueryRules = function connectQueryRules(_render) {
         };
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           queryRules: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -29627,8 +31240,8 @@ var renderer = function renderer(_ref) {
   }), container);
 };
 
-var queryRuleCustomData = function queryRuleCustomData() {
-  var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+var queryRuleCustomData = function queryRuleCustomData(widgetParams) {
+  var _ref2 = widgetParams || {},
       container = _ref2.container,
       _ref2$cssClasses = _ref2.cssClasses,
       userCssClasses = _ref2$cssClasses === void 0 ? {} : _ref2$cssClasses,
@@ -29653,19 +31266,19 @@ var queryRuleCustomData = function queryRuleCustomData() {
     }
   };
 
-  var templates = _objectSpread({}, defaultTemplates, {}, userTemplates);
+  var templates = _objectSpread(_objectSpread({}, defaultTemplates), userTemplates);
 
   var containerNode = (0, _utils.getContainerNode)(container);
-  var makeQueryRuleCustomData = (0, _connectQueryRules.default)(renderer, function () {
+  var makeWidget = (0, _connectQueryRules.default)(renderer, function () {
     (0, _preact.render)(null, containerNode);
   });
-  return _objectSpread({}, makeQueryRuleCustomData({
+  return _objectSpread(_objectSpread({}, makeWidget({
     container: containerNode,
     cssClasses: cssClasses,
     templates: templates,
     transformItems: transformItems
-  }), {
-    $$type: 'ais.queryRuleCustomData'
+  })), {}, {
+    $$widgetType: 'ais.queryRuleCustomData'
   });
 };
 
@@ -29745,8 +31358,8 @@ var queryRuleContext = function queryRuleContext() {
     throw new Error(withUsage('The `trackedFilters` option is required.'));
   }
 
-  return _objectSpread({}, (0, _connectQueryRules.default)(_utils.noop)(widgetParams), {
-    $$type: 'ais.queryRuleContext'
+  return _objectSpread(_objectSpread({}, (0, _connectQueryRules.default)(_utils.noop)(widgetParams)), {}, {
+    $$widgetType: 'ais.queryRuleContext'
   });
 };
 
@@ -29869,6 +31482,7 @@ var placesWidget = function placesWidget(widgetParams) {
   };
   return {
     $$type: 'ais.places',
+    $$widgetType: 'ais.places',
     init: function init(_ref2) {
       var helper = _ref2.helper;
       placesAutocomplete.on('change', function (eventOptions) {
@@ -29905,7 +31519,7 @@ var placesWidget = function placesWidget(widgetParams) {
         return uiStateWithoutPlaces;
       }
 
-      return _objectSpread({}, uiState, {
+      return _objectSpread(_objectSpread({}, uiState), {}, {
         places: {
           query: state.query,
           position: position
@@ -29933,7 +31547,7 @@ var placesWidget = function placesWidget(widgetParams) {
       return searchParameters.setQueryParameter('insideBoundingBox', undefined).setQueryParameter('aroundLatLngViaIP', false).setQueryParameter('aroundLatLng', position || undefined);
     },
     getRenderState: function getRenderState(renderState, renderOptions) {
-      return _objectSpread({}, renderState, {
+      return _objectSpread(_objectSpread({}, renderState), {}, {
         places: this.getWidgetRenderState(renderOptions)
       });
     },
@@ -30237,13 +31851,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
-var _escapeHighlight = _interopRequireWildcard(require("../../lib/escape-highlight"));
-
 var _utils = require("../../lib/utils");
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -30316,7 +31924,7 @@ var connectAutocomplete = function connectAutocomplete(renderFn) {
       $$type: 'ais.autocomplete',
       init: function init(initOptions) {
         var instantSearchInstance = initOptions.instantSearchInstance;
-        renderFn(_objectSpread({}, this.getWidgetRenderState(initOptions), {
+        renderFn(_objectSpread(_objectSpread({}, this.getWidgetRenderState(initOptions)), {}, {
           instantSearchInstance: instantSearchInstance
         }), true);
       },
@@ -30328,12 +31936,12 @@ var connectAutocomplete = function connectAutocomplete(renderFn) {
               hits = _ref3.hits;
           sendEvent('view', hits);
         });
-        renderFn(_objectSpread({}, renderState, {
+        renderFn(_objectSpread(_objectSpread({}, renderState), {}, {
           instantSearchInstance: instantSearchInstance
         }), false);
       },
       getRenderState: function getRenderState(renderState, renderOptions) {
-        return _objectSpread({}, renderState, {
+        return _objectSpread(_objectSpread({}, renderState), {}, {
           autocomplete: this.getWidgetRenderState(renderOptions)
         });
       },
@@ -30353,7 +31961,7 @@ var connectAutocomplete = function connectAutocomplete(renderFn) {
         var indices = scopedResults.map(function (scopedResult) {
           // We need to escape the hits because highlighting
           // exposes HTML tags to the end-user.
-          scopedResult.results.hits = escapeHTML ? (0, _escapeHighlight.default)(scopedResult.results.hits) : scopedResult.results.hits;
+          scopedResult.results.hits = escapeHTML ? (0, _utils.escapeHits)(scopedResult.results.hits) : scopedResult.results.hits;
           var sendEvent = (0, _utils.createSendEventForHits)({
             instantSearchInstance: instantSearchInstance,
             index: scopedResult.results.index,
@@ -30382,7 +31990,7 @@ var connectAutocomplete = function connectAutocomplete(renderFn) {
           return uiState;
         }
 
-        return _objectSpread({}, uiState, {
+        return _objectSpread(_objectSpread({}, uiState), {}, {
           query: query
         });
       },
@@ -30396,7 +32004,7 @@ var connectAutocomplete = function connectAutocomplete(renderFn) {
           return searchParameters.setQueryParameters(parameters);
         }
 
-        return searchParameters.setQueryParameters(_objectSpread({}, parameters, {}, _escapeHighlight.TAG_PLACEHOLDER));
+        return searchParameters.setQueryParameters(_objectSpread(_objectSpread({}, parameters), _utils.TAG_PLACEHOLDER));
       },
       dispose: function dispose(_ref7) {
         var state = _ref7.state;
@@ -30407,8 +32015,8 @@ var connectAutocomplete = function connectAutocomplete(renderFn) {
           return stateWithoutQuery;
         }
 
-        return stateWithoutQuery.setQueryParameters(Object.keys(_escapeHighlight.TAG_PLACEHOLDER).reduce(function (acc, key) {
-          return _objectSpread({}, acc, _defineProperty({}, key, undefined));
+        return stateWithoutQuery.setQueryParameters(Object.keys(_utils.TAG_PLACEHOLDER).reduce(function (acc, key) {
+          return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, key, undefined));
         }, {}));
       }
     };
@@ -30417,7 +32025,7 @@ var connectAutocomplete = function connectAutocomplete(renderFn) {
 
 var _default = connectAutocomplete;
 exports.default = _default;
-},{"../../lib/escape-highlight":"../node_modules/instantsearch.js/es/lib/escape-highlight.js","../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/connectors/index.js":[function(require,module,exports) {
+},{"../../lib/utils":"../node_modules/instantsearch.js/es/lib/utils/index.js"}],"../node_modules/instantsearch.js/es/connectors/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30851,7 +32459,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51963" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57577" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
