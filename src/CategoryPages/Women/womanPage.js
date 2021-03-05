@@ -3,9 +3,7 @@ import { burgerMenu } from "../../Homepage/burgerMenu";
 import instantsearch from "instantsearch.js";
 import algoliasearch from "algoliasearch";
 import { configure, index } from 'instantsearch.js/es/widgets'
-
-
-
+import { doc } from "prettier";
 
 function GetDataCarousel() {
 
@@ -73,11 +71,30 @@ function GetDataCarousel() {
         search.addWidgets(carouselWidgets);
         search.start();
     });
+} 
 
 
-}
+let toggleSettingDrawerBtn = document.querySelector('#toggleSettingDrawer')
+
+toggleSettingDrawerBtn.addEventListener('click', () => {
+    let setDrawerContainer = document.querySelector('#setDrawer');
+    setDrawerContainer.classList.toggle("openSettingDrawer");
+    let toggleSettingDrawer = document.querySelector('#toggleSettingDrawer')
+    toggleSettingDrawer.classList.toggle("moveLabelSettings");
+})
 
 // APP.JS CALL
 GetDataCarousel()
 burgerMenu()
 renderCarouselAllProduct()
+
+
+let execQueryBtn = document.querySelector('#execQuery')
+
+execQueryBtn.addEventListener("click", (event) => {
+    let searchBoxInput = document.querySelector(".ais-SearchBox-input");
+    searchBoxInput.focus();
+    setTimeout(() => {
+        searchBoxInput.value = event.target.innerText;
+    })
+})

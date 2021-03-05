@@ -966,8 +966,93 @@ body {
     background-color: black;
     border-radius: 2px;
 }
+/* Demo Settings */
+.labelDemoSettings {
+  position: fixed;
+  top: 15vh;
+  left: -10px;
+  width: 40px;
+  height: 30px;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid rgba(240, 240, 239, 0.5);
+  z-index: 16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 2s infinite;
+  cursor: pointer;
+  transition: all 0.3s;
+}
 
+.labelDemoSettings p {
+  writing-mode: vertical-rl;
+  margin-left: 20px;
+  text-orientation: sideways-right;
+  font-size: 0.8rem;
+  font-family: 'Castoro', serif;
+  font-style: italic;
+}
 
+.containerSettings {
+  display: flex;
+}
+
+.settingsDrawer {
+  height: 100vh;
+  width: 0px;
+  z-index: 111;
+  top: 0px;
+  left: 0px;
+  position: fixed;
+  background-color: wheat;
+  /* transition: width 0.3s; */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-content: center;
+  visibility: hidden;
+}
+
+.settingBox {
+  padding: 20px;
+  height: 100px;
+}
+
+.settingBox-title {
+  padding: 20px 0px;
+  font-size: 20px;
+}
+
+.settingBox-content {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.settingBox-content span {
+  border: 1px solid black;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #fff;
+  transition: background-color 0.4s;
+}
+
+.settingBox-content:hover span {
+  border: 1px solid white;
+  color: #fff;
+  background-color: black;
+  padding: 10px 20px;
+}
+
+.openSettingDrawer {
+  width: 300px;
+  visibility: initial;
+}
+
+.moveLabelSettings {
+  left: 300px;
+}
 
 
 /*# sourceMappingURL=/app.5fb2f4d2.css.map */

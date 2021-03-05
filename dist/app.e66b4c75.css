@@ -649,7 +649,6 @@ a{
     color: white;
     transition: 0.3s ease-in-out;
 }
-
 /* GENERAL STYLE */
 
 *,
@@ -658,7 +657,7 @@ a{
   box-sizing: border-box;
 }
 
-a{
+a {
   text-decoration: none;
 }
 
@@ -669,36 +668,34 @@ body {
   overflow-x: hidden;
 }
 
-ul, li {
+ul,
+li {
   list-style: none;
 }
 
-.body-wrapper{
+.body-wrapper {
   overflow-x: hidden;
-  position: relative
+  position: relative;
 }
-
 
 /* CAROUSEL IMAGE GLIDEJS */
-.glide__slides{
+.glide__slides {
   padding: 0;
 }
-.banner-carousel{
+.banner-carousel {
   max-height: 70vh;
   overflow-y: hidden;
-
 }
-.banner-carousel-img1{
+.banner-carousel-img1 {
   width: 100%;
   object-fit: contain;
   object-position: 0px -18rem;
 }
-.banner-carousel-img2{
+.banner-carousel-img2 {
   width: 100%;
   object-fit: contain;
   object-position: 0px -15rem;
 }
-
 
 /* CAROUSEL PRODUCT */
 
@@ -726,23 +723,23 @@ ul, li {
   list-style-type: none;
 }
 
-.title-carousel-winter{
+.title-carousel-winter {
   margin: 2rem auto;
-display: flex;
-justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
-.btn-carousel-winter{
+.btn-carousel-winter {
   padding: 0.6rem 2rem;
-  border: 1px solid rgba(0, 0, 0, .5);
+  border: 1px solid rgba(0, 0, 0, 0.5);
   font-size: 1;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   color: black;
   align-self: center;
   cursor: pointer;
   transition: 0.3s ease-in-out;
 }
-.btn-carousel-winter:hover{
+.btn-carousel-winter:hover {
   background-color: rgb(17, 17, 17);
   color: white;
   transition: 0.3s ease-in-out;
@@ -756,19 +753,16 @@ justify-content: space-between;
 
 .carousel .carousel-list-container::-webkit-scrollbar:horizontal {
   height: 4px;
-
 }
 
 .carousel .carousel-list-container::-webkit-scrollbar-thumb {
   border-radius: 8px;
   border: 1px solid white;
-  background-color: rgba(0, 0, 0, .9);
-  
+  background-color: rgba(0, 0, 0, 0.9);
 }
-.carousel .carousel-list-container::-webkit-scrollbar-track { 
-  background-color: #fff; 
+.carousel .carousel-list-container::-webkit-scrollbar-track {
+  background-color: #fff;
   border-radius: 8px;
-  
 }
 
 .carousel .carousel-list-container li {
@@ -781,32 +775,27 @@ justify-content: space-between;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border: 1px solid rgba(240,240,239, 0.9);
+  border: 1px solid rgba(240, 240, 239, 0.9);
   transition: 0.2s ease-in-out;
-
 }
 .carousel .carousel-list-container li:hover {
-
-  box-shadow: 4px 4px 20px rgba(240, 240, 239, 1) ;
+  box-shadow: 4px 4px 20px rgba(240, 240, 239, 1);
   transition: 0.2s ease-in-out;
 }
 
-
 .carousel .carousel-list-container li .title {
-text-align: center;
-font-family: 'Roboto';
-font-weight: 500;
-font-size: 0.8rem;
-
+  text-align: center;
+  font-family: 'Roboto';
+  font-weight: 500;
+  font-size: 0.8rem;
 }
 
 .carousel .carousel-list-container .image-wrapper {
- max-width: 90%;
- display: flex;
- justify-content: center;
- margin: 0 auto;
-padding: 1rem;
- 
+  max-width: 90%;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
 .carousel .carousel-list-container li img {
@@ -819,23 +808,110 @@ padding: 1rem;
   transition: 0.2s ease-in-out;
 }
 .carousel .carousel-list-container li img:hover {
-transform: scale(1.1);
-filter: drop-shadow(16px 16px 20px rgb(240,240,239));
-transition: 0.2s ease-in-out;
+  transform: scale(1.1);
+  filter: drop-shadow(16px 16px 20px rgb(240, 240, 239));
+  transition: 0.2s ease-in-out;
 }
 
 /* STAT */
-.ais-Stats{
-  font-family: "Roboto" ;
+.ais-Stats {
+  font-family: 'Roboto';
   font-weight: 100;
   font-style: italic;
   color: black;
   float: right;
 }
 
+/* Demo Settings */
+.labelDemoSettings {
+  position: fixed;
+  top: 15vh;
+  left: -10px;
+  width: 40px;
+  height: 30px;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid rgba(240, 240, 239, 0.5);
+  z-index: 16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 2s infinite;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.labelDemoSettings p {
+  writing-mode: vertical-rl;
+  margin-left: 20px;
+  text-orientation: sideways-right;
+  font-size: 0.8rem;
+  font-family: 'Castoro', serif;
+  font-style: italic;
+}
+
+.containerSettings {
+  display: flex;
+}
+
+.settingsDrawer {
+  height: 100vh;
+  width: 0px;
+  z-index: 111;
+  top: 0px;
+  position: fixed;
+  background-color: wheat;
+  /* transition: width 0.3s; */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-content: center;
+  visibility: hidden;
+}
+
+.settingBox {
+  padding: 20px;
+  height: 100px;
+}
+
+.settingBox-title {
+  padding: 20px 0px;
+  font-size: 20px;
+}
+
+.settingBox-content {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.settingBox-content span {
+  border: 1px solid black;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #fff;
+  transition: background-color 0.4s;
+}
+
+.settingBox-content:hover span {
+  border: 1px solid white;
+  color: #fff;
+  background-color: black;
+  padding: 10px 20px;
+}
+
+.openSettingDrawer {
+  width: 300px;
+  visibility: initial;
+}
+
+.moveLabelSettings {
+  left: 300px;
+}
+
 /* USER PERSONA SELECTOR */
 
-.labelUserPersonna{
+.labelUserPersonna {
   position: fixed;
   top: 20vh;
   left: -1rem;
@@ -843,7 +919,7 @@ transition: 0.2s ease-in-out;
   height: 100px;
   background-color: white;
   border-radius: 5px;
-  border: 1px solid rgba(240,240,239, 0.5);
+  border: 1px solid rgba(240, 240, 239, 0.5);
   z-index: 16;
   display: flex;
   align-items: center;
@@ -851,7 +927,8 @@ transition: 0.2s ease-in-out;
   animation: bounce 2s infinite;
   cursor: pointer;
 }
-.labelUserPersonna p{
+
+.labelUserPersonna p {
   writing-mode: vertical-rl;
   margin-left: 20px;
   text-orientation: sideways-right;
@@ -861,28 +938,28 @@ transition: 0.2s ease-in-out;
 }
 
 .userPersonaSelector {
- visibility: hidden;
- display: flex;
- flex-direction: column;
- justify-content: center;
- background-color: white;
- color: black;
- width: 200px;
- padding: 1rem;
- text-align: center;
- box-shadow: 4px 4px 20px rgb(0, 0, 0, 0.3);
- border-radius: 3px;
- position: fixed;
- top: 20vh;
- left: 0;
- z-index: 15;
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: white;
+  color: black;
+  width: 200px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 4px 4px 20px rgb(0, 0, 0, 0.3);
+  border-radius: 3px;
+  position: fixed;
+  top: 20vh;
+  left: 0;
+  z-index: 15;
 }
 
-.closePersona{
-cursor: pointer;
-position: absolute;
-top: 0.1rem;
-right: 0.8rem;
+.closePersona {
+  cursor: pointer;
+  position: absolute;
+  top: 0.1rem;
+  right: 0.8rem;
 }
 
 .userPersonaSelector p {
@@ -892,61 +969,60 @@ right: 0.8rem;
   font-family: 'Castoro', serif;
 }
 .userPersonaSelector select {
-  background-color:rgb(246,245,243);
-     border: none;
-     padding: 0.6rem;
-     padding-left: 3rem;
-     border-radius: 5px;
-     font-family: 'Castoro', serif;
+  background-color: rgb(246, 245, 243);
+  border: none;
+  padding: 0.6rem;
+  padding-left: 3rem;
+  border-radius: 5px;
+  font-family: 'Castoro', serif;
 }
 
-.personaFadeIn{
+.personaFadeIn {
   animation: personaIn 0.8s forwards;
 }
-.personaFadeOut{
+.personaFadeOut {
   animation: personaOut 0.8s forwards;
 }
 
-
 /* ANIMATIONS */
 
-@keyframes personaIn{
-  0%{
+@keyframes personaIn {
+  0% {
     visibility: hidden;
     transform: translateX(-100%);
   }
-  100%{
+  100% {
     visibility: visible;
     transform: translateX(0%);
   }
 }
-@keyframes personaOut{
-  0%{
+@keyframes personaOut {
+  0% {
     visibility: visible;
     transform: translateX(0%);
   }
-  100%{
+  100% {
     visibility: hidden;
     transform: translateX(-100%);
   }
 }
-@keyframes bounce{
-  0%{
+@keyframes bounce {
+  0% {
     transform: translateX(0) scale(1);
   }
-  50%{
+  50% {
     transform: translateX(5px);
   }
-  75%{
+  75% {
     transform: translateX(3px);
   }
-  80%{
+  80% {
     transform: translateX(2px);
   }
-  90%{
+  90% {
     transform: translateX(4px);
   }
-  100%{
+  100% {
     transform: translateX(0px);
   }
 }
