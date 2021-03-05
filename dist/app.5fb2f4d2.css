@@ -969,18 +969,15 @@ body {
 /* Demo Settings */
 .labelDemoSettings {
   position: fixed;
-  top: 15vh;
-  left: -10px;
+  top: 3.5vh;
+  left: 10px;
   width: 40px;
   height: 30px;
-  background-color: white;
-  border-radius: 5px;
-  border: 1px solid rgba(240, 240, 239, 0.5);
+  /* background-color: white; */
   z-index: 16;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: bounce 2s infinite;
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -990,7 +987,6 @@ body {
   margin-left: 20px;
   text-orientation: sideways-right;
   font-size: 0.8rem;
-  font-family: 'Castoro', serif;
   font-style: italic;
 }
 
@@ -1016,26 +1012,31 @@ body {
 
 .settingBox {
   padding: 20px;
-  height: 100px;
+  height: auto;
 }
 
 .settingBox-title {
-  padding: 20px 0px;
-  font-size: 20px;
+  padding: 10px 0px;
+  font-size: 22px;
+  font-weight: 500;
+  font-family: Roboto, sans-serif;
 }
 
 .settingBox-content {
-  text-align: center;
-  margin-top: 20px;
+  text-align: left;
+  margin-top: 10px;
+  display: flex;
 }
 
 .settingBox-content span {
+  display: flex;
   border: 1px solid black;
   padding: 10px 20px;
   cursor: pointer;
   border-radius: 5px;
   background-color: #fff;
   transition: background-color 0.4s;
+  font-family: Roboto;
 }
 
 .settingBox-content:hover span {
