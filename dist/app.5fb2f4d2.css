@@ -1001,7 +1001,7 @@ body {
   top: 0px;
   left: 0px;
   position: fixed;
-  background-color: wheat;
+  background-color: #dce1e3;
   /* transition: width 0.3s; */
   display: flex;
   flex-direction: column;
@@ -1012,18 +1012,18 @@ body {
 
 .settingBox {
   padding: 20px;
-  height: auto;
+  height: 15vh;
+  text-align: left;
 }
 
 .settingBox-title {
-  padding: 10px 0px;
+  padding: 5px 0px;
   font-size: 22px;
   font-weight: 500;
   font-family: Roboto, sans-serif;
 }
 
 .settingBox-content {
-  text-align: left;
   margin-top: 10px;
   display: flex;
 }
@@ -1031,7 +1031,7 @@ body {
 .settingBox-content span {
   display: flex;
   border: 1px solid black;
-  padding: 10px 20px;
+  padding: 10px 15px;
   cursor: pointer;
   border-radius: 5px;
   background-color: #fff;
@@ -1043,7 +1043,7 @@ body {
   border: 1px solid white;
   color: #fff;
   background-color: black;
-  padding: 10px 20px;
+  padding: 10px 15px;
 }
 
 .openSettingDrawer {

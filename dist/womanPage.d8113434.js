@@ -53181,9 +53181,9 @@ function GetDataCarousel() {
   }); //GET THE CONFIG
 
   function getCarouselConfigs() {
-    return searchClient.initIndex("gstar_demo_config_woman").search("", {
+    return searchClient.initIndex('gstar_demo_config_woman').search('', {
       attributesToHighlight: [],
-      attributesToRetrieve: ["title", "indexName", "configure"]
+      attributesToRetrieve: ['title', 'indexName', 'configure']
     }).then(res => res.hits);
   } //WIDGET CREATION
 
@@ -53191,11 +53191,11 @@ function GetDataCarousel() {
   let carouselWidgets = [];
 
   function createWidgets(carousels) {
-    const container = document.querySelector("#stacked-carousels");
-    container.innerText = "";
+    const container = document.querySelector('#stacked-carousels');
+    container.innerText = '';
     return carousels.map(carouselConfig => {
-      const carouselContainer = document.createElement("div");
-      carouselContainer.className = "carousel";
+      const carouselContainer = document.createElement('div');
+      carouselContainer.className = 'carousel';
       const indexWidget = (0, _widgets.index)({
         indexName: carouselConfig.indexName,
         indexId: carouselConfig.objectID
@@ -53225,17 +53225,25 @@ function GetDataCarousel() {
 let toggleSettingDrawerBtn = document.querySelector('#toggleSettingDrawer');
 toggleSettingDrawerBtn.addEventListener('click', () => {
   let setDrawerContainer = document.querySelector('#setDrawer');
-  setDrawerContainer.classList.toggle("openSettingDrawer");
+  setDrawerContainer.classList.toggle('openSettingDrawer');
   let toggleSettingDrawer = document.querySelector('#toggleSettingDrawer');
-  toggleSettingDrawer.classList.toggle("moveLabelSettings");
+  toggleSettingDrawer.classList.toggle('moveLabelSettings');
 }); // APP.JS CALL
 
 GetDataCarousel();
 (0, _burgerMenu.burgerMenu)();
 (0, _displayCarouselWomanPage.renderCarouselAllProduct)();
 let execQueryBtn = document.querySelector('#execQuery');
-execQueryBtn.addEventListener("click", event => {
-  let searchBoxInput = document.querySelector(".ais-SearchBox-input");
+execQueryBtn.addEventListener('click', event => {
+  let searchBoxInput = document.querySelector('.ais-SearchBox-input');
+  searchBoxInput.focus();
+  setTimeout(() => {
+    searchBoxInput.value = event.target.innerText;
+  });
+});
+let execQueryBtn1 = document.querySelector('#execQuery1');
+execQueryBtn1.addEventListener('click', event => {
+  let searchBoxInput = document.querySelector('.ais-SearchBox-input');
   searchBoxInput.focus();
   setTimeout(() => {
     searchBoxInput.value = event.target.innerText;
@@ -53269,7 +53277,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55108" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54881" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
