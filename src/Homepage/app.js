@@ -17,7 +17,6 @@ modalProduct()
 
 
 var checkExist = setInterval(function () {
-    console.log(document.readyState)
     if (document.readyState === 'complete') {
         cardAnimationHome()
         modalProduct()

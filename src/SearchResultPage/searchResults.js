@@ -33,6 +33,7 @@ import { carousel } from '../Homepage/displayCarousel';
 
 import aa from 'search-insights';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
+import { html } from 'htm/preact';
 
 export function searchResults() {
     const searchClient = algoliasearch(
@@ -303,6 +304,7 @@ export function searchResults() {
 
                             return [
                                 {
+                                    sourceId: 'products',
                                     getItems() {
                                         return products.hits;
                                     },
@@ -334,6 +336,7 @@ export function searchResults() {
                                     },
                                 },
                                 {
+                                    sourceId: 'category',
                                     getItems() {
                                         return categories.facetHits;
                                     },
@@ -342,7 +345,7 @@ export function searchResults() {
                                             return headerTemplate({ title: 'Categories' });
                                         },
                                         item({ item }) {
-                                            return facetTemplate({ title: item.highlighted });
+                                            return facetTemplate({ title: item.value });
                                         },
                                     },
                                 },
@@ -369,41 +372,47 @@ export function searchResults() {
         return connectAutocomplete(renderAutocomplete);
 
         function headerTemplate({ title }) {
-            return `
+            return html`
+
             <div class="aa-titleCategory">
                 <h3>${title}</h3>
+            </div>
+
+            `;
+        }
+
+        function productTemplate({ image, title, description, price, query }) {
+            return html`
+            <div class="aa-ItemContent">
+                <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-ItemLink">
+                    <div class="aa-ItemImage">
+                        <img src="${image}" alt="${title}"/>
+                    </div>
+                    <div class="aa-ItemInfos">
+                        <div class="aa-ItemTitle">${title}</div>
+                        <div class="aa-ItemPrice">$${price}</div>
+                    </div>
+                </a>
             </div>
             `;
         }
 
-        function productTemplate({ image, title, description, price }) {
-            return `
-          <div class="aa-ItemContent" >
-            <div class="aa-ItemImage">
-              <img src="${image}" alt="${title}">
-            </div>
-            <div class="aa-ItemInfos">
-            <div class="aa-ItemTitle">${title}</div>
-            <div class="aa-ItemPrice">$${price}</div>
-            </div>
-          </div>
-        `;
-        }
-
-        function moreResultsTemplate({ title }) {
-            return `
+        function moreResultsTemplate({ title, query }) {
+            return html`
             <div class="aa-btnShowMore-wrapper">
-                <a href="#" class="aa-btnShowMore">
+                <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-btnShowMore">
                     ${title}
                 </a>
           </div>
         `;
         }
 
-        function facetTemplate({ title }) {
-            return `
-          <div class="aa-ItemContent">
-            <div class="aa-ItemTitle">${title}</div>
+        function facetTemplate({ title, query }) {
+            return html`
+            <div class="aa-ItemContentCategory">
+            <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-ItemLinkCategory">
+                <div class="aa-ItemTitle">${title}</div>
+            </a>
           </div>
         `;
         }

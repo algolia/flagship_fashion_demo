@@ -47,6 +47,7 @@
     "algoliasearch": "^4.8.5",
     "autocomplete.js": "^0.38.0",
     "babel-polyfill": "^6.26.0",
+    "htm": "^3.0.4",
     "instantsearch.js": "^4.15.0",
     "parcel-bundler": "^1.12.4",
     "search-insights": "^1.7.1",

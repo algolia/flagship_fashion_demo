@@ -8,9 +8,7 @@ export function cardAnimationHome() {
             let imgs = document.querySelectorAll('.carousel-list-container li .image-wrapper img')
 
             imgs.forEach(i => {
-                console.log('anim start')
                 i.classList.add('revealCarousel')
-
             })
             clearInterval(checkExist);
         }
