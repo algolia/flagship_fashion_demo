@@ -7,6 +7,7 @@
     "node": "14.15.1"
   },
   "scripts": {
+    "postinstall": "patch-package",
     "start": "parcel html/index.html html/searchResults.html html/categoryPageMan.html html/categoryPageWoman.html --public-url /",
     "dev": "parcel html/*",
     "build": "parcel build html/*",
