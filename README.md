@@ -1,28 +1,22 @@
-# instantsearch.js-app
+# Flagship Fashion Demo
 
-_This project was generated with [create-instantsearch-app](https://github.com/algolia/create-instantsearch-app) by [Algolia](https://algolia.com)._
+This demo serves to show Algolia in action.
 
 ## Get started
 
 To run this project locally, install the dependencies and run the local server:
 
 ```sh
-npm install
-npm start
-```
-
-Alternatively, you may use [Yarn](https://http://yarnpkg.com/):
-
-```sh
 yarn
 yarn start
 ```
 
-Open http://localhost:3000 to see your app.
-# Flagship Fashion Demo
+Open http://localhost:1234 to see your app.
+
 
 ## How to contribute
 
+### Branch structure
 - new features should be developed on a new branch and then merged into `next`
 - `master` consists of the latest stable version of the application in production
 - `next` is akin to the next beta release and should be used for testing
@@ -61,4 +55,12 @@ Open http://localhost:3000 to see your app.
 </table>
 
 
-- please use [semantic commit messages](https://www.conventionalcommits.org), and any PRs must be reviewed by demo eng team before merge.
+### Commits
+We use [Commitlint](https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/config-conventional) with a [conventional configuration](https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/config-conventional), this is enforced using a hook via [Husky](https://www.npmjs.com/package/husky)
+
+### Pull Requests
+You can find the correct template in /PULL_REQUEST_TEMPLATE.md, please adhere to this convention.
+
+All PR's must be tested and subsequently approved by at least one Algolia engineer (a member of the demo engineering team if possible).
+
+Where possible, attach an issue to a PR so it's clear what we are solving. If there is no issue, create one before submitting the PR.
