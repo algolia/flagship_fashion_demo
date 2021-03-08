@@ -6,9 +6,9 @@ import { connectAutocomplete } from 'instantsearch.js/es/connectors';
 import {
     autocomplete,
     getAlgoliaResults,
-    snippetHit,
+
     highlightHit,
-    getAlgoliaHits
+
 } from '@algolia/autocomplete-js';
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions';
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches';
