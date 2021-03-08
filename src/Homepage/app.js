@@ -4,8 +4,6 @@ import { carouselDetailed } from "./displayCarouselDetail";
 import { burgerMenu } from "./burgerMenu";
 import { togglePersona } from "./persona";
 
-
-
 carouselGlideJS()
 GetDataForCarousel()
 carouselDetailed()
