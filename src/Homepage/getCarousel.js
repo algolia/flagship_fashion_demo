@@ -7,7 +7,8 @@ import {
     autocomplete,
     getAlgoliaResults,
     snippetHit,
-    highlightHit
+    highlightHit,
+    getAlgoliaHits
 } from '@algolia/autocomplete-js';
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions';
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches';
@@ -149,19 +150,22 @@ export function GetDataForCarousel() {
             if (isFirstRender) {
                 autocompleteRef.current = autocomplete({
                     container: '#autocomplete',
-                    // debug: true,
+                    debug: true,
                     openOnFocus: true,
                     plugins: [recentSearchesPlugin, querySuggestionsPlugin],
 
                     getSources({ query }) {
+                        console.log(query)
                         if (!query) {
-                            return [];
+                            return [
+                            ];
                         }
 
                         return getAlgoliaResults({
                             searchClient,
                             queries: [
                                 {
+
                                     query,
                                     indexName: 'gstar_demo_test',
                                     params: {
@@ -174,6 +178,7 @@ export function GetDataForCarousel() {
                         }).then(async ([products]) => {
                             const [categories] = await searchClient.searchForFacetValues([
                                 {
+
                                     indexName: 'gstar_demo_test',
                                     params: {
                                         facetName: 'name',
@@ -185,6 +190,7 @@ export function GetDataForCarousel() {
                                     },
                                 },
                                 {
+
                                     indexName: 'gstar_demo_test',
                                     params: {
                                         facetName: 'category',
@@ -199,6 +205,7 @@ export function GetDataForCarousel() {
 
                             return [
                                 {
+                                    sourceId: 'products',
                                     getItems() {
                                         return products.hits;
                                     },
@@ -236,6 +243,7 @@ export function GetDataForCarousel() {
                                     },
                                 },
                                 {
+                                    sourceId: 'categories',
                                     getItems() {
                                         return categories.facetHits;
                                     },
