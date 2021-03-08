@@ -38324,103 +38324,7 @@ Object.keys(_version).forEach(function (key) {
     }
   });
 });
-},{"./createAutocomplete":"../node_modules/@algolia/autocomplete-core/dist/esm/createAutocomplete.js","./getDefaultProps":"../node_modules/@algolia/autocomplete-core/dist/esm/getDefaultProps.js","./types":"../node_modules/@algolia/autocomplete-core/dist/esm/types/index.js","./version":"../node_modules/@algolia/autocomplete-core/dist/esm/version.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/concatClassNames.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.concatClassNames = concatClassNames;
-
-function concatClassNames(classNames) {
-  return classNames.filter(Boolean).join(' ');
-}
-},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/debounce.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.debounce = debounce;
-
-function debounce(fn, time) {
-  var timerId = undefined;
-  return function () {
-    if (timerId) {
-      clearTimeout(timerId);
-    }
-
-    timerId = setTimeout(fn(), time);
-  };
-}
-},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/getDropdownPositionStyle.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getDropdownPositionStyle = getDropdownPositionStyle;
-
-function getDropdownPositionStyle(_ref) {
-  var dropdownPlacement = _ref.dropdownPlacement,
-      container = _ref.container,
-      inputWrapper = _ref.inputWrapper,
-      _ref$environment = _ref.environment,
-      environment = _ref$environment === void 0 ? window : _ref$environment;
-  var containerRect = container.getBoundingClientRect();
-  var top = containerRect.top + containerRect.height;
-
-  switch (dropdownPlacement) {
-    case 'start':
-      {
-        return {
-          top: top,
-          left: containerRect.left
-        };
-      }
-
-    case 'end':
-      {
-        return {
-          top: top,
-          right: environment.document.documentElement.clientWidth - (containerRect.left + containerRect.width)
-        };
-      }
-
-    case 'full-width':
-      {
-        return {
-          top: top,
-          left: 0,
-          right: 0,
-          // @TODO [IE support] IE doesn't support `"unset"`
-          // See https://caniuse.com/#feat=css-unset-value
-          width: 'unset',
-          maxWidth: 'unset'
-        };
-      }
-
-    case 'input-wrapper-width':
-      {
-        var inputWrapperRect = inputWrapper.getBoundingClientRect();
-        return {
-          top: top,
-          left: inputWrapperRect.left,
-          right: environment.document.documentElement.clientWidth - (inputWrapperRect.left + inputWrapperRect.width),
-          // @TODO [IE support] IE doesn't support `"unset"`
-          // See https://caniuse.com/#feat=css-unset-value
-          width: 'unset',
-          maxWidth: 'unset'
-        };
-      }
-
-    default:
-      {
-        throw new Error("The `dropdownPlacement` value \"".concat(dropdownPlacement, "\" is not valid."));
-      }
-  }
-}
-},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/getHTMLElement.js":[function(require,module,exports) {
+},{"./createAutocomplete":"../node_modules/@algolia/autocomplete-core/dist/esm/createAutocomplete.js","./getDefaultProps":"../node_modules/@algolia/autocomplete-core/dist/esm/getDefaultProps.js","./types":"../node_modules/@algolia/autocomplete-core/dist/esm/types/index.js","./version":"../node_modules/@algolia/autocomplete-core/dist/esm/version.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/utils/getHTMLElement.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38428,85 +38332,127 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getHTMLElement = getHTMLElement;
 
+var _autocompleteShared = require("@algolia/autocomplete-shared");
+
 function getHTMLElement(value) {
   if (typeof value === 'string') {
-    return document.querySelector(value);
+    var element = document.querySelector(value);
+    (0, _autocompleteShared.invariant)(element !== null, "The element ".concat(JSON.stringify(value), " is not in the document."));
+    return element;
   }
 
   return value;
 }
-},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/icons/reset-icon.js":[function(require,module,exports) {
+},{"@algolia/autocomplete-shared":"../node_modules/@algolia/autocomplete-shared/dist/esm/index.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/utils/mergeClassNames.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.resetIcon = void 0;
-var resetIcon = "<svg width=\"20\" height=\"20\" viewBox=\"0 0 20 20\">\n  <path\n    d=\"M10 10l5.09-5.09L10 10l5.09 5.09L10 10zm0 0L4.91 4.91 10 10l-5.09 5.09L10 10z\"\n    stroke=\"currentColor\"\n    fill=\"none\"\n    fill-rule=\"evenodd\"\n    stroke-linecap=\"round\"\n    stroke-linejoin=\"round\"\n  ></path>\n</svg>";
-exports.resetIcon = resetIcon;
-},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/icons/search-icon.js":[function(require,module,exports) {
-"use strict";
+exports.mergeClassNames = mergeClassNames;
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.searchIcon = void 0;
-var searchIcon = "<svg width=\"20\" height=\"20\" viewBox=\"0 0 20 20\">\n  <path\n    d=\"M14.386 14.386l4.0877 4.0877-4.0877-4.0877c-2.9418 2.9419-7.7115 2.9419-10.6533 0-2.9419-2.9418-2.9419-7.7115 0-10.6533 2.9418-2.9419 7.7115-2.9419 10.6533 0 2.9419 2.9418 2.9419 7.7115 0 10.6533z\"\n    stroke=\"currentColor\"\n    fill=\"none\"\n    fillRule=\"evenodd\"\n    strokeLinecap=\"round\"\n    strokeLinejoin=\"round\"\n  />\n</svg>";
-exports.searchIcon = searchIcon;
-},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/icons/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _resetIcon = require("./reset-icon");
-
-Object.keys(_resetIcon).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _resetIcon[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _resetIcon[key];
-    }
-  });
-});
-
-var _searchIcon = require("./search-icon");
-
-Object.keys(_searchIcon).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _searchIcon[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _searchIcon[key];
-    }
-  });
-});
-},{"./reset-icon":"../node_modules/@algolia/autocomplete-js/dist/esm/icons/reset-icon.js","./search-icon":"../node_modules/@algolia/autocomplete-js/dist/esm/icons/search-icon.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/renderTemplate.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.renderTemplate = renderTemplate;
-
-/**
- * Renders the template in the root element.
- *
- * If the template is a string, we update the HTML of the root to this string.
- * If the template is empty, it means that users manipulated the root element
- * DOM programatically (e.g., attached events, used a renderer like Preact), so
- * this needs to be a noop.
- */
-function renderTemplate(template, root) {
-  if (typeof template === 'string') {
-    root.innerHTML = template;
+function mergeClassNames() {
+  for (var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++) {
+    values[_key] = arguments[_key];
   }
+
+  return values.reduce(function (acc, current) {
+    Object.keys(current).forEach(function (key) {
+      var accValue = acc[key];
+      var currentValue = current[key];
+
+      if (accValue !== currentValue) {
+        acc[key] = [accValue, currentValue].filter(Boolean).join(' ');
+      }
+    });
+    return acc;
+  }, {});
 }
-},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/setProperties.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/utils/mergeDeep.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.mergeDeep = mergeDeep;
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
+}
+
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function _typeof(obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
+var isObject = function isObject(value) {
+  return value && _typeof(value) === 'object';
+};
+
+function mergeDeep() {
+  for (var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++) {
+    values[_key] = arguments[_key];
+  }
+
+  return values.reduce(function (acc, current) {
+    Object.keys(current).forEach(function (key) {
+      var accValue = acc[key];
+      var currentValue = current[key];
+
+      if (Array.isArray(accValue) && Array.isArray(currentValue)) {
+        acc[key] = accValue.concat.apply(accValue, _toConsumableArray(currentValue));
+      } else if (isObject(accValue) && isObject(currentValue)) {
+        acc[key] = mergeDeep(accValue, currentValue);
+      } else {
+        acc[key] = currentValue;
+      }
+    });
+    return acc;
+  }, {});
+}
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/utils/setProperties.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -38620,29 +38566,166 @@ function setPropertiesWithoutEvents(dom, props) {
     }
   }
 }
-},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/autocomplete.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.autocomplete = autocomplete;
-
-var _autocompleteCore = require("@algolia/autocomplete-core");
-
-var _concatClassNames = require("./concatClassNames");
-
-var _debounce = require("./debounce");
-
-var _getDropdownPositionStyle = require("./getDropdownPositionStyle");
 
 var _getHTMLElement = require("./getHTMLElement");
 
-var _icons = require("./icons");
+Object.keys(_getHTMLElement).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _getHTMLElement[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _getHTMLElement[key];
+    }
+  });
+});
 
-var _renderTemplate = require("./renderTemplate");
+var _mergeClassNames = require("./mergeClassNames");
+
+Object.keys(_mergeClassNames).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _mergeClassNames[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _mergeClassNames[key];
+    }
+  });
+});
+
+var _mergeDeep = require("./mergeDeep");
+
+Object.keys(_mergeDeep).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _mergeDeep[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _mergeDeep[key];
+    }
+  });
+});
 
 var _setProperties = require("./setProperties");
+
+Object.keys(_setProperties).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _setProperties[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _setProperties[key];
+    }
+  });
+});
+},{"./getHTMLElement":"../node_modules/@algolia/autocomplete-js/dist/esm/utils/getHTMLElement.js","./mergeClassNames":"../node_modules/@algolia/autocomplete-js/dist/esm/utils/mergeClassNames.js","./mergeDeep":"../node_modules/@algolia/autocomplete-js/dist/esm/utils/mergeDeep.js","./setProperties":"../node_modules/@algolia/autocomplete-js/dist/esm/utils/setProperties.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/createDomElement.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createDomElement = createDomElement;
+
+var _utils = require("./utils");
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function createDomElement(tagName, _ref) {
+  var _ref$children = _ref.children,
+      children = _ref$children === void 0 ? [] : _ref$children,
+      props = _objectWithoutProperties(_ref, ["children"]);
+
+  var element = document.createElement(tagName);
+  (0, _utils.setProperties)(element, props);
+  element.append.apply(element, _toConsumableArray(children));
+  return element;
+}
+},{"./utils":"../node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/components/Input.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Input = void 0;
+
+var _createDomElement = require("../createDomElement");
+
+var _utils = require("../utils");
 
 function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
@@ -38729,329 +38812,1240 @@ function _objectWithoutPropertiesLoose(source, excluded) {
   return target;
 }
 
-function _createForOfIteratorHelper(o, allowArrayLike) {
-  var it;
+var Input = function Input(_ref) {
+  var autocompleteScopeApi = _ref.autocompleteScopeApi,
+      classNames = _ref.classNames,
+      getInputProps = _ref.getInputProps,
+      getInputPropsCore = _ref.getInputPropsCore,
+      onDetachedEscape = _ref.onDetachedEscape,
+      state = _ref.state,
+      props = _objectWithoutProperties(_ref, ["autocompleteScopeApi", "classNames", "getInputProps", "getInputPropsCore", "onDetachedEscape", "state"]);
 
-  if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) {
-    if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") {
-      if (it) o = it;
-      var i = 0;
+  var element = (0, _createDomElement.createDomElement)('input', props);
+  var inputProps = getInputProps(_objectSpread({
+    state: state,
+    props: getInputPropsCore({
+      inputElement: element
+    }),
+    inputElement: element
+  }, autocompleteScopeApi));
+  (0, _utils.setProperties)(element, _objectSpread(_objectSpread({}, inputProps), {}, {
+    onKeyDown: function onKeyDown(event) {
+      if (onDetachedEscape && event.key === 'Escape') {
+        onDetachedEscape();
+        return;
+      }
 
-      var F = function F() {};
-
-      return {
-        s: F,
-        n: function n() {
-          if (i >= o.length) return {
-            done: true
-          };
-          return {
-            done: false,
-            value: o[i++]
-          };
-        },
-        e: function e(_e) {
-          throw _e;
-        },
-        f: F
-      };
+      inputProps.onKeyDown(event);
     }
+  }));
+  return element;
+};
 
-    throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+exports.Input = Input;
+},{"../createDomElement":"../node_modules/@algolia/autocomplete-js/dist/esm/createDomElement.js","../utils":"../node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/components/LoadingIcon.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.LoadingIcon = void 0;
+
+var LoadingIcon = function LoadingIcon() {
+  var element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  element.setAttribute('class', 'aa-LoadingIcon');
+  element.setAttribute('viewBox', '0 0 100 100');
+  element.setAttribute('width', '20');
+  element.setAttribute('height', '20');
+  element.innerHTML = "<circle\n  cx=\"50\"\n  cy=\"50\"\n  fill=\"none\"\n  r=\"35\"\n  stroke=\"currentColor\"\n  stroke-dasharray=\"164.93361431346415 56.97787143782138\"\n  stroke-width=\"6\"\n>\n  <animateTransform\n    attributeName=\"transform\"\n    type=\"rotate\"\n    repeatCount=\"indefinite\"\n    dur=\"1s\"\n    values=\"0 50 50;90 50 50;180 50 50;360 50 50\"\n    keyTimes=\"0;0.40;0.65;1\"\n  />\n</circle>";
+  return element;
+};
+
+exports.LoadingIcon = LoadingIcon;
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/components/ResetIcon.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ResetIcon = void 0;
+
+var ResetIcon = function ResetIcon() {
+  var element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  element.setAttribute('class', 'aa-ResetIcon');
+  element.setAttribute('viewBox', '0 0 24 24');
+  element.setAttribute('width', '18');
+  element.setAttribute('height', '18');
+  element.setAttribute('fill', 'currentColor');
+  var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', 'M5.293 6.707l5.293 5.293-5.293 5.293c-0.391 0.391-0.391 1.024 0 1.414s1.024 0.391 1.414 0l5.293-5.293 5.293 5.293c0.391 0.391 1.024 0.391 1.414 0s0.391-1.024 0-1.414l-5.293-5.293 5.293-5.293c0.391-0.391 0.391-1.024 0-1.414s-1.024-0.391-1.414 0l-5.293 5.293-5.293-5.293c-0.391-0.391-1.024-0.391-1.414 0s-0.391 1.024 0 1.414z');
+  element.appendChild(path);
+  return element;
+};
+
+exports.ResetIcon = ResetIcon;
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/components/SearchIcon.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.SearchIcon = void 0;
+
+var SearchIcon = function SearchIcon() {
+  var element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  element.setAttribute('class', 'aa-SubmitIcon');
+  element.setAttribute('viewBox', '0 0 24 24');
+  element.setAttribute('width', '20');
+  element.setAttribute('height', '20');
+  element.setAttribute('fill', 'currentColor');
+  var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', 'M16.041 15.856c-0.034 0.026-0.067 0.055-0.099 0.087s-0.060 0.064-0.087 0.099c-1.258 1.213-2.969 1.958-4.855 1.958-1.933 0-3.682-0.782-4.95-2.050s-2.050-3.017-2.050-4.95 0.782-3.682 2.050-4.95 3.017-2.050 4.95-2.050 3.682 0.782 4.95 2.050 2.050 3.017 2.050 4.95c0 1.886-0.745 3.597-1.959 4.856zM21.707 20.293l-3.675-3.675c1.231-1.54 1.968-3.493 1.968-5.618 0-2.485-1.008-4.736-2.636-6.364s-3.879-2.636-6.364-2.636-4.736 1.008-6.364 2.636-2.636 3.879-2.636 6.364 1.008 4.736 2.636 6.364 3.879 2.636 6.364 2.636c2.125 0 4.078-0.737 5.618-1.968l3.675 3.675c0.391 0.391 1.024 0.391 1.414 0s0.391-1.024 0-1.414z');
+  element.appendChild(path);
+  return element;
+};
+
+exports.SearchIcon = SearchIcon;
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/components/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _Input = require("./Input");
+
+Object.keys(_Input).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _Input[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _Input[key];
+    }
+  });
+});
+
+var _LoadingIcon = require("./LoadingIcon");
+
+Object.keys(_LoadingIcon).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _LoadingIcon[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _LoadingIcon[key];
+    }
+  });
+});
+
+var _ResetIcon = require("./ResetIcon");
+
+Object.keys(_ResetIcon).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _ResetIcon[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _ResetIcon[key];
+    }
+  });
+});
+
+var _SearchIcon = require("./SearchIcon");
+
+Object.keys(_SearchIcon).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  if (key in exports && exports[key] === _SearchIcon[key]) return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _SearchIcon[key];
+    }
+  });
+});
+},{"./Input":"../node_modules/@algolia/autocomplete-js/dist/esm/components/Input.js","./LoadingIcon":"../node_modules/@algolia/autocomplete-js/dist/esm/components/LoadingIcon.js","./ResetIcon":"../node_modules/@algolia/autocomplete-js/dist/esm/components/ResetIcon.js","./SearchIcon":"../node_modules/@algolia/autocomplete-js/dist/esm/components/SearchIcon.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/createAutocompleteDom.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createAutocompleteDom = createAutocompleteDom;
+
+var _components = require("./components");
+
+var _createDomElement = require("./createDomElement");
+
+var _utils = require("./utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
   }
 
-  var normalCompletion = true,
-      didErr = false,
-      err;
-  return {
-    s: function s() {
-      it = o[Symbol.iterator]();
-    },
-    n: function n() {
-      var step = it.next();
-      normalCompletion = step.done;
-      return step;
-    },
-    e: function e(_e2) {
-      didErr = true;
-      err = _e2;
-    },
-    f: function f() {
-      try {
-        if (!normalCompletion && it.return != null) it.return();
-      } finally {
-        if (didErr) throw err;
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function createAutocompleteDom(_ref) {
+  var autocomplete = _ref.autocomplete,
+      autocompleteScopeApi = _ref.autocompleteScopeApi,
+      classNames = _ref.classNames,
+      isDetached = _ref.isDetached,
+      _ref$placeholder = _ref.placeholder,
+      placeholder = _ref$placeholder === void 0 ? 'Search' : _ref$placeholder,
+      propGetters = _ref.propGetters,
+      state = _ref.state;
+
+  function onDetachedOverlayClose() {
+    autocomplete.setQuery('');
+    autocomplete.setIsOpen(false);
+    autocomplete.refresh();
+    document.body.classList.remove('aa-Detached');
+  }
+
+  var rootProps = propGetters.getRootProps(_objectSpread({
+    state: state,
+    props: autocomplete.getRootProps({})
+  }, autocompleteScopeApi));
+  var root = (0, _createDomElement.createDomElement)('div', _objectSpread({
+    class: classNames.root
+  }, rootProps));
+  var detachedContainer = (0, _createDomElement.createDomElement)('div', {
+    class: classNames.detachedContainer,
+    onMouseDown: function onMouseDown(event) {
+      event.stopPropagation();
+    }
+  });
+  var detachedOverlay = (0, _createDomElement.createDomElement)('div', {
+    class: classNames.detachedOverlay,
+    children: [detachedContainer],
+    onMouseDown: function onMouseDown() {
+      document.body.removeChild(detachedOverlay);
+      onDetachedOverlayClose();
+    }
+  });
+  var labelProps = propGetters.getLabelProps(_objectSpread({
+    state: state,
+    props: autocomplete.getLabelProps({})
+  }, autocompleteScopeApi));
+  var submitButton = (0, _createDomElement.createDomElement)('button', {
+    class: classNames.submitButton,
+    type: 'submit',
+    children: [(0, _components.SearchIcon)({})]
+  });
+  var label = (0, _createDomElement.createDomElement)('label', _objectSpread({
+    class: classNames.label,
+    children: [submitButton]
+  }, labelProps));
+  var resetButton = (0, _createDomElement.createDomElement)('button', {
+    class: classNames.resetButton,
+    type: 'reset',
+    children: [(0, _components.ResetIcon)({})]
+  });
+  var loadingIndicator = (0, _createDomElement.createDomElement)('div', {
+    class: classNames.loadingIndicator,
+    children: [(0, _components.LoadingIcon)({})]
+  });
+  var input = (0, _components.Input)({
+    class: classNames.input,
+    state: state,
+    getInputProps: propGetters.getInputProps,
+    getInputPropsCore: autocomplete.getInputProps,
+    autocompleteScopeApi: autocompleteScopeApi,
+    onDetachedEscape: isDetached ? function () {
+      document.body.removeChild(detachedOverlay);
+      onDetachedOverlayClose();
+    } : undefined
+  });
+  var inputWrapperPrefix = (0, _createDomElement.createDomElement)('div', {
+    class: classNames.inputWrapperPrefix,
+    children: [label, loadingIndicator]
+  });
+  var inputWrapperSuffix = (0, _createDomElement.createDomElement)('div', {
+    class: classNames.inputWrapperSuffix,
+    children: [resetButton]
+  });
+  var inputWrapper = (0, _createDomElement.createDomElement)('div', {
+    class: classNames.inputWrapper,
+    children: [input]
+  });
+  var formProps = propGetters.getFormProps(_objectSpread({
+    state: state,
+    props: autocomplete.getFormProps({
+      inputElement: input
+    })
+  }, autocompleteScopeApi));
+  var form = (0, _createDomElement.createDomElement)('form', _objectSpread({
+    class: classNames.form,
+    children: [inputWrapperPrefix, inputWrapper, inputWrapperSuffix]
+  }, formProps));
+  var panelProps = propGetters.getPanelProps(_objectSpread({
+    state: state,
+    props: autocomplete.getPanelProps({})
+  }, autocompleteScopeApi));
+  var panel = (0, _createDomElement.createDomElement)('div', _objectSpread({
+    class: classNames.panel
+  }, panelProps));
+
+  if ("development" === 'test') {
+    (0, _utils.setProperties)(panel, {
+      'data-testid': 'panel'
+    });
+  }
+
+  function openDetachedOverlay() {
+    document.body.appendChild(detachedOverlay);
+    document.body.classList.add('aa-Detached');
+    input.focus();
+  }
+
+  if (isDetached) {
+    var detachedSearchButtonIcon = (0, _createDomElement.createDomElement)('div', {
+      class: classNames.detachedSearchButtonIcon,
+      children: [(0, _components.SearchIcon)({})]
+    });
+    var detachedSearchButtonPlaceholder = (0, _createDomElement.createDomElement)('div', {
+      class: classNames.detachedSearchButtonPlaceholder,
+      textContent: placeholder
+    });
+    var detachedSearchButton = (0, _createDomElement.createDomElement)('button', {
+      class: classNames.detachedSearchButton,
+      onClick: function onClick(event) {
+        event.preventDefault();
+        openDetachedOverlay();
+      },
+      children: [detachedSearchButtonIcon, detachedSearchButtonPlaceholder]
+    });
+    var detachedCancelButton = (0, _createDomElement.createDomElement)('button', {
+      class: classNames.detachedCancelButton,
+      textContent: 'Cancel',
+      onClick: function onClick() {
+        document.body.removeChild(detachedOverlay);
+        onDetachedOverlayClose();
       }
+    });
+    var detachedFormContainer = (0, _createDomElement.createDomElement)('div', {
+      class: classNames.detachedFormContainer,
+      children: [form, detachedCancelButton]
+    });
+    detachedContainer.appendChild(detachedFormContainer);
+    root.appendChild(detachedSearchButton);
+  } else {
+    root.appendChild(form);
+  }
+
+  return {
+    openDetachedOverlay: openDetachedOverlay,
+    detachedContainer: detachedContainer,
+    detachedOverlay: detachedOverlay,
+    inputWrapper: inputWrapper,
+    input: input,
+    root: root,
+    form: form,
+    label: label,
+    submitButton: submitButton,
+    resetButton: resetButton,
+    loadingIndicator: loadingIndicator,
+    panel: panel
+  };
+}
+},{"./components":"../node_modules/@algolia/autocomplete-js/dist/esm/components/index.js","./createDomElement":"../node_modules/@algolia/autocomplete-js/dist/esm/createDomElement.js","./utils":"../node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/createEffectWrapper.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createEffectWrapper = createEffectWrapper;
+
+function createEffectWrapper() {
+  var effects = [];
+  var cleanups = [];
+
+  function runEffect(fn) {
+    effects.push(fn);
+    var effectCleanup = fn();
+    cleanups.push(effectCleanup);
+  }
+
+  return {
+    runEffect: runEffect,
+    cleanupEffects: function cleanupEffects() {
+      var currentCleanups = cleanups;
+      cleanups = [];
+      currentCleanups.forEach(function (cleanup) {
+        cleanup();
+      });
+    },
+    runEffects: function runEffects() {
+      var currentEffects = effects;
+      effects = [];
+      currentEffects.forEach(function (effect) {
+        runEffect(effect);
+      });
     }
   };
 }
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/createReactiveWrapper.js":[function(require,module,exports) {
+"use strict";
 
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.createReactiveWrapper = createReactiveWrapper;
 
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
+function createReactiveWrapper() {
+  var reactives = [];
+  return {
+    reactive: function reactive(value) {
+      var reactive = {
+        _fn: value,
+        _ref: {
+          current: value()
+        },
 
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
-  }
+        get value() {
+          return this._ref.current;
+        },
 
-  return arr2;
-}
+        set value(value) {
+          this._ref.current = value;
+        }
 
-function defaultRender(_ref) {
-  var root = _ref.root,
-      sections = _ref.sections;
-
-  var _iterator = _createForOfIteratorHelper(sections),
-      _step;
-
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var section = _step.value;
-      root.appendChild(section);
+      };
+      reactives.push(reactive);
+      value();
+      return reactive;
+    },
+    runReactives: function runReactives() {
+      reactives.forEach(function (value) {
+        value._ref.current = value._fn();
+      });
     }
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
+  };
+}
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/getDefaultOptions.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getDefaultOptions = getDefaultOptions;
+
+var _autocompleteShared = require("@algolia/autocomplete-shared");
+
+var _preact = require("preact");
+
+var _utils = require("./utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
   }
+
+  return keys;
 }
 
-function autocomplete(_ref2) {
-  var container = _ref2.container,
-      _ref2$render = _ref2.render,
-      renderDropdown = _ref2$render === void 0 ? defaultRender : _ref2$render,
-      _ref2$dropdownPlaceme = _ref2.dropdownPlacement,
-      dropdownPlacement = _ref2$dropdownPlaceme === void 0 ? 'input-wrapper-width' : _ref2$dropdownPlaceme,
-      _ref2$classNames = _ref2.classNames,
-      classNames = _ref2$classNames === void 0 ? {} : _ref2$classNames,
-      props = _objectWithoutProperties(_ref2, ["container", "render", "dropdownPlacement", "classNames"]);
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
 
-  var containerElement = (0, _getHTMLElement.getHTMLElement)(container);
-  var inputWrapper = document.createElement('div');
-  var completion = document.createElement('span');
-  var input = document.createElement('input');
-  var root = document.createElement('div');
-  var form = document.createElement('form');
-  var label = document.createElement('label');
-  var resetButton = document.createElement('button');
-  var dropdown = document.createElement('div');
-  var autocomplete = (0, _autocompleteCore.createAutocomplete)(_objectSpread({
-    onStateChange: function onStateChange(options) {
-      var state = options.state;
-      render(state);
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
 
-      if (props.onStateChange) {
-        props.onStateChange(options);
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+var defaultClassNames = {
+  detachedCancelButton: 'aa-DetachedCancelButton',
+  detachedFormContainer: 'aa-DetachedFormContainer',
+  detachedContainer: 'aa-DetachedContainer',
+  detachedOverlay: 'aa-DetachedOverlay',
+  detachedSearchButton: 'aa-DetachedSearchButton',
+  detachedSearchButtonIcon: 'aa-DetachedSearchButtonIcon',
+  detachedSearchButtonPlaceholder: 'aa-DetachedSearchButtonPlaceholder',
+  form: 'aa-Form',
+  input: 'aa-Input',
+  inputWrapper: 'aa-InputWrapper',
+  inputWrapperPrefix: 'aa-InputWrapperPrefix',
+  inputWrapperSuffix: 'aa-InputWrapperSuffix',
+  item: 'aa-Item',
+  label: 'aa-Label',
+  list: 'aa-List',
+  loadingIndicator: 'aa-LoadingIndicator',
+  panel: 'aa-Panel',
+  panelLayout: 'aa-PanelLayout',
+  resetButton: 'aa-ResetButton',
+  root: 'aa-Autocomplete',
+  source: 'aa-Source',
+  sourceFooter: 'aa-SourceFooter',
+  sourceHeader: 'aa-SourceHeader',
+  sourceNoResults: 'aa-SourceNoResults',
+  submitButton: 'aa-SubmitButton'
+};
+
+var defaultRender = function defaultRender(_ref, root) {
+  var children = _ref.children;
+  (0, _preact.render)(children, root);
+};
+
+var defaultRenderer = {
+  createElement: _preact.createElement,
+  Fragment: _preact.Fragment
+};
+
+function getDefaultOptions(options) {
+  var classNames = options.classNames,
+      container = options.container,
+      getEnvironmentProps = options.getEnvironmentProps,
+      getFormProps = options.getFormProps,
+      getInputProps = options.getInputProps,
+      getItemProps = options.getItemProps,
+      getLabelProps = options.getLabelProps,
+      getListProps = options.getListProps,
+      getPanelProps = options.getPanelProps,
+      getRootProps = options.getRootProps,
+      panelContainer = options.panelContainer,
+      panelPlacement = options.panelPlacement,
+      render = options.render,
+      renderNoResults = options.renderNoResults,
+      renderer = options.renderer,
+      detachedMediaQuery = options.detachedMediaQuery,
+      core = _objectWithoutProperties(options, ["classNames", "container", "getEnvironmentProps", "getFormProps", "getInputProps", "getItemProps", "getLabelProps", "getListProps", "getPanelProps", "getRootProps", "panelContainer", "panelPlacement", "render", "renderNoResults", "renderer", "detachedMediaQuery"]);
+
+  var containerElement = (0, _utils.getHTMLElement)(container);
+  (0, _autocompleteShared.invariant)(containerElement.tagName !== 'INPUT', 'The `container` option does not support `input` elements. You need to change the container to a `div`.');
+  var environment = typeof window !== 'undefined' ? window : {};
+  return {
+    renderer: {
+      classNames: (0, _utils.mergeClassNames)(defaultClassNames, classNames !== null && classNames !== void 0 ? classNames : {}),
+      container: containerElement,
+      getEnvironmentProps: getEnvironmentProps !== null && getEnvironmentProps !== void 0 ? getEnvironmentProps : function (_ref2) {
+        var props = _ref2.props;
+        return props;
+      },
+      getFormProps: getFormProps !== null && getFormProps !== void 0 ? getFormProps : function (_ref3) {
+        var props = _ref3.props;
+        return props;
+      },
+      getInputProps: getInputProps !== null && getInputProps !== void 0 ? getInputProps : function (_ref4) {
+        var props = _ref4.props;
+        return props;
+      },
+      getItemProps: getItemProps !== null && getItemProps !== void 0 ? getItemProps : function (_ref5) {
+        var props = _ref5.props;
+        return props;
+      },
+      getLabelProps: getLabelProps !== null && getLabelProps !== void 0 ? getLabelProps : function (_ref6) {
+        var props = _ref6.props;
+        return props;
+      },
+      getListProps: getListProps !== null && getListProps !== void 0 ? getListProps : function (_ref7) {
+        var props = _ref7.props;
+        return props;
+      },
+      getPanelProps: getPanelProps !== null && getPanelProps !== void 0 ? getPanelProps : function (_ref8) {
+        var props = _ref8.props;
+        return props;
+      },
+      getRootProps: getRootProps !== null && getRootProps !== void 0 ? getRootProps : function (_ref9) {
+        var props = _ref9.props;
+        return props;
+      },
+      panelContainer: panelContainer ? (0, _utils.getHTMLElement)(panelContainer) : document.body,
+      panelPlacement: panelPlacement !== null && panelPlacement !== void 0 ? panelPlacement : 'input-wrapper-width',
+      render: render !== null && render !== void 0 ? render : defaultRender,
+      renderNoResults: renderNoResults,
+      renderer: renderer !== null && renderer !== void 0 ? renderer : defaultRenderer,
+      detachedMediaQuery: detachedMediaQuery !== null && detachedMediaQuery !== void 0 ? detachedMediaQuery : getComputedStyle(environment.document.documentElement).getPropertyValue('--aa-detached-media-query')
+    },
+    core: _objectSpread(_objectSpread({}, core), {}, {
+      environment: environment
+    })
+  };
+}
+},{"@algolia/autocomplete-shared":"../node_modules/@algolia/autocomplete-shared/dist/esm/index.js","preact":"../node_modules/preact/dist/preact.module.js","./utils":"../node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/getPanelPlacementStyle.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getPanelPlacementStyle = getPanelPlacementStyle;
+
+function getPanelPlacementStyle(_ref) {
+  var panelPlacement = _ref.panelPlacement,
+      container = _ref.container,
+      form = _ref.form,
+      _ref$environment = _ref.environment,
+      environment = _ref$environment === void 0 ? window : _ref$environment;
+  var containerRect = container.getBoundingClientRect();
+  var top = container.offsetTop + containerRect.height;
+
+  switch (panelPlacement) {
+    case 'start':
+      {
+        return {
+          top: top,
+          left: containerRect.left
+        };
+      }
+
+    case 'end':
+      {
+        return {
+          top: top,
+          right: environment.document.documentElement.clientWidth - (containerRect.left + containerRect.width)
+        };
+      }
+
+    case 'full-width':
+      {
+        return {
+          top: top,
+          left: 0,
+          right: 0,
+          width: 'unset',
+          maxWidth: 'unset'
+        };
+      }
+
+    case 'input-wrapper-width':
+      {
+        var formRect = form.getBoundingClientRect();
+        return {
+          top: top,
+          left: formRect.left,
+          right: environment.document.documentElement.clientWidth - (formRect.left + formRect.width),
+          width: 'unset',
+          maxWidth: 'unset'
+        };
+      }
+
+    default:
+      {
+        throw new Error("The `panelPlacement` value ".concat(JSON.stringify(panelPlacement), " is not valid."));
+      }
+  }
+}
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/render.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.renderSearchBox = renderSearchBox;
+exports.renderPanel = renderPanel;
+
+var _utils = require("./utils");
+
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
       }
     }
-  }, props));
-  var onResize = (0, _debounce.debounce)(function () {
-    if (!dropdown.hasAttribute('hidden')) {
-      setDropdownPosition();
-    }
-  }, 100);
 
-  function setDropdownPosition() {
-    (0, _setProperties.setProperties)(dropdown, {
-      style: (0, _getDropdownPositionStyle.getDropdownPositionStyle)({
-        dropdownPlacement: dropdownPlacement,
-        container: root,
-        inputWrapper: inputWrapper,
-        environment: props.environment
+    return target;
+  };
+
+  return _extends.apply(this, arguments);
+}
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+/** @jsx createElement */
+
+
+function renderSearchBox(_ref) {
+  var autocomplete = _ref.autocomplete,
+      autocompleteScopeApi = _ref.autocompleteScopeApi,
+      dom = _ref.dom,
+      propGetters = _ref.propGetters,
+      state = _ref.state;
+  (0, _utils.setPropertiesWithoutEvents)(dom.root, propGetters.getRootProps(_objectSpread({
+    state: state,
+    props: autocomplete.getRootProps({})
+  }, autocompleteScopeApi)));
+  (0, _utils.setPropertiesWithoutEvents)(dom.input, propGetters.getInputProps(_objectSpread({
+    state: state,
+    props: autocomplete.getInputProps({
+      inputElement: dom.input
+    }),
+    inputElement: dom.input
+  }, autocompleteScopeApi)));
+  (0, _utils.setProperties)(dom.label, {
+    hidden: state.status === 'stalled'
+  });
+  (0, _utils.setProperties)(dom.loadingIndicator, {
+    hidden: state.status !== 'stalled'
+  });
+  (0, _utils.setProperties)(dom.resetButton, {
+    hidden: !state.query
+  });
+}
+
+function renderPanel(render, _ref2) {
+  var autocomplete = _ref2.autocomplete,
+      autocompleteScopeApi = _ref2.autocompleteScopeApi,
+      classNames = _ref2.classNames,
+      createElement = _ref2.createElement,
+      dom = _ref2.dom,
+      Fragment = _ref2.Fragment,
+      panelContainer = _ref2.panelContainer,
+      propGetters = _ref2.propGetters,
+      state = _ref2.state;
+
+  if (!state.isOpen) {
+    if (panelContainer.contains(dom.panel)) {
+      panelContainer.removeChild(dom.panel);
+    }
+
+    return;
+  } // We add the panel element to the DOM when it's not yet appended and that the
+  // items are fetched.
+
+
+  if (!panelContainer.contains(dom.panel) && state.status !== 'loading') {
+    panelContainer.appendChild(dom.panel);
+  }
+
+  dom.panel.classList.toggle('aa-Panel--stalled', state.status === 'stalled');
+  var sections = state.collections.map(function (_ref3, sourceIndex) {
+    var source = _ref3.source,
+        items = _ref3.items;
+    return createElement("section", {
+      key: sourceIndex,
+      className: classNames.source,
+      "data-autocomplete-source-id": source.sourceId
+    }, source.templates.header && createElement("div", {
+      className: classNames.sourceHeader
+    }, source.templates.header({
+      createElement: createElement,
+      Fragment: Fragment,
+      items: items,
+      source: source,
+      state: state
+    })), items.length === 0 && source.templates.noResults && state.query ? createElement("div", {
+      className: classNames.sourceNoResults
+    }, source.templates.noResults({
+      createElement: createElement,
+      Fragment: Fragment,
+      source: source,
+      state: state
+    })) : createElement("ul", _extends({
+      className: classNames.list
+    }, propGetters.getListProps(_objectSpread({
+      state: state,
+      props: autocomplete.getListProps({})
+    }, autocompleteScopeApi))), items.map(function (item) {
+      var itemProps = autocomplete.getItemProps({
+        item: item,
+        source: source
+      });
+      return createElement("li", _extends({
+        key: itemProps.id,
+        className: classNames.item
+      }, propGetters.getItemProps(_objectSpread({
+        state: state,
+        props: itemProps
+      }, autocompleteScopeApi))), source.templates.item({
+        createElement: createElement,
+        Fragment: Fragment,
+        item: item,
+        state: state
+      }));
+    })), source.templates.footer && createElement("div", {
+      className: classNames.sourceFooter
+    }, source.templates.footer({
+      createElement: createElement,
+      Fragment: Fragment,
+      items: items,
+      source: source,
+      state: state
+    })));
+  });
+  var children = createElement("div", {
+    className: "aa-PanelLayout"
+  }, sections);
+  render({
+    children: children,
+    state: state,
+    sections: sections,
+    createElement: createElement,
+    Fragment: Fragment
+  }, dom.panel);
+}
+},{"./utils":"../node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/autocomplete.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.autocomplete = autocomplete;
+
+var _autocompleteCore = require("@algolia/autocomplete-core");
+
+var _autocompleteShared = require("@algolia/autocomplete-shared");
+
+var _createAutocompleteDom = require("./createAutocompleteDom");
+
+var _createEffectWrapper2 = require("./createEffectWrapper");
+
+var _createReactiveWrapper = require("./createReactiveWrapper");
+
+var _getDefaultOptions = require("./getDefaultOptions");
+
+var _getPanelPlacementStyle = require("./getPanelPlacementStyle");
+
+var _render = require("./render");
+
+var _utils = require("./utils");
+
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
+
+  return target;
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function autocomplete(options) {
+  var _createEffectWrapper = (0, _createEffectWrapper2.createEffectWrapper)(),
+      runEffect = _createEffectWrapper.runEffect,
+      cleanupEffects = _createEffectWrapper.cleanupEffects,
+      runEffects = _createEffectWrapper.runEffects;
+
+  var _createReactiveWrappe = (0, _createReactiveWrapper.createReactiveWrapper)(),
+      reactive = _createReactiveWrappe.reactive,
+      runReactives = _createReactiveWrappe.runReactives;
+
+  var hasNoResultsSourceTemplateRef = (0, _autocompleteShared.createRef)(false);
+  var optionsRef = (0, _autocompleteShared.createRef)(options);
+  var onStateChangeRef = (0, _autocompleteShared.createRef)(undefined);
+  var props = reactive(function () {
+    return (0, _getDefaultOptions.getDefaultOptions)(optionsRef.current);
+  });
+  var isDetached = reactive(function () {
+    return props.value.core.environment.matchMedia(props.value.renderer.detachedMediaQuery).matches;
+  });
+  var autocomplete = reactive(function () {
+    return (0, _autocompleteCore.createAutocomplete)(_objectSpread(_objectSpread({}, props.value.core), {}, {
+      onStateChange: function onStateChange(options) {
+        var _onStateChangeRef$cur, _props$value$core$onS, _props$value$core;
+
+        hasNoResultsSourceTemplateRef.current = options.state.collections.some(function (collection) {
+          return collection.source.templates.noResults;
+        });
+        (_onStateChangeRef$cur = onStateChangeRef.current) === null || _onStateChangeRef$cur === void 0 ? void 0 : _onStateChangeRef$cur.call(onStateChangeRef, options);
+        (_props$value$core$onS = (_props$value$core = props.value.core).onStateChange) === null || _props$value$core$onS === void 0 ? void 0 : _props$value$core$onS.call(_props$value$core, options);
+      },
+      shouldPanelOpen: optionsRef.current.shouldPanelOpen || function (_ref) {
+        var state = _ref.state;
+        var hasItems = (0, _autocompleteShared.getItemsCount)(state) > 0;
+
+        if (!props.value.core.openOnFocus && !state.query) {
+          return hasItems;
+        }
+
+        var hasNoResultsTemplate = Boolean(hasNoResultsSourceTemplateRef.current || props.value.renderer.renderNoResults);
+        return !hasItems && hasNoResultsTemplate || hasItems;
+      }
+    }));
+  });
+  var lastStateRef = (0, _autocompleteShared.createRef)(_objectSpread({
+    collections: [],
+    completion: null,
+    context: {},
+    isOpen: false,
+    query: '',
+    activeItemId: null,
+    status: 'idle'
+  }, props.value.core.initialState));
+  var propGetters = {
+    getEnvironmentProps: props.value.renderer.getEnvironmentProps,
+    getFormProps: props.value.renderer.getFormProps,
+    getInputProps: props.value.renderer.getInputProps,
+    getItemProps: props.value.renderer.getItemProps,
+    getLabelProps: props.value.renderer.getLabelProps,
+    getListProps: props.value.renderer.getListProps,
+    getPanelProps: props.value.renderer.getPanelProps,
+    getRootProps: props.value.renderer.getRootProps
+  };
+  var autocompleteScopeApi = {
+    setActiveItemId: autocomplete.value.setActiveItemId,
+    setQuery: autocomplete.value.setQuery,
+    setCollections: autocomplete.value.setCollections,
+    setIsOpen: autocomplete.value.setIsOpen,
+    setStatus: autocomplete.value.setStatus,
+    setContext: autocomplete.value.setContext,
+    refresh: autocomplete.value.refresh
+  };
+  var dom = reactive(function () {
+    return (0, _createAutocompleteDom.createAutocompleteDom)({
+      autocomplete: autocomplete.value,
+      autocompleteScopeApi: autocompleteScopeApi,
+      classNames: props.value.renderer.classNames,
+      isDetached: isDetached.value,
+      placeholder: props.value.core.placeholder,
+      propGetters: propGetters,
+      state: lastStateRef.current
+    });
+  });
+
+  function setPanelPosition() {
+    (0, _utils.setProperties)(dom.value.panel, {
+      style: isDetached.value ? {} : (0, _getPanelPlacementStyle.getPanelPlacementStyle)({
+        panelPlacement: props.value.renderer.panelPlacement,
+        container: dom.value.root,
+        form: dom.value.form,
+        environment: props.value.core.environment
       })
     });
   }
 
-  (0, _setProperties.setProperties)(window, _objectSpread(_objectSpread({}, autocomplete.getEnvironmentProps({
-    searchBoxElement: form,
-    dropdownElement: dropdown,
-    inputElement: input
-  })), {}, {
-    onResize: onResize
-  }));
-  (0, _setProperties.setProperties)(root, _objectSpread(_objectSpread({}, autocomplete.getRootProps()), {}, {
-    class: (0, _concatClassNames.concatClassNames)(['aa-Autocomplete', classNames.root])
-  }));
-  var formProps = autocomplete.getFormProps({
-    inputElement: input
-  });
-  (0, _setProperties.setProperties)(form, _objectSpread(_objectSpread({}, formProps), {}, {
-    class: (0, _concatClassNames.concatClassNames)(['aa-Form', classNames.form])
-  }));
-  (0, _setProperties.setProperties)(inputWrapper, {
-    class: ['aa-InputWrapper', classNames.inputWrapper].filter(Boolean).join(' ')
-  });
-  (0, _setProperties.setProperties)(input, _objectSpread(_objectSpread({}, autocomplete.getInputProps({
-    inputElement: input
-  })), {}, {
-    class: (0, _concatClassNames.concatClassNames)(['aa-Input', classNames.input])
-  }));
-  (0, _setProperties.setProperties)(completion, {
-    class: (0, _concatClassNames.concatClassNames)(['aa-Completion', classNames.completion])
-  });
-  (0, _setProperties.setProperties)(label, _objectSpread(_objectSpread({}, autocomplete.getLabelProps()), {}, {
-    class: (0, _concatClassNames.concatClassNames)(['aa-Label', classNames.label]),
-    innerHTML: _icons.searchIcon
-  }));
-  (0, _setProperties.setProperties)(resetButton, {
-    type: 'reset',
-    onClick: formProps.onReset,
-    class: (0, _concatClassNames.concatClassNames)(['aa-ResetButton', classNames.resetButton]),
-    innerHTML: _icons.resetIcon
-  });
-  (0, _setProperties.setProperties)(dropdown, _objectSpread(_objectSpread({}, autocomplete.getDropdownProps()), {}, {
-    hidden: true,
-    class: (0, _concatClassNames.concatClassNames)(['aa-Dropdown', classNames.dropdown])
-  }));
-
-  function render(state) {
-    (0, _setProperties.setPropertiesWithoutEvents)(root, autocomplete.getRootProps());
-    (0, _setProperties.setPropertiesWithoutEvents)(input, autocomplete.getInputProps({
-      inputElement: input
-    }));
-
-    if (props.enableCompletion) {
-      completion.textContent = state.completion;
-    }
-
-    dropdown.innerHTML = '';
-
-    if (state.isOpen) {
-      (0, _setProperties.setProperties)(dropdown, {
-        hidden: false
-      });
-    } else {
-      (0, _setProperties.setProperties)(dropdown, {
-        hidden: true
-      });
-      return;
-    }
-
-    if (state.status === 'stalled') {
-      dropdown.classList.add('aa-Dropdown--stalled');
-    } else {
-      dropdown.classList.remove('aa-Dropdown--stalled');
-    }
-
-    var sections = state.suggestions.map(function (suggestion) {
-      var items = suggestion.items;
-      var source = suggestion.source;
-      var section = document.createElement('section');
-      (0, _setProperties.setProperties)(section, {
-        class: (0, _concatClassNames.concatClassNames)(['aa-Section', classNames.section])
-      });
-
-      if (source.templates.header) {
-        var header = document.createElement('div');
-        (0, _setProperties.setProperties)(header, {
-          class: (0, _concatClassNames.concatClassNames)(['aa-SectionHeader', classNames.sectionHeader])
-        });
-        (0, _renderTemplate.renderTemplate)(source.templates.header({
-          root: header,
-          state: state
-        }), header);
-        section.appendChild(header);
-      }
-
-      if (items.length > 0) {
-        var menu = document.createElement('ul');
-        (0, _setProperties.setProperties)(menu, _objectSpread(_objectSpread({}, autocomplete.getMenuProps()), {}, {
-          class: (0, _concatClassNames.concatClassNames)(['aa-Menu', classNames.menu])
-        }));
-        var menuItems = items.map(function (item) {
-          var li = document.createElement('li');
-          (0, _setProperties.setProperties)(li, _objectSpread(_objectSpread({}, autocomplete.getItemProps({
-            item: item,
-            source: source
-          })), {}, {
-            class: (0, _concatClassNames.concatClassNames)(['aa-Item', classNames.item])
-          }));
-          (0, _renderTemplate.renderTemplate)(source.templates.item({
-            root: li,
-            item: item,
-            state: state
-          }), li);
-          return li;
-        });
-
-        var _iterator2 = _createForOfIteratorHelper(menuItems),
-            _step2;
-
-        try {
-          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-            var menuItem = _step2.value;
-            menu.appendChild(menuItem);
-          }
-        } catch (err) {
-          _iterator2.e(err);
-        } finally {
-          _iterator2.f();
-        }
-
-        section.appendChild(menu);
-      }
-
-      if (source.templates.footer) {
-        var footer = document.createElement('div');
-        (0, _setProperties.setProperties)(footer, {
-          class: (0, _concatClassNames.concatClassNames)(['aa-SectionFooter', classNames.sectionFooter])
-        });
-        (0, _renderTemplate.renderTemplate)(source.templates.footer({
-          root: footer,
-          state: state
-        }), footer);
-        section.appendChild(footer);
-      }
-
-      return section;
-    });
-    renderDropdown({
-      root: dropdown,
-      sections: sections,
-      state: state
-    });
+  function scheduleRender(state) {
+    lastStateRef.current = state;
+    var renderProps = {
+      autocomplete: autocomplete.value,
+      autocompleteScopeApi: autocompleteScopeApi,
+      classNames: props.value.renderer.classNames,
+      container: props.value.renderer.container,
+      createElement: props.value.renderer.renderer.createElement,
+      dom: dom.value,
+      Fragment: props.value.renderer.renderer.Fragment,
+      panelContainer: isDetached.value ? dom.value.detachedContainer : props.value.renderer.panelContainer,
+      propGetters: propGetters,
+      state: lastStateRef.current
+    };
+    var render = !(0, _autocompleteShared.getItemsCount)(state) && !hasNoResultsSourceTemplateRef.current && props.value.renderer.renderNoResults || props.value.renderer.render;
+    (0, _render.renderSearchBox)(renderProps);
+    (0, _render.renderPanel)(render, renderProps);
   }
 
-  if (props.enableCompletion) {
-    inputWrapper.appendChild(completion);
-  }
+  runEffect(function () {
+    var environmentProps = autocomplete.value.getEnvironmentProps({
+      formElement: dom.value.form,
+      panelElement: dom.value.panel,
+      inputElement: dom.value.input
+    });
+    (0, _utils.setProperties)(props.value.core.environment, environmentProps);
+    return function () {
+      (0, _utils.setProperties)(props.value.core.environment, Object.keys(environmentProps).reduce(function (acc, key) {
+        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, key, undefined));
+      }, {}));
+    };
+  });
+  runEffect(function () {
+    var panelContainerElement = isDetached.value ? props.value.core.environment.document.body : props.value.renderer.panelContainer;
+    var panelElement = isDetached.value ? dom.value.detachedOverlay : dom.value.panel;
 
-  inputWrapper.appendChild(input);
-  inputWrapper.appendChild(label);
-  inputWrapper.appendChild(resetButton);
-  form.appendChild(inputWrapper);
-  root.appendChild(form);
-  root.appendChild(dropdown);
-  containerElement.appendChild(root);
-  setDropdownPosition();
+    if (isDetached.value && lastStateRef.current.isOpen) {
+      dom.value.openDetachedOverlay();
+    }
+
+    scheduleRender(lastStateRef.current);
+    return function () {
+      if (panelContainerElement.contains(panelElement)) {
+        panelContainerElement.removeChild(panelElement);
+      }
+    };
+  });
+  runEffect(function () {
+    var containerElement = props.value.renderer.container;
+    containerElement.appendChild(dom.value.root);
+    return function () {
+      containerElement.removeChild(dom.value.root);
+    };
+  });
+  runEffect(function () {
+    var debouncedRender = (0, _autocompleteShared.debounce)(function (_ref2) {
+      var state = _ref2.state;
+      scheduleRender(state);
+    }, 0);
+
+    onStateChangeRef.current = function (_ref3) {
+      var state = _ref3.state,
+          prevState = _ref3.prevState; // The outer DOM might have changed since the last time the panel was
+      // positioned. The layout might have shifted vertically for instance.
+      // It's therefore safer to re-calculate the panel position before opening
+      // it again.
+
+      if (state.isOpen && !prevState.isOpen) {
+        setPanelPosition();
+      }
+
+      debouncedRender({
+        state: state
+      });
+    };
+
+    return function () {
+      onStateChangeRef.current = undefined;
+    };
+  });
+  runEffect(function () {
+    var onResize = (0, _autocompleteShared.debounce)(function () {
+      var previousisDetached = isDetached.value;
+      isDetached.value = props.value.core.environment.matchMedia(props.value.renderer.detachedMediaQuery).matches;
+
+      if (previousisDetached !== isDetached.value) {
+        update({});
+      } else {
+        requestAnimationFrame(setPanelPosition);
+      }
+    }, 20);
+    props.value.core.environment.addEventListener('resize', onResize);
+    return function () {
+      props.value.core.environment.removeEventListener('resize', onResize);
+    };
+  });
+  runEffect(function () {
+    if (!isDetached.value) {
+      return function () {};
+    }
+
+    function toggleModalClassname(isActive) {
+      dom.value.detachedContainer.classList.toggle('aa-DetachedContainer--Modal', isActive);
+    }
+
+    function onChange(event) {
+      toggleModalClassname(event.matches);
+    }
+
+    var isModalDetachedMql = window.matchMedia(getComputedStyle(props.value.core.environment.document.documentElement).getPropertyValue('--aa-detached-modal-media-query'));
+    toggleModalClassname(isModalDetachedMql.matches);
+    isModalDetachedMql.addEventListener('change', onChange);
+    return function () {
+      isModalDetachedMql.removeEventListener('change', onChange);
+    };
+  });
+  runEffect(function () {
+    requestAnimationFrame(setPanelPosition);
+    return function () {};
+  });
 
   function destroy() {
-    containerElement.innerHTML = '';
-    (0, _setProperties.setProperties)(window, {
-      onResize: null
+    cleanupEffects();
+  }
+
+  function update() {
+    var updatedOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    cleanupEffects();
+    optionsRef.current = (0, _utils.mergeDeep)(props.value.renderer, props.value.core, {
+      initialState: lastStateRef.current
+    }, updatedOptions);
+    runReactives();
+    runEffects();
+    autocomplete.value.refresh().then(function () {
+      scheduleRender(lastStateRef.current);
     });
   }
 
-  return {
-    setHighlightedIndex: autocomplete.setHighlightedIndex,
-    setQuery: autocomplete.setQuery,
-    setSuggestions: autocomplete.setSuggestions,
-    setIsOpen: autocomplete.setIsOpen,
-    setStatus: autocomplete.setStatus,
-    setContext: autocomplete.setContext,
-    refresh: autocomplete.refresh,
+  return _objectSpread(_objectSpread({}, autocompleteScopeApi), {}, {
+    update: update,
     destroy: destroy
-  };
+  });
 }
-},{"@algolia/autocomplete-core":"../node_modules/@algolia/autocomplete-core/dist/esm/index.js","./concatClassNames":"../node_modules/@algolia/autocomplete-js/dist/esm/concatClassNames.js","./debounce":"../node_modules/@algolia/autocomplete-js/dist/esm/debounce.js","./getDropdownPositionStyle":"../node_modules/@algolia/autocomplete-js/dist/esm/getDropdownPositionStyle.js","./getHTMLElement":"../node_modules/@algolia/autocomplete-js/dist/esm/getHTMLElement.js","./icons":"../node_modules/@algolia/autocomplete-js/dist/esm/icons/index.js","./renderTemplate":"../node_modules/@algolia/autocomplete-js/dist/esm/renderTemplate.js","./setProperties":"../node_modules/@algolia/autocomplete-js/dist/esm/setProperties.js"}],"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/HighlightedHit.js":[function(require,module,exports) {
+},{"@algolia/autocomplete-core":"../node_modules/@algolia/autocomplete-core/dist/esm/index.js","@algolia/autocomplete-shared":"../node_modules/@algolia/autocomplete-shared/dist/esm/index.js","./createAutocompleteDom":"../node_modules/@algolia/autocomplete-js/dist/esm/createAutocompleteDom.js","./createEffectWrapper":"../node_modules/@algolia/autocomplete-js/dist/esm/createEffectWrapper.js","./createReactiveWrapper":"../node_modules/@algolia/autocomplete-js/dist/esm/createReactiveWrapper.js","./getDefaultOptions":"../node_modules/@algolia/autocomplete-js/dist/esm/getDefaultOptions.js","./getPanelPlacementStyle":"../node_modules/@algolia/autocomplete-js/dist/esm/getPanelPlacementStyle.js","./render":"../node_modules/@algolia/autocomplete-js/dist/esm/render.js","./utils":"../node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/HighlightedHit.js":[function(require,module,exports) {
 
 },{}],"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/getAttributeValueByPath.js":[function(require,module,exports) {
 "use strict";
@@ -39933,1908 +40927,7 @@ Object.keys(_getAlgoliaResults).forEach(function (key) {
     }
   });
 });
-},{"./highlight/HighlightedHit":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/HighlightedHit.js","./highlight/parseAlgoliaHitHighlight":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/parseAlgoliaHitHighlight.js","./highlight/parseAlgoliaHitReverseHighlight":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/parseAlgoliaHitReverseHighlight.js","./highlight/parseAlgoliaHitReverseSnippet":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/parseAlgoliaHitReverseSnippet.js","./highlight/parseAlgoliaHitSnippet":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/parseAlgoliaHitSnippet.js","./highlight/SnippetedHit":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/SnippetedHit.js","./search/getAlgoliaFacetHits":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/search/getAlgoliaFacetHits.js","./search/getAlgoliaHits":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/search/getAlgoliaHits.js","./search/getAlgoliaResults":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/search/getAlgoliaResults.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/highlight.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.highlightItem = highlightItem;
-exports.reverseHighlightItem = reverseHighlightItem;
-exports.snippetItem = snippetItem;
-exports.reverseSnippetItem = reverseSnippetItem;
-
-var _autocompletePresetAlgolia = require("@algolia/autocomplete-preset-algolia");
-
-function concatParts(parts, _ref) {
-  var highlightPreTag = _ref.highlightPreTag,
-      highlightPostTag = _ref.highlightPostTag;
-  return parts.reduce(function (acc, current) {
-    return acc + (current.isHighlighted ? "".concat(highlightPreTag).concat(current.value).concat(highlightPostTag) : current.value);
-  }, '');
-}
-/**
- * Highlights and escapes the matching parts of an Algolia hit.
- */
-
-
-function highlightItem(_ref2) {
-  var item = _ref2.item,
-      attribute = _ref2.attribute,
-      _ref2$highlightPreTag = _ref2.highlightPreTag,
-      highlightPreTag = _ref2$highlightPreTag === void 0 ? '<mark>' : _ref2$highlightPreTag,
-      _ref2$highlightPostTa = _ref2.highlightPostTag,
-      highlightPostTag = _ref2$highlightPostTa === void 0 ? '</mark>' : _ref2$highlightPostTa,
-      ignoreEscape = _ref2.ignoreEscape;
-  return concatParts((0, _autocompletePresetAlgolia.parseAlgoliaHitHighlight)({
-    hit: item,
-    attribute: attribute,
-    ignoreEscape: ignoreEscape
-  }), {
-    highlightPreTag: highlightPreTag,
-    highlightPostTag: highlightPostTag
-  });
-}
-/**
- * Highlights and escapes the non-matching parts of an Algolia hit.
- *
- * This is a common pattern for Query Suggestions.
- */
-
-
-function reverseHighlightItem(_ref3) {
-  var item = _ref3.item,
-      attribute = _ref3.attribute,
-      _ref3$highlightPreTag = _ref3.highlightPreTag,
-      highlightPreTag = _ref3$highlightPreTag === void 0 ? '<mark>' : _ref3$highlightPreTag,
-      _ref3$highlightPostTa = _ref3.highlightPostTag,
-      highlightPostTag = _ref3$highlightPostTa === void 0 ? '</mark>' : _ref3$highlightPostTa,
-      ignoreEscape = _ref3.ignoreEscape;
-  return concatParts((0, _autocompletePresetAlgolia.parseAlgoliaHitReverseHighlight)({
-    hit: item,
-    attribute: attribute,
-    ignoreEscape: ignoreEscape
-  }), {
-    highlightPreTag: highlightPreTag,
-    highlightPostTag: highlightPostTag
-  });
-}
-/**
- * Highlights and escapes the matching parts of an Algolia hit snippet.
- */
-
-
-function snippetItem(_ref4) {
-  var item = _ref4.item,
-      attribute = _ref4.attribute,
-      _ref4$highlightPreTag = _ref4.highlightPreTag,
-      highlightPreTag = _ref4$highlightPreTag === void 0 ? '<mark>' : _ref4$highlightPreTag,
-      _ref4$highlightPostTa = _ref4.highlightPostTag,
-      highlightPostTag = _ref4$highlightPostTa === void 0 ? '</mark>' : _ref4$highlightPostTa,
-      ignoreEscape = _ref4.ignoreEscape;
-  return concatParts((0, _autocompletePresetAlgolia.parseAlgoliaHitSnippet)({
-    hit: item,
-    attribute: attribute,
-    ignoreEscape: ignoreEscape
-  }), {
-    highlightPreTag: highlightPreTag,
-    highlightPostTag: highlightPostTag
-  });
-}
-/**
- * Highlights and escapes the non-matching parts of an Algolia hit snippet.
- *
- * This is a common pattern for Query Suggestions.
- */
-
-
-function reverseSnippetItem(_ref5) {
-  var item = _ref5.item,
-      attribute = _ref5.attribute,
-      _ref5$highlightPreTag = _ref5.highlightPreTag,
-      highlightPreTag = _ref5$highlightPreTag === void 0 ? '<mark>' : _ref5$highlightPreTag,
-      _ref5$highlightPostTa = _ref5.highlightPostTag,
-      highlightPostTag = _ref5$highlightPostTa === void 0 ? '</mark>' : _ref5$highlightPostTa,
-      ignoreEscape = _ref5.ignoreEscape;
-  return concatParts((0, _autocompletePresetAlgolia.parseAlgoliaHitReverseSnippet)({
-    hit: item,
-    attribute: attribute,
-    ignoreEscape: ignoreEscape
-  }), {
-    highlightPreTag: highlightPreTag,
-    highlightPostTag: highlightPostTag
-  });
-}
-},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/index.js":[function(require,module,exports) {
-
-},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var _exportNames = {
-  getAlgoliaResults: true,
-  getAlgoliaHits: true
-};
-Object.defineProperty(exports, "getAlgoliaResults", {
-  enumerable: true,
-  get: function () {
-    return _autocompletePresetAlgolia.getAlgoliaResults;
-  }
-});
-Object.defineProperty(exports, "getAlgoliaHits", {
-  enumerable: true,
-  get: function () {
-    return _autocompletePresetAlgolia.getAlgoliaHits;
-  }
-});
-
-var _autocomplete = require("./autocomplete");
-
-Object.keys(_autocomplete).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _autocomplete[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _autocomplete[key];
-    }
-  });
-});
-
-var _highlight = require("./highlight");
-
-Object.keys(_highlight).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _highlight[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _highlight[key];
-    }
-  });
-});
-
-var _autocompletePresetAlgolia = require("@algolia/autocomplete-preset-algolia");
-
-var _types = require("./types");
-
-Object.keys(_types).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _types[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _types[key];
-    }
-  });
-});
-},{"./autocomplete":"../node_modules/@algolia/autocomplete-js/dist/esm/autocomplete.js","./highlight":"../node_modules/@algolia/autocomplete-js/dist/esm/highlight.js","@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","./types":"../node_modules/@algolia/autocomplete-js/dist/esm/types/index.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/getHTMLElement.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getHTMLElement = getHTMLElement;
-
-var _autocompleteShared = require("@algolia/autocomplete-shared");
-
-function getHTMLElement(value) {
-  if (typeof value === 'string') {
-    var element = document.querySelector(value);
-    (0, _autocompleteShared.invariant)(element !== null, "The element ".concat(JSON.stringify(value), " is not in the document."));
-    return element;
-  }
-
-  return value;
-}
-},{"@algolia/autocomplete-shared":"../node_modules/@algolia/autocomplete-shared/dist/esm/index.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/mergeClassNames.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.mergeClassNames = mergeClassNames;
-
-function mergeClassNames() {
-  for (var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++) {
-    values[_key] = arguments[_key];
-  }
-
-  return values.reduce(function (acc, current) {
-    Object.keys(current).forEach(function (key) {
-      var accValue = acc[key];
-      var currentValue = current[key];
-
-      if (accValue !== currentValue) {
-        acc[key] = [accValue, currentValue].filter(Boolean).join(' ');
-      }
-    });
-    return acc;
-  }, {});
-}
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/mergeDeep.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.mergeDeep = mergeDeep;
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-
-function _iterableToArray(iter) {
-  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
-}
-
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
-  }
-
-  return arr2;
-}
-
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-var isObject = function isObject(value) {
-  return value && _typeof(value) === 'object';
-};
-
-function mergeDeep() {
-  for (var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++) {
-    values[_key] = arguments[_key];
-  }
-
-  return values.reduce(function (acc, current) {
-    Object.keys(current).forEach(function (key) {
-      var accValue = acc[key];
-      var currentValue = current[key];
-
-      if (Array.isArray(accValue) && Array.isArray(currentValue)) {
-        acc[key] = accValue.concat.apply(accValue, _toConsumableArray(currentValue));
-      } else if (isObject(accValue) && isObject(currentValue)) {
-        acc[key] = mergeDeep(accValue, currentValue);
-      } else {
-        acc[key] = currentValue;
-      }
-    });
-    return acc;
-  }, {});
-}
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/setProperties.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.setProperty = setProperty;
-exports.setProperties = setProperties;
-exports.setPropertiesWithoutEvents = setPropertiesWithoutEvents;
-
-/* eslint-disable */
-
-/*
- * Taken from Preact
- *
- * See https://github.com/preactjs/preact/blob/6ab49d9020740127577bf4af66bf63f4af7f9fee/src/diff/props.js#L58-L151
- */
-function setStyle(style, key, value) {
-  if (value === null) {
-    style[key] = '';
-  } else if (typeof value !== 'number') {
-    style[key] = value;
-  } else {
-    style[key] = value + 'px';
-  }
-}
-/**
- * Proxy an event to hooked event handlers
- */
-
-
-function eventProxy(event) {
-  this._listeners[event.type](event);
-}
-/**
- * Set a property value on a DOM node
- */
-
-
-function setProperty(dom, name, value) {
-  var useCapture;
-  var nameLower;
-  var oldValue = dom[name];
-
-  if (name === 'style') {
-    if (typeof value == 'string') {
-      dom.style = value;
-    } else {
-      if (value === null) {
-        dom.style = '';
-      } else {
-        for (name in value) {
-          if (!oldValue || value[name] !== oldValue[name]) {
-            setStyle(dom.style, name, value[name]);
-          }
-        }
-      }
-    }
-  } // Benchmark for comparison: https://esbench.com/bench/574c954bdb965b9a00965ac6
-  else if (name[0] === 'o' && name[1] === 'n') {
-      useCapture = name !== (name = name.replace(/Capture$/, ''));
-      nameLower = name.toLowerCase();
-      if (nameLower in dom) name = nameLower;
-      name = name.slice(2);
-      if (!dom._listeners) dom._listeners = {};
-      dom._listeners[name] = value;
-
-      if (value) {
-        if (!oldValue) dom.addEventListener(name, eventProxy, useCapture);
-      } else {
-        dom.removeEventListener(name, eventProxy, useCapture);
-      }
-    } else if (name !== 'list' && name !== 'tagName' && // HTMLButtonElement.form and HTMLInputElement.form are read-only but can be set using
-    // setAttribute
-    name !== 'form' && name !== 'type' && name !== 'size' && name !== 'download' && name !== 'href' && name in dom) {
-      dom[name] = value == null ? '' : value;
-    } else if (typeof value != 'function' && name !== 'dangerouslySetInnerHTML') {
-      if (value == null || value === false && // ARIA-attributes have a different notion of boolean values.
-      // The value `false` is different from the attribute not
-      // existing on the DOM, so we can't remove it. For non-boolean
-      // ARIA-attributes we could treat false as a removal, but the
-      // amount of exceptions would cost us too many bytes. On top of
-      // that other VDOM frameworks also always stringify `false`.
-      !/^ar/.test(name)) {
-        dom.removeAttribute(name);
-      } else {
-        dom.setAttribute(name, value);
-      }
-    }
-}
-
-function getNormalizedName(name) {
-  switch (name) {
-    case 'onChange':
-      return 'onInput';
-
-    default:
-      return name;
-  }
-}
-
-function setProperties(dom, props) {
-  for (var name in props) {
-    setProperty(dom, getNormalizedName(name), props[name]);
-  }
-}
-
-function setPropertiesWithoutEvents(dom, props) {
-  for (var name in props) {
-    if (!(name[0] === 'o' && name[1] === 'n')) {
-      setProperty(dom, getNormalizedName(name), props[name]);
-    }
-  }
-}
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _getHTMLElement = require("./getHTMLElement");
-
-Object.keys(_getHTMLElement).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _getHTMLElement[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _getHTMLElement[key];
-    }
-  });
-});
-
-var _mergeClassNames = require("./mergeClassNames");
-
-Object.keys(_mergeClassNames).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _mergeClassNames[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _mergeClassNames[key];
-    }
-  });
-});
-
-var _mergeDeep = require("./mergeDeep");
-
-Object.keys(_mergeDeep).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _mergeDeep[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _mergeDeep[key];
-    }
-  });
-});
-
-var _setProperties = require("./setProperties");
-
-Object.keys(_setProperties).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _setProperties[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _setProperties[key];
-    }
-  });
-});
-},{"./getHTMLElement":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/getHTMLElement.js","./mergeClassNames":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/mergeClassNames.js","./mergeDeep":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/mergeDeep.js","./setProperties":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/setProperties.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/createDomElement.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createDomElement = createDomElement;
-
-var _utils = require("./utils");
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-
-function _iterableToArray(iter) {
-  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
-}
-
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
-  }
-
-  return arr2;
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-function createDomElement(tagName, _ref) {
-  var _ref$children = _ref.children,
-      children = _ref$children === void 0 ? [] : _ref$children,
-      props = _objectWithoutProperties(_ref, ["children"]);
-
-  var element = document.createElement(tagName);
-  (0, _utils.setProperties)(element, props);
-  element.append.apply(element, _toConsumableArray(children));
-  return element;
-}
-},{"./utils":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/components/Input.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Input = void 0;
-
-var _createDomElement = require("../createDomElement");
-
-var _utils = require("../utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-var Input = function Input(_ref) {
-  var autocompleteScopeApi = _ref.autocompleteScopeApi,
-      classNames = _ref.classNames,
-      getInputProps = _ref.getInputProps,
-      getInputPropsCore = _ref.getInputPropsCore,
-      onDetachedEscape = _ref.onDetachedEscape,
-      state = _ref.state,
-      props = _objectWithoutProperties(_ref, ["autocompleteScopeApi", "classNames", "getInputProps", "getInputPropsCore", "onDetachedEscape", "state"]);
-
-  var element = (0, _createDomElement.createDomElement)('input', props);
-  var inputProps = getInputProps(_objectSpread({
-    state: state,
-    props: getInputPropsCore({
-      inputElement: element
-    }),
-    inputElement: element
-  }, autocompleteScopeApi));
-  (0, _utils.setProperties)(element, _objectSpread(_objectSpread({}, inputProps), {}, {
-    onKeyDown: function onKeyDown(event) {
-      if (onDetachedEscape && event.key === 'Escape') {
-        onDetachedEscape();
-        return;
-      }
-
-      inputProps.onKeyDown(event);
-    }
-  }));
-  return element;
-};
-
-exports.Input = Input;
-},{"../createDomElement":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/createDomElement.js","../utils":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/components/LoadingIcon.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.LoadingIcon = void 0;
-
-var LoadingIcon = function LoadingIcon() {
-  var element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  element.setAttribute('class', 'aa-LoadingIcon');
-  element.setAttribute('viewBox', '0 0 100 100');
-  element.setAttribute('width', '20');
-  element.setAttribute('height', '20');
-  element.innerHTML = "<circle\n  cx=\"50\"\n  cy=\"50\"\n  fill=\"none\"\n  r=\"35\"\n  stroke=\"currentColor\"\n  stroke-dasharray=\"164.93361431346415 56.97787143782138\"\n  stroke-width=\"6\"\n>\n  <animateTransform\n    attributeName=\"transform\"\n    type=\"rotate\"\n    repeatCount=\"indefinite\"\n    dur=\"1s\"\n    values=\"0 50 50;90 50 50;180 50 50;360 50 50\"\n    keyTimes=\"0;0.40;0.65;1\"\n  />\n</circle>";
-  return element;
-};
-
-exports.LoadingIcon = LoadingIcon;
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/components/ResetIcon.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ResetIcon = void 0;
-
-var ResetIcon = function ResetIcon() {
-  var element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  element.setAttribute('class', 'aa-ResetIcon');
-  element.setAttribute('viewBox', '0 0 24 24');
-  element.setAttribute('width', '18');
-  element.setAttribute('height', '18');
-  element.setAttribute('fill', 'currentColor');
-  var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', 'M5.293 6.707l5.293 5.293-5.293 5.293c-0.391 0.391-0.391 1.024 0 1.414s1.024 0.391 1.414 0l5.293-5.293 5.293 5.293c0.391 0.391 1.024 0.391 1.414 0s0.391-1.024 0-1.414l-5.293-5.293 5.293-5.293c0.391-0.391 0.391-1.024 0-1.414s-1.024-0.391-1.414 0l-5.293 5.293-5.293-5.293c-0.391-0.391-1.024-0.391-1.414 0s-0.391 1.024 0 1.414z');
-  element.appendChild(path);
-  return element;
-};
-
-exports.ResetIcon = ResetIcon;
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/components/SearchIcon.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.SearchIcon = void 0;
-
-var SearchIcon = function SearchIcon() {
-  var element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  element.setAttribute('class', 'aa-SubmitIcon');
-  element.setAttribute('viewBox', '0 0 24 24');
-  element.setAttribute('width', '20');
-  element.setAttribute('height', '20');
-  element.setAttribute('fill', 'currentColor');
-  var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', 'M16.041 15.856c-0.034 0.026-0.067 0.055-0.099 0.087s-0.060 0.064-0.087 0.099c-1.258 1.213-2.969 1.958-4.855 1.958-1.933 0-3.682-0.782-4.95-2.050s-2.050-3.017-2.050-4.95 0.782-3.682 2.050-4.95 3.017-2.050 4.95-2.050 3.682 0.782 4.95 2.050 2.050 3.017 2.050 4.95c0 1.886-0.745 3.597-1.959 4.856zM21.707 20.293l-3.675-3.675c1.231-1.54 1.968-3.493 1.968-5.618 0-2.485-1.008-4.736-2.636-6.364s-3.879-2.636-6.364-2.636-4.736 1.008-6.364 2.636-2.636 3.879-2.636 6.364 1.008 4.736 2.636 6.364 3.879 2.636 6.364 2.636c2.125 0 4.078-0.737 5.618-1.968l3.675 3.675c0.391 0.391 1.024 0.391 1.414 0s0.391-1.024 0-1.414z');
-  element.appendChild(path);
-  return element;
-};
-
-exports.SearchIcon = SearchIcon;
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/components/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _Input = require("./Input");
-
-Object.keys(_Input).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _Input[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _Input[key];
-    }
-  });
-});
-
-var _LoadingIcon = require("./LoadingIcon");
-
-Object.keys(_LoadingIcon).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _LoadingIcon[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _LoadingIcon[key];
-    }
-  });
-});
-
-var _ResetIcon = require("./ResetIcon");
-
-Object.keys(_ResetIcon).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _ResetIcon[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _ResetIcon[key];
-    }
-  });
-});
-
-var _SearchIcon = require("./SearchIcon");
-
-Object.keys(_SearchIcon).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _SearchIcon[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _SearchIcon[key];
-    }
-  });
-});
-},{"./Input":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/components/Input.js","./LoadingIcon":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/components/LoadingIcon.js","./ResetIcon":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/components/ResetIcon.js","./SearchIcon":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/components/SearchIcon.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/createAutocompleteDom.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createAutocompleteDom = createAutocompleteDom;
-
-var _components = require("./components");
-
-var _createDomElement = require("./createDomElement");
-
-var _utils = require("./utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function createAutocompleteDom(_ref) {
-  var autocomplete = _ref.autocomplete,
-      autocompleteScopeApi = _ref.autocompleteScopeApi,
-      classNames = _ref.classNames,
-      isDetached = _ref.isDetached,
-      _ref$placeholder = _ref.placeholder,
-      placeholder = _ref$placeholder === void 0 ? 'Search' : _ref$placeholder,
-      propGetters = _ref.propGetters,
-      state = _ref.state;
-
-  function onDetachedOverlayClose() {
-    autocomplete.setQuery('');
-    autocomplete.setIsOpen(false);
-    autocomplete.refresh();
-    document.body.classList.remove('aa-Detached');
-  }
-
-  var rootProps = propGetters.getRootProps(_objectSpread({
-    state: state,
-    props: autocomplete.getRootProps({})
-  }, autocompleteScopeApi));
-  var root = (0, _createDomElement.createDomElement)('div', _objectSpread({
-    class: classNames.root
-  }, rootProps));
-  var detachedContainer = (0, _createDomElement.createDomElement)('div', {
-    class: classNames.detachedContainer,
-    onMouseDown: function onMouseDown(event) {
-      event.stopPropagation();
-    }
-  });
-  var detachedOverlay = (0, _createDomElement.createDomElement)('div', {
-    class: classNames.detachedOverlay,
-    children: [detachedContainer],
-    onMouseDown: function onMouseDown() {
-      document.body.removeChild(detachedOverlay);
-      onDetachedOverlayClose();
-    }
-  });
-  var labelProps = propGetters.getLabelProps(_objectSpread({
-    state: state,
-    props: autocomplete.getLabelProps({})
-  }, autocompleteScopeApi));
-  var submitButton = (0, _createDomElement.createDomElement)('button', {
-    class: classNames.submitButton,
-    type: 'submit',
-    children: [(0, _components.SearchIcon)({})]
-  });
-  var label = (0, _createDomElement.createDomElement)('label', _objectSpread({
-    class: classNames.label,
-    children: [submitButton]
-  }, labelProps));
-  var resetButton = (0, _createDomElement.createDomElement)('button', {
-    class: classNames.resetButton,
-    type: 'reset',
-    children: [(0, _components.ResetIcon)({})]
-  });
-  var loadingIndicator = (0, _createDomElement.createDomElement)('div', {
-    class: classNames.loadingIndicator,
-    children: [(0, _components.LoadingIcon)({})]
-  });
-  var input = (0, _components.Input)({
-    class: classNames.input,
-    state: state,
-    getInputProps: propGetters.getInputProps,
-    getInputPropsCore: autocomplete.getInputProps,
-    autocompleteScopeApi: autocompleteScopeApi,
-    onDetachedEscape: isDetached ? function () {
-      document.body.removeChild(detachedOverlay);
-      onDetachedOverlayClose();
-    } : undefined
-  });
-  var inputWrapperPrefix = (0, _createDomElement.createDomElement)('div', {
-    class: classNames.inputWrapperPrefix,
-    children: [label, loadingIndicator]
-  });
-  var inputWrapperSuffix = (0, _createDomElement.createDomElement)('div', {
-    class: classNames.inputWrapperSuffix,
-    children: [resetButton]
-  });
-  var inputWrapper = (0, _createDomElement.createDomElement)('div', {
-    class: classNames.inputWrapper,
-    children: [input]
-  });
-  var formProps = propGetters.getFormProps(_objectSpread({
-    state: state,
-    props: autocomplete.getFormProps({
-      inputElement: input
-    })
-  }, autocompleteScopeApi));
-  var form = (0, _createDomElement.createDomElement)('form', _objectSpread({
-    class: classNames.form,
-    children: [inputWrapperPrefix, inputWrapper, inputWrapperSuffix]
-  }, formProps));
-  var panelProps = propGetters.getPanelProps(_objectSpread({
-    state: state,
-    props: autocomplete.getPanelProps({})
-  }, autocompleteScopeApi));
-  var panel = (0, _createDomElement.createDomElement)('div', _objectSpread({
-    class: classNames.panel
-  }, panelProps));
-
-  if ("development" === 'test') {
-    (0, _utils.setProperties)(panel, {
-      'data-testid': 'panel'
-    });
-  }
-
-  function openDetachedOverlay() {
-    document.body.appendChild(detachedOverlay);
-    document.body.classList.add('aa-Detached');
-    input.focus();
-  }
-
-  if (isDetached) {
-    var detachedSearchButtonIcon = (0, _createDomElement.createDomElement)('div', {
-      class: classNames.detachedSearchButtonIcon,
-      children: [(0, _components.SearchIcon)({})]
-    });
-    var detachedSearchButtonPlaceholder = (0, _createDomElement.createDomElement)('div', {
-      class: classNames.detachedSearchButtonPlaceholder,
-      textContent: placeholder
-    });
-    var detachedSearchButton = (0, _createDomElement.createDomElement)('button', {
-      class: classNames.detachedSearchButton,
-      onClick: function onClick(event) {
-        event.preventDefault();
-        openDetachedOverlay();
-      },
-      children: [detachedSearchButtonIcon, detachedSearchButtonPlaceholder]
-    });
-    var detachedCancelButton = (0, _createDomElement.createDomElement)('button', {
-      class: classNames.detachedCancelButton,
-      textContent: 'Cancel',
-      onClick: function onClick() {
-        document.body.removeChild(detachedOverlay);
-        onDetachedOverlayClose();
-      }
-    });
-    var detachedFormContainer = (0, _createDomElement.createDomElement)('div', {
-      class: classNames.detachedFormContainer,
-      children: [form, detachedCancelButton]
-    });
-    detachedContainer.appendChild(detachedFormContainer);
-    root.appendChild(detachedSearchButton);
-  } else {
-    root.appendChild(form);
-  }
-
-  return {
-    openDetachedOverlay: openDetachedOverlay,
-    detachedContainer: detachedContainer,
-    detachedOverlay: detachedOverlay,
-    inputWrapper: inputWrapper,
-    input: input,
-    root: root,
-    form: form,
-    label: label,
-    submitButton: submitButton,
-    resetButton: resetButton,
-    loadingIndicator: loadingIndicator,
-    panel: panel
-  };
-}
-},{"./components":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/components/index.js","./createDomElement":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/createDomElement.js","./utils":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/createEffectWrapper.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createEffectWrapper = createEffectWrapper;
-
-function createEffectWrapper() {
-  var effects = [];
-  var cleanups = [];
-
-  function runEffect(fn) {
-    effects.push(fn);
-    var effectCleanup = fn();
-    cleanups.push(effectCleanup);
-  }
-
-  return {
-    runEffect: runEffect,
-    cleanupEffects: function cleanupEffects() {
-      var currentCleanups = cleanups;
-      cleanups = [];
-      currentCleanups.forEach(function (cleanup) {
-        cleanup();
-      });
-    },
-    runEffects: function runEffects() {
-      var currentEffects = effects;
-      effects = [];
-      currentEffects.forEach(function (effect) {
-        runEffect(effect);
-      });
-    }
-  };
-}
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/createReactiveWrapper.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createReactiveWrapper = createReactiveWrapper;
-
-function createReactiveWrapper() {
-  var reactives = [];
-  return {
-    reactive: function reactive(value) {
-      var reactive = {
-        _fn: value,
-        _ref: {
-          current: value()
-        },
-
-        get value() {
-          return this._ref.current;
-        },
-
-        set value(value) {
-          this._ref.current = value;
-        }
-
-      };
-      reactives.push(reactive);
-      value();
-      return reactive;
-    },
-    runReactives: function runReactives() {
-      reactives.forEach(function (value) {
-        value._ref.current = value._fn();
-      });
-    }
-  };
-}
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/getDefaultOptions.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getDefaultOptions = getDefaultOptions;
-
-var _autocompleteShared = require("@algolia/autocomplete-shared");
-
-var _preact = require("preact");
-
-var _utils = require("./utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-var defaultClassNames = {
-  detachedCancelButton: 'aa-DetachedCancelButton',
-  detachedFormContainer: 'aa-DetachedFormContainer',
-  detachedContainer: 'aa-DetachedContainer',
-  detachedOverlay: 'aa-DetachedOverlay',
-  detachedSearchButton: 'aa-DetachedSearchButton',
-  detachedSearchButtonIcon: 'aa-DetachedSearchButtonIcon',
-  detachedSearchButtonPlaceholder: 'aa-DetachedSearchButtonPlaceholder',
-  form: 'aa-Form',
-  input: 'aa-Input',
-  inputWrapper: 'aa-InputWrapper',
-  inputWrapperPrefix: 'aa-InputWrapperPrefix',
-  inputWrapperSuffix: 'aa-InputWrapperSuffix',
-  item: 'aa-Item',
-  label: 'aa-Label',
-  list: 'aa-List',
-  loadingIndicator: 'aa-LoadingIndicator',
-  panel: 'aa-Panel',
-  panelLayout: 'aa-PanelLayout',
-  resetButton: 'aa-ResetButton',
-  root: 'aa-Autocomplete',
-  source: 'aa-Source',
-  sourceFooter: 'aa-SourceFooter',
-  sourceHeader: 'aa-SourceHeader',
-  sourceNoResults: 'aa-SourceNoResults',
-  submitButton: 'aa-SubmitButton'
-};
-
-var defaultRender = function defaultRender(_ref, root) {
-  var children = _ref.children;
-  (0, _preact.render)(children, root);
-};
-
-var defaultRenderer = {
-  createElement: _preact.createElement,
-  Fragment: _preact.Fragment
-};
-
-function getDefaultOptions(options) {
-  var classNames = options.classNames,
-      container = options.container,
-      getEnvironmentProps = options.getEnvironmentProps,
-      getFormProps = options.getFormProps,
-      getInputProps = options.getInputProps,
-      getItemProps = options.getItemProps,
-      getLabelProps = options.getLabelProps,
-      getListProps = options.getListProps,
-      getPanelProps = options.getPanelProps,
-      getRootProps = options.getRootProps,
-      panelContainer = options.panelContainer,
-      panelPlacement = options.panelPlacement,
-      render = options.render,
-      renderNoResults = options.renderNoResults,
-      renderer = options.renderer,
-      detachedMediaQuery = options.detachedMediaQuery,
-      core = _objectWithoutProperties(options, ["classNames", "container", "getEnvironmentProps", "getFormProps", "getInputProps", "getItemProps", "getLabelProps", "getListProps", "getPanelProps", "getRootProps", "panelContainer", "panelPlacement", "render", "renderNoResults", "renderer", "detachedMediaQuery"]);
-
-  var containerElement = (0, _utils.getHTMLElement)(container);
-  (0, _autocompleteShared.invariant)(containerElement.tagName !== 'INPUT', 'The `container` option does not support `input` elements. You need to change the container to a `div`.');
-  var environment = typeof window !== 'undefined' ? window : {};
-  return {
-    renderer: {
-      classNames: (0, _utils.mergeClassNames)(defaultClassNames, classNames !== null && classNames !== void 0 ? classNames : {}),
-      container: containerElement,
-      getEnvironmentProps: getEnvironmentProps !== null && getEnvironmentProps !== void 0 ? getEnvironmentProps : function (_ref2) {
-        var props = _ref2.props;
-        return props;
-      },
-      getFormProps: getFormProps !== null && getFormProps !== void 0 ? getFormProps : function (_ref3) {
-        var props = _ref3.props;
-        return props;
-      },
-      getInputProps: getInputProps !== null && getInputProps !== void 0 ? getInputProps : function (_ref4) {
-        var props = _ref4.props;
-        return props;
-      },
-      getItemProps: getItemProps !== null && getItemProps !== void 0 ? getItemProps : function (_ref5) {
-        var props = _ref5.props;
-        return props;
-      },
-      getLabelProps: getLabelProps !== null && getLabelProps !== void 0 ? getLabelProps : function (_ref6) {
-        var props = _ref6.props;
-        return props;
-      },
-      getListProps: getListProps !== null && getListProps !== void 0 ? getListProps : function (_ref7) {
-        var props = _ref7.props;
-        return props;
-      },
-      getPanelProps: getPanelProps !== null && getPanelProps !== void 0 ? getPanelProps : function (_ref8) {
-        var props = _ref8.props;
-        return props;
-      },
-      getRootProps: getRootProps !== null && getRootProps !== void 0 ? getRootProps : function (_ref9) {
-        var props = _ref9.props;
-        return props;
-      },
-      panelContainer: panelContainer ? (0, _utils.getHTMLElement)(panelContainer) : document.body,
-      panelPlacement: panelPlacement !== null && panelPlacement !== void 0 ? panelPlacement : 'input-wrapper-width',
-      render: render !== null && render !== void 0 ? render : defaultRender,
-      renderNoResults: renderNoResults,
-      renderer: renderer !== null && renderer !== void 0 ? renderer : defaultRenderer,
-      detachedMediaQuery: detachedMediaQuery !== null && detachedMediaQuery !== void 0 ? detachedMediaQuery : getComputedStyle(environment.document.documentElement).getPropertyValue('--aa-detached-media-query')
-    },
-    core: _objectSpread(_objectSpread({}, core), {}, {
-      environment: environment
-    })
-  };
-}
-},{"@algolia/autocomplete-shared":"../node_modules/@algolia/autocomplete-shared/dist/esm/index.js","preact":"../node_modules/preact/dist/preact.module.js","./utils":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/getPanelPlacementStyle.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getPanelPlacementStyle = getPanelPlacementStyle;
-
-function getPanelPlacementStyle(_ref) {
-  var panelPlacement = _ref.panelPlacement,
-      container = _ref.container,
-      form = _ref.form,
-      _ref$environment = _ref.environment,
-      environment = _ref$environment === void 0 ? window : _ref$environment;
-  var containerRect = container.getBoundingClientRect();
-  var top = container.offsetTop + containerRect.height;
-
-  switch (panelPlacement) {
-    case 'start':
-      {
-        return {
-          top: top,
-          left: containerRect.left
-        };
-      }
-
-    case 'end':
-      {
-        return {
-          top: top,
-          right: environment.document.documentElement.clientWidth - (containerRect.left + containerRect.width)
-        };
-      }
-
-    case 'full-width':
-      {
-        return {
-          top: top,
-          left: 0,
-          right: 0,
-          width: 'unset',
-          maxWidth: 'unset'
-        };
-      }
-
-    case 'input-wrapper-width':
-      {
-        var formRect = form.getBoundingClientRect();
-        return {
-          top: top,
-          left: formRect.left,
-          right: environment.document.documentElement.clientWidth - (formRect.left + formRect.width),
-          width: 'unset',
-          maxWidth: 'unset'
-        };
-      }
-
-    default:
-      {
-        throw new Error("The `panelPlacement` value ".concat(JSON.stringify(panelPlacement), " is not valid."));
-      }
-  }
-}
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/render.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.renderSearchBox = renderSearchBox;
-exports.renderPanel = renderPanel;
-
-var _utils = require("./utils");
-
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-/** @jsx createElement */
-
-
-function renderSearchBox(_ref) {
-  var autocomplete = _ref.autocomplete,
-      autocompleteScopeApi = _ref.autocompleteScopeApi,
-      dom = _ref.dom,
-      propGetters = _ref.propGetters,
-      state = _ref.state;
-  (0, _utils.setPropertiesWithoutEvents)(dom.root, propGetters.getRootProps(_objectSpread({
-    state: state,
-    props: autocomplete.getRootProps({})
-  }, autocompleteScopeApi)));
-  (0, _utils.setPropertiesWithoutEvents)(dom.input, propGetters.getInputProps(_objectSpread({
-    state: state,
-    props: autocomplete.getInputProps({
-      inputElement: dom.input
-    }),
-    inputElement: dom.input
-  }, autocompleteScopeApi)));
-  (0, _utils.setProperties)(dom.label, {
-    hidden: state.status === 'stalled'
-  });
-  (0, _utils.setProperties)(dom.loadingIndicator, {
-    hidden: state.status !== 'stalled'
-  });
-  (0, _utils.setProperties)(dom.resetButton, {
-    hidden: !state.query
-  });
-}
-
-function renderPanel(render, _ref2) {
-  var autocomplete = _ref2.autocomplete,
-      autocompleteScopeApi = _ref2.autocompleteScopeApi,
-      classNames = _ref2.classNames,
-      createElement = _ref2.createElement,
-      dom = _ref2.dom,
-      Fragment = _ref2.Fragment,
-      panelContainer = _ref2.panelContainer,
-      propGetters = _ref2.propGetters,
-      state = _ref2.state;
-
-  if (!state.isOpen) {
-    if (panelContainer.contains(dom.panel)) {
-      panelContainer.removeChild(dom.panel);
-    }
-
-    return;
-  } // We add the panel element to the DOM when it's not yet appended and that the
-  // items are fetched.
-
-
-  if (!panelContainer.contains(dom.panel) && state.status !== 'loading') {
-    panelContainer.appendChild(dom.panel);
-  }
-
-  dom.panel.classList.toggle('aa-Panel--stalled', state.status === 'stalled');
-  var sections = state.collections.map(function (_ref3, sourceIndex) {
-    var source = _ref3.source,
-        items = _ref3.items;
-    return createElement("section", {
-      key: sourceIndex,
-      className: classNames.source,
-      "data-autocomplete-source-id": source.sourceId
-    }, source.templates.header && createElement("div", {
-      className: classNames.sourceHeader
-    }, source.templates.header({
-      createElement: createElement,
-      Fragment: Fragment,
-      items: items,
-      source: source,
-      state: state
-    })), items.length === 0 && source.templates.noResults && state.query ? createElement("div", {
-      className: classNames.sourceNoResults
-    }, source.templates.noResults({
-      createElement: createElement,
-      Fragment: Fragment,
-      source: source,
-      state: state
-    })) : createElement("ul", _extends({
-      className: classNames.list
-    }, propGetters.getListProps(_objectSpread({
-      state: state,
-      props: autocomplete.getListProps({})
-    }, autocompleteScopeApi))), items.map(function (item) {
-      var itemProps = autocomplete.getItemProps({
-        item: item,
-        source: source
-      });
-      return createElement("li", _extends({
-        key: itemProps.id,
-        className: classNames.item
-      }, propGetters.getItemProps(_objectSpread({
-        state: state,
-        props: itemProps
-      }, autocompleteScopeApi))), source.templates.item({
-        createElement: createElement,
-        Fragment: Fragment,
-        item: item,
-        state: state
-      }));
-    })), source.templates.footer && createElement("div", {
-      className: classNames.sourceFooter
-    }, source.templates.footer({
-      createElement: createElement,
-      Fragment: Fragment,
-      items: items,
-      source: source,
-      state: state
-    })));
-  });
-  var children = createElement("div", {
-    className: "aa-PanelLayout"
-  }, sections);
-  render({
-    children: children,
-    state: state,
-    sections: sections,
-    createElement: createElement,
-    Fragment: Fragment
-  }, dom.panel);
-}
-},{"./utils":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/autocomplete.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.autocomplete = autocomplete;
-
-var _autocompleteCore = require("@algolia/autocomplete-core");
-
-var _autocompleteShared = require("@algolia/autocomplete-shared");
-
-var _createAutocompleteDom = require("./createAutocompleteDom");
-
-var _createEffectWrapper2 = require("./createEffectWrapper");
-
-var _createReactiveWrapper = require("./createReactiveWrapper");
-
-var _getDefaultOptions = require("./getDefaultOptions");
-
-var _getPanelPlacementStyle = require("./getPanelPlacementStyle");
-
-var _render = require("./render");
-
-var _utils = require("./utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function autocomplete(options) {
-  var _createEffectWrapper = (0, _createEffectWrapper2.createEffectWrapper)(),
-      runEffect = _createEffectWrapper.runEffect,
-      cleanupEffects = _createEffectWrapper.cleanupEffects,
-      runEffects = _createEffectWrapper.runEffects;
-
-  var _createReactiveWrappe = (0, _createReactiveWrapper.createReactiveWrapper)(),
-      reactive = _createReactiveWrappe.reactive,
-      runReactives = _createReactiveWrappe.runReactives;
-
-  var hasNoResultsSourceTemplateRef = (0, _autocompleteShared.createRef)(false);
-  var optionsRef = (0, _autocompleteShared.createRef)(options);
-  var onStateChangeRef = (0, _autocompleteShared.createRef)(undefined);
-  var props = reactive(function () {
-    return (0, _getDefaultOptions.getDefaultOptions)(optionsRef.current);
-  });
-  var isDetached = reactive(function () {
-    return props.value.core.environment.matchMedia(props.value.renderer.detachedMediaQuery).matches;
-  });
-  var autocomplete = reactive(function () {
-    return (0, _autocompleteCore.createAutocomplete)(_objectSpread(_objectSpread({}, props.value.core), {}, {
-      onStateChange: function onStateChange(options) {
-        var _onStateChangeRef$cur, _props$value$core$onS, _props$value$core;
-
-        hasNoResultsSourceTemplateRef.current = options.state.collections.some(function (collection) {
-          return collection.source.templates.noResults;
-        });
-        (_onStateChangeRef$cur = onStateChangeRef.current) === null || _onStateChangeRef$cur === void 0 ? void 0 : _onStateChangeRef$cur.call(onStateChangeRef, options);
-        (_props$value$core$onS = (_props$value$core = props.value.core).onStateChange) === null || _props$value$core$onS === void 0 ? void 0 : _props$value$core$onS.call(_props$value$core, options);
-      },
-      shouldPanelOpen: optionsRef.current.shouldPanelOpen || function (_ref) {
-        var state = _ref.state;
-        var hasItems = (0, _autocompleteShared.getItemsCount)(state) > 0;
-
-        if (!props.value.core.openOnFocus && !state.query) {
-          return hasItems;
-        }
-
-        var hasNoResultsTemplate = Boolean(hasNoResultsSourceTemplateRef.current || props.value.renderer.renderNoResults);
-        return !hasItems && hasNoResultsTemplate || hasItems;
-      }
-    }));
-  });
-  var lastStateRef = (0, _autocompleteShared.createRef)(_objectSpread({
-    collections: [],
-    completion: null,
-    context: {},
-    isOpen: false,
-    query: '',
-    activeItemId: null,
-    status: 'idle'
-  }, props.value.core.initialState));
-  var propGetters = {
-    getEnvironmentProps: props.value.renderer.getEnvironmentProps,
-    getFormProps: props.value.renderer.getFormProps,
-    getInputProps: props.value.renderer.getInputProps,
-    getItemProps: props.value.renderer.getItemProps,
-    getLabelProps: props.value.renderer.getLabelProps,
-    getListProps: props.value.renderer.getListProps,
-    getPanelProps: props.value.renderer.getPanelProps,
-    getRootProps: props.value.renderer.getRootProps
-  };
-  var autocompleteScopeApi = {
-    setActiveItemId: autocomplete.value.setActiveItemId,
-    setQuery: autocomplete.value.setQuery,
-    setCollections: autocomplete.value.setCollections,
-    setIsOpen: autocomplete.value.setIsOpen,
-    setStatus: autocomplete.value.setStatus,
-    setContext: autocomplete.value.setContext,
-    refresh: autocomplete.value.refresh
-  };
-  var dom = reactive(function () {
-    return (0, _createAutocompleteDom.createAutocompleteDom)({
-      autocomplete: autocomplete.value,
-      autocompleteScopeApi: autocompleteScopeApi,
-      classNames: props.value.renderer.classNames,
-      isDetached: isDetached.value,
-      placeholder: props.value.core.placeholder,
-      propGetters: propGetters,
-      state: lastStateRef.current
-    });
-  });
-
-  function setPanelPosition() {
-    (0, _utils.setProperties)(dom.value.panel, {
-      style: isDetached.value ? {} : (0, _getPanelPlacementStyle.getPanelPlacementStyle)({
-        panelPlacement: props.value.renderer.panelPlacement,
-        container: dom.value.root,
-        form: dom.value.form,
-        environment: props.value.core.environment
-      })
-    });
-  }
-
-  function scheduleRender(state) {
-    lastStateRef.current = state;
-    var renderProps = {
-      autocomplete: autocomplete.value,
-      autocompleteScopeApi: autocompleteScopeApi,
-      classNames: props.value.renderer.classNames,
-      container: props.value.renderer.container,
-      createElement: props.value.renderer.renderer.createElement,
-      dom: dom.value,
-      Fragment: props.value.renderer.renderer.Fragment,
-      panelContainer: isDetached.value ? dom.value.detachedContainer : props.value.renderer.panelContainer,
-      propGetters: propGetters,
-      state: lastStateRef.current
-    };
-    var render = !(0, _autocompleteShared.getItemsCount)(state) && !hasNoResultsSourceTemplateRef.current && props.value.renderer.renderNoResults || props.value.renderer.render;
-    (0, _render.renderSearchBox)(renderProps);
-    (0, _render.renderPanel)(render, renderProps);
-  }
-
-  runEffect(function () {
-    var environmentProps = autocomplete.value.getEnvironmentProps({
-      formElement: dom.value.form,
-      panelElement: dom.value.panel,
-      inputElement: dom.value.input
-    });
-    (0, _utils.setProperties)(props.value.core.environment, environmentProps);
-    return function () {
-      (0, _utils.setProperties)(props.value.core.environment, Object.keys(environmentProps).reduce(function (acc, key) {
-        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, key, undefined));
-      }, {}));
-    };
-  });
-  runEffect(function () {
-    var panelContainerElement = isDetached.value ? props.value.core.environment.document.body : props.value.renderer.panelContainer;
-    var panelElement = isDetached.value ? dom.value.detachedOverlay : dom.value.panel;
-
-    if (isDetached.value && lastStateRef.current.isOpen) {
-      dom.value.openDetachedOverlay();
-    }
-
-    scheduleRender(lastStateRef.current);
-    return function () {
-      if (panelContainerElement.contains(panelElement)) {
-        panelContainerElement.removeChild(panelElement);
-      }
-    };
-  });
-  runEffect(function () {
-    var containerElement = props.value.renderer.container;
-    containerElement.appendChild(dom.value.root);
-    return function () {
-      containerElement.removeChild(dom.value.root);
-    };
-  });
-  runEffect(function () {
-    var debouncedRender = (0, _autocompleteShared.debounce)(function (_ref2) {
-      var state = _ref2.state;
-      scheduleRender(state);
-    }, 0);
-
-    onStateChangeRef.current = function (_ref3) {
-      var state = _ref3.state,
-          prevState = _ref3.prevState; // The outer DOM might have changed since the last time the panel was
-      // positioned. The layout might have shifted vertically for instance.
-      // It's therefore safer to re-calculate the panel position before opening
-      // it again.
-
-      if (state.isOpen && !prevState.isOpen) {
-        setPanelPosition();
-      }
-
-      debouncedRender({
-        state: state
-      });
-    };
-
-    return function () {
-      onStateChangeRef.current = undefined;
-    };
-  });
-  runEffect(function () {
-    var onResize = (0, _autocompleteShared.debounce)(function () {
-      var previousisDetached = isDetached.value;
-      isDetached.value = props.value.core.environment.matchMedia(props.value.renderer.detachedMediaQuery).matches;
-
-      if (previousisDetached !== isDetached.value) {
-        update({});
-      } else {
-        requestAnimationFrame(setPanelPosition);
-      }
-    }, 20);
-    props.value.core.environment.addEventListener('resize', onResize);
-    return function () {
-      props.value.core.environment.removeEventListener('resize', onResize);
-    };
-  });
-  runEffect(function () {
-    if (!isDetached.value) {
-      return function () {};
-    }
-
-    function toggleModalClassname(isActive) {
-      dom.value.detachedContainer.classList.toggle('aa-DetachedContainer--Modal', isActive);
-    }
-
-    function onChange(event) {
-      toggleModalClassname(event.matches);
-    }
-
-    var isModalDetachedMql = window.matchMedia(getComputedStyle(props.value.core.environment.document.documentElement).getPropertyValue('--aa-detached-modal-media-query'));
-    toggleModalClassname(isModalDetachedMql.matches);
-    isModalDetachedMql.addEventListener('change', onChange);
-    return function () {
-      isModalDetachedMql.removeEventListener('change', onChange);
-    };
-  });
-  runEffect(function () {
-    requestAnimationFrame(setPanelPosition);
-    return function () {};
-  });
-
-  function destroy() {
-    cleanupEffects();
-  }
-
-  function update() {
-    var updatedOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    cleanupEffects();
-    optionsRef.current = (0, _utils.mergeDeep)(props.value.renderer, props.value.core, {
-      initialState: lastStateRef.current
-    }, updatedOptions);
-    runReactives();
-    runEffects();
-    autocomplete.value.refresh().then(function () {
-      scheduleRender(lastStateRef.current);
-    });
-  }
-
-  return _objectSpread(_objectSpread({}, autocompleteScopeApi), {}, {
-    update: update,
-    destroy: destroy
-  });
-}
-},{"@algolia/autocomplete-core":"../node_modules/@algolia/autocomplete-core/dist/esm/index.js","@algolia/autocomplete-shared":"../node_modules/@algolia/autocomplete-shared/dist/esm/index.js","./createAutocompleteDom":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/createAutocompleteDom.js","./createEffectWrapper":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/createEffectWrapper.js","./createReactiveWrapper":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/createReactiveWrapper.js","./getDefaultOptions":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/getDefaultOptions.js","./getPanelPlacementStyle":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/getPanelPlacementStyle.js","./render":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/render.js","./utils":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/version.js":[function(require,module,exports) {
+},{"./highlight/HighlightedHit":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/HighlightedHit.js","./highlight/parseAlgoliaHitHighlight":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/parseAlgoliaHitHighlight.js","./highlight/parseAlgoliaHitReverseHighlight":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/parseAlgoliaHitReverseHighlight.js","./highlight/parseAlgoliaHitReverseSnippet":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/parseAlgoliaHitReverseSnippet.js","./highlight/parseAlgoliaHitSnippet":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/parseAlgoliaHitSnippet.js","./highlight/SnippetedHit":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/highlight/SnippetedHit.js","./search/getAlgoliaFacetHits":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/search/getAlgoliaFacetHits.js","./search/getAlgoliaHits":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/search/getAlgoliaHits.js","./search/getAlgoliaResults":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/search/getAlgoliaResults.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/version.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -41843,7 +40936,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.version = void 0;
 var version = '1.0.0-alpha.43';
 exports.version = version;
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaFacetHits.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaFacetHits.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -41867,7 +40960,7 @@ function getAlgoliaFacetHits(_ref) {
     }]
   });
 }
-},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","./version":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/version.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaHits.js":[function(require,module,exports) {
+},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","./version":"../node_modules/@algolia/autocomplete-js/dist/esm/version.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaHits.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -41891,7 +40984,7 @@ function getAlgoliaHits(_ref) {
     }]
   });
 }
-},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","./version":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/version.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaResults.js":[function(require,module,exports) {
+},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","./version":"../node_modules/@algolia/autocomplete-js/dist/esm/version.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaResults.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -41915,7 +41008,7 @@ function getAlgoliaResults(_ref) {
     }]
   });
 }
-},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","./version":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/version.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/highlight.js":[function(require,module,exports) {
+},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","./version":"../node_modules/@algolia/autocomplete-js/dist/esm/version.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/highlight.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -42016,29 +41109,29 @@ function reverseSnippetHit(_ref4) {
     }, x.value) : x.value;
   });
 }
-},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","preact":"../node_modules/preact/dist/preact.module.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteApi.js":[function(require,module,exports) {
+},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","preact":"../node_modules/preact/dist/preact.module.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteApi.js":[function(require,module,exports) {
 
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteClassNames.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteClassNames.js":[function(require,module,exports) {
 
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteCollection.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteCollection.js":[function(require,module,exports) {
 
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteDom.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteDom.js":[function(require,module,exports) {
 
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteOptions.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteOptions.js":[function(require,module,exports) {
 
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompletePlugin.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompletePlugin.js":[function(require,module,exports) {
 
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompletePropGetters.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompletePropGetters.js":[function(require,module,exports) {
 
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteRender.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteRender.js":[function(require,module,exports) {
 
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteRenderer.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteRenderer.js":[function(require,module,exports) {
 
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteSource.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteSource.js":[function(require,module,exports) {
 
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteState.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteState.js":[function(require,module,exports) {
 
-},{}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/index.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-js/dist/esm/types/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -42187,7 +41280,7 @@ Object.keys(_AutocompleteState).forEach(function (key) {
     }
   });
 });
-},{"./AutocompleteApi":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteApi.js","./AutocompleteClassNames":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteClassNames.js","./AutocompleteCollection":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteCollection.js","./AutocompleteDom":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteDom.js","./AutocompleteOptions":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteOptions.js","./AutocompletePlugin":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompletePlugin.js","./AutocompletePropGetters":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompletePropGetters.js","./AutocompleteRender":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteRender.js","./AutocompleteRenderer":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteRenderer.js","./AutocompleteSource":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteSource.js","./AutocompleteState":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteState.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/index.js":[function(require,module,exports) {
+},{"./AutocompleteApi":"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteApi.js","./AutocompleteClassNames":"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteClassNames.js","./AutocompleteCollection":"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteCollection.js","./AutocompleteDom":"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteDom.js","./AutocompleteOptions":"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteOptions.js","./AutocompletePlugin":"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompletePlugin.js","./AutocompletePropGetters":"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompletePropGetters.js","./AutocompleteRender":"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteRender.js","./AutocompleteRenderer":"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteRenderer.js","./AutocompleteSource":"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteSource.js","./AutocompleteState":"../node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteState.js"}],"../node_modules/@algolia/autocomplete-js/dist/esm/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -42271,7 +41364,7 @@ Object.keys(_types).forEach(function (key) {
     }
   });
 });
-},{"./autocomplete":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/autocomplete.js","./getAlgoliaFacetHits":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaFacetHits.js","./getAlgoliaHits":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaHits.js","./getAlgoliaResults":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaResults.js","./highlight":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/highlight.js","./types":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/types/index.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/getTemplates.js":[function(require,module,exports) {
+},{"./autocomplete":"../node_modules/@algolia/autocomplete-js/dist/esm/autocomplete.js","./getAlgoliaFacetHits":"../node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaFacetHits.js","./getAlgoliaHits":"../node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaHits.js","./getAlgoliaResults":"../node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaResults.js","./highlight":"../node_modules/@algolia/autocomplete-js/dist/esm/highlight.js","./types":"../node_modules/@algolia/autocomplete-js/dist/esm/types/index.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/getTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -42334,7 +41427,7 @@ function getTemplates(_ref) {
     }
   };
 }
-},{"@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/index.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/createQuerySuggestionsPlugin.js":[function(require,module,exports) {
+},{"@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-js/dist/esm/index.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/createQuerySuggestionsPlugin.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -42603,7 +41696,7 @@ function createQuerySuggestionsPlugin(_ref) {
     }
   };
 }
-},{"@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/node_modules/@algolia/autocomplete-js/dist/esm/index.js","./getTemplates":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/getTemplates.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js":[function(require,module,exports) {
+},{"@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-js/dist/esm/index.js","./getTemplates":"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/getTemplates.js"}],"../node_modules/@algolia/autocomplete-plugin-query-suggestions/dist/esm/index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -42657,2165 +41750,7 @@ function createStore(storage) {
     }
   };
 }
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/getHTMLElement.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getHTMLElement = getHTMLElement;
-
-var _autocompleteShared = require("@algolia/autocomplete-shared");
-
-function getHTMLElement(value) {
-  if (typeof value === 'string') {
-    var element = document.querySelector(value);
-    (0, _autocompleteShared.invariant)(element !== null, "The element ".concat(JSON.stringify(value), " is not in the document."));
-    return element;
-  }
-
-  return value;
-}
-},{"@algolia/autocomplete-shared":"../node_modules/@algolia/autocomplete-shared/dist/esm/index.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/mergeClassNames.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.mergeClassNames = mergeClassNames;
-
-function mergeClassNames() {
-  for (var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++) {
-    values[_key] = arguments[_key];
-  }
-
-  return values.reduce(function (acc, current) {
-    Object.keys(current).forEach(function (key) {
-      var accValue = acc[key];
-      var currentValue = current[key];
-
-      if (accValue !== currentValue) {
-        acc[key] = [accValue, currentValue].filter(Boolean).join(' ');
-      }
-    });
-    return acc;
-  }, {});
-}
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/mergeDeep.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.mergeDeep = mergeDeep;
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-
-function _iterableToArray(iter) {
-  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
-}
-
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
-  }
-
-  return arr2;
-}
-
-function _typeof(obj) {
-  "@babel/helpers - typeof";
-
-  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-    _typeof = function _typeof(obj) {
-      return typeof obj;
-    };
-  } else {
-    _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-    };
-  }
-
-  return _typeof(obj);
-}
-
-var isObject = function isObject(value) {
-  return value && _typeof(value) === 'object';
-};
-
-function mergeDeep() {
-  for (var _len = arguments.length, values = new Array(_len), _key = 0; _key < _len; _key++) {
-    values[_key] = arguments[_key];
-  }
-
-  return values.reduce(function (acc, current) {
-    Object.keys(current).forEach(function (key) {
-      var accValue = acc[key];
-      var currentValue = current[key];
-
-      if (Array.isArray(accValue) && Array.isArray(currentValue)) {
-        acc[key] = accValue.concat.apply(accValue, _toConsumableArray(currentValue));
-      } else if (isObject(accValue) && isObject(currentValue)) {
-        acc[key] = mergeDeep(accValue, currentValue);
-      } else {
-        acc[key] = currentValue;
-      }
-    });
-    return acc;
-  }, {});
-}
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/setProperties.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.setProperty = setProperty;
-exports.setProperties = setProperties;
-exports.setPropertiesWithoutEvents = setPropertiesWithoutEvents;
-
-/* eslint-disable */
-
-/*
- * Taken from Preact
- *
- * See https://github.com/preactjs/preact/blob/6ab49d9020740127577bf4af66bf63f4af7f9fee/src/diff/props.js#L58-L151
- */
-function setStyle(style, key, value) {
-  if (value === null) {
-    style[key] = '';
-  } else if (typeof value !== 'number') {
-    style[key] = value;
-  } else {
-    style[key] = value + 'px';
-  }
-}
-/**
- * Proxy an event to hooked event handlers
- */
-
-
-function eventProxy(event) {
-  this._listeners[event.type](event);
-}
-/**
- * Set a property value on a DOM node
- */
-
-
-function setProperty(dom, name, value) {
-  var useCapture;
-  var nameLower;
-  var oldValue = dom[name];
-
-  if (name === 'style') {
-    if (typeof value == 'string') {
-      dom.style = value;
-    } else {
-      if (value === null) {
-        dom.style = '';
-      } else {
-        for (name in value) {
-          if (!oldValue || value[name] !== oldValue[name]) {
-            setStyle(dom.style, name, value[name]);
-          }
-        }
-      }
-    }
-  } // Benchmark for comparison: https://esbench.com/bench/574c954bdb965b9a00965ac6
-  else if (name[0] === 'o' && name[1] === 'n') {
-      useCapture = name !== (name = name.replace(/Capture$/, ''));
-      nameLower = name.toLowerCase();
-      if (nameLower in dom) name = nameLower;
-      name = name.slice(2);
-      if (!dom._listeners) dom._listeners = {};
-      dom._listeners[name] = value;
-
-      if (value) {
-        if (!oldValue) dom.addEventListener(name, eventProxy, useCapture);
-      } else {
-        dom.removeEventListener(name, eventProxy, useCapture);
-      }
-    } else if (name !== 'list' && name !== 'tagName' && // HTMLButtonElement.form and HTMLInputElement.form are read-only but can be set using
-    // setAttribute
-    name !== 'form' && name !== 'type' && name !== 'size' && name !== 'download' && name !== 'href' && name in dom) {
-      dom[name] = value == null ? '' : value;
-    } else if (typeof value != 'function' && name !== 'dangerouslySetInnerHTML') {
-      if (value == null || value === false && // ARIA-attributes have a different notion of boolean values.
-      // The value `false` is different from the attribute not
-      // existing on the DOM, so we can't remove it. For non-boolean
-      // ARIA-attributes we could treat false as a removal, but the
-      // amount of exceptions would cost us too many bytes. On top of
-      // that other VDOM frameworks also always stringify `false`.
-      !/^ar/.test(name)) {
-        dom.removeAttribute(name);
-      } else {
-        dom.setAttribute(name, value);
-      }
-    }
-}
-
-function getNormalizedName(name) {
-  switch (name) {
-    case 'onChange':
-      return 'onInput';
-
-    default:
-      return name;
-  }
-}
-
-function setProperties(dom, props) {
-  for (var name in props) {
-    setProperty(dom, getNormalizedName(name), props[name]);
-  }
-}
-
-function setPropertiesWithoutEvents(dom, props) {
-  for (var name in props) {
-    if (!(name[0] === 'o' && name[1] === 'n')) {
-      setProperty(dom, getNormalizedName(name), props[name]);
-    }
-  }
-}
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _getHTMLElement = require("./getHTMLElement");
-
-Object.keys(_getHTMLElement).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _getHTMLElement[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _getHTMLElement[key];
-    }
-  });
-});
-
-var _mergeClassNames = require("./mergeClassNames");
-
-Object.keys(_mergeClassNames).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _mergeClassNames[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _mergeClassNames[key];
-    }
-  });
-});
-
-var _mergeDeep = require("./mergeDeep");
-
-Object.keys(_mergeDeep).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _mergeDeep[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _mergeDeep[key];
-    }
-  });
-});
-
-var _setProperties = require("./setProperties");
-
-Object.keys(_setProperties).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _setProperties[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _setProperties[key];
-    }
-  });
-});
-},{"./getHTMLElement":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/getHTMLElement.js","./mergeClassNames":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/mergeClassNames.js","./mergeDeep":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/mergeDeep.js","./setProperties":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/setProperties.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/createDomElement.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createDomElement = createDomElement;
-
-var _utils = require("./utils");
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
-}
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-
-function _iterableToArray(iter) {
-  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
-}
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
-}
-
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-    arr2[i] = arr[i];
-  }
-
-  return arr2;
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-function createDomElement(tagName, _ref) {
-  var _ref$children = _ref.children,
-      children = _ref$children === void 0 ? [] : _ref$children,
-      props = _objectWithoutProperties(_ref, ["children"]);
-
-  var element = document.createElement(tagName);
-  (0, _utils.setProperties)(element, props);
-  element.append.apply(element, _toConsumableArray(children));
-  return element;
-}
-},{"./utils":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/components/Input.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Input = void 0;
-
-var _createDomElement = require("../createDomElement");
-
-var _utils = require("../utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-var Input = function Input(_ref) {
-  var autocompleteScopeApi = _ref.autocompleteScopeApi,
-      classNames = _ref.classNames,
-      getInputProps = _ref.getInputProps,
-      getInputPropsCore = _ref.getInputPropsCore,
-      onDetachedEscape = _ref.onDetachedEscape,
-      state = _ref.state,
-      props = _objectWithoutProperties(_ref, ["autocompleteScopeApi", "classNames", "getInputProps", "getInputPropsCore", "onDetachedEscape", "state"]);
-
-  var element = (0, _createDomElement.createDomElement)('input', props);
-  var inputProps = getInputProps(_objectSpread({
-    state: state,
-    props: getInputPropsCore({
-      inputElement: element
-    }),
-    inputElement: element
-  }, autocompleteScopeApi));
-  (0, _utils.setProperties)(element, _objectSpread(_objectSpread({}, inputProps), {}, {
-    onKeyDown: function onKeyDown(event) {
-      if (onDetachedEscape && event.key === 'Escape') {
-        onDetachedEscape();
-        return;
-      }
-
-      inputProps.onKeyDown(event);
-    }
-  }));
-  return element;
-};
-
-exports.Input = Input;
-},{"../createDomElement":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/createDomElement.js","../utils":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/components/LoadingIcon.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.LoadingIcon = void 0;
-
-var LoadingIcon = function LoadingIcon() {
-  var element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  element.setAttribute('class', 'aa-LoadingIcon');
-  element.setAttribute('viewBox', '0 0 100 100');
-  element.setAttribute('width', '20');
-  element.setAttribute('height', '20');
-  element.innerHTML = "<circle\n  cx=\"50\"\n  cy=\"50\"\n  fill=\"none\"\n  r=\"35\"\n  stroke=\"currentColor\"\n  stroke-dasharray=\"164.93361431346415 56.97787143782138\"\n  stroke-width=\"6\"\n>\n  <animateTransform\n    attributeName=\"transform\"\n    type=\"rotate\"\n    repeatCount=\"indefinite\"\n    dur=\"1s\"\n    values=\"0 50 50;90 50 50;180 50 50;360 50 50\"\n    keyTimes=\"0;0.40;0.65;1\"\n  />\n</circle>";
-  return element;
-};
-
-exports.LoadingIcon = LoadingIcon;
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/components/ResetIcon.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ResetIcon = void 0;
-
-var ResetIcon = function ResetIcon() {
-  var element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  element.setAttribute('class', 'aa-ResetIcon');
-  element.setAttribute('viewBox', '0 0 24 24');
-  element.setAttribute('width', '18');
-  element.setAttribute('height', '18');
-  element.setAttribute('fill', 'currentColor');
-  var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', 'M5.293 6.707l5.293 5.293-5.293 5.293c-0.391 0.391-0.391 1.024 0 1.414s1.024 0.391 1.414 0l5.293-5.293 5.293 5.293c0.391 0.391 1.024 0.391 1.414 0s0.391-1.024 0-1.414l-5.293-5.293 5.293-5.293c0.391-0.391 0.391-1.024 0-1.414s-1.024-0.391-1.414 0l-5.293 5.293-5.293-5.293c-0.391-0.391-1.024-0.391-1.414 0s-0.391 1.024 0 1.414z');
-  element.appendChild(path);
-  return element;
-};
-
-exports.ResetIcon = ResetIcon;
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/components/SearchIcon.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.SearchIcon = void 0;
-
-var SearchIcon = function SearchIcon() {
-  var element = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  element.setAttribute('class', 'aa-SubmitIcon');
-  element.setAttribute('viewBox', '0 0 24 24');
-  element.setAttribute('width', '20');
-  element.setAttribute('height', '20');
-  element.setAttribute('fill', 'currentColor');
-  var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', 'M16.041 15.856c-0.034 0.026-0.067 0.055-0.099 0.087s-0.060 0.064-0.087 0.099c-1.258 1.213-2.969 1.958-4.855 1.958-1.933 0-3.682-0.782-4.95-2.050s-2.050-3.017-2.050-4.95 0.782-3.682 2.050-4.95 3.017-2.050 4.95-2.050 3.682 0.782 4.95 2.050 2.050 3.017 2.050 4.95c0 1.886-0.745 3.597-1.959 4.856zM21.707 20.293l-3.675-3.675c1.231-1.54 1.968-3.493 1.968-5.618 0-2.485-1.008-4.736-2.636-6.364s-3.879-2.636-6.364-2.636-4.736 1.008-6.364 2.636-2.636 3.879-2.636 6.364 1.008 4.736 2.636 6.364 3.879 2.636 6.364 2.636c2.125 0 4.078-0.737 5.618-1.968l3.675 3.675c0.391 0.391 1.024 0.391 1.414 0s0.391-1.024 0-1.414z');
-  element.appendChild(path);
-  return element;
-};
-
-exports.SearchIcon = SearchIcon;
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/components/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _Input = require("./Input");
-
-Object.keys(_Input).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _Input[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _Input[key];
-    }
-  });
-});
-
-var _LoadingIcon = require("./LoadingIcon");
-
-Object.keys(_LoadingIcon).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _LoadingIcon[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _LoadingIcon[key];
-    }
-  });
-});
-
-var _ResetIcon = require("./ResetIcon");
-
-Object.keys(_ResetIcon).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _ResetIcon[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _ResetIcon[key];
-    }
-  });
-});
-
-var _SearchIcon = require("./SearchIcon");
-
-Object.keys(_SearchIcon).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _SearchIcon[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _SearchIcon[key];
-    }
-  });
-});
-},{"./Input":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/components/Input.js","./LoadingIcon":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/components/LoadingIcon.js","./ResetIcon":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/components/ResetIcon.js","./SearchIcon":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/components/SearchIcon.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/createAutocompleteDom.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createAutocompleteDom = createAutocompleteDom;
-
-var _components = require("./components");
-
-var _createDomElement = require("./createDomElement");
-
-var _utils = require("./utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function createAutocompleteDom(_ref) {
-  var autocomplete = _ref.autocomplete,
-      autocompleteScopeApi = _ref.autocompleteScopeApi,
-      classNames = _ref.classNames,
-      isDetached = _ref.isDetached,
-      _ref$placeholder = _ref.placeholder,
-      placeholder = _ref$placeholder === void 0 ? 'Search' : _ref$placeholder,
-      propGetters = _ref.propGetters,
-      state = _ref.state;
-
-  function onDetachedOverlayClose() {
-    autocomplete.setQuery('');
-    autocomplete.setIsOpen(false);
-    autocomplete.refresh();
-    document.body.classList.remove('aa-Detached');
-  }
-
-  var rootProps = propGetters.getRootProps(_objectSpread({
-    state: state,
-    props: autocomplete.getRootProps({})
-  }, autocompleteScopeApi));
-  var root = (0, _createDomElement.createDomElement)('div', _objectSpread({
-    class: classNames.root
-  }, rootProps));
-  var detachedContainer = (0, _createDomElement.createDomElement)('div', {
-    class: classNames.detachedContainer,
-    onMouseDown: function onMouseDown(event) {
-      event.stopPropagation();
-    }
-  });
-  var detachedOverlay = (0, _createDomElement.createDomElement)('div', {
-    class: classNames.detachedOverlay,
-    children: [detachedContainer],
-    onMouseDown: function onMouseDown() {
-      document.body.removeChild(detachedOverlay);
-      onDetachedOverlayClose();
-    }
-  });
-  var labelProps = propGetters.getLabelProps(_objectSpread({
-    state: state,
-    props: autocomplete.getLabelProps({})
-  }, autocompleteScopeApi));
-  var submitButton = (0, _createDomElement.createDomElement)('button', {
-    class: classNames.submitButton,
-    type: 'submit',
-    children: [(0, _components.SearchIcon)({})]
-  });
-  var label = (0, _createDomElement.createDomElement)('label', _objectSpread({
-    class: classNames.label,
-    children: [submitButton]
-  }, labelProps));
-  var resetButton = (0, _createDomElement.createDomElement)('button', {
-    class: classNames.resetButton,
-    type: 'reset',
-    children: [(0, _components.ResetIcon)({})]
-  });
-  var loadingIndicator = (0, _createDomElement.createDomElement)('div', {
-    class: classNames.loadingIndicator,
-    children: [(0, _components.LoadingIcon)({})]
-  });
-  var input = (0, _components.Input)({
-    class: classNames.input,
-    state: state,
-    getInputProps: propGetters.getInputProps,
-    getInputPropsCore: autocomplete.getInputProps,
-    autocompleteScopeApi: autocompleteScopeApi,
-    onDetachedEscape: isDetached ? function () {
-      document.body.removeChild(detachedOverlay);
-      onDetachedOverlayClose();
-    } : undefined
-  });
-  var inputWrapperPrefix = (0, _createDomElement.createDomElement)('div', {
-    class: classNames.inputWrapperPrefix,
-    children: [label, loadingIndicator]
-  });
-  var inputWrapperSuffix = (0, _createDomElement.createDomElement)('div', {
-    class: classNames.inputWrapperSuffix,
-    children: [resetButton]
-  });
-  var inputWrapper = (0, _createDomElement.createDomElement)('div', {
-    class: classNames.inputWrapper,
-    children: [input]
-  });
-  var formProps = propGetters.getFormProps(_objectSpread({
-    state: state,
-    props: autocomplete.getFormProps({
-      inputElement: input
-    })
-  }, autocompleteScopeApi));
-  var form = (0, _createDomElement.createDomElement)('form', _objectSpread({
-    class: classNames.form,
-    children: [inputWrapperPrefix, inputWrapper, inputWrapperSuffix]
-  }, formProps));
-  var panelProps = propGetters.getPanelProps(_objectSpread({
-    state: state,
-    props: autocomplete.getPanelProps({})
-  }, autocompleteScopeApi));
-  var panel = (0, _createDomElement.createDomElement)('div', _objectSpread({
-    class: classNames.panel
-  }, panelProps));
-
-  if ("development" === 'test') {
-    (0, _utils.setProperties)(panel, {
-      'data-testid': 'panel'
-    });
-  }
-
-  function openDetachedOverlay() {
-    document.body.appendChild(detachedOverlay);
-    document.body.classList.add('aa-Detached');
-    input.focus();
-  }
-
-  if (isDetached) {
-    var detachedSearchButtonIcon = (0, _createDomElement.createDomElement)('div', {
-      class: classNames.detachedSearchButtonIcon,
-      children: [(0, _components.SearchIcon)({})]
-    });
-    var detachedSearchButtonPlaceholder = (0, _createDomElement.createDomElement)('div', {
-      class: classNames.detachedSearchButtonPlaceholder,
-      textContent: placeholder
-    });
-    var detachedSearchButton = (0, _createDomElement.createDomElement)('button', {
-      class: classNames.detachedSearchButton,
-      onClick: function onClick(event) {
-        event.preventDefault();
-        openDetachedOverlay();
-      },
-      children: [detachedSearchButtonIcon, detachedSearchButtonPlaceholder]
-    });
-    var detachedCancelButton = (0, _createDomElement.createDomElement)('button', {
-      class: classNames.detachedCancelButton,
-      textContent: 'Cancel',
-      onClick: function onClick() {
-        document.body.removeChild(detachedOverlay);
-        onDetachedOverlayClose();
-      }
-    });
-    var detachedFormContainer = (0, _createDomElement.createDomElement)('div', {
-      class: classNames.detachedFormContainer,
-      children: [form, detachedCancelButton]
-    });
-    detachedContainer.appendChild(detachedFormContainer);
-    root.appendChild(detachedSearchButton);
-  } else {
-    root.appendChild(form);
-  }
-
-  return {
-    openDetachedOverlay: openDetachedOverlay,
-    detachedContainer: detachedContainer,
-    detachedOverlay: detachedOverlay,
-    inputWrapper: inputWrapper,
-    input: input,
-    root: root,
-    form: form,
-    label: label,
-    submitButton: submitButton,
-    resetButton: resetButton,
-    loadingIndicator: loadingIndicator,
-    panel: panel
-  };
-}
-},{"./components":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/components/index.js","./createDomElement":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/createDomElement.js","./utils":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/createEffectWrapper.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createEffectWrapper = createEffectWrapper;
-
-function createEffectWrapper() {
-  var effects = [];
-  var cleanups = [];
-
-  function runEffect(fn) {
-    effects.push(fn);
-    var effectCleanup = fn();
-    cleanups.push(effectCleanup);
-  }
-
-  return {
-    runEffect: runEffect,
-    cleanupEffects: function cleanupEffects() {
-      var currentCleanups = cleanups;
-      cleanups = [];
-      currentCleanups.forEach(function (cleanup) {
-        cleanup();
-      });
-    },
-    runEffects: function runEffects() {
-      var currentEffects = effects;
-      effects = [];
-      currentEffects.forEach(function (effect) {
-        runEffect(effect);
-      });
-    }
-  };
-}
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/createReactiveWrapper.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createReactiveWrapper = createReactiveWrapper;
-
-function createReactiveWrapper() {
-  var reactives = [];
-  return {
-    reactive: function reactive(value) {
-      var reactive = {
-        _fn: value,
-        _ref: {
-          current: value()
-        },
-
-        get value() {
-          return this._ref.current;
-        },
-
-        set value(value) {
-          this._ref.current = value;
-        }
-
-      };
-      reactives.push(reactive);
-      value();
-      return reactive;
-    },
-    runReactives: function runReactives() {
-      reactives.forEach(function (value) {
-        value._ref.current = value._fn();
-      });
-    }
-  };
-}
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/getDefaultOptions.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getDefaultOptions = getDefaultOptions;
-
-var _autocompleteShared = require("@algolia/autocomplete-shared");
-
-var _preact = require("preact");
-
-var _utils = require("./utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-var defaultClassNames = {
-  detachedCancelButton: 'aa-DetachedCancelButton',
-  detachedFormContainer: 'aa-DetachedFormContainer',
-  detachedContainer: 'aa-DetachedContainer',
-  detachedOverlay: 'aa-DetachedOverlay',
-  detachedSearchButton: 'aa-DetachedSearchButton',
-  detachedSearchButtonIcon: 'aa-DetachedSearchButtonIcon',
-  detachedSearchButtonPlaceholder: 'aa-DetachedSearchButtonPlaceholder',
-  form: 'aa-Form',
-  input: 'aa-Input',
-  inputWrapper: 'aa-InputWrapper',
-  inputWrapperPrefix: 'aa-InputWrapperPrefix',
-  inputWrapperSuffix: 'aa-InputWrapperSuffix',
-  item: 'aa-Item',
-  label: 'aa-Label',
-  list: 'aa-List',
-  loadingIndicator: 'aa-LoadingIndicator',
-  panel: 'aa-Panel',
-  panelLayout: 'aa-PanelLayout',
-  resetButton: 'aa-ResetButton',
-  root: 'aa-Autocomplete',
-  source: 'aa-Source',
-  sourceFooter: 'aa-SourceFooter',
-  sourceHeader: 'aa-SourceHeader',
-  sourceNoResults: 'aa-SourceNoResults',
-  submitButton: 'aa-SubmitButton'
-};
-
-var defaultRender = function defaultRender(_ref, root) {
-  var children = _ref.children;
-  (0, _preact.render)(children, root);
-};
-
-var defaultRenderer = {
-  createElement: _preact.createElement,
-  Fragment: _preact.Fragment
-};
-
-function getDefaultOptions(options) {
-  var classNames = options.classNames,
-      container = options.container,
-      getEnvironmentProps = options.getEnvironmentProps,
-      getFormProps = options.getFormProps,
-      getInputProps = options.getInputProps,
-      getItemProps = options.getItemProps,
-      getLabelProps = options.getLabelProps,
-      getListProps = options.getListProps,
-      getPanelProps = options.getPanelProps,
-      getRootProps = options.getRootProps,
-      panelContainer = options.panelContainer,
-      panelPlacement = options.panelPlacement,
-      render = options.render,
-      renderNoResults = options.renderNoResults,
-      renderer = options.renderer,
-      detachedMediaQuery = options.detachedMediaQuery,
-      core = _objectWithoutProperties(options, ["classNames", "container", "getEnvironmentProps", "getFormProps", "getInputProps", "getItemProps", "getLabelProps", "getListProps", "getPanelProps", "getRootProps", "panelContainer", "panelPlacement", "render", "renderNoResults", "renderer", "detachedMediaQuery"]);
-
-  var containerElement = (0, _utils.getHTMLElement)(container);
-  (0, _autocompleteShared.invariant)(containerElement.tagName !== 'INPUT', 'The `container` option does not support `input` elements. You need to change the container to a `div`.');
-  var environment = typeof window !== 'undefined' ? window : {};
-  return {
-    renderer: {
-      classNames: (0, _utils.mergeClassNames)(defaultClassNames, classNames !== null && classNames !== void 0 ? classNames : {}),
-      container: containerElement,
-      getEnvironmentProps: getEnvironmentProps !== null && getEnvironmentProps !== void 0 ? getEnvironmentProps : function (_ref2) {
-        var props = _ref2.props;
-        return props;
-      },
-      getFormProps: getFormProps !== null && getFormProps !== void 0 ? getFormProps : function (_ref3) {
-        var props = _ref3.props;
-        return props;
-      },
-      getInputProps: getInputProps !== null && getInputProps !== void 0 ? getInputProps : function (_ref4) {
-        var props = _ref4.props;
-        return props;
-      },
-      getItemProps: getItemProps !== null && getItemProps !== void 0 ? getItemProps : function (_ref5) {
-        var props = _ref5.props;
-        return props;
-      },
-      getLabelProps: getLabelProps !== null && getLabelProps !== void 0 ? getLabelProps : function (_ref6) {
-        var props = _ref6.props;
-        return props;
-      },
-      getListProps: getListProps !== null && getListProps !== void 0 ? getListProps : function (_ref7) {
-        var props = _ref7.props;
-        return props;
-      },
-      getPanelProps: getPanelProps !== null && getPanelProps !== void 0 ? getPanelProps : function (_ref8) {
-        var props = _ref8.props;
-        return props;
-      },
-      getRootProps: getRootProps !== null && getRootProps !== void 0 ? getRootProps : function (_ref9) {
-        var props = _ref9.props;
-        return props;
-      },
-      panelContainer: panelContainer ? (0, _utils.getHTMLElement)(panelContainer) : document.body,
-      panelPlacement: panelPlacement !== null && panelPlacement !== void 0 ? panelPlacement : 'input-wrapper-width',
-      render: render !== null && render !== void 0 ? render : defaultRender,
-      renderNoResults: renderNoResults,
-      renderer: renderer !== null && renderer !== void 0 ? renderer : defaultRenderer,
-      detachedMediaQuery: detachedMediaQuery !== null && detachedMediaQuery !== void 0 ? detachedMediaQuery : getComputedStyle(environment.document.documentElement).getPropertyValue('--aa-detached-media-query')
-    },
-    core: _objectSpread(_objectSpread({}, core), {}, {
-      environment: environment
-    })
-  };
-}
-},{"@algolia/autocomplete-shared":"../node_modules/@algolia/autocomplete-shared/dist/esm/index.js","preact":"../node_modules/preact/dist/preact.module.js","./utils":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/getPanelPlacementStyle.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getPanelPlacementStyle = getPanelPlacementStyle;
-
-function getPanelPlacementStyle(_ref) {
-  var panelPlacement = _ref.panelPlacement,
-      container = _ref.container,
-      form = _ref.form,
-      _ref$environment = _ref.environment,
-      environment = _ref$environment === void 0 ? window : _ref$environment;
-  var containerRect = container.getBoundingClientRect();
-  var top = container.offsetTop + containerRect.height;
-
-  switch (panelPlacement) {
-    case 'start':
-      {
-        return {
-          top: top,
-          left: containerRect.left
-        };
-      }
-
-    case 'end':
-      {
-        return {
-          top: top,
-          right: environment.document.documentElement.clientWidth - (containerRect.left + containerRect.width)
-        };
-      }
-
-    case 'full-width':
-      {
-        return {
-          top: top,
-          left: 0,
-          right: 0,
-          width: 'unset',
-          maxWidth: 'unset'
-        };
-      }
-
-    case 'input-wrapper-width':
-      {
-        var formRect = form.getBoundingClientRect();
-        return {
-          top: top,
-          left: formRect.left,
-          right: environment.document.documentElement.clientWidth - (formRect.left + formRect.width),
-          width: 'unset',
-          maxWidth: 'unset'
-        };
-      }
-
-    default:
-      {
-        throw new Error("The `panelPlacement` value ".concat(JSON.stringify(panelPlacement), " is not valid."));
-      }
-  }
-}
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/render.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.renderSearchBox = renderSearchBox;
-exports.renderPanel = renderPanel;
-
-var _utils = require("./utils");
-
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-/** @jsx createElement */
-
-
-function renderSearchBox(_ref) {
-  var autocomplete = _ref.autocomplete,
-      autocompleteScopeApi = _ref.autocompleteScopeApi,
-      dom = _ref.dom,
-      propGetters = _ref.propGetters,
-      state = _ref.state;
-  (0, _utils.setPropertiesWithoutEvents)(dom.root, propGetters.getRootProps(_objectSpread({
-    state: state,
-    props: autocomplete.getRootProps({})
-  }, autocompleteScopeApi)));
-  (0, _utils.setPropertiesWithoutEvents)(dom.input, propGetters.getInputProps(_objectSpread({
-    state: state,
-    props: autocomplete.getInputProps({
-      inputElement: dom.input
-    }),
-    inputElement: dom.input
-  }, autocompleteScopeApi)));
-  (0, _utils.setProperties)(dom.label, {
-    hidden: state.status === 'stalled'
-  });
-  (0, _utils.setProperties)(dom.loadingIndicator, {
-    hidden: state.status !== 'stalled'
-  });
-  (0, _utils.setProperties)(dom.resetButton, {
-    hidden: !state.query
-  });
-}
-
-function renderPanel(render, _ref2) {
-  var autocomplete = _ref2.autocomplete,
-      autocompleteScopeApi = _ref2.autocompleteScopeApi,
-      classNames = _ref2.classNames,
-      createElement = _ref2.createElement,
-      dom = _ref2.dom,
-      Fragment = _ref2.Fragment,
-      panelContainer = _ref2.panelContainer,
-      propGetters = _ref2.propGetters,
-      state = _ref2.state;
-
-  if (!state.isOpen) {
-    if (panelContainer.contains(dom.panel)) {
-      panelContainer.removeChild(dom.panel);
-    }
-
-    return;
-  } // We add the panel element to the DOM when it's not yet appended and that the
-  // items are fetched.
-
-
-  if (!panelContainer.contains(dom.panel) && state.status !== 'loading') {
-    panelContainer.appendChild(dom.panel);
-  }
-
-  dom.panel.classList.toggle('aa-Panel--stalled', state.status === 'stalled');
-  var sections = state.collections.map(function (_ref3, sourceIndex) {
-    var source = _ref3.source,
-        items = _ref3.items;
-    return createElement("section", {
-      key: sourceIndex,
-      className: classNames.source,
-      "data-autocomplete-source-id": source.sourceId
-    }, source.templates.header && createElement("div", {
-      className: classNames.sourceHeader
-    }, source.templates.header({
-      createElement: createElement,
-      Fragment: Fragment,
-      items: items,
-      source: source,
-      state: state
-    })), items.length === 0 && source.templates.noResults && state.query ? createElement("div", {
-      className: classNames.sourceNoResults
-    }, source.templates.noResults({
-      createElement: createElement,
-      Fragment: Fragment,
-      source: source,
-      state: state
-    })) : createElement("ul", _extends({
-      className: classNames.list
-    }, propGetters.getListProps(_objectSpread({
-      state: state,
-      props: autocomplete.getListProps({})
-    }, autocompleteScopeApi))), items.map(function (item) {
-      var itemProps = autocomplete.getItemProps({
-        item: item,
-        source: source
-      });
-      return createElement("li", _extends({
-        key: itemProps.id,
-        className: classNames.item
-      }, propGetters.getItemProps(_objectSpread({
-        state: state,
-        props: itemProps
-      }, autocompleteScopeApi))), source.templates.item({
-        createElement: createElement,
-        Fragment: Fragment,
-        item: item,
-        state: state
-      }));
-    })), source.templates.footer && createElement("div", {
-      className: classNames.sourceFooter
-    }, source.templates.footer({
-      createElement: createElement,
-      Fragment: Fragment,
-      items: items,
-      source: source,
-      state: state
-    })));
-  });
-  var children = createElement("div", {
-    className: "aa-PanelLayout"
-  }, sections);
-  render({
-    children: children,
-    state: state,
-    sections: sections,
-    createElement: createElement,
-    Fragment: Fragment
-  }, dom.panel);
-}
-},{"./utils":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/autocomplete.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.autocomplete = autocomplete;
-
-var _autocompleteCore = require("@algolia/autocomplete-core");
-
-var _autocompleteShared = require("@algolia/autocomplete-shared");
-
-var _createAutocompleteDom = require("./createAutocompleteDom");
-
-var _createEffectWrapper2 = require("./createEffectWrapper");
-
-var _createReactiveWrapper = require("./createReactiveWrapper");
-
-var _getDefaultOptions = require("./getDefaultOptions");
-
-var _getPanelPlacementStyle = require("./getPanelPlacementStyle");
-
-var _render = require("./render");
-
-var _utils = require("./utils");
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function autocomplete(options) {
-  var _createEffectWrapper = (0, _createEffectWrapper2.createEffectWrapper)(),
-      runEffect = _createEffectWrapper.runEffect,
-      cleanupEffects = _createEffectWrapper.cleanupEffects,
-      runEffects = _createEffectWrapper.runEffects;
-
-  var _createReactiveWrappe = (0, _createReactiveWrapper.createReactiveWrapper)(),
-      reactive = _createReactiveWrappe.reactive,
-      runReactives = _createReactiveWrappe.runReactives;
-
-  var hasNoResultsSourceTemplateRef = (0, _autocompleteShared.createRef)(false);
-  var optionsRef = (0, _autocompleteShared.createRef)(options);
-  var onStateChangeRef = (0, _autocompleteShared.createRef)(undefined);
-  var props = reactive(function () {
-    return (0, _getDefaultOptions.getDefaultOptions)(optionsRef.current);
-  });
-  var isDetached = reactive(function () {
-    return props.value.core.environment.matchMedia(props.value.renderer.detachedMediaQuery).matches;
-  });
-  var autocomplete = reactive(function () {
-    return (0, _autocompleteCore.createAutocomplete)(_objectSpread(_objectSpread({}, props.value.core), {}, {
-      onStateChange: function onStateChange(options) {
-        var _onStateChangeRef$cur, _props$value$core$onS, _props$value$core;
-
-        hasNoResultsSourceTemplateRef.current = options.state.collections.some(function (collection) {
-          return collection.source.templates.noResults;
-        });
-        (_onStateChangeRef$cur = onStateChangeRef.current) === null || _onStateChangeRef$cur === void 0 ? void 0 : _onStateChangeRef$cur.call(onStateChangeRef, options);
-        (_props$value$core$onS = (_props$value$core = props.value.core).onStateChange) === null || _props$value$core$onS === void 0 ? void 0 : _props$value$core$onS.call(_props$value$core, options);
-      },
-      shouldPanelOpen: optionsRef.current.shouldPanelOpen || function (_ref) {
-        var state = _ref.state;
-        var hasItems = (0, _autocompleteShared.getItemsCount)(state) > 0;
-
-        if (!props.value.core.openOnFocus && !state.query) {
-          return hasItems;
-        }
-
-        var hasNoResultsTemplate = Boolean(hasNoResultsSourceTemplateRef.current || props.value.renderer.renderNoResults);
-        return !hasItems && hasNoResultsTemplate || hasItems;
-      }
-    }));
-  });
-  var lastStateRef = (0, _autocompleteShared.createRef)(_objectSpread({
-    collections: [],
-    completion: null,
-    context: {},
-    isOpen: false,
-    query: '',
-    activeItemId: null,
-    status: 'idle'
-  }, props.value.core.initialState));
-  var propGetters = {
-    getEnvironmentProps: props.value.renderer.getEnvironmentProps,
-    getFormProps: props.value.renderer.getFormProps,
-    getInputProps: props.value.renderer.getInputProps,
-    getItemProps: props.value.renderer.getItemProps,
-    getLabelProps: props.value.renderer.getLabelProps,
-    getListProps: props.value.renderer.getListProps,
-    getPanelProps: props.value.renderer.getPanelProps,
-    getRootProps: props.value.renderer.getRootProps
-  };
-  var autocompleteScopeApi = {
-    setActiveItemId: autocomplete.value.setActiveItemId,
-    setQuery: autocomplete.value.setQuery,
-    setCollections: autocomplete.value.setCollections,
-    setIsOpen: autocomplete.value.setIsOpen,
-    setStatus: autocomplete.value.setStatus,
-    setContext: autocomplete.value.setContext,
-    refresh: autocomplete.value.refresh
-  };
-  var dom = reactive(function () {
-    return (0, _createAutocompleteDom.createAutocompleteDom)({
-      autocomplete: autocomplete.value,
-      autocompleteScopeApi: autocompleteScopeApi,
-      classNames: props.value.renderer.classNames,
-      isDetached: isDetached.value,
-      placeholder: props.value.core.placeholder,
-      propGetters: propGetters,
-      state: lastStateRef.current
-    });
-  });
-
-  function setPanelPosition() {
-    (0, _utils.setProperties)(dom.value.panel, {
-      style: isDetached.value ? {} : (0, _getPanelPlacementStyle.getPanelPlacementStyle)({
-        panelPlacement: props.value.renderer.panelPlacement,
-        container: dom.value.root,
-        form: dom.value.form,
-        environment: props.value.core.environment
-      })
-    });
-  }
-
-  function scheduleRender(state) {
-    lastStateRef.current = state;
-    var renderProps = {
-      autocomplete: autocomplete.value,
-      autocompleteScopeApi: autocompleteScopeApi,
-      classNames: props.value.renderer.classNames,
-      container: props.value.renderer.container,
-      createElement: props.value.renderer.renderer.createElement,
-      dom: dom.value,
-      Fragment: props.value.renderer.renderer.Fragment,
-      panelContainer: isDetached.value ? dom.value.detachedContainer : props.value.renderer.panelContainer,
-      propGetters: propGetters,
-      state: lastStateRef.current
-    };
-    var render = !(0, _autocompleteShared.getItemsCount)(state) && !hasNoResultsSourceTemplateRef.current && props.value.renderer.renderNoResults || props.value.renderer.render;
-    (0, _render.renderSearchBox)(renderProps);
-    (0, _render.renderPanel)(render, renderProps);
-  }
-
-  runEffect(function () {
-    var environmentProps = autocomplete.value.getEnvironmentProps({
-      formElement: dom.value.form,
-      panelElement: dom.value.panel,
-      inputElement: dom.value.input
-    });
-    (0, _utils.setProperties)(props.value.core.environment, environmentProps);
-    return function () {
-      (0, _utils.setProperties)(props.value.core.environment, Object.keys(environmentProps).reduce(function (acc, key) {
-        return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, key, undefined));
-      }, {}));
-    };
-  });
-  runEffect(function () {
-    var panelContainerElement = isDetached.value ? props.value.core.environment.document.body : props.value.renderer.panelContainer;
-    var panelElement = isDetached.value ? dom.value.detachedOverlay : dom.value.panel;
-
-    if (isDetached.value && lastStateRef.current.isOpen) {
-      dom.value.openDetachedOverlay();
-    }
-
-    scheduleRender(lastStateRef.current);
-    return function () {
-      if (panelContainerElement.contains(panelElement)) {
-        panelContainerElement.removeChild(panelElement);
-      }
-    };
-  });
-  runEffect(function () {
-    var containerElement = props.value.renderer.container;
-    containerElement.appendChild(dom.value.root);
-    return function () {
-      containerElement.removeChild(dom.value.root);
-    };
-  });
-  runEffect(function () {
-    var debouncedRender = (0, _autocompleteShared.debounce)(function (_ref2) {
-      var state = _ref2.state;
-      scheduleRender(state);
-    }, 0);
-
-    onStateChangeRef.current = function (_ref3) {
-      var state = _ref3.state,
-          prevState = _ref3.prevState; // The outer DOM might have changed since the last time the panel was
-      // positioned. The layout might have shifted vertically for instance.
-      // It's therefore safer to re-calculate the panel position before opening
-      // it again.
-
-      if (state.isOpen && !prevState.isOpen) {
-        setPanelPosition();
-      }
-
-      debouncedRender({
-        state: state
-      });
-    };
-
-    return function () {
-      onStateChangeRef.current = undefined;
-    };
-  });
-  runEffect(function () {
-    var onResize = (0, _autocompleteShared.debounce)(function () {
-      var previousisDetached = isDetached.value;
-      isDetached.value = props.value.core.environment.matchMedia(props.value.renderer.detachedMediaQuery).matches;
-
-      if (previousisDetached !== isDetached.value) {
-        update({});
-      } else {
-        requestAnimationFrame(setPanelPosition);
-      }
-    }, 20);
-    props.value.core.environment.addEventListener('resize', onResize);
-    return function () {
-      props.value.core.environment.removeEventListener('resize', onResize);
-    };
-  });
-  runEffect(function () {
-    if (!isDetached.value) {
-      return function () {};
-    }
-
-    function toggleModalClassname(isActive) {
-      dom.value.detachedContainer.classList.toggle('aa-DetachedContainer--Modal', isActive);
-    }
-
-    function onChange(event) {
-      toggleModalClassname(event.matches);
-    }
-
-    var isModalDetachedMql = window.matchMedia(getComputedStyle(props.value.core.environment.document.documentElement).getPropertyValue('--aa-detached-modal-media-query'));
-    toggleModalClassname(isModalDetachedMql.matches);
-    isModalDetachedMql.addEventListener('change', onChange);
-    return function () {
-      isModalDetachedMql.removeEventListener('change', onChange);
-    };
-  });
-  runEffect(function () {
-    requestAnimationFrame(setPanelPosition);
-    return function () {};
-  });
-
-  function destroy() {
-    cleanupEffects();
-  }
-
-  function update() {
-    var updatedOptions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    cleanupEffects();
-    optionsRef.current = (0, _utils.mergeDeep)(props.value.renderer, props.value.core, {
-      initialState: lastStateRef.current
-    }, updatedOptions);
-    runReactives();
-    runEffects();
-    autocomplete.value.refresh().then(function () {
-      scheduleRender(lastStateRef.current);
-    });
-  }
-
-  return _objectSpread(_objectSpread({}, autocompleteScopeApi), {}, {
-    update: update,
-    destroy: destroy
-  });
-}
-},{"@algolia/autocomplete-core":"../node_modules/@algolia/autocomplete-core/dist/esm/index.js","@algolia/autocomplete-shared":"../node_modules/@algolia/autocomplete-shared/dist/esm/index.js","./createAutocompleteDom":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/createAutocompleteDom.js","./createEffectWrapper":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/createEffectWrapper.js","./createReactiveWrapper":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/createReactiveWrapper.js","./getDefaultOptions":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/getDefaultOptions.js","./getPanelPlacementStyle":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/getPanelPlacementStyle.js","./render":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/render.js","./utils":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/utils/index.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/version.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.version = void 0;
-var version = '1.0.0-alpha.43';
-exports.version = version;
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaFacetHits.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getAlgoliaFacetHits = getAlgoliaFacetHits;
-
-var _autocompletePresetAlgolia = require("@algolia/autocomplete-preset-algolia");
-
-var _version = require("./version");
-
-function getAlgoliaFacetHits(_ref) {
-  var searchClient = _ref.searchClient,
-      queries = _ref.queries;
-  return (0, _autocompletePresetAlgolia.getAlgoliaFacetHits)({
-    searchClient: searchClient,
-    queries: queries,
-    userAgents: [{
-      segment: 'autocomplete-js',
-      version: _version.version
-    }]
-  });
-}
-},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","./version":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/version.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaHits.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getAlgoliaHits = getAlgoliaHits;
-
-var _autocompletePresetAlgolia = require("@algolia/autocomplete-preset-algolia");
-
-var _version = require("./version");
-
-function getAlgoliaHits(_ref) {
-  var searchClient = _ref.searchClient,
-      queries = _ref.queries;
-  return (0, _autocompletePresetAlgolia.getAlgoliaHits)({
-    searchClient: searchClient,
-    queries: queries,
-    userAgents: [{
-      segment: 'autocomplete-js',
-      version: _version.version
-    }]
-  });
-}
-},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","./version":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/version.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaResults.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getAlgoliaResults = getAlgoliaResults;
-
-var _autocompletePresetAlgolia = require("@algolia/autocomplete-preset-algolia");
-
-var _version = require("./version");
-
-function getAlgoliaResults(_ref) {
-  var searchClient = _ref.searchClient,
-      queries = _ref.queries;
-  return (0, _autocompletePresetAlgolia.getAlgoliaResults)({
-    searchClient: searchClient,
-    queries: queries,
-    userAgents: [{
-      segment: 'autocomplete-js',
-      version: _version.version
-    }]
-  });
-}
-},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","./version":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/version.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/highlight.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.highlightHit = highlightHit;
-exports.reverseHighlightHit = reverseHighlightHit;
-exports.snippetHit = snippetHit;
-exports.reverseSnippetHit = reverseSnippetHit;
-
-var _autocompletePresetAlgolia = require("@algolia/autocomplete-preset-algolia");
-
-var _preact = require("preact");
-
-/**
- * Highlights and escapes the matching parts of an Algolia hit.
- */
-function highlightHit(_ref) {
-  var hit = _ref.hit,
-      attribute = _ref.attribute,
-      _ref$tagName = _ref.tagName,
-      tagName = _ref$tagName === void 0 ? 'mark' : _ref$tagName,
-      _ref$createElement = _ref.createElement,
-      createElement = _ref$createElement === void 0 ? _preact.createElement : _ref$createElement;
-  return (0, _autocompletePresetAlgolia.parseAlgoliaHitHighlight)({
-    hit: hit,
-    attribute: attribute
-  }).map(function (x, index) {
-    return x.isHighlighted ? createElement(tagName, {
-      key: index
-    }, x.value) : x.value;
-  });
-}
-/**
- * Highlights and escapes the non-matching parts of an Algolia hit.
- *
- * This is a common pattern for Query Suggestions.
- */
-
-
-function reverseHighlightHit(_ref2) {
-  var hit = _ref2.hit,
-      attribute = _ref2.attribute,
-      _ref2$tagName = _ref2.tagName,
-      tagName = _ref2$tagName === void 0 ? 'mark' : _ref2$tagName,
-      _ref2$createElement = _ref2.createElement,
-      createElement = _ref2$createElement === void 0 ? _preact.createElement : _ref2$createElement;
-  return (0, _autocompletePresetAlgolia.parseAlgoliaHitReverseHighlight)({
-    hit: hit,
-    attribute: attribute
-  }).map(function (x, index) {
-    return x.isHighlighted ? createElement(tagName, {
-      key: index
-    }, x.value) : x.value;
-  });
-}
-/**
- * Highlights and escapes the matching parts of an Algolia hit snippet.
- */
-
-
-function snippetHit(_ref3) {
-  var hit = _ref3.hit,
-      attribute = _ref3.attribute,
-      _ref3$tagName = _ref3.tagName,
-      tagName = _ref3$tagName === void 0 ? 'mark' : _ref3$tagName,
-      _ref3$createElement = _ref3.createElement,
-      createElement = _ref3$createElement === void 0 ? _preact.createElement : _ref3$createElement;
-  return (0, _autocompletePresetAlgolia.parseAlgoliaHitSnippet)({
-    hit: hit,
-    attribute: attribute
-  }).map(function (x, index) {
-    return x.isHighlighted ? createElement(tagName, {
-      key: index
-    }, x.value) : x.value;
-  });
-}
-/**
- * Highlights and escapes the non-matching parts of an Algolia hit snippet.
- *
- * This is a common pattern for Query Suggestions.
- */
-
-
-function reverseSnippetHit(_ref4) {
-  var hit = _ref4.hit,
-      attribute = _ref4.attribute,
-      _ref4$tagName = _ref4.tagName,
-      tagName = _ref4$tagName === void 0 ? 'mark' : _ref4$tagName,
-      _ref4$createElement = _ref4.createElement,
-      createElement = _ref4$createElement === void 0 ? _preact.createElement : _ref4$createElement;
-  return (0, _autocompletePresetAlgolia.parseAlgoliaHitReverseSnippet)({
-    hit: hit,
-    attribute: attribute
-  }).map(function (x, index) {
-    return x.isHighlighted ? createElement(tagName, {
-      key: index
-    }, x.value) : x.value;
-  });
-}
-},{"@algolia/autocomplete-preset-algolia":"../node_modules/@algolia/autocomplete-preset-algolia/dist/esm/index.js","preact":"../node_modules/preact/dist/preact.module.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteApi.js":[function(require,module,exports) {
-
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteClassNames.js":[function(require,module,exports) {
-
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteCollection.js":[function(require,module,exports) {
-
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteDom.js":[function(require,module,exports) {
-
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteOptions.js":[function(require,module,exports) {
-
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompletePlugin.js":[function(require,module,exports) {
-
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompletePropGetters.js":[function(require,module,exports) {
-
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteRender.js":[function(require,module,exports) {
-
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteRenderer.js":[function(require,module,exports) {
-
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteSource.js":[function(require,module,exports) {
-
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteState.js":[function(require,module,exports) {
-
-},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _AutocompleteApi = require("./AutocompleteApi");
-
-Object.keys(_AutocompleteApi).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _AutocompleteApi[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _AutocompleteApi[key];
-    }
-  });
-});
-
-var _AutocompleteClassNames = require("./AutocompleteClassNames");
-
-Object.keys(_AutocompleteClassNames).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _AutocompleteClassNames[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _AutocompleteClassNames[key];
-    }
-  });
-});
-
-var _AutocompleteCollection = require("./AutocompleteCollection");
-
-Object.keys(_AutocompleteCollection).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _AutocompleteCollection[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _AutocompleteCollection[key];
-    }
-  });
-});
-
-var _AutocompleteDom = require("./AutocompleteDom");
-
-Object.keys(_AutocompleteDom).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _AutocompleteDom[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _AutocompleteDom[key];
-    }
-  });
-});
-
-var _AutocompleteOptions = require("./AutocompleteOptions");
-
-Object.keys(_AutocompleteOptions).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _AutocompleteOptions[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _AutocompleteOptions[key];
-    }
-  });
-});
-
-var _AutocompletePlugin = require("./AutocompletePlugin");
-
-Object.keys(_AutocompletePlugin).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _AutocompletePlugin[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _AutocompletePlugin[key];
-    }
-  });
-});
-
-var _AutocompletePropGetters = require("./AutocompletePropGetters");
-
-Object.keys(_AutocompletePropGetters).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _AutocompletePropGetters[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _AutocompletePropGetters[key];
-    }
-  });
-});
-
-var _AutocompleteRender = require("./AutocompleteRender");
-
-Object.keys(_AutocompleteRender).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _AutocompleteRender[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _AutocompleteRender[key];
-    }
-  });
-});
-
-var _AutocompleteRenderer = require("./AutocompleteRenderer");
-
-Object.keys(_AutocompleteRenderer).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _AutocompleteRenderer[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _AutocompleteRenderer[key];
-    }
-  });
-});
-
-var _AutocompleteSource = require("./AutocompleteSource");
-
-Object.keys(_AutocompleteSource).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _AutocompleteSource[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _AutocompleteSource[key];
-    }
-  });
-});
-
-var _AutocompleteState = require("./AutocompleteState");
-
-Object.keys(_AutocompleteState).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _AutocompleteState[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _AutocompleteState[key];
-    }
-  });
-});
-},{"./AutocompleteApi":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteApi.js","./AutocompleteClassNames":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteClassNames.js","./AutocompleteCollection":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteCollection.js","./AutocompleteDom":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteDom.js","./AutocompleteOptions":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteOptions.js","./AutocompletePlugin":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompletePlugin.js","./AutocompletePropGetters":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompletePropGetters.js","./AutocompleteRender":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteRender.js","./AutocompleteRenderer":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteRenderer.js","./AutocompleteSource":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteSource.js","./AutocompleteState":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/AutocompleteState.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _autocomplete = require("./autocomplete");
-
-Object.keys(_autocomplete).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _autocomplete[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _autocomplete[key];
-    }
-  });
-});
-
-var _getAlgoliaFacetHits = require("./getAlgoliaFacetHits");
-
-Object.keys(_getAlgoliaFacetHits).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _getAlgoliaFacetHits[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _getAlgoliaFacetHits[key];
-    }
-  });
-});
-
-var _getAlgoliaHits = require("./getAlgoliaHits");
-
-Object.keys(_getAlgoliaHits).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _getAlgoliaHits[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _getAlgoliaHits[key];
-    }
-  });
-});
-
-var _getAlgoliaResults = require("./getAlgoliaResults");
-
-Object.keys(_getAlgoliaResults).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _getAlgoliaResults[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _getAlgoliaResults[key];
-    }
-  });
-});
-
-var _highlight = require("./highlight");
-
-Object.keys(_highlight).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _highlight[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _highlight[key];
-    }
-  });
-});
-
-var _types = require("./types");
-
-Object.keys(_types).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (key in exports && exports[key] === _types[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _types[key];
-    }
-  });
-});
-},{"./autocomplete":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/autocomplete.js","./getAlgoliaFacetHits":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaFacetHits.js","./getAlgoliaHits":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaHits.js","./getAlgoliaResults":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/getAlgoliaResults.js","./highlight":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/highlight.js","./types":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/types/index.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/getTemplates.js":[function(require,module,exports) {
+},{}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/getTemplates.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -44887,7 +41822,7 @@ function getTemplates(_ref) {
     }
   };
 }
-},{"@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-plugin-recent-searches/node_modules/@algolia/autocomplete-js/dist/esm/index.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/createRecentSearchesPlugin.js":[function(require,module,exports) {
+},{"@algolia/autocomplete-js":"../node_modules/@algolia/autocomplete-js/dist/esm/index.js"}],"../node_modules/@algolia/autocomplete-plugin-recent-searches/dist/esm/createRecentSearchesPlugin.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -45926,7 +42861,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64076" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49705" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -46134,7 +43069,42 @@ function getBaseURL(url) {
 
 exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
-},{}],"../node_modules/parcel-bundler/src/builtins/bundle-loader.js":[function(require,module,exports) {
+},{}],"../node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
+
+function updateLink(link) {
+  var newLink = link.cloneNode();
+
+  newLink.onload = function () {
+    link.remove();
+  };
+
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+
+var cssTimeout = null;
+
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
+      }
+    }
+
+    cssTimeout = null;
+  }, 50);
+}
+
+module.exports = reloadCSS;
+},{"./bundle-url":"../node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"../node_modules/parcel-bundler/src/builtins/bundle-loader.js":[function(require,module,exports) {
 var getBundleURL = require('./bundle-url').getBundleURL;
 
 function loadBundlesLazy(bundles) {
@@ -46241,5 +43211,5 @@ module.exports = function loadJSBundle(bundle) {
 };
 },{}],0:[function(require,module,exports) {
 var b=require("../node_modules/parcel-bundler/src/builtins/bundle-loader.js");b.register("js",require("../node_modules/parcel-bundler/src/builtins/loaders/browser/js-loader.js"));b.load([]).then(function(){require("../src/Homepage/app.js");});
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js",0], null)
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","../node_modules/parcel-bundler/src/builtins/css-loader.js",0], null)
 //# sourceMappingURL=/app.5626fd45.js.map

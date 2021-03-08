@@ -7,7 +7,8 @@
     "node": "14.15.1"
   },
   "scripts": {
-    "start": "parcel html/index.html html/* --public-url /",
+    "postinstall": "patch-package",
+    "start": "parcel html/index.html html/searchResults.html html/categoryPageMan.html html/categoryPageWoman.html --public-url /",
     "dev": "parcel html/*",
     "build": "parcel build html/*",
     "lint": "eslint .",
@@ -35,7 +36,7 @@
   ],
   "dependencies": {
     "@algolia/autocomplete-core": "1.0.0-alpha.43",
-    "@algolia/autocomplete-js": "1.0.0-alpha.29",
+    "@algolia/autocomplete-js": "1.0.0-alpha.43",
     "@algolia/autocomplete-plugin-algolia-insights": "1.0.0-alpha.43",
     "@algolia/autocomplete-plugin-query-suggestions": "1.0.0-alpha.43",
     "@algolia/autocomplete-plugin-recent-searches": "1.0.0-alpha.43",
@@ -50,6 +51,8 @@
     "instantsearch.js": "^4.15.0",
     "keysim": "^2.1.0",
     "parcel-bundler": "^1.12.4",
+    "patch-package": "^6.4.6",
+    "postinstall-postinstall": "^2.1.0",
     "search-insights": "^1.7.1",
     "serve-static": "^1.14.1"
   },
