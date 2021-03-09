@@ -1,6 +1,9 @@
-@import './carouselDetailed.css';
-@import './headerMenu.css';
-@import './autocomplete.css';
+
+@import "./carouselDetailed.css";
+@import "./headerMenu.css";
+@import "./autocomplete.css";
+@import "./modalProduct.css";
+
 
 /* GENERAL STYLE */
 
@@ -138,7 +141,9 @@ li {
 
 .carousel .carousel-list-container li .title {
   text-align: center;
-  font-family: 'Roboto';
+
+  font-family: "Roboto";
+
   font-weight: 500;
   font-size: 0.8rem;
 }
@@ -149,16 +154,20 @@ li {
   justify-content: center;
   margin: 0 auto;
   padding: 1rem;
+  position: relative;
+  cursor: pointer;
+
 }
 
 .carousel .carousel-list-container li img {
   width: 70%;
   object-fit: contain;
   align-self: center;
-  margin-top: -6rem;
-  margin-bottom: 1rem;
+  margin: 1rem auto;
   filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
-  transition: 0.2s ease-in-out;
+  clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+
+  transition: 0.5s ease-in-out;
 }
 .carousel .carousel-list-container li img:hover {
   transform: scale(1.1);
@@ -168,7 +177,7 @@ li {
 
 /* STAT */
 .ais-Stats {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-weight: 100;
   font-style: italic;
   color: black;
@@ -286,7 +295,7 @@ li {
   margin-left: 20px;
   text-orientation: sideways-right;
   font-size: 0.8rem;
-  font-family: 'Castoro', serif;
+  font-family: "Castoro", serif;
   font-style: italic;
 }
 
@@ -319,7 +328,7 @@ li {
   color: black;
   font-size: 0.8rem;
   font-style: italic;
-  font-family: 'Castoro', serif;
+  font-family: "Castoro", serif;
 }
 .userPersonaSelector select {
   background-color: rgb(246, 245, 243);
@@ -327,7 +336,7 @@ li {
   padding: 0.6rem;
   padding-left: 3rem;
   border-radius: 5px;
-  font-family: 'Castoro', serif;
+  font-family: "Castoro", serif;
 }
 
 .personaFadeIn {
@@ -336,6 +345,96 @@ li {
 .personaFadeOut {
   animation: personaOut 0.8s forwards;
 }
+
+
+.img-overlay {
+  opacity: 0;
+  position: absolute;
+  height: 100%;
+  width: 70%;
+  background-color: rgba(255, 255, 255, 0.678);
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: none;
+  cursor: pointer;
+  transform: translate3d(0, -2rem, 0rem);
+}
+
+.hit-addToCart {
+  opacity: 0;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 30%;
+  right: 50%;
+  transform: translate(50%, -50%);
+  align-items: center;
+  width: fit-content;
+  height: 4rem;
+  color: black;
+}
+.hit-addToCart i {
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 501;
+}
+
+/* POPUP EVENT  */
+
+.popUp-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.popUpEventClick {
+  position: fixed;
+  top: calc(100% - 5rem);
+  left: calc(0vw + 2rem);
+  background-color: rgba(99, 175, 84, 0.76);
+  color: white;
+  padding: 1rem;
+  border-radius: 5px;
+  z-index: 500;
+  animation: disapear 6s forwards;
+  font-family: "Roboto";
+  box-sizing: border-box;
+}
+.popUpEventCart {
+  position: fixed;
+  top: calc(100% - 9rem);
+  left: calc(0vw + 2rem);
+  background-color: rgba(230, 196, 0, 0.699);
+  color: white;
+  padding: 1rem;
+  border-radius: 5px;
+  z-index: 500;
+  animation: disapear 6s forwards;
+  font-family: "Roboto";
+  box-sizing: border-box;
+}
+
+.fadeInSize {
+  animation: fadeInSize 0.5s forwards;
+}
+.fadeOutSize {
+  animation: fadeOutSize 0.1s forwards;
+}
+
+.revealCarousel {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%) !important;
+}
+
+.transition-wipe {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(317deg, rgba(255, 255, 255, 1) 0%, rgba(0, 0, 0, 1) 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  left: -100%;
+}
+
 
 /* ANIMATIONS */
 
@@ -377,5 +476,51 @@ li {
   }
   100% {
     transform: translateX(0px);
+  }
+}
+
+@keyframes fadeInSize {
+  0% {
+    visibility: hidden;
+    transform: translateY(4rem) scale(1);
+    opacity: 0;
+  }
+  100% {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0rem) scale(1.1);
+  }
+}
+@keyframes fadeOutSize {
+  0% {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0rem) scale(1.1);
+  }
+  100% {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(4rem) scale(1);
+  }
+}
+
+@keyframes disapear {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(0rem);
+  }
+  75% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(2rem);
+    opacity: 0;
+    /* visibility: hidden; */
   }
 }

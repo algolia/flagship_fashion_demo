@@ -6,12 +6,15 @@ import { connectAutocomplete } from 'instantsearch.js/es/connectors';
 import {
     autocomplete,
     getAlgoliaResults,
-    snippetHit,
-    highlightHit
+
+    highlightHit,
+
 } from '@algolia/autocomplete-js';
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions';
 import { createLocalStorageRecentSearchesPlugin } from '@algolia/autocomplete-plugin-recent-searches';
 import '@algolia/autocomplete-theme-classic';
+import { html } from 'htm/preact';
+
 
 
 export function GetDataForCarousel() {
@@ -23,6 +26,7 @@ export function GetDataForCarousel() {
         searchClient,
         routing: true
     });
+
 
     const autocompleteSearchBox = createAutocompleteSearchBox();
 
@@ -154,13 +158,15 @@ export function GetDataForCarousel() {
 
                     getSources({ query }) {
                         if (!query) {
-                            return [];
+                            return [
+                            ];
                         }
 
                         return getAlgoliaResults({
                             searchClient,
                             queries: [
                                 {
+
                                     query,
                                     indexName: 'gstar_demo_test',
                                     params: {
@@ -173,23 +179,25 @@ export function GetDataForCarousel() {
                         }).then(async ([products]) => {
                             const [categories] = await searchClient.searchForFacetValues([
                                 {
+
                                     indexName: 'gstar_demo_test',
                                     params: {
                                         facetName: 'name',
                                         facetQuery: query,
-                                        highlightPreTag: '<mark>',
-                                        highlightPostTag: '</mark>',
+                                        highlightPreTag: `<mark>`,
+                                        highlightPostTag: `</mark>`,
                                         maxFacetHits: 5,
                                         enablePersonalization: true,
                                     },
                                 },
                                 {
+
                                     indexName: 'gstar_demo_test',
                                     params: {
                                         facetName: 'category',
                                         facetQuery: query,
-                                        highlightPreTag: '<mark>',
-                                        highlightPostTag: '</mark>',
+                                        highlightPreTag: `<mark>`,
+                                        highlightPostTag: `</mark>`,
                                         maxFacetHits: 5,
                                         enablePersonalization: true,
                                     },
@@ -198,6 +206,7 @@ export function GetDataForCarousel() {
 
                             return [
                                 {
+                                    sourceId: 'products',
                                     getItems() {
                                         return products.hits;
                                     },
@@ -235,6 +244,7 @@ export function GetDataForCarousel() {
                                     },
                                 },
                                 {
+                                    sourceId: 'categories',
                                     getItems() {
                                         return categories.facetHits;
                                     },
@@ -244,8 +254,8 @@ export function GetDataForCarousel() {
                                         },
                                         item({ item }) {
                                             return facetTemplate({
-                                                title: item.highlighted,
-                                                query: products.query
+                                                title: item.value,
+                                                query: products.query,
                                             });
                                         },
                                     },
@@ -268,19 +278,21 @@ export function GetDataForCarousel() {
         return connectAutocomplete(renderAutocomplete);
 
         function headerTemplate({ title }) {
-            return `
+            return html`
+
             <div class="aa-titleCategory">
                 <h3>${title}</h3>
             </div>
+
             `;
         }
 
         function productTemplate({ image, title, description, price, query }) {
-            return `
+            return html`
             <div class="aa-ItemContent">
                 <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-ItemLink">
                     <div class="aa-ItemImage">
-                        <img src="${image}" alt="${title}">
+                        <img src="${image}" alt="${title}"/>
                     </div>
                     <div class="aa-ItemInfos">
                         <div class="aa-ItemTitle">${title}</div>
@@ -288,11 +300,11 @@ export function GetDataForCarousel() {
                     </div>
                 </a>
             </div>
-        `;
+            `;
         }
 
         function moreResultsTemplate({ title, query }) {
-            return `
+            return html`
             <div class="aa-btnShowMore-wrapper">
                 <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-btnShowMore">
                     ${title}
@@ -302,8 +314,8 @@ export function GetDataForCarousel() {
         }
 
         function facetTemplate({ title, query }) {
-            return `
-          <div class="aa-ItemContentCategory">
+            return html`
+            <div class="aa-ItemContentCategory">
             <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-ItemLinkCategory">
                 <div class="aa-ItemTitle">${title}</div>
             </a>
