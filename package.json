@@ -7,7 +7,8 @@
     "node": "14.15.1"
   },
   "scripts": {
-    "start": "parcel html/index.html html/* --public-url /",
+    "postinstall": "patch-package",
+    "start": "parcel html/index.html html/searchResults.html html/categoryPageMan.html html/categoryPageWoman.html --public-url /",
     "dev": "parcel html/*",
     "build": "parcel build html/*",
     "lint": "eslint .",
@@ -18,6 +19,8 @@
   "type": "module",
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.13.7",
+    "@commitlint/cli": "^12.0.1",
+    "@commitlint/config-conventional": "^12.0.1",
     "babel-eslint": "10.0.3",
     "eslint": "7.20.0",
     "eslint-config-algolia": "16.0.0",
@@ -48,8 +51,12 @@
     "autocomplete.js": "^0.38.0",
     "babel-polyfill": "^6.26.0",
     "htm": "^3.0.4",
+    "husky": "^5.1.3",
     "instantsearch.js": "^4.15.0",
+    "keysim": "^2.1.0",
     "parcel-bundler": "^1.12.4",
+    "patch-package": "^6.4.6",
+    "postinstall-postinstall": "^2.1.0",
     "search-insights": "^1.7.1",
     "serve-static": "^1.14.1"
   },
