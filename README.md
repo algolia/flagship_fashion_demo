@@ -1,13 +1,16 @@
 
-# FASHION DEMO FOR RETAILERS
+<div style="display:flex; justify-content:center; flex-direction:column; text-align:center;">
+<h1 style="font-family='Helvetica'; font-size=18px; font-weight=bold; color=grey;">FASHION DEMO FOR RETAILERS</h1>
 
-<img src="https://i.ibb.co/b3FwNnp/Screenshot-2021-03-09-at-10-41-49.png" alt="Fashion demo" width="500"/>
+<img src="https://i.ibb.co/b3FwNnp/Screenshot-2021-03-09-at-10-41-49.png" alt="Fashion demo" width="500" style="margin: 2rem auto"/>
 
 _This project was generated with [create-instantsearch-app](https://github.com/algolia/create-instantsearch-app) by [Algolia](https://algolia.com)._
 The project uses ESLint and Prettier for formatting and linting based on [eslint-config-algolia](https://github.com/algolia/eslint-config-algolia#formatting-prettier). Make sure to get a [plugin for your favorite IDE](http://eslint.org/docs/user-guide/integrations.html#editors).
 
+</div>
 
-## Get started
+
+<h2 style="font-family='Helvetica'; font-size=15px; font-weight=bold; color=grey;">⭐️ Get started</h2>
 
 To run this project locally, install the dependencies and run the local server:
 
@@ -26,19 +29,19 @@ yarn start
 Open http://localhost:1234 to see your app.
 
 
-## Configuration
+<h2 style="font-family='Helvetica'; font-size=15px; font-weight=bold; color=grey;">⭐️ Configuration</h2>
 
 Please provide the following environment variables before deploying:
 When Goes public use Environment Variables
 
-## Branches
+<h2 style="font-family='Helvetica'; font-size=15px; font-weight=bold; color=grey;">⭐️ Branches</h2>
 
 `Main Branch` : master
 `Deploy Branch` : prod/netlify
 `Test feature Branch` : next
 
 
-## Deploying
+<h2 style="font-family='Helvetica'; font-size=15px; font-weight=bold; color=grey;">⭐️ Deploying</h2>
 
 Continuous deployment on Netlify
 
@@ -50,8 +53,11 @@ Or
 
 `Merge Your Branch on prod/Netlify`
 
-## Algolia's features implemented & docs
 
+
+<h2 style="font-family='Helvetica'; font-size=15px; font-weight=bold; color=grey; margin-top=2rem;">⭐️ Algolia's features implemented & docs</h2>
+
+<div style="text-align=left">
 **📙 Documentation :**
 
  - *Personalised Carousel*
@@ -138,3 +144,4 @@ Or
 - *Insight event*
 
 ✅ [Send events to analytics](https://www.algolia.com/doc/guides/building-search-ui/going-further/send-insights-events/js/)
+</div>
