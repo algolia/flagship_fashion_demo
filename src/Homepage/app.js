@@ -6,8 +6,6 @@ import { togglePersona } from "./persona";
 import { cardAnimationHome } from "./cardAnimationHome";
 import { modalProduct } from "./modalProduct";
 
-
-
 carouselGlideJS()
 GetDataForCarousel()
 carouselDetailed()
