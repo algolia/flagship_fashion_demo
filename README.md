@@ -2,7 +2,7 @@
 <div style="display:flex; justify-content:center; flex-direction:column; text-align:center;">
 <h1 style="font-family='Helvetica'; font-size=18px; font-weight=bold; color=grey;">FASHION DEMO FOR RETAILERS</h1>
 
-<img src="https://i.ibb.co/b3FwNnp/Screenshot-2021-03-09-at-10-41-49.png" alt="Fashion demo" width="500" style="margin: 2rem auto"/>
+<img src="https://i.ibb.co/b3FwNnp/Screenshot-2021-03-09-at-10-41-49.png" alt="Fashion demo" width="800" style="margin: 2rem auto"/>
 
 _This project was generated with [create-instantsearch-app](https://github.com/algolia/create-instantsearch-app) by [Algolia](https://algolia.com)._
 The project uses ESLint and Prettier for formatting and linting based on [eslint-config-algolia](https://github.com/algolia/eslint-config-algolia#formatting-prettier). Make sure to get a [plugin for your favorite IDE](http://eslint.org/docs/user-guide/integrations.html#editors).
