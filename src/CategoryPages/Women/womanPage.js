@@ -72,15 +72,6 @@ function GetDataCarousel() {
   });
 }
 
-let toggleSettingDrawerBtn = document.querySelector('#toggleSettingDrawer');
-
-toggleSettingDrawerBtn.addEventListener('click', () => {
-  let setDrawerContainer = document.querySelector('#setDrawer');
-  setDrawerContainer.classList.toggle('openSettingDrawer');
-  let toggleSettingDrawer = document.querySelector('#toggleSettingDrawer');
-  toggleSettingDrawer.classList.toggle('moveLabelSettings');
-});
-
 // APP.JS CALL
 GetDataCarousel();
 burgerMenu();
