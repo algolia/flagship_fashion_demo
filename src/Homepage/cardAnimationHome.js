@@ -6,7 +6,6 @@ export function cardAnimationHome() {
     var checkExist = setInterval(function () {
         if (document.readyState === 'complete') {
             let imgs = document.querySelectorAll('.carousel-list-container li .image-wrapper img')
-
             imgs.forEach(i => {
                 i.classList.add('revealCarousel')
             })

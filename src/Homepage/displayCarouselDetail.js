@@ -13,10 +13,6 @@ export function carouselDetailed() {
         searchClient
     });
 
-
-
-
-
     // CONFIG TO SEND INSIGHT EVENT TO THE DASHBOARD FOR PERSONALISATION
     const insightsMiddleware = createInsightsMiddleware({
         insightsClient: aa,
@@ -62,9 +58,6 @@ export function carouselDetailed() {
         } = renderOptions;
 
         const container = document.querySelector('.carousel-container')
-
-
-
 
         if (isFirstRender) {
             let ul = document.createElement('ul')
@@ -143,13 +136,9 @@ export function carouselDetailed() {
 
 
     };
-
-
     const customHits = connectHits(
         renderHits
     );
-
-
     searchDetail.addWidgets([
         configure({
             hitsPerPage: 8,
