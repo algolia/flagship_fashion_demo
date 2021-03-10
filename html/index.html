@@ -2,44 +2,51 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="theme-color" content="#000000">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="theme-color" content="#000000" />
 
   <!-- <link rel="manifest" href="./manifest.webmanifest"> -->
-  <link rel="shortcut icon" href="../favicon.png">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="shortcut icon" href="../favicon.png" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400;1,700&display=swap"
-    rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Castoro&display=swap" rel="stylesheet">
+    rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Castoro&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
     integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
     crossorigin="anonymous" />
 
   <!-- Required Core Stylesheet GLIDE.JS  -->
-  <link rel="stylesheet" href="../node_modules/@glidejs/glide/dist/css/glide.core.min.css">
+  <link rel="stylesheet" href="../node_modules/@glidejs/glide/dist/css/glide.core.min.css" />
 
   <!-- Optional Theme Stylesheet GLIDE.JS -->
-  <link rel="stylesheet" href="../node_modules/@glidejs/glide/dist/css/glide.theme.min.css">
+  <link rel="stylesheet" href="../node_modules/@glidejs/glide/dist/css/glide.theme.min.css" />
 
   <script>
-    var ALGOLIA_INSIGHTS_SRC = "https://cdn.jsdelivr.net/npm/search-insights@1.6.3";
+    var ALGOLIA_INSIGHTS_SRC =
+      'https://cdn.jsdelivr.net/npm/search-insights@1.6.3';
 
-    !function (e, a, t, n, s, i, c) {
-      e.AlgoliaAnalyticsObject = s, e[s] = e[s] || function () {
-        (e[s].queue = e[s].queue || []).push(arguments)
-      }, i = a.createElement(t), c = a.getElementsByTagName(t)[0],
-      i.async = 1, i.src = n, c.parentNode.insertBefore(i, c)
-    }(window, document, "script", ALGOLIA_INSIGHTS_SRC, "aa");
-
+    !(function (e, a, t, n, s, i, c) {
+      (e.AlgoliaAnalyticsObject = s),
+        (e[s] =
+          e[s] ||
+          function () {
+            (e[s].queue = e[s].queue || []).push(arguments);
+          }),
+        (i = a.createElement(t)),
+        (c = a.getElementsByTagName(t)[0]),
+        (i.async = 1),
+        (i.src = n),
+        c.parentNode.insertBefore(i, c);
+    })(window, document, 'script', ALGOLIA_INSIGHTS_SRC, 'aa');
   </script>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css">
-  <link rel="stylesheet" href="../src/index.css">
-  <link rel="stylesheet" href="../src/Homepage/css/app.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css" />
+  <link rel="stylesheet" href="../src/index.css" />
+  <link rel="stylesheet" href="../src/Homepage/css/app.css" />
 
   <title>Fashion Brand Demo</title>
 </head>
@@ -49,7 +56,7 @@
     <header class="header">
       <nav class="nav-wrapper">
         <div class="nav-logo">
-          <a href="./index.html"><img src="../images/brand_logo.png" alt="Brand logo"></a>
+          <a href="./index.html"><img src="../images/brand_logo.png" alt="Brand logo" /></a>
         </div>
         <div class="nav-list">
           <ul>
@@ -70,6 +77,7 @@
         </div>
       </nav>
     </header>
+
 
     <div class="labelUserPersonna">
       <p>Click me</p>
@@ -106,6 +114,7 @@
       </div>
     </div>
 
+
     <div class="container">
       <div id="stats"></div>
       <div class="search-panel">
@@ -121,13 +130,18 @@
             <p>The latest pieces from our last collection</p>
           </div>
           <div class="carousel-container"></div>
-
         </div>
       </div>
-
+      <div class="popUp-wrapper"></div>
+    </div>
+    <div class="modalProduct-wrapper">
+      <div class="modalProduct "></div>
     </div>
   </div>
+
+  </div>
   <script src="../src/Homepage/app.js"></script>
+
 </body>
 
 </html>

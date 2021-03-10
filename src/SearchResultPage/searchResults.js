@@ -33,6 +33,7 @@ import { carousel } from '../Homepage/displayCarousel';
 
 import aa from 'search-insights';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
+import { html } from 'htm/preact';
 
 export function searchResults() {
     const searchClient = algoliasearch(
@@ -141,8 +142,7 @@ export function searchResults() {
                 return item.banner;
             }
         });
-        console.log(items);
-        console.log(checkBanner);
+
         if (!checkBanner.includes(undefined)) {
             let banner = widgetParams.container;
             banner.style.display = 'block';
@@ -304,6 +304,7 @@ export function searchResults() {
 
                             return [
                                 {
+                                    sourceId: 'products',
                                     getItems() {
                                         return products.hits;
                                     },
@@ -335,6 +336,7 @@ export function searchResults() {
                                     },
                                 },
                                 {
+                                    sourceId: 'category',
                                     getItems() {
                                         return categories.facetHits;
                                     },
@@ -343,7 +345,7 @@ export function searchResults() {
                                             return headerTemplate({ title: 'Categories' });
                                         },
                                         item({ item }) {
-                                            return facetTemplate({ title: item.highlighted });
+                                            return facetTemplate({ title: item.value });
                                         },
                                     },
                                 },
@@ -352,7 +354,7 @@ export function searchResults() {
                     },
                     onSubmit({ root, sections, state, event }) {
                         const stateCollection = state.collections[2].items.length;
-                        console.log(state);
+                        // console.log(state);
                         if (stateCollection === 0) {
                             noResult(stateCollection);
                         } else {
@@ -370,41 +372,47 @@ export function searchResults() {
         return connectAutocomplete(renderAutocomplete);
 
         function headerTemplate({ title }) {
-            return `
+            return html`
+
             <div class="aa-titleCategory">
                 <h3>${title}</h3>
+            </div>
+
+            `;
+        }
+
+        function productTemplate({ image, title, description, price, query }) {
+            return html`
+            <div class="aa-ItemContent">
+                <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-ItemLink">
+                    <div class="aa-ItemImage">
+                        <img src="${image}" alt="${title}"/>
+                    </div>
+                    <div class="aa-ItemInfos">
+                        <div class="aa-ItemTitle">${title}</div>
+                        <div class="aa-ItemPrice">$${price}</div>
+                    </div>
+                </a>
             </div>
             `;
         }
 
-        function productTemplate({ image, title, description, price }) {
-            return `
-          <div class="aa-ItemContent" >
-            <div class="aa-ItemImage">
-              <img src="${image}" alt="${title}">
-            </div>
-            <div class="aa-ItemInfos">
-            <div class="aa-ItemTitle">${title}</div>
-            <div class="aa-ItemPrice">$${price}</div>
-            </div>
-          </div>
-        `;
-        }
-
-        function moreResultsTemplate({ title }) {
-            return `
+        function moreResultsTemplate({ title, query }) {
+            return html`
             <div class="aa-btnShowMore-wrapper">
-                <a href="#" class="aa-btnShowMore">
+                <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-btnShowMore">
                     ${title}
                 </a>
           </div>
         `;
         }
 
-        function facetTemplate({ title }) {
-            return `
-          <div class="aa-ItemContent">
-            <div class="aa-ItemTitle">${title}</div>
+        function facetTemplate({ title, query }) {
+            return html`
+            <div class="aa-ItemContentCategory">
+            <a href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}" class="aa-ItemLinkCategory">
+                <div class="aa-ItemTitle">${title}</div>
+            </a>
           </div>
         `;
         }
@@ -748,7 +756,7 @@ export function searchResults() {
 
         const container = document.querySelector(widgetParams.container);
 
-        console.log(bindEvent)
+
 
         if (isFirstRender) {
             container.addEventListener('click', event => {
@@ -759,30 +767,33 @@ export function searchResults() {
                 );
 
                 if (targetWithEvent) {
-                    console.log(targetWithEvent)
                     const payload = parseInsightsEvent(targetWithEvent);
                     instantSearchInstance.sendEventToInsights(payload);
-                    console.log(payload.payload.objectIDs[0])
-                    popUpEvent(payload.payload.eventName, payload.payload.objectIDs[0])
+                    popUpEventClick(payload.payload.eventName, payload.payload.objectIDs[0])
+                    // popUpEventCart(payload.payload.eventName, payload.payload.objectIDs[0])
                 }
             });
         }
 
-        function popUpEvent(event, object) {
+        function popUpEventClick(event, object) {
             const index = searchClient.initIndex('gstar_demo_test');
             let rightPanel = document.querySelector('.right-panel')
+            let popUpWrapper = document.querySelector('.popUp-wrapper')
             index.getObject(object).then(object => {
                 let div = document.createElement('div')
-                div.classList.add('popUpEvent')
-                div.innerHTML = `Open product details logged, on ${object.name}`
-                rightPanel.appendChild(div)
+
+                if (event === 'Product Clicked') {
+                    div.classList.add('popUpEventClick')
+                    div.innerHTML = `Open product details, on ${object.name}`
+                } else if (event === 'Product Added') {
+                    div.classList.add('popUpEventCart')
+                    div.innerHTML = `Add to cart product, on ${object.name}`
+                }
+                popUpWrapper.appendChild(div)
                 div.addEventListener('animationend', () => {
                     div.remove()
                 });
             });
-
-
-
         }
 
         const response = renderOptions.results;
@@ -797,7 +808,7 @@ export function searchResults() {
 
             if (isValidUserData(userData)) {
                 if (response !== undefined) {
-                    console.log(response);
+
                     //Appending custom data at the beginning of the array of results only if it's in the range of the position
                     let start = response.page * response.hitsPerPage + 1;
                     let end = response.page * response.hitsPerPage + response.hitsPerPage;
@@ -825,25 +836,24 @@ export function searchResults() {
                     </li>`;
                     } else {
                         return `<li
-              ${bindEvent('click', hit, 'Product Clicked')}
-             class="carousel-list-item">
+                        
+             class="carousel-list-item carousel-list-item-modal-call" data-id="${hit.objectID}">
                             <div class="badgeWrapper">
                                     <div>${displayEcoBadge(hit)}</div>
                                     <div>${displayOffBadge(hit)}</div>
                                 </div>
-                            <a href="${hit.url
-                            }" class="product-searchResult" data-id="${hit.objectID
-                            }">
-                                <div class="image-wrapper">
-                                    <img src="${hit.image_link
-                            }" align="left" alt="${hit.name
-                            }" class="result-img" />
-            
+                            
+                                <div class="image-wrapper" data-id="${hit.objectID}" ${bindEvent('click', hit, 'Product Clicked')}>
+                                    <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" data-id="${hit.objectID}"  />
+                                    <div class="result-img-overlay"></div>
+                                    <div class="hit-addToCart">
+                                        <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-cart-arrow-down"></i></a>
+                                    </div>
                                     <div class="hit-sizeFilter">
-                                        <p>Sizes available: <span>${hit.sizeFilter
-                            }</span></p>
+                                        <p>Sizes available: <span>${hit.sizeFilter}</span></p>
                                     </div>
                                 </div>
+                               
                                 <div class="hit-name">
                                     <div class="hit-infos">
                                         <div>${hit.name}</div>
@@ -869,7 +879,7 @@ export function searchResults() {
                                     </div>
             
                                 </div>
-                            </a>
+                           
                         </li>`;
                     }
                 })

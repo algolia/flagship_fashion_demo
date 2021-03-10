@@ -5,6 +5,10 @@ import {
   hits,
   EXPERIMENTAL_configureRelatedItems,
 } from 'instantsearch.js/es/widgets';
+import { connectHits } from 'instantsearch.js/es/connectors';
+import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
+import aa from 'search-insights';
+
 
 export function relatedResultModal() {
   const searchClient = algoliasearch(
@@ -23,26 +27,63 @@ export function relatedResultModal() {
     searchClient,
   });
 
+
+  // CONFIG TO SEND INSIGHT EVENT TO THE DASHBOARD FOR PERSONALISATION
+  const insightsMiddleware = createInsightsMiddleware({
+    insightsClient: aa,
+  });
+
+  search.use(insightsMiddleware);
+  searchIndexSecond.use(insightsMiddleware)
+
+  const findInsightsTarget = (startElement, endElement, validator) => {
+    let element = startElement;
+    while (element && !validator(element)) {
+      if (element === endElement) {
+        return null;
+      }
+      element = element.parentElement;
+    }
+    return element;
+  };
+
+  const parseInsightsEvent = element => {
+    const serializedPayload = element.getAttribute('data-insights-event');
+
+    if (typeof serializedPayload !== 'string') {
+      throw new Error(
+        'The insights middleware expects `data-insights-event` to be a base64-encoded JSON string.'
+      );
+    }
+
+    try {
+      return JSON.parse(atob(serializedPayload));
+    } catch (error) {
+      throw new Error(
+        'The insights middleware was unable to parse `data-insights-event`.'
+      );
+    }
+  };
+
+
+
+
   let searchInput = document.querySelector('.autocomplete input');
+  let searchForm = document.querySelector('.autocomplete .aa-Form')
   let timer,
     timeoutVal = 500;
-  // detects when the user is actively typing
-  searchInput.addEventListener('keypress', handleKeyPress);
-  // triggers a check to see if the user is actually done typing
-  searchInput.addEventListener('change', handleKeyUp);
+
+  // triggers a check to see if the user is submiting his search
+  searchForm.addEventListener('submit', handleKeyUp);
 
   function handleKeyUp(e) {
     window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
     if (e) {
       timer = window.setTimeout(() => {
-        domListening();
         getObjectID();
+        domListening();
       }, timeoutVal);
     }
-  }
-
-  function handleKeyPress(e) {
-    window.clearTimeout(timer);
   }
 
   // Listen to the Dom and change the content of the relatedsearch carousel with the search
@@ -56,19 +97,24 @@ export function relatedResultModal() {
       childList: true,
       subtree: true,
     });
+    observer.disconnect()
   }
 
   const getObjectID = () => {
-    let productSearchResult = document.querySelectorAll(
-      '.product-searchResult'
-    );
+    let productSearchResult = document.querySelectorAll('.image-wrapper');
     productSearchResult.forEach(item => {
-      if (item.dataset.id !== 'undefined') {
+      if (item.dataset.id !== undefined) {
         index.getObject(item.dataset.id).then(object => {
           item.addEventListener('click', e => {
-            e.preventDefault();
-            displayrelateditems(object);
-            displayModal();
+            let img = item.querySelector('img')
+            if (e.target === item || e.target === img) {
+              e.preventDefault();
+              displayrelateditems(object);
+              displayModal();
+            } else {
+              e.preventDefault();
+            }
+
           });
         });
       }
@@ -81,13 +127,19 @@ export function relatedResultModal() {
     let modalWrapper = document.querySelector('.modal-relatedItems--wrapper');
     let closeModal = document.querySelector('.modal-relatedItems--closeBtn');
     let fadeInModal = document.querySelector('.modal-relatedItems');
-    // modalWrapper.classList.toggle('displayBlock')
+    let ulFirst = document.querySelectorAll('.modal-relatedItems ul')
 
-    closeModal.addEventListener('click', () => {
-      modalWrapper.classList.remove('displayBlock');
-      fadeInModal.classList.remove('fadeInModal');
-      modalWrapper.classList.add('fadeOutModal');
-    });
+
+    modalWrapper.addEventListener('click', (e) => {
+      if (e.target !== fadeInModal && !fadeInModal.contains(e.target) || e.target === closeModal) {
+        modalWrapper.classList.remove('displayBlock');
+        fadeInModal.classList.remove('fadeInModal');
+        modalWrapper.classList.add('fadeOutModal');
+        ulFirst.forEach(i => {
+          i.remove()
+        })
+      }
+    })
 
     if (!modalWrapper.classList.contains('displayBlock')) {
       modalWrapper.classList.add('displayBlock');
@@ -98,6 +150,133 @@ export function relatedResultModal() {
 
   // Display the related Search carousel according to the product chosen by user
   function displayrelateditems(object) {
+
+    const renderHits = (renderOptions, isFirstRender) => {
+      const {
+        hits,
+        widgetParams,
+        bindEvent,
+        instantSearchInstance,
+      } = renderOptions;
+
+      const container = document.querySelector('.modal-relatedItems')
+      const firstCarousel = document.querySelector('#carousel-relatedItems');
+      const secondCarousel = document.querySelector('#carousel-relatedItemsSecond');
+
+
+
+      if (isFirstRender) {
+        let ul = document.createElement('ul')
+        let ulSecondCarousel = document.createElement('ul')
+        ul.classList.add('ais-Hits-list')
+        ulSecondCarousel.classList.add('ais-Hits-list')
+        firstCarousel.appendChild(ul)
+        secondCarousel.appendChild(ulSecondCarousel)
+
+        container.addEventListener('click', event => {
+          const targetWithEvent = findInsightsTarget(
+            event.target,
+            event.currentTarget,
+            element => element.hasAttribute('data-insights-event')
+          );
+
+          if (targetWithEvent) {
+            const payload = parseInsightsEvent(targetWithEvent);
+            instantSearchInstance.sendEventToInsights(payload);
+            popUpEventClick(payload.payload.eventName, payload.payload.objectIDs[0])
+          }
+        });
+      }
+
+      function popUpEventClick(event, object) {
+        const index = searchClient.initIndex('gstar_demo_test');
+        let popUpWrapper = document.querySelector('.popUp-wrapper')
+        index.getObject(object).then(object => {
+          let div = document.createElement('div')
+
+          if (event === 'Product Clicked') {
+            div.classList.add('popUpEventClick')
+            div.innerHTML = `Open product details, on ${object.name}`
+          } else if (event === 'Product Added') {
+            div.classList.add('popUpEventCart')
+            div.innerHTML = `Add to cart product, on ${object.name}`
+          }
+          popUpWrapper.appendChild(div)
+          div.addEventListener('animationend', () => {
+            div.remove()
+          });
+        });
+      }
+
+      document.querySelector('#carousel-relatedItems ul').innerHTML = `
+      ${hits
+          .map(hit => {
+
+            return `         
+            
+            <li class="ais-Hits-item carousel-list-item">   
+              <div class="image-wrapper" ${bindEvent('click', hit, 'Product Clicked')}>
+                <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                <div class="result-img-overlay"></div>
+                <div class="hit-addToCart">
+                  <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-cart-arrow-down"></i></a>
+                </div>
+                <div class="hit-sizeFilter">
+                    <p>Sizes available: <span>${hit.sizeFilter}</span></p>
+                </div>
+              </div>
+              <div class="hit-name">
+                  <div class="hit-infos">
+                    <div>${hit.name}</div>
+                        <div class="hit-colors">${hit.colourFilter}</div>
+                  </div>
+                  <div class="related-hit-price">$${hit.price}</div>
+              </div>
+            </li>
+                              `;
+
+          })
+          .join('')}`;
+
+      document.querySelector('#carousel-relatedItemsSecond ul').innerHTML = `
+          ${hits
+          .map(hit => {
+
+            return `         
+                
+                <li class="ais-Hits-item carousel-list-item">   
+                  <div class="image-wrapper" ${bindEvent('click', hit, 'Product Clicked')}>
+                    <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                    <div class="result-img-overlay"></div>
+                    <div class="hit-addToCart">
+                      <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-cart-arrow-down"></i></a>
+                    </div>
+                    <div class="hit-sizeFilter">
+                        <p>Sizes available: <span>${hit.sizeFilter}</span></p>
+                    </div>
+                  </div>
+                  <div class="hit-name">
+                      <div class="hit-infos">
+                        <div>${hit.name}</div>
+                            <div class="hit-colors">${hit.colourFilter}</div>
+                      </div>
+                      <div class="hit-price">$${hit.price}</div>
+                  </div>
+                </li>
+                                  `;
+
+          })
+          .join('')}`;
+
+
+    };
+
+
+
+    const customHits = connectHits(
+      renderHits
+    );
+
     const referenceHit = {
       objectID: object.objectID,
       category: object.category,
@@ -139,36 +318,8 @@ export function relatedResultModal() {
           category: { score: 2 },
         },
       }),
-      hits({
-        container: '#carousel-relatedItems',
-        templates: {
-          item: (hit, bindEvent) =>
-            `          
-                        <a onClick=${console.log(bindEvent)} href="${
-              hit.url
-            }" class="product-searchResult" data-id="${hit.objectID}">
-                        <div class="image-wrapper">
-                            <img src="${hit.image_link}" align="left" alt="${
-              hit.name
-            }" class="result-img" />
-                            <div class="hit-sizeFilter">
-                                <p>Sizes available: <span>${
-                                  hit.sizeFilter
-                                }</span></p>
-                            </div>
-                        </div>
-                        <div class="hit-name">
-                            <div class="hit-infos">
-                            <div>${hit.name}</div>
-                                <div class="hit-colors">${
-                                  hit.colourFilter
-                                }</div>
-                            </div>
-                            <div class="hit-price">$${hit.price}</div>
-                        </div>
-                    </a>
-                        `,
-        },
+      customHits({
+        container: document.querySelector('#carousel-relatedItems'),
       }),
     ]);
     // Add the widgets 2nd index
@@ -185,28 +336,8 @@ export function relatedResultModal() {
           colourFilter: { score: 2 },
         },
       }),
-      hits({
-        container: '#carousel-relatedItemsSecond',
-        templates: {
-          item: hit =>
-            `          
-                        <a href="${hit.url}" class="product-searchResult" data-id="${hit.objectID}">
-                        <div class="image-wrapper">
-                            <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
-                            <div class="hit-sizeFilter">
-                                <p>Sizes available: <span>${hit.sizeFilter}</span></p>
-                            </div>
-                        </div>
-                        <div class="hit-name">
-                            <div class="hit-infos">
-                            <div>${hit.name}</div>
-                                <div class="hit-colors">${hit.colourFilter}</div>
-                            </div>
-                            <div class="hit-price">$${hit.price}</div>
-                        </div>
-                    </a>
-                        `,
-        },
+      customHits({
+        container: document.querySelector('#carousel-relatedItemsSecond'),
       }),
     ]);
   }

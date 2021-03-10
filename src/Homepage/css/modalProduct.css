@@ -1,0 +1,190 @@
+.modalProduct-wrapper {
+    position: fixed;
+    z-index: 10;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(3, 3, 3, 0.5);
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    overflow: clip;
+}
+
+.modalProduct {
+    position: absolute;
+    z-index: 10;
+    height: 80vh;
+    width: 80vw;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow-x: hidden;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 5px;
+}
+
+.modalProduct .fa-heart {
+    font-size: 2rem;
+}
+
+.productModal-infos-Wrapper {
+    display: flex;
+}
+
+.productModal-image-wrapper {
+    padding: 1rem;
+    margin: 1rem auto;
+}
+
+.productModal-info-wrapper {
+    padding: 1rem;
+    margin: 1rem auto;
+}
+.productModal-image-wrapper img {
+    width: 100%;
+    object-fit: contain;
+}
+
+.productModal-hit-category {
+    font-size: 0.8rem;
+    font-family: "Roboto";
+    font-style: italic;
+    color: rgb(185, 185, 185);
+}
+.productModal-hit-name {
+    margin: 0.5rem auto;
+    font-size: 1.5rem;
+    font-family: "Cstoro";
+    font-weight: bold;
+    color: black;
+}
+
+.productModal-hit-description {
+    margin: 2rem 0rem;
+    font-size: 0.9rem;
+    font-style: italic;
+    font-weight: 100;
+    width: 70%;
+}
+
+.productModal-hit-rating-price {
+    font-family: "Castoro";
+}
+.productModal-hit-addToCart {
+    margin: 2rem auto;
+}
+
+.productModal-btn {
+    padding: 0.6rem 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    font-size: 1;
+    font-family: "Roboto";
+    color: white;
+    align-self: center;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    background-color: rgb(17, 17, 17);
+}
+.productModal-btn:hover {
+    background-color: rgb(255, 255, 255);
+    color: black;
+    transition: 0.3s ease-in-out;
+}
+
+.productModal-hit-addToCart .fa-angle-down {
+    margin-left: 1rem;
+}
+
+.productModal-hit-color {
+    display: flex;
+    margin: 1rem auto;
+    align-items: center;
+}
+
+.productModal-hit-color-text {
+    font-family: "Roboto";
+    font-size: 0.8rem;
+    font-style: italic;
+    font-weight: 100;
+    margin-right: 1rem;
+}
+
+.product-colorsHex {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+/* RELATED ITEM MODAL */
+
+.related-ais-Hits-item {
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid rgba(230, 230, 230, 0.322);
+    margin: auto 0.3rem;
+}
+.related-image-wrapper {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.related-image-wrapper img {
+    width: 100%;
+}
+
+.related-hit-names {
+    font-size: 0.8rem;
+    font-family: "Roboto";
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 1rem auto;
+}
+
+.related-hit-price {
+    font-size: 0.8rem;
+    font-family: "Castoro";
+    font-weight: bold;
+}
+
+.related-product-colorsHex {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0.5rem 0;
+}
+
+/* ANIMATION */
+
+.fadeIn {
+    animation: fadeIn 1s forwards;
+}
+.fadeOut {
+    animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        visibility: visible;
+        opacity: 1;
+        display: block;
+    }
+}
+@keyframes fadeOut {
+    0% {
+        visibility: visible;
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
