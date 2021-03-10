@@ -50,7 +50,7 @@ export function GetDataForCarousel() {
             .search("", {
                 facetFilters: ['userToken:' + getUserToken()],
                 attributesToHighlight: [],
-                attributesToRetrieve: ["title", "indexName", "configure"],
+                attributesToRetrieve: ["title", "indexName", "configure", "objectID"],
             })
             .then((res) => res.hits);
     }
@@ -66,6 +66,7 @@ export function GetDataForCarousel() {
 
             const carouselContainer = document.createElement("div");
             carouselContainer.className = "carousel";
+            carouselContainer.id = `${carouselConfig.objectID}`
 
             const indexWidget = index({
                 indexName: carouselConfig.indexName,
