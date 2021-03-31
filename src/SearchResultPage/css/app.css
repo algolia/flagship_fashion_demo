@@ -1,38 +1,38 @@
-@import "./searchboxHeader.css";
-@import "./filters.css";
-@import "./searchBoxResults.css";
-@import "./modalRelatedItems.css";
-@import "./guidedNavigation.css";
-@import "./dynamicBanner.css";
-@import "./autocomplete.css";
-@import "./pagination.css";
-@import "./persona.css";
+@import './searchboxHeader.css';
+@import './filters.css';
+@import './searchBoxResults.css';
+@import './modalRelatedItems.css';
+@import './guidedNavigation.css';
+@import './dynamicBanner.css';
+@import './autocomplete.css';
+@import './pagination.css';
+@import './persona.css';
 
 * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 body {
-    overflow-x: hidden;
+  overflow-x: hidden;
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 ul,
 li {
-    list-style: none;
+  list-style: none;
 }
 
 .body-wrapper {
-    overflow-x: hidden;
-    position: relative
+  overflow-x: hidden;
+  position: relative;
 }
 
-.results-list{
-    display: flex;
-    flex-direction: row;
+.results-list {
+  display: flex;
+  flex-direction: row;
 }

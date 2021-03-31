@@ -8,7 +8,8 @@
   background-color: #fff;
   border: 1px solid hsla(0, 0%, 58.8%, 0.16);
   border-radius: 3px;
-  box-shadow: 0 0 0 1px rgba(35, 38, 59, 0.05), 0 8px 16px -4px rgba(35, 38, 59, 0.25);
+  box-shadow: 0 0 0 1px rgba(35, 38, 59, 0.05),
+    0 8px 16px -4px rgba(35, 38, 59, 0.25);
   margin-top: 5px;
   z-index: 99;
   position: relative;
@@ -26,7 +27,7 @@
   display: flex;
   margin: 1rem auto;
   padding: 0.5rem 1rem;
-  font-family: "Castoro", serif;
+  font-family: 'Castoro', serif;
 }
 
 .aa-ItemContent {
@@ -35,7 +36,7 @@
   position: relative;
   padding: 1rem;
   font-size: 0.8rem;
-  font-family: "Roboto";
+  font-family: 'Roboto';
 }
 .aa-ItemImage img {
   padding: 0.3rem;
@@ -61,7 +62,7 @@
   padding: 0.6rem 1rem !important;
   border: 1px solid rgba(0, 0, 0, 0.5);
   font-size: 0.8rem;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   color: black;
   align-self: center;
   cursor: pointer;
@@ -121,7 +122,7 @@
   position: relative;
   padding: 0.5rem;
   font-size: 0.8rem;
-  font-family: "Roboto";
+  font-family: 'Roboto';
 }
 .aa-ItemContentCategory a {
   text-decoration: none;
@@ -177,7 +178,7 @@
   padding: 0.6rem 2rem;
   border: 1px solid rgba(0, 0, 0, 0.5);
   font-size: 1;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   color: black;
   align-self: center;
   cursor: pointer;
@@ -229,7 +230,7 @@
 
 .carousel .carousel-list-container li .title {
   text-align: center;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   font-weight: 500;
   font-size: 0.8rem;
 }

@@ -1,6 +1,6 @@
 /* AUTOCOMPLETE */
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 /* .aa-Panel * {
@@ -10,120 +10,121 @@ a {
 } */
 
 .aa-Panel {
-    top: 55px !important;
+  top: 55px !important;
 }
 
 .aa-PanelLayout {
-    background-color: #fff;
-    border: 1px solid hsla(0, 0%, 58.8%, 0.16);
-    border-radius: 3px;
-    box-shadow: 0 0 0 1px rgba(35, 38, 59, 0.05), 0 8px 16px -4px rgba(35, 38, 59, 0.25);
-    margin-top: 5px;
-    z-index: 99;
-    position: relative;
+  background-color: #fff;
+  border: 1px solid hsla(0, 0%, 58.8%, 0.16);
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(35, 38, 59, 0.05),
+    0 8px 16px -4px rgba(35, 38, 59, 0.25);
+  margin-top: 5px;
+  z-index: 99;
+  position: relative;
 }
 
 .aa-PanelLayout section:nth-child(3),
 .aa-PanelLayout section:nth-child(4) {
-    padding: 1rem;
+  padding: 1rem;
 }
 .aa-PanelLayout section:nth-child(4) li {
-    margin-top: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .aa-titleCategory {
-    display: flex;
-    margin: 1rem auto;
-    padding: 0.5rem 1rem;
-    font-family: "Castoro", serif;
+  display: flex;
+  margin: 1rem auto;
+  padding: 0.5rem 1rem;
+  font-family: 'Castoro', serif;
 }
 
 .ais-SearchBox-wrapper {
-    align-self: center;
-    position: absolute;
-    width: 60%;
-    right: 5rem;
+  align-self: center;
+  position: absolute;
+  width: 60%;
+  right: 5rem;
 }
 
 .aa-ItemLink {
-    display: flex;
-    position: relative;
-    padding: 1rem;
-    font-size: 0.8rem;
-    font-family: "Roboto";
+  display: flex;
+  position: relative;
+  padding: 1rem;
+  font-size: 0.8rem;
+  font-family: 'Roboto';
 }
 
 .aa-ItemTitle {
-    color: black;
+  color: black;
 }
 
 .aa-ItemContent {
-    display: flex;
-    border-bottom: 1px solid rgba(133, 133, 133, 0.2);
-    position: relative;
-    padding: 1rem;
-    font-size: 0.8rem;
-    font-family: "Roboto";
+  display: flex;
+  border-bottom: 1px solid rgba(133, 133, 133, 0.2);
+  position: relative;
+  padding: 1rem;
+  font-size: 0.8rem;
+  font-family: 'Roboto';
 }
 
 .aa-ItemContentCategory {
-    display: flex;
-    border-bottom: 1px solid rgba(133, 133, 133, 0.2);
-    color: black;
-    width: 100%;
-    text-decoration: none;
-    position: relative;
-    padding: 0.5rem;
-    font-size: 0.8rem;
-    font-family: "Roboto";
+  display: flex;
+  border-bottom: 1px solid rgba(133, 133, 133, 0.2);
+  color: black;
+  width: 100%;
+  text-decoration: none;
+  position: relative;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  font-family: 'Roboto';
 }
 
-.aa-ItemImage img {
-    padding: 0.3rem;
-    margin-right: 1rem;
-    border-radius: 5px;
-    width: 70px;
-    filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
-    object-fit: contain;
-}
+/* .aa-ItemImage img {
+  padding: 0.3rem;
+  margin-right: 1rem;
+  border-radius: 5px;
+  width: 70px;
+  filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
+  object-fit: contain;
+} */
 
 .aa-ItemInfos {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    place-content: center;
-    color: black;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  place-content: center;
+  color: black;
 }
 .aa-btnShowMore-wrapper {
-    display: flex;
-    justify-content: center;
-    place-content: center;
+  display: flex;
+  justify-content: center;
+  place-content: center;
 }
 .aa-btnShowMore {
-    padding: 0.6rem 1rem !important;
-    border: 1px solid rgba(0, 0, 0, 0.5);
-    font-size: 0.8rem;
-    font-family: "Roboto";
-    color: black;
-    align-self: center;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-    margin: 1rem !important;
+  padding: 0.6rem 1rem !important;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  font-size: 0.8rem;
+  font-family: 'Roboto';
+  color: black;
+  align-self: center;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  margin: 1rem !important;
 }
 .aa-btnShowMore:hover {
-    background-color: rgb(17, 17, 17);
-    color: white;
-    transition: 0.3s ease-in-out;
+  background-color: rgb(17, 17, 17);
+  color: white;
+  transition: 0.3s ease-in-out;
 }
 
 .aa-SourceFooter {
-    margin: 1rem auto;
+  margin: 1rem auto;
 }
 
 .aa-SubmitButton svg {
-    fill: black;
+  fill: black;
 }
 
 .aa-Panel svg {
-    fill: rgb(75, 75, 75);
+  fill: rgb(75, 75, 75);
 }
