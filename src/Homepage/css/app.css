@@ -164,7 +164,6 @@ li {
   margin: 1rem auto;
   filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
   clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
-
   transition: 0.5s ease-in-out;
 }
 .carousel .carousel-list-container li img:hover {
@@ -441,10 +440,11 @@ li {
 .searchbar-wrapper-a {
   display: flex;
   width: 100vw;
-  height: 200px;
+  height: 150px;
   background-color: #fff;
   justify-content: center;
   align-content: center;
+  z-index: 1111;
   position: absolute;
   top: 0;
   transform: translateY(-200px);
@@ -455,6 +455,13 @@ li {
   display: flex;
   justify-content: space-between;
   margin-bottom: 5px;
+}
+
+.searchbar-row-a1 span {
+  font-weight: 300;
+  font-size: 12px;
+  padding-left: 50px;
+  /* margin-bottom: 11px; */
 }
 
 .aa-Input {
@@ -468,7 +475,7 @@ li {
 }
 
 .autocomplete-a {
-  width: 50vw;
+  width: 70vw;
 }
 
 .aa-Autocomplete {

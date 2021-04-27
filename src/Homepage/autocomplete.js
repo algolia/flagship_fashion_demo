@@ -32,7 +32,6 @@ export function autocompleteHome() {
     }).addWidgets([
       autocompleteSearchBox({
         container: '#autocomplete',
-        placeholder: 'Search products',
       }),
     ]),
   ]);
@@ -51,7 +50,7 @@ export function autocompleteHome() {
       indexName: 'gstar_demo_test_query_suggestions',
       getSearchParams() {
         return recentSearchesPlugin.data.getAlgoliaSearchParams({
-          hitsPerPage: 3,
+          hitsPerPage: 5,
         });
       },
     });
@@ -69,6 +68,7 @@ export function autocompleteHome() {
       if (isFirstRender) {
         autocompleteRef.current = autocomplete({
           container: '#autocomplete',
+          placeholder: 'SEARCH PRODUCTS...',
           // debug: true,
           openOnFocus: true,
           plugins: [recentSearchesPlugin, querySuggestionsPlugin],
@@ -85,7 +85,7 @@ export function autocompleteHome() {
                   query,
                   indexName: 'gstar_demo_test',
                   params: {
-                    hitsPerPage: 4,
+                    hitsPerPage: 6,
                     attributesToSnippet: ['name:10'],
                     enablePersonalization: true,
                   },
@@ -100,7 +100,7 @@ export function autocompleteHome() {
                     facetQuery: query,
                     highlightPreTag: `<mark>`,
                     highlightPostTag: `</mark>`,
-                    maxFacetHits: 5,
+                    maxFacetHits: 6,
                     enablePersonalization: true,
                   },
                 },
