@@ -70,7 +70,11 @@ export function modalProduct() {
       // Retrieves all attributes
       index.getObject(productID).then((object) => {
         displayProduct(object);
-        relatedItems(object);
+        if (object.objectID) {
+          // relatedItems(object);
+          recommandedItems(object)
+          boughtTogether(object)
+        }
       });
       showModal();
     });
@@ -105,9 +109,8 @@ export function modalProduct() {
         <div class="productModal-global-Wrapper" id="product-modal">
             <div class="productModal-infos-Wrapper">
                 <div class="productModal-image-wrapper">
-                    <img src="${product.image_link}" align="left" alt="${
-      product.name
-    }" class="productModal-hit-img" />
+                    <img src="${product.image_link}" align="left" alt="${product.name
+      }" class="productModal-hit-img" />
                     <div class="productModal-img-overlay"></div>
                 </div>
                 <div class="productModal-info-wrapper">
@@ -120,32 +123,26 @@ export function modalProduct() {
                         ${product.name}
                         </div>
                         <div class="productModal-hit-color">
-                            <div class="productModal-hit-color-text">${
-                              product.hexColorCode
-                                ? product.hexColorCode.split('//')[0]
-                                : ''
-                            }</div>
-                            <div style="background: ${
-                              product.hexColorCode
-                                ? product.hexColorCode.split('//')[1]
-                                : ''
-                            }" class="product-colorsHex"></div>
+                            <div class="productModal-hit-color-text">${product.hexColorCode
+        ? product.hexColorCode.split('//')[0]
+        : ''
+      }</div>
+                            <div style="background: ${product.hexColorCode
+        ? product.hexColorCode.split('//')[1]
+        : ''
+      }" class="product-colorsHex"></div>
                         </div>
-                        <div class="productModal-hit-description">${
-                          product.description
-                        }</div>
+                        <div class="productModal-hit-description">${product.description
+      }</div>
                         <div class="productModal-hit-rating-price">
-                            <div class="productModal-hit-price">$${
-                              product.price
-                            }</div>
+                            <div class="productModal-hit-price">$${product.price
+      }</div>
                         </div>
                         </div>
-                        <div class="productModal-hit-addToCart" data-id=${
-                          product.objectID
-                        }>
-                            <a href="#"class="productModal-btn" data-id=${
-                              product.objectID
-                            }>Add to cart  <i class="fas fa-angle-down"></i></a>
+                        <div class="productModal-hit-addToCart" data-id=${product.objectID
+      }>
+                            <a href="#"class="productModal-btn" data-id=${product.objectID
+      }>Add to cart  <i class="fas fa-angle-down"></i></a>
                         </div>
                     </div>
                 </div>
@@ -179,139 +176,259 @@ export function modalProduct() {
     });
   }
 
-  function relatedItems(object) {
-    const renderHits = (renderOptions, isFirstRender) => {
-      const {
-        hits,
-        widgetParams,
-        bindEvent,
-        instantSearchInstance,
-      } = renderOptions;
-
-      let container = document.querySelector('.productModal-global-Wrapper');
-
-      if (isFirstRender) {
-        let ul = document.createElement('ul');
-        ul.classList.add('ais-Hits-list');
-        container.appendChild(ul);
-
-        container.addEventListener('click', (event) => {
-          const targetWithEvent = findInsightsTarget(
-            event.target,
-            event.currentTarget,
-            (element) => element.hasAttribute('data-insights-event')
-          );
-
-          if (targetWithEvent) {
-            const payload = parseInsightsEvent(targetWithEvent);
-            instantSearchInstance.sendEventToInsights(payload);
-            popUpEventClick(
-              payload.payload.eventName,
-              payload.payload.objectIDs[0]
-            );
-          }
-        });
-      }
-
-      function popUpEventClick(event, object) {
-        const index = searchClient.initIndex('gstar_demo_test');
-        let popUpWrapper = document.querySelector('.popUp-wrapper');
-        index.getObject(object).then((object) => {
+  function boughtTogether(object) {
+    if (object.objectID) {
+      const indexBT = searchClient.initIndex('ai_recommend_bought-together_gstar_demo_test');
+      let objectID = object.objectID
+      indexBT.getObject(objectID).then((item) => {
+        let boughtTogetherItemsArray = []
+        item.recommendations.forEach(i => {
+          boughtTogetherItemsArray.push(i.objectID)
+        })
+        index.getObjects(boughtTogetherItemsArray).then(({ results }) => {
+          let container = document.querySelector('.productModal-global-Wrapper');
+          let ul = document.createElement('ul');
+          let title = document.createElement('h3');
           let div = document.createElement('div');
-          if (event === 'Product Clicked') {
-            div.classList.add('popUpEventClick');
-            div.innerHTML = `Open product details, on ${object.name}`;
-          } else if (event === 'Product Added') {
-            div.classList.add('popUpEventCart');
-            div.innerHTML = `Add to cart product, on ${object.name}`;
-          }
-          popUpWrapper.appendChild(div);
-          div.addEventListener('animationend', () => {
-            div.remove();
-          });
-        });
-      }
 
-      document.querySelector('.productModal-global-Wrapper ul').innerHTML = `
-            ${hits
+          div.classList.add('list-wrapper')
+          title.innerHTML = 'Often bought together'
+          ul.classList.add('boughtTogetherItems');
+
+          div.appendChild(title)
+          div.appendChild(ul);
+          container.appendChild(div)
+
+          document.querySelector('.boughtTogetherItems').innerHTML = `
+          ${results
+              .splice(0, 8)
               .map((hit) => {
                 return `                   
-                  <li class="related-ais-Hits-item related-carousel-list-item">   
-                    <div class="related-image-wrapper" ${bindEvent(
-                      'click',
-                      hit,
-                      'Product Clicked'
-                    )}>
-                      <img src="${hit.image_link}" align="left" alt="${
-                  hit.name
-                }" class="related-result-img" />
-                      <div class="related-result-img-overlay"></div>
-                    </div>
-                    <div class="related-hit-names">
-                        <div class="related-hit-infos">
-                          <div class="related-hit-name">${hit.name}</div>
-                          <div style="background: ${
-                            hit.hexColorCode
-                              ? hit.hexColorCode.split('//')[1]
-                              : ''
-                          }" class="related-product-colorsHex"></div>
-                        </div>
-                        <div class="related-hit-price">$${hit.price}</div>
-                    </div>
-                  </li>
-                                    `;
+            <li class="related-ais-Hits-item related-carousel-list-item">   
+              <div class="related-image-wrapper">
+                <img src="${hit.image_link}" align="left" alt="${hit.name
+                  }" class="related-result-img" />
+                <div class="related-result-img-overlay"></div>
+              </div>
+              <div class="related-hit-names">
+                  <div class="related-hit-infos">
+                    <div class="related-hit-name">${hit.name}</div>
+                    <div style="background: ${hit.hexColorCode
+                    ? hit.hexColorCode.split('//')[1]
+                    : ''
+                  }" class="related-product-colorsHex"></div>
+                  </div>
+                  <div class="related-hit-price">$${hit.price}</div>
+              </div>
+            </li>
+                              `;
               })
               .join('')}`;
-    };
-
-    const customHits = connectHits(renderHits);
-
-    const referenceHit = {
-      objectID: object.objectID,
-      category: object.category,
-      colors: object.colors,
-      description: object.description,
-      dynamic_attributes: object.dynamic_attributes,
-      genderFilter: object.genderFilter,
-      name: object.name,
-      keywords: object.keywords,
-      default_variant: object.default_variant,
-      image_link: object.image_link,
-      colourFilter: object.colourFilter,
-      hierarchical_categories: object.hierarchical_categories,
-      non_numeric_attributes: object.non_numeric_attributes,
-      price: object.price,
-      priceFilter: object.priceFilter,
-      sizeFilter: object.sizeFilter,
-      position: object.position,
-      url: object.url,
-      numeric_attributes: object.numeric_attributes,
-      fitFilter: object.fitFilter,
-      neckFilter: object.neckFilter,
-      sleeveFilter: object.sleeveFilter,
-      availabilityDetail: object.availabilityDetail,
-      fullStock: object.fullStock,
-      sizes: object.sizes,
-    };
-
-    // Add the widgets
-    search.addWidgets([
-      configure({
-        hitsPerPage: 8,
-        query: '',
-      }),
-      EXPERIMENTAL_configureRelatedItems({
-        hit: referenceHit,
-        matchingPatterns: {
-          genderFilter: { score: 3 },
-          category: { score: 2 },
-        },
-      }),
-      customHits({
-        container: document.querySelector('#carousel-relatedItems'),
-      }),
-    ]);
+        });
+      }).catch(err => {
+        console.log(err)
+      });
+    }
   }
+
+  function recommandedItems(object) {
+    if (object.objectID) {
+      let objectID = object.objectID
+      const indexRecommand = searchClient.initIndex('ai_recommend_related-products_gstar_demo_test');
+      console.log(objectID)
+      indexRecommand.getObject(objectID).then((item) => {
+        let recommandItems = []
+        item.recommendations.forEach(i => {
+          recommandItems.push(i.objectID)
+        })
+        index.getObjects(recommandItems).then(({ results }) => {
+
+          let container = document.querySelector('.productModal-global-Wrapper');
+          let ul = document.createElement('ul');
+          let title = document.createElement('h3')
+          let div = document.createElement('div')
+
+          div.classList.add('list-wrapper')
+          title.innerHTML = 'Recommanded for you'
+          ul.classList.add('recommendedItems');
+
+          div.appendChild(title)
+          div.appendChild(ul);
+          container.appendChild(div)
+
+
+          document.querySelector('.productModal-global-Wrapper .recommendedItems').innerHTML = `
+        ${results
+              .splice(0, 8)
+              .map((hit) => {
+                return `                   
+              <li class="related-ais-Hits-item related-carousel-list-item">   
+                <div class="related-image-wrapper">
+                  <img src="${hit.image_link}" align="left" alt="${hit.name
+                  }" class="related-result-img" />
+                  <div class="related-result-img-overlay"></div>
+                </div>
+                <div class="related-hit-names">
+                    <div class="related-hit-infos">
+                      <div class="related-hit-name">${hit.name}</div>
+                      <div style="background: ${hit.hexColorCode
+                    ? hit.hexColorCode.split('//')[1]
+                    : ''
+                  }" class="related-product-colorsHex"></div>
+                    </div>
+                    <div class="related-hit-price">$${hit.price}</div>
+                </div>
+              </li>
+                                `;
+              })
+              .join('')}`;
+        });
+      }).catch(err => {
+        console.log(err)
+      });
+    }
+  }
+
+  // function relatedItems(object) {
+  //   console.log(object)
+  //   const renderHits = (renderOptions, isFirstRender) => {
+  //     const {
+  //       hits,
+  //       widgetParams,
+  //       bindEvent,
+  //       instantSearchInstance,
+  //     } = renderOptions;
+
+  //     let container = document.querySelector('.productModal-global-Wrapper');
+
+  //     if (isFirstRender) {
+  //       let ul = document.createElement('ul');
+  //       ul.classList.add('ais-Hits-list');
+  //       container.appendChild(ul);
+  //       let title = document.createElement('h3');
+  //       let div = document.createElement('div');
+  //       div.classList.add('list-wrapper')
+  //       title.innerHTML = 'Our related Items'
+  //       ul.classList.add('boughtTogetherItems');
+  //       div.appendChild(title)
+  //       div.appendChild(ul);
+  //       container.appendChild(div)
+
+  //       container.addEventListener('click', (event) => {
+  //         const targetWithEvent = findInsightsTarget(
+  //           event.target,
+  //           event.currentTarget,
+  //           (element) => element.hasAttribute('data-insights-event')
+  //         );
+
+  //         if (targetWithEvent) {
+  //           const payload = parseInsightsEvent(targetWithEvent);
+  //           instantSearchInstance.sendEventToInsights(payload);
+  //           popUpEventClick(
+  //             payload.payload.eventName,
+  //             payload.payload.objectIDs[0]
+  //           );
+  //         }
+  //       });
+  //     }
+
+  //     function popUpEventClick(event, object) {
+  //       const index = searchClient.initIndex('gstar_demo_test');
+  //       let popUpWrapper = document.querySelector('.popUp-wrapper');
+  //       index.getObject(object).then((object) => {
+  //         let div = document.createElement('div');
+  //         if (event === 'Product Clicked') {
+  //           div.classList.add('popUpEventClick');
+  //           div.innerHTML = `Open product details, on ${object.name}`;
+  //         } else if (event === 'Product Added') {
+  //           div.classList.add('popUpEventCart');
+  //           div.innerHTML = `Add to cart product, on ${object.name}`;
+  //         }
+  //         popUpWrapper.appendChild(div);
+  //         div.addEventListener('animationend', () => {
+  //           div.remove();
+  //         });
+  //       });
+  //     }
+
+  //     document.querySelector('.productModal-global-Wrapper ul').innerHTML = `
+  //           ${hits
+  //         .map((hit) => {
+  //           return `                   
+  //                 <li class="related-ais-Hits-item related-carousel-list-item">   
+  //                   <div class="related-image-wrapper" ${bindEvent(
+  //             'click',
+  //             hit,
+  //             'Product Clicked'
+  //           )}>
+  //                     <img src="${hit.image_link}" align="left" alt="${hit.name
+  //             }" class="related-result-img" />
+  //                     <div class="related-result-img-overlay"></div>
+  //                   </div>
+  //                   <div class="related-hit-names">
+  //                       <div class="related-hit-infos">
+  //                         <div class="related-hit-name">${hit.name}</div>
+  //                         <div style="background: ${hit.hexColorCode
+  //               ? hit.hexColorCode.split('//')[1]
+  //               : ''
+  //             }" class="related-product-colorsHex"></div>
+  //                       </div>
+  //                       <div class="related-hit-price">$${hit.price}</div>
+  //                   </div>
+  //                 </li>
+  //                                   `;
+  //         })
+  //         .join('')}`;
+  //   };
+
+  //   const customHits = connectHits(renderHits);
+
+  //   const referenceHit = {
+  //     objectID: object.objectID,
+  //     category: object.category,
+  //     colors: object.colors,
+  //     description: object.description,
+  //     dynamic_attributes: object.dynamic_attributes,
+  //     genderFilter: object.genderFilter,
+  //     name: object.name,
+  //     keywords: object.keywords,
+  //     default_variant: object.default_variant,
+  //     image_link: object.image_link,
+  //     colourFilter: object.colourFilter,
+  //     hierarchical_categories: object.hierarchical_categories,
+  //     non_numeric_attributes: object.non_numeric_attributes,
+  //     price: object.price,
+  //     priceFilter: object.priceFilter,
+  //     sizeFilter: object.sizeFilter,
+  //     position: object.position,
+  //     url: object.url,
+  //     numeric_attributes: object.numeric_attributes,
+  //     fitFilter: object.fitFilter,
+  //     neckFilter: object.neckFilter,
+  //     sleeveFilter: object.sleeveFilter,
+  //     availabilityDetail: object.availabilityDetail,
+  //     fullStock: object.fullStock,
+  //     sizes: object.sizes,
+  //   };
+
+  //   // Add the widgets
+  //   search.addWidgets([
+  //     configure({
+  //       hitsPerPage: 8,
+  //       query: '',
+  //     }),
+  //     EXPERIMENTAL_configureRelatedItems({
+  //       hit: referenceHit,
+  //       matchingPatterns: {
+  //         genderFilter: { score: 3 },
+  //         category: { score: 2 },
+  //       },
+  //     }),
+  //     customHits({
+  //       container: document.querySelector('#carousel-relatedItems'),
+  //     }),
+  //   ]);
+  // }
 
   cardProductSecondCarousel.forEach((product) => {
     // detailProduct(product)
