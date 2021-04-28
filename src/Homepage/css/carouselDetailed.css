@@ -1,4 +1,6 @@
-.ais-Hits-list {
+.ais-Hits-list,
+.recommendedItems,
+.boughtTogetherItems {
   flex-wrap: nowrap !important;
   display: -webkit-box !important;
   overflow-x: scroll !important;
@@ -8,20 +10,28 @@
 
 /* HORIZONTAL SCROLLBAR */
 
-.ais-Hits-list::-webkit-scrollbar {
+.ais-Hits-list::-webkit-scrollbar,
+.recommendedItems::-webkit-scrollbar,
+.boughtTogetherItems::-webkit-scrollbar {
   -webkit-appearance: none;
 }
 
-.ais-Hits-list::-webkit-scrollbar:horizontal {
+.ais-Hits-list::-webkit-scrollbar:horizontal,
+.recommendedItems::-webkit-scrollbar:horizontal,
+.boughtTogetherItems::-webkit-scrollbar:horizontal {
   height: 4px;
 }
 
-.ais-Hits-list::-webkit-scrollbar-thumb {
+.ais-Hits-list::-webkit-scrollbar-thumb,
+.recommendedItems::-webkit-scrollbar-thumb,
+.boughtTogetherItems::-webkit-scrollbar-thumb {
   border-radius: 8px;
   border: 1px solid white;
   background-color: rgba(0, 0, 0, 0.9);
 }
-.ais-Hits-list::-webkit-scrollbar-track {
+.ais-Hits-list::-webkit-scrollbar-track,
+.recommendedItems::-webkit-scrollbar-track,
+.boughtTogetherItems::-webkit-scrollbar-track {
   background-color: #fff;
   border-radius: 8px;
 }

@@ -13,13 +13,13 @@
 .modalProduct {
     position: absolute;
     z-index: 10;
-    height: 80vh;
+    height: 60vh;
     width: 80vw;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     overflow-x: hidden;
-    padding: 1rem;
+    padding: 1rem 2rem;
     background-color: white;
     border-radius: 5px;
 }
@@ -55,7 +55,7 @@
 .productModal-hit-name {
     margin: 0.5rem auto;
     font-size: 1.5rem;
-    font-family: "Cstoro";
+    font-family: "Castoro";
     font-weight: bold;
     color: black;
 }
@@ -120,6 +120,7 @@
 
 .related-ais-Hits-item {
     width: 250px;
+    height: 300px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -144,6 +145,7 @@
     flex-direction: column;
     justify-content: center;
     margin: 1rem auto;
+    padding: 0 1rem;
 }
 
 .related-hit-price {
@@ -157,6 +159,14 @@
     height: 10px;
     border-radius: 50%;
     margin: 0.5rem 0;
+}
+
+.list-wrapper {
+    margin: 3rem auto;
+}
+.list-wrapper h3 {
+    margin-left: 2rem;
+    font-family: "Castoro";
 }
 
 /* ANIMATION */
