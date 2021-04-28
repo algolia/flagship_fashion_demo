@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-a{
+a {
   text-decoration: none;
 }
 
@@ -13,19 +13,17 @@ body {
   margin: 0;
   background-color: #ffffff;
   overflow-x: hidden;
-
 }
 
-ul, li {
+ul,
+li {
   list-style: none;
 }
 
-.body-wrapper{
+.body-wrapper {
   overflow-x: hidden;
-  position: relative
+  position: relative;
 }
-
-
 
 body,
 h1 {
