@@ -1,12 +1,12 @@
 import { searchResults } from './searchResults';
-import { filterResult } from './filterResults';
+// import { filterResult } from './filterResults';
 import { burgerMenu } from '../Homepage/burgerMenu';
 import { relatedResultModal } from './relatedResultModal';
 import { cardAnimation } from './cardAnimations';
 import { togglePersona } from './persona';
 
 searchResults();
-filterResult();
+// filterResult();
 burgerMenu();
 togglePersona();
 

@@ -78,20 +78,18 @@
             <div id="refinement-list-SearchResult" class="refinement-list-SearchResult"></div>
             <div id="banner"></div>
             <div class="filters-wrapper">
-                <div id="stats-searchResult" class="stats-searchResult filters-item-side"></div>
-                <div id="sort-by" class="sort-by">
-                </div>
                 <div class="btn-filter-wrapper filters-item-side" id="filters-button">
                     <a href="" class="btn-filter">Filters<i class="fas fa-sort-amount-down-alt"></i></a>
                 </div>
-
+                <div id="sort-by" class="sort-by"></div>
+                <div id="stats-searchResult" class="stats-searchResult filters-item-side"></div>
             </div>
             <div id="smart-sort-banner" class="smart-sort-banner"></div>
-            <div class="showfilter-wrapper">
-                <div id="clear-refinements" class="clear-refinements"></div>
-                <div id="current-refinements" class="current-refinements"></div>
+            <div class="container-result-wrapper">
                 <div class="left-panel">
-                    <div class="sideBarFilter">
+                    <div id="clear-refinements" class="clear-refinements"></div>
+                    <div id="current-refinements" class="current-refinements"></div>
+                    <!-- <div class="sideBarFilter">
                         <ul>
                             <li class="sideBarFilter-listItem gender">
                                 <p>Gender</p><i class="fas fa-chevron-right"></i>
@@ -109,92 +107,94 @@
                                 <p>Price</p><i class="fas fa-chevron-right"></i>
                             </li>
                         </ul>
-                    </div>
+                    </div> -->
                     <div class="gender-wrapper filter-item-wrapper">
-                        <div class="btn-backFilter">
+                        <!-- <div class="btn-backFilter">
                             <div><i class="fas fa-chevron-left"></i>Filters</div>
-                        </div>
+                        </div> -->
                         <h2>Gender</h2>
                         <div id="gender-list" class="gender-list"></div>
                     </div>
                     <div class="category-wrapper filter-item-wrapper">
-                        <div class="btn-backFilter">
+                        <!-- <div class="btn-backFilter">
                             <div><i class="fas fa-chevron-left"></i>Filters</div>
-                        </div>
+                        </div> -->
                         <h2>Category</h2>
                         <div id="category-list" class="category-list"></div>
                     </div>
                     <div class="color-wrapper filter-item-wrapper">
-                        <div class="btn-backFilter">
+                        <!-- <div class="btn-backFilter">
                             <div><i class="fas fa-chevron-left"></i>Filters</div>
-                        </div>
+                        </div> -->
                         <h2>Colors</h2>
                         <div class="hexColor-list" id="hexColor-list"></div>
                     </div>
                     <div class="size-wrapper filter-item-wrapper">
-                        <div class="btn-backFilter">
+                        <!-- <div class="btn-backFilter">
                             <div><i class="fas fa-chevron-left"></i>Filters</div>
-                        </div>
+                        </div> -->
                         <h2>Sizes</h2>
                         <div id="size-list" class="size-list"></div>
                     </div>
-                    <div class="color-wrapper filter-item-wrapper">
-                        <div class="btn-backFilter">
+                    <!-- <div class="color-wrapper filter-item-wrapper"> -->
+                    <!-- <div class="btn-backFilter">
                             <div><i class="fas fa-chevron-left"></i>Filters</div>
-                        </div>
-                        <h2>Colors</h2>
+                        </div> -->
+                    <!-- <h2>Colors</h2>
                         <div id="color-list" class="color-list"></div>
-                    </div>
+                    </div> -->
                     <div class="price-wrapper filter-item-wrapper">
-                        <div class="btn-backFilter">
+                        <!-- <div class="btn-backFilter">
                             <div><i class="fas fa-chevron-left"></i>Filters</div>
-                        </div>
+                        </div> -->
                         <h2>Prices</h2>
                         <div id="price-list" class="price-list"></div>
                     </div>
                 </div>
-            </div>
 
-            <div class="virtualSearch" id="virtualSearch"></div>
 
-            <div class="right-panel">
 
-                <div id="hex-color-list"></div>
-                <ul id="hits" class="hitsAutocomplete displayGrid"></ul>
-                <div id="hitsResults" class="hitsAutocomplete displayGrid"></div>
-                <div class="container">
-                    <div id="stacked-carousels"></div>
-                </div>
 
-                <div id="colorHex"></div>
-                <div id="pagination"></div>
+                <div class="right-panel">
 
-                <div class="modal-relatedItems--wrapper">
-                    <div class="modal-relatedItems">
-                        <div class="modal-relatedItems--closeBtn">X</div>
-                        <div class="modal-carousel--wraper">
-                            <div class="modal-carousel--title">
-                                <h2>In the same Category</h2>
-                                <div class="underline"></div>
+                    <div id="hex-color-list"></div>
+                    <ul id="hits" class="hitsAutocomplete displayGrid"></ul>
+                    <div id="hitsResults" class="hitsAutocomplete displayGrid"></div>
+                    <div class="container">
+                        <div id="stacked-carousels"></div>
+                    </div>
+
+                    <div id="colorHex"></div>
+                    <div id="pagination"></div>
+
+                    <div class="modal-relatedItems--wrapper">
+                        <div class="modal-relatedItems">
+                            <div class="modal-relatedItems--closeBtn">X</div>
+                            <div class="modal-carousel--wraper">
+                                <div class="modal-carousel--title">
+                                    <h2>In the same Category</h2>
+                                    <div class="underline"></div>
+                                </div>
+                                <div id="carousel-relatedItems" class="carousel-relatedItems"></div>
+
                             </div>
-                            <div id="carousel-relatedItems" class="carousel-relatedItems"></div>
+                            <div class="modal-carousel--wraper">
+                                <div class="modal-carousel--title">
+                                    <h2>You Might also like</h2>
+                                    <div class="underline"></div>
+                                </div>
+                                <div id="carousel-relatedItemsSecond" class="carousel-relatedItemsSecond">
+                                </div>
 
-                        </div>
-                        <div class="modal-carousel--wraper">
-                            <div class="modal-carousel--title">
-                                <h2>You Might also like</h2>
-                                <div class="underline"></div>
                             </div>
-                            <div id="carousel-relatedItemsSecond" class="carousel-relatedItemsSecond">
-                            </div>
-
                         </div>
                     </div>
-                </div>
-                <div class="popUp-wrapper"></div>
+                    <div class="popUp-wrapper"></div>
 
+                </div>
             </div>
         </div>
+        <div class="virtualSearch" id="virtualSearch"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
         integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
@@ -205,10 +205,10 @@
     <script src="../src/SearchResultPage/app.js"></script>
 </body>
 
-<script>window.userpilotSettings = {token: "79gv65g8"}</script> 
-<script src = "https://js.userpilot.io/sdk/latest.js"></script>                    
+<script>window.userpilotSettings = { token: "79gv65g8" }</script>
+<script src="https://js.userpilot.io/sdk/latest.js"></script>
 <script>
-  userpilot.anonymous()
+    userpilot.anonymous()
 </script>
 
 </html>
