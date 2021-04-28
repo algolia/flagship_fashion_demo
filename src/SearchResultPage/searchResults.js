@@ -87,6 +87,10 @@ export function searchResults() {
     }
   };
 
+  // Declared globally for data persistence
+  let catlist = [];
+  let catlistIsrefined = [];
+
   const renderCustomSearchBar = (renderOptions, isFirstRender) => {
     const { items, refine, widgetParams, query } = renderOptions;
     const suggestionContainer = document.querySelector(
@@ -103,22 +107,41 @@ export function searchResults() {
         hitsPerPage: 1,
       })
       .then(({ hits }) => {
-        suggestionContainer.querySelector('ul').innerHTML = hits
-          .map((item) =>
-            item.category
-              .map(
-                (i) => ` 
-                        <li style="${isRefined(i)}">${i}</li>
+        // Initialize category
+        if (hits && hits[0].category && catlist.length === 0)
+          catlist = hits[0].category;
+
+        // Format data to add isRefined
+        if (catlist && catlist.length > 0 && catlistIsrefined.length === 0) {
+          catlist.map((cat) => {
+            catlistIsrefined.push({
+              name: cat,
+              isRefined: false,
+            });
+          });
+        }
+
+        suggestionContainer.querySelector('ul').innerHTML = catlistIsrefined
+          .filter((item, idx) => idx < 11)
+          .map(
+            (category, idx) => ` 
+                        <li id="${idx}" style="${isRefined(category)}">${
+              category.name
+            }</li>
                     `
-              )
-              .slice(0, 11)
-              .join('')
           )
           .join('');
 
         [...suggestionContainer.querySelectorAll('li')].forEach((element) => {
           element.addEventListener('click', (event) => {
             event.preventDefault();
+
+            // Update isRefined value
+            if (catlistIsrefined[event.target.id])
+              catlistIsrefined[event.target.id].isRefined = !catlistIsrefined[
+                event.target.id
+              ].isRefined;
+
             search.renderState[
               'gstar_demo_test'
             ].refinementList.category.refine(event.target.innerText);
@@ -355,7 +378,6 @@ export function searchResults() {
           },
           onSubmit({ root, sections, state, event }) {
             const stateCollection = state.collections[2].items.length;
-            // console.log(state);
             if (stateCollection === 0) {
               noResult(stateCollection);
             } else {
