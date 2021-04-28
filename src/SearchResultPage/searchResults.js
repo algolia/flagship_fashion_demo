@@ -378,7 +378,6 @@ export function searchResults() {
           },
           onSubmit({ root, sections, state, event }) {
             const stateCollection = state.collections[2].items.length;
-            // console.log(state);
             if (stateCollection === 0) {
               noResult(stateCollection);
             } else {
