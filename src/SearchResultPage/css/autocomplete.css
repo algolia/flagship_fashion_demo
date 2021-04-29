@@ -76,7 +76,7 @@
 }
 
 .hitsAutocomplete {
-  width: 90vw;
+  width: 90%;
   margin: 2rem auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -96,8 +96,8 @@
 .carousel-list-item {
   min-height: 450px;
   padding: 1.5rem;
-  margin: auto 1rem;
-  width: 100%;
+  margin: 0.2rem 1rem;
+  width: 98%;
   background-color: white;
   position: relative;
   display: flex;
