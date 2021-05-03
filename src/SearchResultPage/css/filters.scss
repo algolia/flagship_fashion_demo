@@ -51,6 +51,82 @@
     justify-content: center;
 }
 
+/* GENDER FILTER */
+.gender-list .ais-RefinementList-item {
+    margin: 1rem 0;
+}
+
+.gender-list .ais-RefinementList-item--selected .ais-RefinementList-label {
+    cursor: pointer;
+    padding: 0.5rem;
+    border: 1px solid rgba(8, 8, 8, 0.9);
+    list-style: none;
+    margin: 0.3rem;
+    font-family: "Roboto";
+    font-size: 0.8rem;
+    background-color: black;
+    color: white;
+    font-style: italic;
+    transition: all 0.3s ease-in-out;
+}
+
+.gender-list .ais-RefinementList-item--selected .ais-RefinementList-label .ais-RefinementList-labelText {
+    color: white;
+}
+
+.gender-list .ais-RefinementList-label {
+    cursor: pointer;
+    padding: 0.5rem;
+    border: 1px solid rgba(8, 8, 8, 0.9);
+    list-style: none;
+    margin: 0.3rem;
+    font-family: "Roboto";
+    font-size: 0.8rem;
+    background-color: rgb(255, 255, 255);
+    font-style: italic;
+    transition: all 0.3s ease-in-out;
+}
+
+.gender-list .ais-RefinementList-checkbox {
+    visibility: hidden;
+    display: none;
+}
+
+/* CATEGORY LIST */
+.category-list .ais-MenuSelect-select {
+    padding: 0.6rem 3rem 0.6rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    font-size: 1rem;
+    font-family: "Roboto";
+    color: black;
+    align-self: center;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border-radius: 0;
+}
+
+.category-list .ais-MenuSelect-select:focus {
+    outline: none;
+}
+
+/* SIZE LIST */
+
+.size-list .ais-MenuSelect-select {
+    padding: 0.6rem 3rem 0.6rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    font-size: 1rem;
+    font-family: "Roboto";
+    color: black;
+    align-self: center;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border-radius: 0;
+}
+
+.size-list .ais-MenuSelect-select:focus {
+    outline: none;
+}
+
 .sideBarFilter ul {
     list-style: none;
 }
@@ -109,7 +185,7 @@
     margin-top: 0.2rem;
     display: block;
     content: "";
-    border-bottom: 1px solid rgba(0, 0, 0);
+    border-bottom: 1px solid rgb(0, 0, 0);
     transform: scaleX(1.1);
     transition: transform 0.3s ease-in-out;
 }
@@ -196,7 +272,7 @@
     margin-top: 0.3rem;
     display: block;
     content: "";
-    border-bottom: 1px solid rgba(0, 0, 0);
+    border-bottom: 1px solid rgb(0, 0, 0);
     transform: scaleX(1.1);
     transition: transform 0.3s ease-in-out;
 }

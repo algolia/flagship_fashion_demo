@@ -1,9 +1,7 @@
-
-@import "./carouselDetailed.css";
-@import "./headerMenu.css";
-@import "./autocomplete.css";
-@import "./modalProduct.css";
-
+@import "./carouselDetailed.scss";
+@import "./headerMenu.scss";
+@import "./autocomplete.scss";
+@import "./modalProduct.scss";
 
 /* GENERAL STYLE */
 
@@ -89,7 +87,7 @@ li {
   padding: 0.6rem 2rem;
   border: 1px solid rgba(0, 0, 0, 0.5);
   font-size: 1;
-  font-family: 'Roboto';
+  font-family: "Roboto";
   color: black;
   align-self: center;
   cursor: pointer;
@@ -156,7 +154,6 @@ li {
   padding: 1rem;
   position: relative;
   cursor: pointer;
-
 }
 
 .carousel .carousel-list-container li img {
@@ -222,7 +219,7 @@ li {
   width: 200px;
   padding: 1rem;
   text-align: center;
-  box-shadow: 4px 4px 20px rgb(0, 0, 0, 0.3);
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.3);
   border-radius: 3px;
   position: fixed;
   top: 20vh;
@@ -258,7 +255,6 @@ li {
 .personaFadeOut {
   animation: personaOut 0.8s forwards;
 }
-
 
 .img-overlay {
   opacity: 0;
@@ -347,7 +343,6 @@ li {
   z-index: 1000;
   left: -100%;
 }
-
 
 /* ANIMATIONS */
 

@@ -1,111 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="theme-color" content="#000000" />
-    <!-- <link rel="manifest" href="./manifest.webmanifest"> -->
-    <link rel="shortcut icon" href="../favicon.png" />
 
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400;1,700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Castoro&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="theme-color" content="#000000" />
+  <!-- <link rel="manifest" href="./manifest.webmanifest"> -->
+  <link rel="shortcut icon" href="../favicon.png" />
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-      integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
-      crossorigin="anonymous"
-    />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400;1,700&display=swap"
+    rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Castoro&display=swap" rel="stylesheet" />
 
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css"
-    />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+    crossorigin="anonymous" />
 
-    <!-- Required Core Stylesheet GLIDE.JS  -->
-    <link
-      rel="stylesheet"
-      href="../node_modules/@glidejs/glide/dist/css/glide.core.min.css"
-    />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css" />
 
-    <!-- Optional Theme Stylesheet GLIDE.JS -->
-    <link
-      rel="stylesheet"
-      href="../node_modules/@glidejs/glide/dist/css/glide.theme.min.css"
-    />
+  <!-- Required Core Stylesheet GLIDE.JS  -->
+  <link rel="stylesheet" href="../node_modules/@glidejs/glide/dist/css/glide.core.min.css" />
 
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css"
-    />
+  <!-- Optional Theme Stylesheet GLIDE.JS -->
+  <link rel="stylesheet" href="../node_modules/@glidejs/glide/dist/css/glide.theme.min.css" />
 
-    <link rel="stylesheet" href="../src/CategoryPages/Men/app.css" />
-    <link rel="stylesheet" href="../src/shared-css/demo-settings.css" />
-  </head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css" />
 
-  <body>
-    <div class="body-wrapper">
-      <header class="header">
-        <nav class="nav-wrapper">
-          <div class="nav-logo">
-            <a href="./index.html"
-              ><img src="../images/brand_logo.png" alt="Brand logo"
-            /></a>
-          </div>
-          <div class="nav-list" id="nav-list">
-            <ul>
-              <li><a href="./searchResults.html">CATALOGUE</a></li>
-              <li><a href="./categoryPageWoman.html">WOMEN</a></li>
-              <li><a href="./categoryPageMan.html">MEN</a></li>
-              <li><a href="">MAGAZINE</a></li>
-            </ul>
-          </div>
-          <div class="searchbar-wrapper">
-            <div id="searchbox" class="ais-SearchBox-wrapper"></div>
-          </div>
-          <div class="burger">
-            <div class="line1"></div>
-            <div class="line2"></div>
-            <div class="line3"></div>
-          </div>
-        </nav>
-      </header>
+  <link rel="stylesheet" href="../src/CategoryPages/Men/app.scss" />
+  <link rel="stylesheet" href="../src/shared-css/demo-settings.css" />
+</head>
 
-      <div class="container" id="demo-settings-container">
-
+<body>
+  <div class="body-wrapper">
+    <header class="header">
+      <nav class="nav-wrapper">
+        <div class="nav-logo">
+          <a href="./index.html"><img src="../images/brand_logo.png" alt="Brand logo" /></a>
         </div>
-
-        <div id="stats-searchResultWoman"></div>
-        <div class="search-panel">
-          <div class="search-panel__filters">
-            <div id="brand-list"></div>
-          </div>
-          <div class="search-panel__results">
-            <div id="hits"></div>
-            <div id="pagination"></div>
-            <div id="stacked-carousels"></div>
-          </div>
+        <div class="nav-list" id="nav-list">
+          <ul>
+            <li><a href="./searchResults.html">CATALOGUE</a></li>
+            <li><a href="./categoryPageWoman.html">WOMEN</a></li>
+            <li><a href="./categoryPageMan.html">MEN</a></li>
+            <li><a href="">MAGAZINE</a></li>
+          </ul>
         </div>
+        <div class="searchbar-wrapper">
+          <div id="searchbox" class="ais-SearchBox-wrapper"></div>
+        </div>
+        <div class="burger">
+          <div class="line1"></div>
+          <div class="line2"></div>
+          <div class="line3"></div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container" id="demo-settings-container">
+
+    </div>
+
+    <div id="stats-searchResultWoman"></div>
+    <div class="search-panel">
+      <div class="search-panel__filters">
+        <div id="brand-list"></div>
+      </div>
+      <div class="search-panel__results">
+        <div id="hits"></div>
+        <div id="pagination"></div>
+        <div id="stacked-carousels"></div>
       </div>
     </div>
-    <script src="../src/CategoryPages/Women/womanPage.js"></script>
-    <script src="../src/shared-js/createDemoSettings.js"></script>
-  </body>
+  </div>
+  </div>
+  <script src="../src/CategoryPages/Women/womanPage.js"></script>
+  <script src="../src/shared-js/createDemoSettings.js"></script>
+</body>
 
-  <script>window.userpilotSettings = {token: "79gv65g8"}</script> 
-<script src = "https://js.userpilot.io/sdk/latest.js"></script>                    
+<script>window.userpilotSettings = { token: "79gv65g8" }</script>
+<script src="https://js.userpilot.io/sdk/latest.js"></script>
 <script>
   userpilot.anonymous()
 </script>
+
 </html>
