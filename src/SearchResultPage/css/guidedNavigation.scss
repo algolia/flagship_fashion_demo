@@ -1,9 +1,10 @@
+@import "../../Scss/global-variables.scss";
 
-.refinement-list-SearchResult{
+.refinement-list-SearchResult {
     margin: 2rem auto;
 }
 
-.refinement-list-SearchResult  ul {
+.refinement-list-SearchResult ul {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -14,18 +15,18 @@
     cursor: pointer;
     padding: 0.5rem;
     border: 1px solid rgba(8, 8, 8, 0.9);
-   list-style: none;
-   margin: 0.3rem;
-   font-family: 'Roboto';
-   font-size: 0.8rem;
-   background-color: rgb(219, 219, 219);
-   font-style: italic;
-   transition: all 0.3s ease-in-out;
+    list-style: none;
+    margin: 0.3rem;
+    font-family: "Roboto";
+    font-size: 0.8rem;
+    background-color: rgb(219, 219, 219);
+    font-style: italic;
+    transition: all 0.3s ease-in-out;
 }
 .refinement-list-SearchResult ul li:hover {
-   background-color: rgb(255, 255, 255);
-   transform: scale(1.02);
-   transition: all 0.3s ease-in-out;  
+    background-color: rgb(255, 255, 255);
+    transform: scale(1.02);
+    transition: all 0.3s ease-in-out;
 }
 .refinement-list-SearchResult ul li a {
     color: black;
@@ -37,7 +38,6 @@
     font-size: 0.6rem;
 }
 
-.btn-showMore{
+.btn-showMore {
     font-style: italic;
 }
-

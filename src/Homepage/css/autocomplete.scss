@@ -1,3 +1,5 @@
+@import "../../Scss/global-variables.scss";
+
 /* AUTOCOMPLETE */
 a {
     text-decoration: none;
@@ -35,7 +37,7 @@ a {
     display: flex;
     margin: 1rem auto;
     padding: 0.5rem 1rem;
-    font-family: "Castoro", serif;
+    font-family: $main-font, serif;
 }
 
 .ais-SearchBox-wrapper {

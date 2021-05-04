@@ -62,7 +62,7 @@ export const carousel = connectHits(function renderCarousel(
   if (isFirstRender) {
     container.insertAdjacentHTML(
       'afterbegin',
-      `<div class="title-carousel-winter"><h2>${title}</h2><a href="/searchResults.html" class="btn-carousel-winter">See All</a></div>`
+      `<div class="title-carousel-winter"><h2>${title}</h2><a href="/searchResults.html" class="btn-carousel-winter"><p>See All</p></a></div>`
     );
     const ul = document.createElement('ul');
     ul.classList.add('carousel-list-container');
@@ -111,22 +111,22 @@ export const carousel = connectHits(function renderCarousel(
     .map(
       (hit) => `
         <li data-id="${hit.objectID}">
+        <i class="fas fa-heart heart"></i>
           <div class="image-wrapper" ${bindEvent(
-            'click',
-            hit,
-            'Product Clicked'
-          )} data-id="${hit.objectID}">
-            <img src="${hit.image_link}" alt="${hit.name}" data-id="${
-        hit.objectID
-      }">
+        'click',
+        hit,
+        'Product Clicked'
+      )} data-id="${hit.objectID}">
+            <img src="${hit.image_link}" alt="${hit.name}" data-id="${hit.objectID
+        }">
             <div class="img-overlay" data-id="${hit.objectID}"></div>
           </div>
           <div class="hit-addToCart">
             <a ${bindEvent(
-              'click',
-              hit,
-              'Product Added'
-            )}><i class="fas fa-ellipsis-h"></i></a>
+          'click',
+          hit,
+          'Product Clicked'
+        )}><i class="fas fa-ellipsis-h"></i></a>
           </div>
           <div class="info">
             <h3 class="title">${hit.name}</h3>

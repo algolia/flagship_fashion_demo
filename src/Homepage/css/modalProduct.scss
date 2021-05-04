@@ -1,3 +1,5 @@
+@import "../../Scss/global-variables.scss";
+
 .modalProduct-wrapper {
     position: fixed;
     z-index: 10;
@@ -55,7 +57,7 @@
 .productModal-hit-name {
     margin: 0.5rem auto;
     font-size: 1.5rem;
-    font-family: "Castoro";
+    font-family: $main-font;
     font-weight: bold;
     color: black;
 }
@@ -69,7 +71,7 @@
 }
 
 .productModal-hit-rating-price {
-    font-family: "Castoro";
+    font-family: $main-font;
 }
 .productModal-hit-addToCart {
     margin: 2rem auto;
@@ -125,7 +127,16 @@
     flex-direction: column;
     justify-content: center;
     border: 1px solid rgba(230, 230, 230, 0.322);
-    margin: auto 0.3rem;
+    margin: auto 1rem;
+    border: 1px solid rgba(240, 240, 239, 0.9);
+    transition: 0.2s ease-in-out;
+    border-radius: 15px;
+    box-shadow: -1px -5px 28px 2px rgba(0, 0, 0, 0.2);
+
+    &:hover {
+        box-shadow: 4px 4px 20px rgba(245, 236, 241, 1);
+        transition: 0.2s ease-in-out;
+    }
 }
 .related-image-wrapper {
     width: 50%;
@@ -150,7 +161,7 @@
 
 .related-hit-price {
     font-size: 0.8rem;
-    font-family: "Castoro";
+    font-family: $main-font;
     font-weight: bold;
 }
 
@@ -166,7 +177,7 @@
 }
 .list-wrapper h3 {
     margin-left: 2rem;
-    font-family: "Castoro";
+    font-family: $main-font;
 }
 
 /* ANIMATION */

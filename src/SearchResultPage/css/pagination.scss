@@ -1,19 +1,21 @@
-.ais-Pagination{
+@import "../../Scss/global-variables.scss";
+
+.ais-Pagination {
     margin: 2rem;
 }
 
-.ais-Pagination-item{
+.ais-Pagination-item {
     border: none;
 }
 
-.ais-Pagination-link{
+.ais-Pagination-link {
     border: none;
     color: black;
-    font-family: 'Castoro', serif;
+    font-family: $main-font, serif;
     font-size: 0.8rem;
 }
 
-.ais-Pagination-item--selected .ais-Pagination-link{
+.ais-Pagination-item--selected .ais-Pagination-link {
     color: white;
     background-color: black;
     border-radius: 2px;

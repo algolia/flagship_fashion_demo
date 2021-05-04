@@ -1,3 +1,4 @@
+@import "../../Scss/global-variables.scss";
 @import "./carouselDetailed.scss";
 @import "./headerMenu.scss";
 @import "./autocomplete.scss";
@@ -33,6 +34,103 @@ li {
 }
 
 /* CAROUSEL IMAGE GLIDEJS */
+.hero-banner {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  padding: 3rem;
+  background-color: #f6edf1;
+  width: 100%;
+  overflow-x: hidden;
+  justify-items: center;
+  align-items: center;
+}
+.banner-title-wrapper {
+  justify-items: center;
+  align-items: center;
+  h1 {
+    font-family: $main-font;
+    position: relative;
+    overflow: hidden;
+    height: 3rem;
+    width: 20rem;
+    font-size: 2rem;
+  }
+  h2 {
+    font-family: $main-font;
+    position: relative;
+    overflow: hidden;
+    height: 3rem;
+    width: 20rem;
+    font-size: 2rem;
+  }
+  p {
+    font-family: $second-font;
+    position: relative;
+    overflow: hidden;
+    height: 3rem;
+    width: 20rem;
+  }
+
+  .hidden-text {
+    position: absolute;
+    z-index: 100;
+    // top: 4rem;
+  }
+}
+
+.banner-images-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  width: 100%;
+  justify-items: center;
+  align-items: center;
+
+  .img1 {
+    width: 99%;
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 3;
+    object-fit: contain;
+  }
+  .img2 {
+    width: 97%;
+    object-fit: contain;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
+  }
+
+  .img3 {
+    width: 97%;
+    margin: 0.3rem 0;
+    object-fit: contain;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 2;
+    align-self: flex-start;
+    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0% 100%);
+    transition: 0.8s ease-in-out;
+  }
+  .img4 {
+    width: 70%;
+    margin: 0.3rem auto;
+    object-fit: contain;
+    grid-column-start: 2;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 1;
+  }
+}
+
+.revealBanner {
+  clip-path: polygon(0 100%, 100% 100%, 100% 0, 0 0) !important;
+  transition: 0.8s ease-in-out;
+}
+
 .glide__slides {
   padding: 0;
 }
@@ -58,15 +156,7 @@ li {
   margin: 0 auto;
   padding: 1rem;
   overflow-x: hidden;
-}
-
-.carousel h2 {
-  margin: 0rem 2rem;
-  color: #161616;
   position: relative;
-  font-size: 2rem;
-  z-index: auto;
-  align-self: center;
 }
 
 .carousel .carousel-list-container {
@@ -81,22 +171,43 @@ li {
   margin: 2rem auto;
   display: flex;
   justify-content: space-between;
+
+  h2 {
+    margin: 0rem 2rem;
+    color: #161616;
+    position: relative;
+    font-size: 2rem;
+    z-index: auto;
+    align-self: center;
+    font-family: $main-font;
+  }
 }
 
 .btn-carousel-winter {
   padding: 0.6rem 2rem;
-  border: 1px solid rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(245, 236, 241, 1);
   font-size: 1;
   font-family: "Roboto";
   color: black;
   align-self: center;
   cursor: pointer;
   transition: 0.3s ease-in-out;
-}
-.btn-carousel-winter:hover {
-  background-color: rgb(17, 17, 17);
-  color: white;
-  transition: 0.3s ease-in-out;
+  border-radius: 30px;
+  font-family: $main-font;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1rem;
+
+  p {
+    margin: 0;
+  }
+
+  &:hover {
+    background-color: rgb(245, 236, 241);
+    color: white;
+    transition: 0.3s ease-in-out;
+  }
 }
 
 /* HORIZONTAL SCROLLBAR */
@@ -119,6 +230,10 @@ li {
   border-radius: 8px;
 }
 
+.carousel {
+  margin: 4rem 0;
+}
+
 .carousel .carousel-list-container li {
   min-height: 450px;
   padding: 1.5rem;
@@ -131,10 +246,13 @@ li {
   justify-content: center;
   border: 1px solid rgba(240, 240, 239, 0.9);
   transition: 0.2s ease-in-out;
-}
-.carousel .carousel-list-container li:hover {
-  box-shadow: 4px 4px 20px rgba(240, 240, 239, 1);
-  transition: 0.2s ease-in-out;
+  border-radius: 15px;
+  box-shadow: -1px -5px 28px 2px rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    box-shadow: 4px 4px 20px rgba(245, 236, 241, 1);
+    transition: 0.2s ease-in-out;
+  }
 }
 
 .carousel .carousel-list-container li .title {
@@ -174,11 +292,14 @@ li {
 
 /* STAT */
 .ais-Stats {
+  position: absolute;
   font-family: "Roboto";
   font-weight: 100;
   font-style: italic;
   color: black;
-  float: right;
+  right: 1rem;
+  top: 1rem;
+  margin: 0 1rem;
 }
 
 /* USER PERSONA SELECTOR */
@@ -205,7 +326,7 @@ li {
   margin-left: 20px;
   text-orientation: sideways-right;
   font-size: 0.8rem;
-  font-family: "Castoro", serif;
+  font-family: $main-font, serif;
   font-style: italic;
 }
 
@@ -238,7 +359,7 @@ li {
   color: black;
   font-size: 0.8rem;
   font-style: italic;
-  font-family: "Castoro", serif;
+  font-family: $main-font, serif;
 }
 .userPersonaSelector select {
   background-color: rgb(246, 245, 243);
@@ -246,7 +367,7 @@ li {
   padding: 0.6rem;
   padding-left: 3rem;
   border-radius: 5px;
-  font-family: "Castoro", serif;
+  font-family: $main-font, serif;
 }
 
 .personaFadeIn {
@@ -328,9 +449,9 @@ li {
   animation: fadeOutSize 0.1s forwards;
 }
 
-.revealCarousel {
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%) !important;
-}
+// .revealCarousel {
+//   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%) !important;
+// }
 
 .transition-wipe {
   position: absolute;
@@ -344,71 +465,82 @@ li {
   left: -100%;
 }
 
+// FOOTER
+
+.footer {
+  width: 100%;
+  margin-top: 4rem;
+
+  img {
+    width: 100%;
+  }
+}
+
 /* ANIMATIONS */
 
 @keyframes personaIn {
   0% {
     visibility: hidden;
-    transform: translateX(-100%);
+    transform: translate3d(-100%, 0, 0);
   }
   100% {
     visibility: visible;
-    transform: translateX(0%);
+    transform: translate3d(0%, 0, 0);
   }
 }
 @keyframes personaOut {
   0% {
     visibility: visible;
-    transform: translateX(0%);
+    transform: translate3d(0%, 0, 0);
   }
   100% {
     visibility: hidden;
-    transform: translateX(-100%);
+    transform: translate3d(-100%, 0, 0);
   }
 }
 @keyframes bounce {
   0% {
-    transform: translateX(0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   50% {
-    transform: translateX(5px);
+    transform: translate3d(5px, 0, 0);
   }
   75% {
-    transform: translateX(3px);
+    transform: translate3d(3px, 0, 0);
   }
   80% {
-    transform: translateX(2px);
+    transform: translate3d(2px, 0, 0);
   }
   90% {
-    transform: translateX(4px);
+    transform: translate3d(4px, 0, 0);
   }
   100% {
-    transform: translateX(0px);
+    transform: translate3d(0px, 0, 0);
   }
 }
 
 @keyframes fadeInSize {
   0% {
     visibility: hidden;
-    transform: translateY(4rem) scale(1);
+    transform: translate3d(0, 4rem, 0) scale(1);
     opacity: 0;
   }
   100% {
     visibility: visible;
     opacity: 1;
-    transform: translateY(0rem) scale(1.1);
+    transform: translate3d(0, 50%, 0) scale(1.1);
   }
 }
 @keyframes fadeOutSize {
   0% {
     visibility: visible;
     opacity: 1;
-    transform: translateY(0rem) scale(1.1);
+    transform: translate3d(0, 0rem, 0) scale(1.1);
   }
   100% {
     visibility: hidden;
     opacity: 0;
-    transform: translateY(4rem) scale(1);
+    transform: translate3d(0, 4rem, 0) scale(1);
   }
 }
 
@@ -421,13 +553,13 @@ li {
   }
   50% {
     opacity: 0.8;
-    transform: translateY(0rem);
+    transform: translate3d(0, 0rem, 0);
   }
   75% {
     opacity: 0.5;
   }
   100% {
-    transform: translateY(2rem);
+    transform: translate3d(0, 2rem, 0);
     opacity: 0;
     /* visibility: hidden; */
   }
