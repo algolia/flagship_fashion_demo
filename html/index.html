@@ -24,8 +24,7 @@
 
   <!-- Optional Theme Stylesheet GLIDE.JS -->
   <link rel="stylesheet" href="../node_modules/@glidejs/glide/dist/css/glide.theme.min.css" />
-  <script src="https://use.fontawesome.com/7b821c9314.js"></script>
-    
+
   <script>
     var ALGOLIA_INSIGHTS_SRC =
       'https://cdn.jsdelivr.net/npm/search-insights@1.6.3';
@@ -54,7 +53,7 @@
 </head>
 
 <body>
-<div class="body-wrapper">
+  <div class="body-wrapper">
     <header class="header">
       <nav class="nav-wrapper">
         <div class="nav-logo">
@@ -67,121 +66,19 @@
             <li><a href="./categoryPageMan.html">MEN</a></li>
             <li><a href="">MAGAZINE</a></li>
             <li><a href="" class="btnPersona">PERSONA</a></li>
-            <li>  
-              <svg version="1.1" id="open-search" 
-              x="0px" y="0px"
-              viewBox="0 0 512.005 512.005" 
-              style="enable-background:new 0 0 512.005 512.005; cursor: pointer" 
-              width="20px"
-              height="20px"
-              xml:space="preserve">
-              <g>
-                <g>
-                  <path d="M505.749,475.587l-145.6-145.6c28.203-34.837,45.184-79.104,45.184-127.317c0-111.744-90.923-202.667-202.667-202.667
-                    S0,90.925,0,202.669s90.923,202.667,202.667,202.667c48.213,0,92.48-16.981,127.317-45.184l145.6,145.6
-                    c4.16,4.16,9.621,6.251,15.083,6.251s10.923-2.091,15.083-6.251C514.091,497.411,514.091,483.928,505.749,475.587z
-                    M202.667,362.669c-88.235,0-160-71.765-160-160s71.765-160,160-160s160,71.765,160,160S290.901,362.669,202.667,362.669z"/>
-                </g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              </svg>
-            </li>
           </ul>
-        </div>    
-        
+        </div>
+        <div class="searchbar-wrapper">
+          <div id="autocomplete" class="autocomplete ais-SearchBox-wrapper"></div>
+        </div>
         <div class="burger">
           <div class="line1"></div>
           <div class="line2"></div>
           <div class="line3"></div>
         </div>
       </nav>
-  
-      <div id="search-row" class="searchbar-wrapper-a">
-        <div class="searchbar-row-a">
-          <div class="searchbar-row-a1">
-            <span>What are you looking for ?</span>
-              <svg style="cursor: pointer; z-index: 1111;" version="1.1" id="close_a" 
-              xmlns="http://www.w3.org/2000/svg" 
-              xmlns:xlink="http://www.w3.org/1999/xlink" 
-              width="10px"
-              height="10px"
-              x="0px" y="0px"
-                viewBox="0 0 496.096 496.096" style="enable-background:new 0 0 496.096 496.096;" xml:space="preserve">
-              <g>
-                <g>
-                  <path d="M259.41,247.998L493.754,13.654c3.123-3.124,3.123-8.188,0-11.312c-3.124-3.123-8.188-3.123-11.312,0L248.098,236.686
-                    L13.754,2.342C10.576-0.727,5.512-0.639,2.442,2.539c-2.994,3.1-2.994,8.015,0,11.115l234.344,234.344L2.442,482.342
-                    c-3.178,3.07-3.266,8.134-0.196,11.312s8.134,3.266,11.312,0.196c0.067-0.064,0.132-0.13,0.196-0.196L248.098,259.31
-                    l234.344,234.344c3.178,3.07,8.242,2.982,11.312-0.196c2.995-3.1,2.995-8.016,0-11.116L259.41,247.998z"/>
-                </g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              <g>
-              </g>
-              </svg>
-          </div>
-            <div id="autocomplete" class="autocomplete-a"></div>
-        </div>
-      </div>
     </header>
-  
- 
+
     <div class="container" id="demo-settings-container"></div>
 
     <div class="labelUserPersonna" id="persona-selector">
