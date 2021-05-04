@@ -1,9 +1,8 @@
-
-@import "./carouselDetailed.css";
-@import "./headerMenu.css";
-@import "./autocomplete.css";
-@import "./modalProduct.css";
-
+@import './carouselDetailed.css';
+@import './headerMenu.css';
+@import './autocomplete.css';
+@import './modalProduct.css';
+@import './classic-theme.css';
 
 /* GENERAL STYLE */
 
@@ -142,7 +141,7 @@ li {
 .carousel .carousel-list-container li .title {
   text-align: center;
 
-  font-family: "Roboto";
+  font-family: 'Roboto';
 
   font-weight: 500;
   font-size: 0.8rem;
@@ -156,7 +155,6 @@ li {
   padding: 1rem;
   position: relative;
   cursor: pointer;
-
 }
 
 .carousel .carousel-list-container li img {
@@ -166,7 +164,6 @@ li {
   margin: 1rem auto;
   filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
   clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
-
   transition: 0.5s ease-in-out;
 }
 .carousel .carousel-list-container li img:hover {
@@ -177,7 +174,7 @@ li {
 
 /* STAT */
 .ais-Stats {
-  font-family: "Roboto";
+  font-family: 'Roboto';
   font-weight: 100;
   font-style: italic;
   color: black;
@@ -208,7 +205,7 @@ li {
   margin-left: 20px;
   text-orientation: sideways-right;
   font-size: 0.8rem;
-  font-family: "Castoro", serif;
+  font-family: 'Castoro', serif;
   font-style: italic;
 }
 
@@ -241,7 +238,7 @@ li {
   color: black;
   font-size: 0.8rem;
   font-style: italic;
-  font-family: "Castoro", serif;
+  font-family: 'Castoro', serif;
 }
 .userPersonaSelector select {
   background-color: rgb(246, 245, 243);
@@ -249,7 +246,7 @@ li {
   padding: 0.6rem;
   padding-left: 3rem;
   border-radius: 5px;
-  font-family: "Castoro", serif;
+  font-family: 'Castoro', serif;
 }
 
 .personaFadeIn {
@@ -258,7 +255,6 @@ li {
 .personaFadeOut {
   animation: personaOut 0.8s forwards;
 }
-
 
 .img-overlay {
   opacity: 0;
@@ -308,7 +304,7 @@ li {
   border-radius: 5px;
   z-index: 500;
   animation: disapear 6s forwards;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   box-sizing: border-box;
 }
 .popUpEventCart {
@@ -321,7 +317,7 @@ li {
   border-radius: 5px;
   z-index: 500;
   animation: disapear 6s forwards;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   box-sizing: border-box;
 }
 
@@ -340,14 +336,17 @@ li {
   position: absolute;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(317deg, rgba(255, 255, 255, 1) 0%, rgba(0, 0, 0, 1) 100%);
+  background: linear-gradient(
+    317deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(0, 0, 0, 1) 100%
+  );
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   left: -100%;
 }
-
 
 /* ANIMATIONS */
 
@@ -436,4 +435,49 @@ li {
     opacity: 0;
     /* visibility: hidden; */
   }
+}
+
+.searchbar-wrapper-a {
+  display: flex;
+  width: 100vw;
+  height: 150px;
+  background-color: #fff;
+  justify-content: center;
+  align-content: center;
+  z-index: 1111;
+  position: absolute;
+  top: 0;
+  transform: translateY(-200px);
+  transition: transform 0.4s ease-in;
+}
+
+.searchbar-row-a1 {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.searchbar-row-a1 span {
+  font-weight: 300;
+  font-size: 12px;
+  padding-left: 50px;
+  /* margin-bottom: 11px; */
+}
+
+.aa-Input {
+  outline: none;
+  border: none;
+}
+
+.searchbar-row-a {
+  margin: auto 0;
+  position: relative;
+}
+
+.autocomplete-a {
+  width: 70vw;
+}
+
+.aa-Autocomplete {
+  background-color: black;
 }
