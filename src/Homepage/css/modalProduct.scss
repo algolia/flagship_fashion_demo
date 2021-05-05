@@ -79,19 +79,29 @@
 
 .productModal-btn {
     padding: 0.6rem 2rem;
-    border: 1px solid rgba(0, 0, 0, 0.5);
+    border: 1px solid #f5ecf1;
     font-size: 1;
     font-family: "Roboto";
-    color: white;
+    color: black;
     align-self: center;
     cursor: pointer;
     transition: 0.3s ease-in-out;
-    background-color: rgb(17, 17, 17);
-}
-.productModal-btn:hover {
-    background-color: rgb(255, 255, 255);
-    color: black;
-    transition: 0.3s ease-in-out;
+    border-radius: 30px;
+    font-family: $main-font;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 15rem;
+
+    span {
+        display: flex;
+    }
+
+    &:hover {
+        background-color: #f5ecf1;
+        color: white;
+        transition: 0.3s ease-in-out;
+    }
 }
 
 .productModal-hit-addToCart .fa-angle-down {

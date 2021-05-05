@@ -142,7 +142,7 @@ export function modalProduct() {
                         <div class="productModal-hit-addToCart" data-id=${product.objectID
       }>
                             <a href="#"class="productModal-btn" data-id=${product.objectID
-      }>Add to cart  <i class="fas fa-angle-down"></i></a>
+      }><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
                         </div>
                     </div>
                 </div>

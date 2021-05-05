@@ -1,16 +1,19 @@
 @import "../../Scss/global-variables.scss";
 
 .filters-wrapper {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-areas: "filters sortBy  stats";
-    justify-items: center;
+    // display: grid;
+    // grid-template-columns: repeat(2, 1fr);
+    // grid-template-areas: "sortBy  stats";
+    display: flex;
+
+    // justify-items: center;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    border: 1px solid rgba(133, 133, 133, 0.2);
-    width: 100vw;
-    margin: 0 auto;
+    // border: 1px solid rgba(133, 133, 133, 0.2);
+    // width: 100vw;
+    // margin: 0 auto;
+    background-color: $third-color;
 }
 
 .showfilter-wrapper {
@@ -25,10 +28,16 @@
     border-top: none;
     padding: 2rem;
     margin-bottom: 2rem;
+    font-size: 0.8rem;
 }
 
 .stats-searchResult {
-    grid-area: stats;
+    // grid-area: stats;
+    // justify-self: end;
+    span {
+        font-family: $main-font;
+        font-size: 0.8rem;
+    }
 }
 
 .btn-filter-wrapper {
@@ -36,16 +45,17 @@
 }
 
 .filters-item-side {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+    // width: 100%;
+    // display: flex;
+    // justify-content: center;
 }
 
 .sort-by {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    grid-area: sortBy;
+    // width: 100%;
+    // display: flex;
+    // justify-content: center;
+    // grid-area: sortBy;
+    font-size: 0.8rem;
 }
 .sort-by .ais-Sortby {
     width: 100%;

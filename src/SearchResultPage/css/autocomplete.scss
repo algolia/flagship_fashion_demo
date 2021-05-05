@@ -95,23 +95,22 @@
 }
 
 .carousel-list-item {
-  min-height: 450px;
-  padding: 1.5rem;
-  margin: 0.2rem 1rem;
-  width: 98%;
+  min-height: 550px;
+  margin: 0.5rem 0rem;
+  width: 97%;
   background-color: white;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border: 1px solid rgba(240, 240, 239, 0.9);
+  // border: 1px solid rgba(240, 240, 239, 0.9);
   transition: 0.2s ease-in-out;
-}
-
-.carousel-list-item:hover {
-  border: 1px solid rgba(173, 173, 172, 0.6);
-  box-shadow: 4px 4px 20px rgba(240, 240, 239, 1);
-  transition: 0.2s ease-in-out;
+  // border-radius: 15px;
+  // box-shadow: -1px -5px 28px 2px rgba(0, 0, 0, 0.2);
+  // &:hover {
+  //   box-shadow: 4px 4px 20px rgba(245, 236, 241, 1);
+  //   transition: 0.2s ease-in-out;
+  // }
 }
 
 .aa-ItemContentCategory {

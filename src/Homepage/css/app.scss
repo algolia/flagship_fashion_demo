@@ -180,6 +180,29 @@ li {
     z-index: auto;
     align-self: center;
     font-family: $main-font;
+    position: relative;
+    z-index: 9;
+
+    &::before {
+      content: "";
+      background-color: $fourth-color;
+      height: 0.1rem;
+      width: 75%;
+      position: absolute;
+      bottom: -0.1rem;
+      left: 30%;
+      transition: 0.2s ease-in-out;
+      // transform: scaleY(0.1);
+      z-index: -1;
+    }
+
+    &:hover::before {
+      transform-origin: bottom;
+      z-index: -1;
+      height: 1.5rem;
+      // transform: scaleY(2);
+      transition: 0.2s ease-in-out;
+    }
   }
 }
 

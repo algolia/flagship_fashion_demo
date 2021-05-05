@@ -28,27 +28,29 @@
 }
 
 .result-img {
-    width: 50%;
+    width: 100%;
     margin: 0 auto;
     justify-self: center;
-    margin-bottom: 3rem;
-    filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
+    // margin-bottom: 3rem;
+    /* filter: drop-shadow(#f0f0ef 32px 60px 20px); */
     transition: 0.2s ease-in-out;
     cursor: pointer;
+    border-radius: 0 30% 0 0%;
 }
 
-.result-img:hover {
-    transform: scale(0.9);
-    filter: drop-shadow(16px 16px 20px rgb(240, 240, 239));
-    transition: 0.2s ease-in-out;
-}
+// .result-img:hover {
+//     transform: scale(0.9);
+//     filter: drop-shadow(16px 16px 20px rgb(240, 240, 239));
+//     transition: 0.2s ease-in-out;
+// }
 
 .result-img-overlay {
     opacity: 0;
     position: absolute;
     height: 100%;
-    width: 50%;
-    background-color: rgba(255, 255, 255, 0.678);
+    width: 100%;
+    border-radius: 0 30% 0 0%;
+    background-color: rgba(0, 0, 0, 0.7);
     transition: opacity 0.5s ease-in-out;
     pointer-events: none;
     cursor: pointer;
@@ -77,36 +79,47 @@
 
 .hit-name {
     color: black;
-    font-family: "Roboto";
+    font-family: $main-font;
     font-weight: bold;
     font-size: 1rem;
-    margin: 1rem 0;
+    margin: 1rem 0 3rem 0;
     display: flex;
+    justify-content: center;
 }
 
 .hit-infos {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
+    justify-content: center;
     width: 100%;
     flex-wrap: wrap;
+    font-size: 0.9rem;
+
+    div {
+        text-align: center;
+    }
 }
 
 .hit-infos em {
     background-color: rgb(66, 66, 66);
     color: white;
     padding: 0.2rem;
+    font-size: 0.9rem;
 }
 
 .hit-price {
     position: absolute;
     bottom: 1rem;
     right: 1rem;
-}
-
-.cross-price {
-    text-decoration: line-through;
-    font-size: 0.8rem;
-    color: #c7c7c7;
+    font-family: "Roboto";
+    font-size: 1.5rem;
+    .price {
+    }
+    .cross-price {
+        text-decoration: line-through;
+        font-size: 0.8rem;
+        color: $fourth-color;
+    }
 }
 
 .hit-description {
@@ -131,17 +144,20 @@
 
 .colorWrapper {
     display: flex;
-    flex-direction: column;
+    /* flex-direction: column; */
     justify-content: center;
     align-items: center;
-}
+    margin-top: 0.5rem;
+    font-family: "Roboto";
+    font-weight: 300;
 
-.hit-colorsHex {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 1px solid rgba(240, 240, 239, 0.9);
-    margin-top: 1rem;
+    .hit-colorsHex {
+        margin-left: 0.5rem;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 1px solid rgba(240, 240, 239, 0.9);
+    }
 }
 
 /* SIZE FILTER HOVER */
@@ -152,26 +168,26 @@
     display: flex;
     justify-content: center;
     position: absolute;
-    bottom: 0;
+    bottom: 2rem;
     left: 0;
     align-items: center;
     width: 100%;
     height: 4rem;
-    background-color: rgba(255, 255, 255, 0.8);
-    color: black;
-}
-.hit-sizeFilter p {
-    font-size: 0.8rem;
-    font-family: "Roboto";
-    color: black;
-    font-weight: bold;
-}
-.hit-sizeFilter span {
-    font-size: 0.8rem;
-    font-family: "Roboto";
-    color: black;
-    font-weight: medium;
-    font-style: italic;
+
+    p {
+        font-size: 0.8rem;
+        font-family: "Roboto";
+        // font-family: $main-font;
+        color: white;
+        font-weight: 300;
+    }
+
+    span {
+        font-size: 0.8rem;
+        font-family: "Roboto";
+        color: white;
+        font-weight: 300;
+    }
 }
 
 .hit-addToCart {
@@ -179,13 +195,13 @@
     display: flex;
     justify-content: center;
     position: absolute;
-    top: 30%;
+    top: 40%;
     right: 50%;
     transform: translate(50%, -50%);
     align-items: center;
     width: fit-content;
     height: 4rem;
-    color: black;
+    color: white;
 }
 .hit-addToCart i {
     font-size: 1.2rem;
@@ -239,8 +255,8 @@
 
 .badgeWrapper {
     position: absolute;
-    right: 1rem;
-    top: 0.5rem;
+    left: 1rem;
+    top: 1rem;
     width: 15%;
     transition: transform 0.2s ease-in-out;
     z-index: 10;
@@ -248,34 +264,35 @@
 
 .badge {
     color: black;
-    font-family: "Roboto";
+    font-family: $main-font;
     font-weight: bold;
     border-radius: 1px;
     padding: 0.2rem;
     margin-bottom: 0.2rem;
     font-size: 0.8rem;
-    justify-content: center;
+    justify-content: start;
     display: flex;
 }
 
 .badgeOff {
-    background-color: rgba(179, 30, 30, 0.6);
+    color: rgb(179, 132, 144);
 }
 .badgeEco {
-    background-color: rgba(1, 158, 1, 0.6);
+    color: rgb(132, 179, 132);
 }
 
-.scaleDown {
-    transform: scale(0.9);
+.colorChange {
+    color: white;
     transition: transform 0.2s ease-in-out;
 }
 
 /* SELECT SORT-BY */
 
 .ais-SortBy-select {
+    font-size: 0.8rem;
     padding: 0.6rem 3rem 0.6rem 1rem;
     border: 1px solid rgba(0, 0, 0, 0.5);
-    font-size: 1rem;
+
     font-family: "Roboto";
     color: black;
     align-self: center;

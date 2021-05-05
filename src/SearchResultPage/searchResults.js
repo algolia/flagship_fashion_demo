@@ -123,10 +123,10 @@ export function searchResults() {
         }
 
         suggestionContainer.querySelector('ul').innerHTML = catlistIsrefined
-          .filter((item, idx) => idx < 11)
+          .filter((item, idx) => idx < 5)
           .map(
             (category, idx) => ` 
-                        <li id="${idx}" style="${isRefined(category)}">${category.name
+                        <li class="" id="${idx}" style="${isRefined(category)}">${category.name
               }</li>
                     `
           )
@@ -581,11 +581,13 @@ export function searchResults() {
   function displayPrice(hit) {
     if (hit.newPrice) {
       return `<p class="cross-price">$${hit.price}</p>
-                    <p>$${hit.newPrice}</p>`;
+                    <p class="price">$${hit.newPrice}</p>`;
     } else {
       return `<p>$${hit.price}</p>`;
     }
   }
+
+
 
   function displayEcoBadge(hit) {
     if (hit.badges) {
@@ -887,11 +889,11 @@ export function searchResults() {
                                         <a ${bindEvent(
                 'click',
                 hit,
-                'Product Added'
-              )}><i class="fas fa-cart-arrow-down"></i></a>
+                'Product Clicked'
+              )}><i class="fas fa-ellipsis-h"></i></a>
                                     </div>
                                     <div class="hit-sizeFilter">
-                                        <p>Sizes available: <span>${hit.sizeFilter
+                                        <p>Sizes available: <span>${hit.sizeFilter.join(', ')
               }</span></p>
                                     </div>
                                 </div>
