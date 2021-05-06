@@ -1039,7 +1039,7 @@ export function searchResults() {
     //   container: '#category-list',
     //   attribute: 'category',
     // }),
-    menuSelect({
+    refinementList({
       container: '#category-list',
       attribute: 'category',
     }),

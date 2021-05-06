@@ -24,10 +24,24 @@
     padding: 1rem 2rem;
     background-color: white;
     border-radius: 5px;
+
+    .fa-heart {
+        font-size: 2rem;
+        color: #f5ecf1;
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        transition: 0.2 ease-in-out;
+    }
 }
 
-.modalProduct .fa-heart {
-    font-size: 2rem;
+.recommendedItems,
+.boughtTogetherItems {
+    flex-wrap: nowrap !important;
+    display: -webkit-box !important;
+    overflow-x: scroll !important;
+    padding: 2rem;
+    list-style-type: none;
 }
 
 .productModal-infos-Wrapper {
@@ -35,17 +49,23 @@
 }
 
 .productModal-image-wrapper {
+    width: 30%;
     padding: 1rem;
     margin: 1rem auto;
+    img {
+        width: 100%;
+        object-fit: contain;
+    }
 }
 
 .productModal-info-wrapper {
     padding: 1rem;
     margin: 1rem auto;
-}
-.productModal-image-wrapper img {
-    width: 100%;
-    object-fit: contain;
+
+    img {
+        width: 100%;
+        object-fit: contain;
+    }
 }
 
 .productModal-hit-category {
@@ -142,6 +162,7 @@
     transition: 0.2s ease-in-out;
     border-radius: 15px;
     box-shadow: -1px -5px 28px 2px rgba(0, 0, 0, 0.2);
+    position: relative;
 
     &:hover {
         box-shadow: 4px 4px 20px rgba(245, 236, 241, 1);
@@ -158,7 +179,6 @@
 .related-image-wrapper img {
     width: 100%;
 }
-
 .related-hit-names {
     font-size: 0.8rem;
     font-family: "Roboto";
@@ -167,19 +187,24 @@
     justify-content: center;
     margin: 1rem auto;
     padding: 0 1rem;
+    text-align: center;
+    position: relative;
+
+    .related-product-colorsHex {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin: 0.5rem auto;
+    }
 }
 
 .related-hit-price {
     font-size: 0.8rem;
     font-family: $main-font;
     font-weight: bold;
-}
-
-.related-product-colorsHex {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin: 0.5rem 0;
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
 }
 
 .list-wrapper {
