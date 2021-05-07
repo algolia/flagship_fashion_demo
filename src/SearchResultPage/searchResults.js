@@ -36,6 +36,7 @@ import aa from 'search-insights';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 import { html } from 'htm/preact';
 
+
 export function searchResults() {
   const searchClient = algoliasearch(
     'HYDY1KWTWB',
@@ -382,6 +383,7 @@ export function searchResults() {
             } else {
               refine(state.query);
               displayResultOrNoResult(stateCollection);
+
             }
           },
         });

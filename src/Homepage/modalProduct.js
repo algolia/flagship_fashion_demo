@@ -218,8 +218,8 @@ export function modalProduct() {
                     : ''
                   }" class="related-product-colorsHex"></div>
                   </div>
+                  </div>
                   <div class="related-hit-price">$${hit.price}</div>
-              </div>
             </li>
                               `;
               })
@@ -276,8 +276,8 @@ export function modalProduct() {
                     : ''
                   }" class="related-product-colorsHex"></div>
                     </div>
+                    </div>
                     <div class="related-hit-price">$${hit.price}</div>
-                </div>
               </li>
                                 `;
               })

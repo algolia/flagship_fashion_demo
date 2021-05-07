@@ -318,6 +318,7 @@
     display: flex;
     flex-direction: column;
     padding: 0 0 0 5rem;
+    position: relative;
 }
 
 .right-panel {
@@ -437,6 +438,7 @@
             width: 18px;
             height: 18px;
             align-self: center;
+            cursor: pointer;
 
             &::-webkit-color-swatch {
                 border: 1px solid rgba(0, 0, 0, 0.5);
@@ -561,32 +563,47 @@
     border: none;
     background: transparent;
     margin-left: 0.4rem;
+    cursor: pointer;
+    font-family: $main-font;
+}
+
+.hideFilters {
+    position: fixed;
+    top: 50%;
+    left: 0.2rem;
+    font-size: 0.8rem;
+    transform: rotateZ(90deg);
+    font-family: "Roboto";
+    color: rgb(202, 202, 202);
+    cursor: pointer;
+    z-index: 100;
 }
 
 /* ANIMATIONS */
 
-@keyframes fadeFilters {
-    0% {
-        transform: translateX(100%);
-        visibility: visible;
-        opacity: 0.2;
-    }
-    100% {
-        transform: translateX(0%);
-        visibility: visible;
-        opacity: 1;
-    }
-}
 @keyframes fadeOutFilter {
     0% {
         transform: translateX(0%);
         visibility: visible;
-        opacity: 1;
+        opacity: 0.2;
     }
     100% {
-        transform: translateX(100%);
+        transform: translateX(-100%);
         visibility: hidden;
         opacity: 0;
+        display: none;
+    }
+}
+@keyframes fadeFilters {
+    0% {
+        transform: translateX(-100%);
+        visibility: hidden;
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateX(0%);
+        visibility: visible;
+        opacity: 1;
     }
 }
 

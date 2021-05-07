@@ -4,6 +4,12 @@
     display: flex;
     justify-content: center;
     margin: 3rem auto;
+    position: relative;
+}
+
+.fullScreenGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) !important;
 }
 
 .ais-Hits-list {
@@ -174,6 +180,8 @@
     left: 0;
     align-items: center;
     width: 100%;
+    padding: 0 3rem;
+    text-align: center;
     height: 4rem;
 
     p {

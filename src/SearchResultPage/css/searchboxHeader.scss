@@ -29,13 +29,36 @@
   width: 200px;
 }
 
+.nav-list {
+  display: flex;
+  align-items: center;
+}
 .nav-list ul {
   list-style: none;
   display: flex;
+  align-items: center;
 }
 .nav-list ul li {
   padding: 1rem;
   font-size: 1rem;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    background-color: black;
+    height: 1px;
+    width: 70%;
+    bottom: 0.5rem;
+    transform-origin: 100% 0;
+    transform: scaleX(0);
+    transition: transform 0.4s;
+  }
+
+  &:hover::before {
+    transform-origin: 0 0;
+    transform: scaleX(1);
+  }
 }
 .nav-list ul li a {
   padding: 1rem;
