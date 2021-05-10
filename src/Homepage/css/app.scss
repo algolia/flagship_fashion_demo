@@ -47,6 +47,7 @@ li {
 .banner-title-wrapper {
   justify-items: center;
   align-items: center;
+  z-index: 8;
   h1 {
     font-family: $main-font;
     position: relative;
@@ -54,6 +55,7 @@ li {
     height: 3rem;
     width: 20rem;
     font-size: 2rem;
+    z-index: 8;
   }
   h2 {
     font-family: $main-font;
@@ -62,6 +64,7 @@ li {
     height: 3rem;
     width: 20rem;
     font-size: 2rem;
+    z-index: 8;
   }
   p {
     font-family: $second-font;
@@ -69,6 +72,7 @@ li {
     overflow: hidden;
     height: 3rem;
     width: 20rem;
+    z-index: 8;
   }
 
   .hidden-text {

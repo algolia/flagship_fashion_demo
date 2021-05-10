@@ -1,3 +1,5 @@
+@import "../../Scss/global-variables.scss";
+
 .body-wrapper {
   overflow-x: hidden;
   position: relative;
@@ -33,18 +35,35 @@
   margin: 2rem auto;
   display: flex;
   justify-content: space-between;
+
+  h2 {
+    font-family: $main-font;
+  }
 }
 
 .btn-carousel-winter {
   padding: 0.6rem 2rem;
   text-decoration: none;
-  border: 1px solid rgba(0, 0, 0, 0.5);
-  font-size: 1;
-  font-family: "Roboto";
+  border: 1px solid #f5ecf1;
+  font-size: 0.8rem;
   color: black;
   align-self: center;
   cursor: pointer;
   transition: 0.3s ease-in-out;
+  border-radius: 30px;
+  font-family: $main-font;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1rem;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    background-color: #111111;
+    color: white;
+    transition: 0.3s ease-in-out;
+  }
 }
 .btn-carousel-winter:hover {
   background-color: rgb(17, 17, 17);
@@ -92,7 +111,7 @@
 
 .carousel .carousel-list-container li .title {
   text-align: center;
-  font-family: "Roboto";
+  font-family: $main-font;
   font-weight: 500;
   font-size: 0.8rem;
 }
@@ -122,11 +141,10 @@
 
 /* STAT */
 .ais-Stats {
-  font-family: "Roboto";
+  font-family: $main-font;
   font-weight: 100;
   font-style: italic;
   color: black;
-  float: right;
 }
 
 /* MAN PAGE RESULT */
@@ -182,7 +200,7 @@
 
 .hit-name {
   color: black;
-  font-family: "Roboto";
+  font-family: $main-font;
   font-weight: bold;
   font-size: 1rem;
   margin: 1rem 0;
