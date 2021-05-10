@@ -186,7 +186,7 @@ export function modalProduct() {
   function boughtTogether(object) {
     if (object.objectID) {
       const indexBT = searchClient.initIndex(
-        'ai_recommend_bought-together_gstar_demo_test'
+        'ai_recommend_bought-together_gstar_demo_test_static'
       );
       let objectID = object.objectID;
       indexBT
@@ -249,7 +249,7 @@ export function modalProduct() {
     if (object.objectID) {
       let objectID = object.objectID;
       const indexRecommand = searchClient.initIndex(
-        'ai_recommend_related-products_gstar_demo_test'
+        'ai_recommend_related_products_gstar_demo_test_static'
       );
       indexRecommand
         .getObject(objectID)
