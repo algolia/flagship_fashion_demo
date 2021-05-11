@@ -10,7 +10,7 @@ export function animationOnload() {
         duration: 2,
         stagger: 0.2,
         ease: "power2.inOut",
-        from: "center"
+        // from: 'center'
         // 0.1 seconds between when each ".box" element starts animating
     });
     gsap.from(".img4 path", {
@@ -18,7 +18,7 @@ export function animationOnload() {
         duration: 1,
         stagger: 0.1,
         ease: "power2.inOut",
-        from: "center"
+        // from: 'center'
         // 0.1 seconds between when each ".box" element starts animating
     });
 
