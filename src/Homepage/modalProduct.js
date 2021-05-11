@@ -64,6 +64,7 @@ export function modalProduct() {
 
 
 
+
   const personaChange = document.querySelector('.user-token-selector')
   personaChange.addEventListener('change', (e) => {
     setTimeout(getObjectID, 1000)
@@ -90,6 +91,7 @@ export function modalProduct() {
           });
           showModal();
         });
+
       });
     }
   }
@@ -154,10 +156,12 @@ export function modalProduct() {
       }</div>
                         </div>
                         </div>
+
                         <div class="productModal-hit-addToCart" data-id=${product.objectID
       }>
                             <a href="#"class="productModal-btn" data-id=${product.objectID
       }><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
+
                         </div>
                     </div>
                 </div>
@@ -193,6 +197,7 @@ export function modalProduct() {
 
   function boughtTogether(object) {
     if (object.objectID) {
+
       const indexBT = searchClient.initIndex('ai_recommend_bought-together_gstar_demo_test');
       let objectID = object.objectID
       indexBT.getObject(objectID).then((item) => {
@@ -201,7 +206,7 @@ export function modalProduct() {
           boughtTogetherItemsArray.push(i.objectID)
         })
         index.getObjects(boughtTogetherItemsArray).then(({ results }) => {
-          let bti = document.querySelector('boughtTogetherItems')
+
 
           let container = document.querySelector('.productModal-global-Wrapper');
           let ul = document.createElement('ul');
@@ -217,6 +222,7 @@ export function modalProduct() {
           container.appendChild(div)
 
           document.querySelector('.boughtTogetherItems').innerHTML = `
+
           ${results
               .splice(0, 8)
               .map((hit) => {
@@ -230,15 +236,14 @@ export function modalProduct() {
               <div class="related-hit-names">
                   <div class="related-hit-infos">
                     <div class="related-hit-name">${hit.name}</div>
-                    <div style="background: ${hit.hexColorCode
-                    ? hit.hexColorCode.split('//')[1]
-                    : ''
+                    <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
                   }" class="related-product-colorsHex"></div>
                   </div>
                   </div>
                   <div class="related-hit-price">$${hit.price}</div>
             </li>
                               `;
+
               })
               .join('')}`;
 
@@ -247,12 +252,14 @@ export function modalProduct() {
       }).catch(err => {
         console.log(err)
       });
+
     }
   }
 
   function recommandedItems(object) {
 
     if (object.objectID) {
+
       let objectID = object.objectID
       const indexRecommand = searchClient.initIndex('ai_recommend_related-products_gstar_demo_test');
 
@@ -263,7 +270,7 @@ export function modalProduct() {
         })
         index.getObjects(recommandItems).then(({ results }) => {
 
-          let ri = document.querySelector('recommendedItems')
+
 
           let container = document.querySelector('.productModal-global-Wrapper');
           let ul = document.createElement('ul');
@@ -280,6 +287,7 @@ export function modalProduct() {
 
 
           document.querySelector('.productModal-global-Wrapper .recommendedItems').innerHTML = `
+
         ${results
               .splice(0, 8)
               .map((hit) => {
@@ -293,22 +301,19 @@ export function modalProduct() {
                 <div class="related-hit-names">
                     <div class="related-hit-infos">
                       <div class="related-hit-name">${hit.name}</div>
-                      <div style="background: ${hit.hexColorCode
-                    ? hit.hexColorCode.split('//')[1]
-                    : ''
+                      <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
                   }" class="related-product-colorsHex"></div>
                     </div>
                     </div>
                     <div class="related-hit-price">$${hit.price}</div>
               </li>
                                 `;
+
               })
               .join('')}`;
 
         });
-      }).catch(err => {
-        console.log(err)
-      });
+      })
     }
   }
 
