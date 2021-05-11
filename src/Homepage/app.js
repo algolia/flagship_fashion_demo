@@ -12,7 +12,7 @@ GetDataForCarousel()
 carouselDetailed()
 burgerMenu()
 togglePersona()
-modalProduct()
+// modalProduct()
 autocompleteHome()
 
 

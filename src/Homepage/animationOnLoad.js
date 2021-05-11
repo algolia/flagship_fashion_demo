@@ -41,7 +41,6 @@ export function animationOnload() {
 
     let img3 = document.querySelector('.img3')
     window.addEventListener('load', (e) => {
-        console.log(e)
         img3.classList.add('revealBanner')
     })
 

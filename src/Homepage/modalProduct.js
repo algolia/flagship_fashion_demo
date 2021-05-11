@@ -63,35 +63,22 @@ export function modalProduct() {
   };
 
 
-  let observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation) {
-        setTimeout(getObjectID, 1000)
-      }
-    });
-  });
 
-  const targetNode = document.querySelector('#stacked-carousels');
-  observer.observe(targetNode, {
-    // characterDataOldValue: true,
-    // subtree: true,
-    // characterData: true
-    childList: true,
-    // characterData: true
-  });
+  const personaChange = document.querySelector('.user-token-selector')
+  personaChange.addEventListener('change', (e) => {
+    setTimeout(getObjectID, 1000)
+    e.stopPropagation()
+  })
+
+
 
 
   const getObjectID = () => {
     let cardProduct = document.querySelectorAll('.carousel-list-container li');
-    // console.log(cardProduct)
     if (cardProduct.length > 0) {
       cardProduct.forEach((product) => {
-        // detailProduct(product)
         product.addEventListener('click', (e) => {
-          console.log('product')
-          console.log(e)
           let productID = e.target.dataset.id;
-
           // Retrieves all attributes
           index.getObject(productID).then((object) => {
             displayProduct(object);
@@ -214,6 +201,8 @@ export function modalProduct() {
           boughtTogetherItemsArray.push(i.objectID)
         })
         index.getObjects(boughtTogetherItemsArray).then(({ results }) => {
+          let bti = document.querySelector('boughtTogetherItems')
+
           let container = document.querySelector('.productModal-global-Wrapper');
           let ul = document.createElement('ul');
           let title = document.createElement('h3');
@@ -252,7 +241,9 @@ export function modalProduct() {
                               `;
               })
               .join('')}`;
+
         });
+
       }).catch(err => {
         console.log(err)
       });
@@ -264,13 +255,15 @@ export function modalProduct() {
     if (object.objectID) {
       let objectID = object.objectID
       const indexRecommand = searchClient.initIndex('ai_recommend_related-products_gstar_demo_test');
-      console.log(objectID)
+
       indexRecommand.getObject(objectID).then((item) => {
         let recommandItems = []
         item.recommendations.forEach(i => {
           recommandItems.push(i.objectID)
         })
         index.getObjects(recommandItems).then(({ results }) => {
+
+          let ri = document.querySelector('recommendedItems')
 
           let container = document.querySelector('.productModal-global-Wrapper');
           let ul = document.createElement('ul');
@@ -311,6 +304,7 @@ export function modalProduct() {
                                 `;
               })
               .join('')}`;
+
         });
       }).catch(err => {
         console.log(err)

@@ -59,31 +59,9 @@ export function modalProductSearchResult() {
     }
   };
 
-
-  let searchForm = document.querySelector('.autocomplete .aa-Form')
-  let timer,
-    timeoutVal = 500;
-
-
-
-  // triggers a check to see if the user is submiting his search
-  // searchForm.addEventListener('submit', handleKeyUp);
-
-  // function handleKeyUp(e) {
-  //   window.clearTimeout(timer); // prevent errant multiple timeouts from being generated
-  //   if (e) {
-  //     console.log(e)
-  //     timer = window.setTimeout(() => {
-  //       getObjectsIDS();
-  //     }, timeoutVal);
-  //   }
-  // }
-
-
   let observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       if (mutation) {
-        console.log(mutation)
         getObjectsIDS();
       }
     });
@@ -99,24 +77,6 @@ export function modalProductSearchResult() {
 
 
 
-  // function domListening() {
-
-  //   const observer = new MutationObserver(mutation => {
-  //     console.log(mutation)
-  //     if (mutation) {
-  //       console.log(mutation)
-  //       getObjectsIDS();
-  //     }
-  //   });
-  //   const targetNode = document.querySelector('.right-panel');
-  //   observer.observe(targetNode, {
-  //     childList: true,
-  //     subtree: true,
-  //   });
-  //   observer.disconnect()
-  // }
-
-
   function getObjectsIDS() {
 
     let cardProduct = document.querySelectorAll('.hitsAutocomplete li');
@@ -125,8 +85,6 @@ export function modalProductSearchResult() {
       // detailProduct(product)
       product.addEventListener('click', (e) => {
         let productID = e.target.dataset.id;
-        console.log(e, productID)
-
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
           displayProduct(object);
@@ -296,7 +254,6 @@ export function modalProductSearchResult() {
     if (object.objectID) {
       let objectID = object.objectID
       const indexRecommand = searchClient.initIndex('ai_recommend_related-products_gstar_demo_test');
-      console.log(objectID)
       indexRecommand.getObject(objectID).then((item) => {
         let recommandItems = []
         item.recommendations.forEach(i => {
