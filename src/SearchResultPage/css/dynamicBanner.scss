@@ -1,0 +1,52 @@
+@import "../../Scss/global-variables.scss";
+
+.banner-wrapper {
+    max-height: 500px;
+    overflow-y: hidden;
+    position: relative;
+    z-index: -1;
+}
+.banner-wrapper img {
+    width: 100%;
+    object-fit: contain;
+    object-position: 0px -22rem;
+    filter: grayscale(70%) blur(1px);
+}
+
+.banner-wrapper h3 {
+    background: -webkit-linear-gradient(317deg, rgba(0, 0, 0, 1) 0%, rgba(255, 255, 255, 1) 18%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.banner-title--wrapper {
+    font-family: "Roboto", sans-serif;
+    font-weight: 900;
+    color: white;
+    text-transform: uppercase;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 3rem;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+.underline-bannerTitle {
+    position: fixed;
+    width: 300px;
+    height: 1px;
+    background: linear-gradient(167deg, rgba(0, 1, 22, 1) 43%, rgba(255, 255, 255, 0.5) 100%);
+    z-index: 11;
+    right: -2rem;
+}
+
+.banner-overlay {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 9;
+    background: rgb(0, 0, 0);
+    background: linear-gradient(167deg, rgba(0, 0, 0, 0.5) 43%, rgba(255, 255, 255, 0.8) 100%);
+}

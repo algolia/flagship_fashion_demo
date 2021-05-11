@@ -1,0 +1,38 @@
+@import "./searchboxHeader.scss";
+@import "./filters.scss";
+@import "./searchBoxResults.scss";
+@import "./modalRelatedItems.scss";
+@import "./guidedNavigation.scss";
+@import "./dynamicBanner.scss";
+@import "./autocomplete.scss";
+@import "./pagination.scss";
+@import "./persona.scss";
+@import "../../Homepage/css/modalProduct.scss";
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: none;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+.body-wrapper {
+  overflow-x: hidden;
+  position: relative;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: row;
+}

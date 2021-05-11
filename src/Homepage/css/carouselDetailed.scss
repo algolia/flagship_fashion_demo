@@ -1,0 +1,164 @@
+@import "../../Scss/global-variables.scss";
+
+.ais-Hits-list,
+.recommendedItems,
+.boughtTogetherItems {
+  flex-wrap: nowrap !important;
+  display: -webkit-box !important;
+  overflow-x: scroll !important;
+  padding: 2rem;
+  list-style-type: none;
+}
+
+/* HORIZONTAL SCROLLBAR */
+
+.ais-Hits-list::-webkit-scrollbar,
+.recommendedItems::-webkit-scrollbar,
+.boughtTogetherItems::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.ais-Hits-list::-webkit-scrollbar:horizontal,
+.recommendedItems::-webkit-scrollbar:horizontal,
+.boughtTogetherItems::-webkit-scrollbar:horizontal {
+  height: 4px;
+}
+
+.ais-Hits-list::-webkit-scrollbar-thumb,
+.recommendedItems::-webkit-scrollbar-thumb,
+.boughtTogetherItems::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 1px solid white;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+.ais-Hits-list::-webkit-scrollbar-track,
+.recommendedItems::-webkit-scrollbar-track,
+.boughtTogetherItems::-webkit-scrollbar-track {
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.ais-Hits-item {
+  min-height: 550px;
+  padding: 1.5rem;
+  margin: auto 1rem;
+  width: 380px;
+  background-color: white;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid rgba(240, 240, 239, 0.9);
+  transition: 0.2s ease-in-out;
+  border-radius: 15px;
+  box-shadow: -1px -5px 28px 2px rgba(0, 0, 0, 0.2);
+  &:hover {
+    box-shadow: 4px 4px 20px rgba(245, 236, 241, 1);
+    transition: 0.2s ease-in-out;
+  }
+}
+
+.image-wrapper {
+  max-width: 90%;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 1rem;
+  position: relative;
+  cursor: pointer;
+}
+
+.hit-img {
+  width: 70%;
+  object-fit: contain;
+  align-self: center;
+  filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
+  transition: 0.2s ease-in-out;
+  padding-bottom: 1rem;
+}
+.hit-img:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(16px 16px 20px rgb(240, 240, 239));
+  transition: 0.2s ease-in-out;
+}
+
+.carousel-detailed-display-info {
+  text-align: center;
+  color: black;
+}
+.carousel-detailed-display-info .hit-name {
+  font-weight: bold;
+  font-size: 1rem;
+  margin: 1rem auto;
+}
+
+.hit-description {
+  margin: 0.5rem auto;
+  font-size: 0.7rem;
+  font-style: italic;
+  font-weight: 100;
+}
+.hit-rating-price {
+  display: flex;
+  justify-content: center;
+  height: auto;
+}
+.hit-price {
+  position: absolute;
+  bottom: 0.5rem;
+  padding: 1rem 0;
+  font-weight: 300;
+  font-family: $main-font;
+}
+
+.detailedCarousel-infos {
+  font-family: "Roboto";
+  width: 100%;
+  margin: 4rem auto;
+  text-align: center;
+
+  h2 {
+    font-family: $main-font, serif;
+    font-size: 2rem;
+    position: relative;
+
+    span {
+      position: relative;
+      &::before {
+        content: "";
+        background-color: $fourth-color;
+        height: 0.1rem;
+        width: 100%;
+        position: absolute;
+        bottom: -0.1rem;
+        left: 0%;
+        transition: 0.2s ease-in-out;
+        // transform: scaleY(0.1);
+        z-index: -1;
+      }
+
+      &:hover::before {
+        transform-origin: bottom;
+        z-index: -1;
+        height: 2.5rem;
+        // transform: scaleY(2);
+        transition: 0.2s ease-in-out;
+      }
+    }
+  }
+  p {
+    font-size: 0.8rem;
+  }
+}
+
+.fa-heart {
+  color: #f5ecf1;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  transition: 0.2 ease-in-out;
+}
+.active-heart {
+  color: rgb(250, 76, 76);
+  transition: 0.2 ease-in-out;
+}

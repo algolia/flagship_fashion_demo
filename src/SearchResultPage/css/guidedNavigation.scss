@@ -1,0 +1,53 @@
+@import "../../Scss/global-variables.scss";
+
+.refinement-list-SearchResult {
+    margin: 0rem auto;
+    background-color: $third-color;
+    padding: 1rem 0;
+    // height: 20vh;
+}
+
+.refinement-list-SearchResult ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 70vw;
+    margin: 0rem auto;
+}
+.refinement-list-SearchResult ul li {
+    padding: 0.6rem 2rem;
+    border: 1px solid #f5ecf1;
+    font-size: 0.8rem;
+    color: black;
+    align-self: center;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    border-radius: 30px;
+    font-family: "Roboto";
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 1rem;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+        background-color: #f5ecf1;
+        color: white;
+        transition: 0.3s ease-in-out;
+    }
+}
+
+.refinement-list-SearchResult ul li a {
+    color: black;
+    transition: all 0.3s ease-in-out;
+}
+
+.refinement-list-SearchResult ul li a span {
+    color: rgb(39, 39, 39);
+    font-size: 0.6rem;
+}
+
+.btn-showMore {
+    font-style: italic;
+}

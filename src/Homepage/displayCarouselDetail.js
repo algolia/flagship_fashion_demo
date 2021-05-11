@@ -111,9 +111,9 @@ export function carouselDetailed() {
                 <div class="image-wrapper" ${bindEvent('click', hit, 'Product Clicked')}>
                     <img src="${hit.image_link}" align="left" alt="${hit.name}" class="hit-img" />
                     <div class="img-overlay"></div>
-                </div>
-                <div class="hit-addToCart">
-                    <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-cart-arrow-down"></i></a>
+                    <div class="hit-addToCart">
+                        <a ${bindEvent('click', hit, 'Product Clicked')}><i class="fas fa-ellipsis-h"></i></a>
+                    </div>
                 </div>
                     <div class="carousel-detailed-display-info">
                         <div class="hit-name">

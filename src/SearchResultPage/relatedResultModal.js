@@ -219,7 +219,7 @@ export function relatedResultModal() {
                 <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
                 <div class="result-img-overlay"></div>
                 <div class="hit-addToCart">
-                  <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-cart-arrow-down"></i></a>
+                  <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-ellipsis-h"></i></a>
                 </div>
                 <div class="hit-sizeFilter">
                     <p>Sizes available: <span>${hit.sizeFilter}</span></p>
@@ -249,7 +249,7 @@ export function relatedResultModal() {
                     <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
                     <div class="result-img-overlay"></div>
                     <div class="hit-addToCart">
-                      <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-cart-arrow-down"></i></a>
+                      <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-ellipsis-h"></i></a>
                     </div>
                     <div class="hit-sizeFilter">
                         <p>Sizes available: <span>${hit.sizeFilter}</span></p>

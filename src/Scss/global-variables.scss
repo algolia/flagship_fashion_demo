@@ -1,0 +1,123 @@
+// VARIABLES
+$main-color: hsl(0, 0%, 0%);
+$second-color: white;
+$third-color: linear-gradient(163deg, rgba(0, 0, 0, 1) 52%, rgba(255, 255, 255, 1) 100%);
+$fourth-color: #f5ecf1;
+
+$main-font: "Tropiline";
+$second-font: "Tropiline-Light";
+
+// @import "../../components/Carousels/carousel.scss";
+
+// font
+// @font-face {
+//     font-family: "Tropiline";
+//     src: url("Tropiline-Bold.woff2") format("woff2"), url("Tropiline-Bold.woff") format("woff"),
+//         url("Tropiline-Bold.ttf") format("truetype");
+//     src: local("Tropiline"), local("Tropiline"), url("Tropiline-Bold.woff2") format("woff2");
+//     font-weight: bold;
+//     font-style: normal;
+//     font-display: swap;
+// }
+
+// @font-face {
+//     font-family: "Tropiline";
+//     src: url("Tropiline-LightItalic.woff2") format("woff2"), url("Tropiline-LightItalic.woff") format("woff"),
+//         url("Tropiline-LightItalic.ttf") format("truetype");
+
+//     font-weight: 300;
+//     font-style: italic;
+//     font-display: swap;
+// }
+
+// @font-face {
+//     font-family: "Tropiline";
+//     src: url("Tropiline-SemiBold.woff2") format("woff2"), url("Tropiline-SemiBold.woff") format("woff"),
+//         url("Tropiline-SemiBold.ttf") format("truetype");
+//     font-weight: 600;
+//     font-style: normal;
+//     font-display: swap;
+// }
+
+// @font-face {
+//     font-family: "Tropiline";
+//     src: url("Tropiline-Italic.woff2") format("woff2"), url("Tropiline-Italic.woff") format("woff"),
+//         url("Tropiline-Italic.ttf") format("truetype");
+//     font-weight: normal;
+//     font-style: italic;
+//     font-display: swap;
+// }
+
+// @font-face {
+//     font-family: "Tropiline";
+//     src: url("Tropiline-ExtraBold.woff2") format("woff2"), url("Tropiline-ExtraBold.woff") format("woff"),
+//         url("Tropiline-ExtraBold.ttf") format("truetype");
+
+//     font-weight: bold;
+//     font-style: normal;
+//     font-display: swap;
+// }
+
+// @font-face {
+//     font-family: "Tropiline";
+//     src: url("Tropiline-BoldItalic.woff2") format("woff2"), url("Tropiline-BoldItalic.woff") format("woff"),
+//         url("Tropiline-BoldItalic.ttf") format("truetype");
+//     font-weight: bold;
+//     font-style: italic;
+//     font-display: swap;
+// }
+
+// @font-face {
+//     font-family: "Tropiline";
+//     src: url("Tropiline-SemiBoldItalic.woff2") format("woff2"), url("Tropiline-SemiBoldItalic.woff") format("woff"),
+//         url("Tropiline-SemiBoldItalic.ttf") format("truetype");
+//     font-weight: 600;
+//     font-style: italic;
+//     font-display: swap;
+// }
+
+// @font-face {
+//     font-family: "Tropiline";
+//     src: url("Tropiline-ExtraBoldItalic.woff2") format("woff2"), url("Tropiline-ExtraBoldItalic.woff") format("woff"),
+//         url("Tropiline-ExtraBoldItalic.ttf") format("truetype");
+//     font-weight: bold;
+//     font-style: italic;
+//     font-display: swap;
+// }
+
+// @font-face {
+//     font-family: "Tropiline";
+//     src: url("Tropiline-Regular.woff2") format("woff2"), url("Tropiline-Regular.woff") format("woff"),
+//         url("Tropiline-Regular.ttf") format("truetype");
+//     font-weight: normal;
+//     font-style: normal;
+//     font-display: swap;
+// }
+
+// @font-face {
+//     font-family: "Tropiline";
+//     src: url("Tropiline-Light.woff2") format("woff2"), url("Tropiline-Light.woff") format("woff"),
+//         url("Tropiline-Light.ttf") format("truetype");
+//     src: local("Tropiline-light"), local("Tropiline-light"), url("Tropiline-Light.woff2") format("woff2");
+//     font-weight: 300;
+//     font-style: normal;
+//     font-display: swap;
+// }
+
+// @font-face {
+//     font-family: "Tropiline";
+//     src: url("Tropiline-BlackItalic.woff2") format("woff2"), url("Tropiline-BlackItalic.woff") format("woff"),
+//         url("Tropiline-BlackItalic.ttf") format("truetype");
+//     font-weight: 900;
+//     font-style: italic;
+//     font-display: swap;
+// }
+
+// @font-face {
+//     font-family: "Tropiline";
+//     src: url("Tropiline-Black.woff2") format("woff2"), url("Tropiline-Black.woff") format("woff"),
+//         url("Tropiline-Black.ttf") format("truetype");
+//     font-weight: 900;
+//     font-style: normal;
+//     font-display: swap;
+// }

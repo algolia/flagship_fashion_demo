@@ -1,4 +1,4 @@
-import { carouselGlideJS } from "./glide";
+import { animationOnload } from "./animationOnLoad";
 import { GetDataForCarousel } from "./getCarousel";
 import { carouselDetailed } from "./displayCarouselDetail";
 import { burgerMenu } from "./burgerMenu";
@@ -7,12 +7,12 @@ import { cardAnimationHome } from "./cardAnimationHome";
 import { modalProduct } from "./modalProduct";
 import { autocompleteHome } from "./autocomplete";
 
-carouselGlideJS()
+animationOnload()
 GetDataForCarousel()
 carouselDetailed()
 burgerMenu()
 togglePersona()
-modalProduct()
+// modalProduct()
 autocompleteHome()
 
 
