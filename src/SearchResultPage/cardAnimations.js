@@ -68,14 +68,12 @@ export function cardAnimation() {
 
         hidebtn.addEventListener("click", (e) => {
             if (leftPanel.classList.contains('fadeOutFilter')) {
-                console.log('2')
                 leftPanel.classList.add('fadeFilters')
                 leftPanel.classList.remove('fadeOutFilter')
                 leftPanel.style.display = 'flex'
                 grid.classList.remove('fullScreenGrid')
                 hidebtn.innerText = "HIDE"
             } else if (leftPanel.classList.contains('fadeFilters')) {
-                console.log('1')
                 leftPanel.classList.remove('fadeFilters')
                 leftPanel.classList.add('fadeOutFilter')
                 leftPanel.style.display = 'none'
@@ -83,7 +81,6 @@ export function cardAnimation() {
                 hidebtn.innerText = "SHOW"
             }
             if (!leftPanel.classList.contains('fadeOutFilter') && !leftPanel.classList.contains('fadeFilters')) {
-                console.log('3')
                 leftPanel.classList.add('fadeOutFilter')
                 leftPanel.style.display = 'none'
                 grid.classList.add('fullScreenGrid')
