@@ -114,7 +114,7 @@ export function modalProduct() {
   function displayProduct(product) {
     let modalProduct = document.querySelector('.modalProduct');
     modalProduct.innerHTML = `
-        <i class="fas fa-heart heart"></i>
+        <i class="fas fa-heart heart" id="wishlist-button"></i>
         <div class="productModal-global-Wrapper" id="product-modal">
             <div class="productModal-infos-Wrapper">
                 <div class="productModal-image-wrapper">
@@ -166,6 +166,35 @@ export function modalProduct() {
                 </div>
             </div>
         `;
+
+    let btnAddtoWishlist = document.querySelector('#wishlist-button');
+    console.log(btnAddtoWishlist);
+
+    btnAddtoWishlist.addEventListener('click', (e) => {
+      console.log('clicked');
+      e.preventDefault();
+
+      index
+        .search('', {
+          clickAnalytics: true,
+        })
+        .then(({ hits }) => {
+          aa('clickedObjectIDs', {
+            index: 'gstar_demo_test',
+            eventName: 'Product Added to Wishlist',
+            objectIDs: [e.target.dataset.id],
+          });
+
+          let popUpWrapper = document.querySelector('.popUp-wrapper');
+          let div = document.createElement('div');
+          div.classList.add('popUpEventWishlist');
+          div.innerHTML = `Add to wishlist, on ${product.name}`;
+          popUpWrapper.appendChild(div);
+          div.addEventListener('animationend', () => {
+            div.remove();
+          });
+        });
+    });
 
     let btnAddtoCart = document.querySelector('.productModal-btn');
     btnAddtoCart.addEventListener('click', (e) => {

@@ -469,6 +469,20 @@ li {
   box-sizing: border-box;
 }
 
+.popUpEventWishlist {
+  position: fixed;
+  top: calc(100% - 9rem);
+  left: calc(0vw + 2rem);
+  background-color: rgba(155, 89, 182, 1);
+  color: white;
+  padding: 1rem;
+  border-radius: 5px;
+  z-index: 500;
+  animation: disapear 6s forwards;
+  font-family: "Roboto";
+  box-sizing: border-box;
+}
+
 .fadeInSize {
   animation: fadeInSize 0.5s forwards;
 }
