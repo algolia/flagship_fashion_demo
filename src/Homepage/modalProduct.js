@@ -168,10 +168,7 @@ export function modalProduct() {
         `;
 
     let btnAddtoWishlist = document.querySelector('#wishlist-button');
-    console.log(btnAddtoWishlist);
-
     btnAddtoWishlist.addEventListener('click', (e) => {
-      console.log('clicked');
       e.preventDefault();
 
       index
