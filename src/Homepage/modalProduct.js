@@ -62,17 +62,11 @@ export function modalProduct() {
     }
   };
 
-
-
-
-  const personaChange = document.querySelector('.user-token-selector')
+  const personaChange = document.querySelector('.user-token-selector');
   personaChange.addEventListener('change', (e) => {
-    setTimeout(getObjectID, 1000)
-    e.stopPropagation()
-  })
-
-
-
+    setTimeout(getObjectID, 1000);
+    e.stopPropagation();
+  });
 
   const getObjectID = () => {
     let cardProduct = document.querySelectorAll('.carousel-list-container li');
@@ -85,17 +79,15 @@ export function modalProduct() {
             displayProduct(object);
             if (object.objectID) {
               // relatedItems(object);
-              recommandedItems(object)
-              boughtTogether(object)
+              recommandedItems(object);
+              boughtTogether(object);
             }
           });
           showModal();
         });
-
       });
     }
-  }
-
+  };
 
   function showModal() {
     let modalWrapper = document.querySelector('.modalProduct-wrapper');
@@ -126,8 +118,9 @@ export function modalProduct() {
         <div class="productModal-global-Wrapper" id="product-modal">
             <div class="productModal-infos-Wrapper">
                 <div class="productModal-image-wrapper">
-                    <img src="${product.image_link}" align="left" alt="${product.name
-      }" class="productModal-hit-img" />
+                    <img src="${product.image_link}" align="left" alt="${
+      product.name
+    }" class="productModal-hit-img" />
                     <div class="productModal-img-overlay"></div>
                 </div>
                 <div class="productModal-info-wrapper">
@@ -140,27 +133,33 @@ export function modalProduct() {
                         ${product.name}
                         </div>
                         <div class="productModal-hit-color">
-                            <div class="productModal-hit-color-text">${product.hexColorCode
-        ? product.hexColorCode.split('//')[0]
-        : ''
-      }</div>
-                            <div style="background: ${product.hexColorCode
-        ? product.hexColorCode.split('//')[1]
-        : ''
-      }" class="product-colorsHex"></div>
+                            <div class="productModal-hit-color-text">${
+                              product.hexColorCode
+                                ? product.hexColorCode.split('//')[0]
+                                : ''
+                            }</div>
+                            <div style="background: ${
+                              product.hexColorCode
+                                ? product.hexColorCode.split('//')[1]
+                                : ''
+                            }" class="product-colorsHex"></div>
                         </div>
-                        <div class="productModal-hit-description">${product.description
-      }</div>
+                        <div class="productModal-hit-description">${
+                          product.description
+                        }</div>
                         <div class="productModal-hit-rating-price">
-                            <div class="productModal-hit-price">$${product.price
-      }</div>
+                            <div class="productModal-hit-price">$${
+                              product.price
+                            }</div>
                         </div>
                         </div>
 
-                        <div class="productModal-hit-addToCart" data-id=${product.objectID
-      }>
-                            <a href="#"class="productModal-btn" data-id=${product.objectID
-      }><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
+                        <div class="productModal-hit-addToCart" data-id=${
+                          product.objectID
+                        }>
+                            <a href="#"class="productModal-btn" data-id=${
+                              product.objectID
+                            }><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
 
                         </div>
                     </div>
@@ -197,123 +196,125 @@ export function modalProduct() {
 
   function boughtTogether(object) {
     if (object.objectID) {
-      const indexBT = searchClient.initIndex('ai_recommend_bought-together_gstar_demo_test');
-      let objectID = object.objectID
-      indexBT.getObject(objectID).then((item) => {
-        let boughtTogetherItemsArray = []
-        item.recommendations.forEach(i => {
-          boughtTogetherItemsArray.push(i.objectID)
-        })
-        index.getObjects(boughtTogetherItemsArray).then(({ results }) => {
+      const indexBT = searchClient.initIndex(
+        'ai_recommend_bought-together_gstar_demo_test'
+      );
+      let objectID = object.objectID;
+      indexBT
+        .getObject(objectID)
+        .then((item) => {
+          let boughtTogetherItemsArray = [];
+          item.recommendations.forEach((i) => {
+            boughtTogetherItemsArray.push(i.objectID);
+          });
+          index.getObjects(boughtTogetherItemsArray).then(({ results }) => {
+            let container = document.querySelector(
+              '.productModal-global-Wrapper'
+            );
+            let ul = document.createElement('ul');
+            let title = document.createElement('h3');
+            let div = document.createElement('div');
 
+            div.classList.add('list-wrapper');
+            title.innerHTML = 'Often bought together';
+            ul.classList.add('boughtTogetherItems');
 
-          let container = document.querySelector('.productModal-global-Wrapper');
-          let ul = document.createElement('ul');
-          let title = document.createElement('h3');
-          let div = document.createElement('div');
+            div.appendChild(title);
+            div.appendChild(ul);
+            container.appendChild(div);
 
-          div.classList.add('list-wrapper')
-          title.innerHTML = 'Often bought together'
-          ul.classList.add('boughtTogetherItems');
-
-          div.appendChild(title)
-          div.appendChild(ul);
-          container.appendChild(div)
-
-          document.querySelector('.boughtTogetherItems').innerHTML = `
+            document.querySelector('.boughtTogetherItems').innerHTML = `
           ${results
-              .splice(0, 8)
-              .map((hit) => {
-                return `                   
+            .splice(0, 8)
+            .map((hit) => {
+              return `                   
             <li class="related-ais-Hits-item related-carousel-list-item">   
               <div class="related-image-wrapper">
-                <img src="${hit.image_link}" align="left" alt="${hit.name
-                  }" class="related-result-img" />
+                <img src="${hit.image_link}" align="left" alt="${
+                hit.name
+              }" class="related-result-img" />
                 <div class="related-result-img-overlay"></div>
               </div>
               <div class="related-hit-names">
                   <div class="related-hit-infos">
                     <div class="related-hit-name">${hit.name}</div>
-                    <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-                  }" class="related-product-colorsHex"></div>
+                    <div style="background: ${
+                      hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
+                    }" class="related-product-colorsHex"></div>
                   </div>
                   </div>
                   <div class="related-hit-price">$${hit.price}</div>
             </li>
                               `;
-
-              })
-              .join('')}`;
-
+            })
+            .join('')}`;
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-
-      }).catch(err => {
-        console.log(err)
-      });
-
     }
   }
 
   function recommandedItems(object) {
-
     if (object.objectID) {
-
-      let objectID = object.objectID
-      const indexRecommand = searchClient.initIndex('ai_recommend_related-products_gstar_demo_test');
+      let objectID = object.objectID;
+      const indexRecommand = searchClient.initIndex(
+        'ai_recommend_related-products_gstar_demo_test'
+      );
 
       indexRecommand.getObject(objectID).then((item) => {
-        let recommandItems = []
-        item.recommendations.forEach(i => {
-          recommandItems.push(i.objectID)
-        })
+        let recommandItems = [];
+        item.recommendations.forEach((i) => {
+          recommandItems.push(i.objectID);
+        });
         index.getObjects(recommandItems).then(({ results }) => {
-
-
-
-          let container = document.querySelector('.productModal-global-Wrapper');
+          let container = document.querySelector(
+            '.productModal-global-Wrapper'
+          );
           let ul = document.createElement('ul');
-          let title = document.createElement('h3')
-          let div = document.createElement('div')
+          let title = document.createElement('h3');
+          let div = document.createElement('div');
 
-          div.classList.add('list-wrapper')
-          title.innerHTML = 'Recommanded for you'
+          div.classList.add('list-wrapper');
+          title.innerHTML = 'Recommended for you';
           ul.classList.add('recommendedItems');
 
-          div.appendChild(title)
+          div.appendChild(title);
           div.appendChild(ul);
-          container.appendChild(div)
+          container.appendChild(div);
 
-
-          document.querySelector('.productModal-global-Wrapper .recommendedItems').innerHTML = `
+          document.querySelector(
+            '.productModal-global-Wrapper .recommendedItems'
+          ).innerHTML = `
         ${results
-              .splice(0, 8)
-              .map((hit) => {
-                return `                   
+          .splice(0, 8)
+          .map((hit) => {
+            return `                   
               <li class="related-ais-Hits-item related-carousel-list-item">   
                 <div class="related-image-wrapper">
-                  <img src="${hit.image_link}" align="left" alt="${hit.name
-                  }" class="related-result-img" />
+                  <img src="${hit.image_link}" align="left" alt="${
+              hit.name
+            }" class="related-result-img" />
                   <div class="related-result-img-overlay"></div>
                 </div>
                 <div class="related-hit-names">
                     <div class="related-hit-infos">
                       <div class="related-hit-name">${hit.name}</div>
-                      <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-                  }" class="related-product-colorsHex"></div>
+                      <div style="background: ${
+                        hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
+                      }" class="related-product-colorsHex"></div>
                     </div>
                     </div>
                     <div class="related-hit-price">$${hit.price}</div>
               </li>
                                 `;
-
-              })
-              .join('')}`;
-
+          })
+          .join('')}`;
         });
-      })
+      });
     }
   }
-
 
   cardProductSecondCarousel.forEach((product) => {
     // detailProduct(product)
