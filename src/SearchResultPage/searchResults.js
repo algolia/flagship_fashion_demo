@@ -36,7 +36,6 @@ import aa from 'search-insights';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 import { html } from 'htm/preact';
 
-
 export function searchResults() {
   const searchClient = algoliasearch(
     'HYDY1KWTWB',
@@ -127,8 +126,9 @@ export function searchResults() {
           .filter((item, idx) => idx < 5)
           .map(
             (category, idx) => ` 
-                        <li class="" id="${idx}" style="${isRefined(category)}">${category.name
-              }</li>
+                        <li class="" id="${idx}" style="${isRefined(
+              category
+            )}">${category.name}</li>
                     `
           )
           .join('');
@@ -173,9 +173,9 @@ export function searchResults() {
       widgetParams.container.innerHTML = `
             <div class="banner-wrapper">
               ${items
-          .map(
-            (item) =>
-              `<a href="${item.link}">
+                .map(
+                  (item) =>
+                    `<a href="${item.link}">
                             <div class="banner-overlay"></div>
                             <div class="banner-title--wrapper">
                                 <h3>${item.title}</h3>
@@ -183,8 +183,8 @@ export function searchResults() {
                             </div>
                             <img src="${item.banner}">
                         </a>`
-          )
-          .join('')}
+                )
+                .join('')}
             </div>
           `;
     } else {
@@ -200,17 +200,18 @@ export function searchResults() {
 
   const renderListItem = (item) => `
       ${item.refinements
-      .map(
-        (refinement) => `
-                <li>${refinement.attribute === 'hexColorCode'
-            ? refinement.value.split('//')[0]
-            : refinement.value
-          } (${refinement.count != undefined ? refinement.count : '$'})
+        .map(
+          (refinement) => `
+                <li>${
+                  refinement.attribute === 'hexColorCode'
+                    ? refinement.value.split('//')[0]
+                    : refinement.value
+                } (${refinement.count != undefined ? refinement.count : '$'})
             <button ${createDataAttribtues(
-            refinement
-          )} class="btnCloseRefinements">X</button></li>`
-      )
-      .join('')}
+              refinement
+            )} class="btnCloseRefinements">X</button></li>`
+        )
+        .join('')}
 `;
 
   const renderCurrentRefinements = (renderOptions, isFirstRender) => {
@@ -269,6 +270,9 @@ export function searchResults() {
     // Use indicesRef to track which index (or indices) to query using autocomplete
     const indicesRef = { current: [] };
 
+    const urlParams = new URLSearchParams(decodeURI(window.location.search));
+    let urlQuery = urlParams.get('gstar_demo_test[query]');
+
     const renderAutocomplete = (renderOptions, isFirstRender) => {
       const { indices, refine } = renderOptions;
 
@@ -281,6 +285,11 @@ export function searchResults() {
           // debug: true,
           openOnFocus: true,
           plugins: [recentSearchesPlugin, querySuggestionsPlugin],
+
+          initialState: {
+            // This uses the `search` query parameter as the initial query
+            query: urlQuery,
+          },
 
           getSources({ query }) {
             if (!query) {
@@ -383,7 +392,6 @@ export function searchResults() {
             } else {
               refine(state.query);
               displayResultOrNoResult(stateCollection);
-
             }
           },
         });
@@ -588,8 +596,6 @@ export function searchResults() {
       return `<p>$${hit.price}</p>`;
     }
   }
-
-
 
   function displayEcoBadge(hit) {
     if (hit.badges) {
@@ -856,9 +862,9 @@ export function searchResults() {
 
     document.querySelector('#hits').innerHTML = `
         ${hits
-        .map((hit) => {
-          if (hit.injected) {
-            return ` <li class="carousel-list-item">
+          .map((hit) => {
+            if (hit.injected) {
+              return ` <li class="carousel-list-item">
                           <div class="image-wrapper">
                               <img class="injectImg" src="${hit.image}" alt="">
                           </div>
@@ -867,36 +873,41 @@ export function searchResults() {
                           </div>
   
                     </li>`;
-          } else {
-            return `<li
+            } else {
+              return `<li
                         
-             class="carousel-list-item carousel-list-item-modal-call" data-id="${hit.objectID
-              }">
+             class="carousel-list-item carousel-list-item-modal-call" data-id="${
+               hit.objectID
+             }">
                             <div class="badgeWrapper">
                                     <div>${displayEcoBadge(hit)}</div>
                                     <div>${displayOffBadge(hit)}</div>
                                 </div>
                             
-                                <div class="image-wrapper" data-id="${hit.objectID
-              }" ${bindEvent(
+                                <div class="image-wrapper" data-id="${
+                                  hit.objectID
+                                }" ${bindEvent(
                 'click',
                 hit,
                 'Product Clicked'
               )}>
-                                    <img src="${hit.image_link
-              }" align="left" alt="${hit.name
+                                    <img src="${
+                                      hit.image_link
+                                    }" align="left" alt="${
+                hit.name
               }" class="result-img" data-id="${hit.objectID}"  />
                                     <div class="result-img-overlay"></div>
                                     <div class="hit-addToCart">
                                         <a ${bindEvent(
-                'click',
-                hit,
-                'Product Clicked'
-              )}><i class="fas fa-ellipsis-h"></i></a>
+                                          'click',
+                                          hit,
+                                          'Product Clicked'
+                                        )}><i class="fas fa-ellipsis-h"></i></a>
                                     </div>
                                     <div class="hit-sizeFilter">
-                                        <p>Sizes available: <span>${hit.sizeFilter.join(', ')
-              }</span></p>
+                                        <p>Sizes available: <span>${hit.sizeFilter.join(
+                                          ', '
+                                        )}</span></p>
                                     </div>
                                 </div>
                                
@@ -905,18 +916,20 @@ export function searchResults() {
                                         <div>${hit.name}</div>
             
                                         <div class="colorWrapper">
-                                                <div>${hit.hexColorCode
-                ? hit.hexColorCode.split(
-                  '//'
-                )[0]
-                : ''
-              }</div>
-                                                <div style="background: ${hit.hexColorCode
-                ? hit.hexColorCode.split(
-                  '//'
-                )[1]
-                : ''
-              }" class="hit-colorsHex"></div>
+                                                <div>${
+                                                  hit.hexColorCode
+                                                    ? hit.hexColorCode.split(
+                                                        '//'
+                                                      )[0]
+                                                    : ''
+                                                }</div>
+                                                <div style="background: ${
+                                                  hit.hexColorCode
+                                                    ? hit.hexColorCode.split(
+                                                        '//'
+                                                      )[1]
+                                                    : ''
+                                                }" class="hit-colorsHex"></div>
                                             </div>
             
                                         </div>
@@ -927,9 +940,9 @@ export function searchResults() {
                                 </div>
                            
                         </li>`;
-          }
-        })
-        .join('')}
+            }
+          })
+          .join('')}
     `;
   };
 
@@ -966,7 +979,7 @@ export function searchResults() {
         showMoreLimit: 10,
       }),
       {
-        init(opts) { },
+        init(opts) {},
       },
       {
         render(options) {
@@ -1029,8 +1042,8 @@ export function searchResults() {
         container.querySelector(
           '.ais-SmartSortBanner-description'
         ).textContent = showingRelevantResults
-            ? 'We removed some search results to show you the most relevants ones.'
-            : 'Currently showing all results.';
+          ? 'We removed some search results to show you the most relevants ones.'
+          : 'Currently showing all results.';
       },
     },
     virtualSearchBox({ container: '#virtualSearch' }),
