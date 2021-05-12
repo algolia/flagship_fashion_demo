@@ -182,6 +182,7 @@ export function modalProduct() {
             objectIDs: [e.target.dataset.id],
           });
 
+          btnAddtoWishlist.classList.add('redWishlistButton');
           let popUpWrapper = document.querySelector('.popUp-wrapper');
           let div = document.createElement('div');
           div.classList.add('popUpEventWishlist');
