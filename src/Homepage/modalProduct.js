@@ -167,7 +167,9 @@ export function modalProduct() {
             </div>
         `;
 
+    let btnAddtoCart = document.querySelector('.productModal-btn');
     let btnAddtoWishlist = document.querySelector('#wishlist-button');
+
     btnAddtoWishlist.addEventListener('click', (e) => {
       e.preventDefault();
 
@@ -179,7 +181,7 @@ export function modalProduct() {
           aa('clickedObjectIDs', {
             index: 'gstar_demo_test',
             eventName: 'Product Added to Wishlist',
-            objectIDs: [e.target.dataset.id],
+            objectIDs: [btnAddtoCart.dataset.id],
           });
 
           btnAddtoWishlist.classList.add('redWishlistButton');
@@ -194,7 +196,6 @@ export function modalProduct() {
         });
     });
 
-    let btnAddtoCart = document.querySelector('.productModal-btn');
     btnAddtoCart.addEventListener('click', (e) => {
       e.preventDefault();
 
