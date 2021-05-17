@@ -89,6 +89,8 @@ When Goes public use Environment Variables
 - `next` is pushed to master on a continuous basis, defined by each sprints output
 
 
+<h2 style="font-family='Helvetica'; font-size=15px; font-weight=bold; color=grey;">⭐️ Dependancies</h2>
+
 
 <h2 style="font-family='Helvetica'; font-size=15px; font-weight=bold; color=grey; margin-top=2rem;">⭐️ Algolia s features implemented & docs</h2>
 

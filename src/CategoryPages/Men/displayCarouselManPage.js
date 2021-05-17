@@ -1,6 +1,12 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
-import { configure, pagination, hits, stats, searchBox } from 'instantsearch.js/es/widgets'
+import {
+  configure,
+  pagination,
+  hits,
+  stats,
+  searchBox,
+} from 'instantsearch.js/es/widgets';
 import { connectHits } from 'instantsearch.js/es/connectors';
 
 export const carousel = connectHits(function renderCarousel(
@@ -11,17 +17,17 @@ export const carousel = connectHits(function renderCarousel(
     const section = document.createElement('section');
     section.classList.add('section-carousel-winter');
     container.appendChild(section);
-    const divSection = document.createElement('div')
-    divSection.classList.add('title-carousel-winter')
-    section.appendChild(divSection)
-    const titleSection = document.createElement('h2')
-    titleSection.innerText = title
-    divSection.appendChild(titleSection)
-    const btnSection = document.createElement('a')
-    btnSection.classList.add('btn-carousel-winter')
-    btnSection.innerHTML = "See All"
-    btnSection.href = "./index.html"
-    divSection.appendChild(btnSection)
+    const divSection = document.createElement('div');
+    divSection.classList.add('title-carousel-winter');
+    section.appendChild(divSection);
+    const titleSection = document.createElement('h2');
+    titleSection.innerText = title;
+    divSection.appendChild(titleSection);
+    const btnSection = document.createElement('a');
+    btnSection.classList.add('btn-carousel-winter');
+    btnSection.innerHTML = 'See All';
+    btnSection.href = './index.html';
+    divSection.appendChild(btnSection);
     const ul = document.createElement('ul');
     ul.classList.add('carousel-list-container');
     section.appendChild(ul);
@@ -29,10 +35,12 @@ export const carousel = connectHits(function renderCarousel(
 
   container.querySelector('ul').innerHTML = hits
     .map(
-      hit => `
+      (hit) => `
         <li>
           <div class="image-wrapper">
-            <img src="${hit.image_link}" alt="${hit.name}">
+            <img
+            src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${hit.objectID}.jpg"
+             alt="${hit.name}">
           </div>
           <div class="info">
             <h3 class="title">${hit.name}</h3>
@@ -43,10 +51,11 @@ export const carousel = connectHits(function renderCarousel(
     .join('');
 });
 
-
 export function renderCarouselAllProduct() {
-
-  const searchClient = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+  const searchClient = algoliasearch(
+    'HYDY1KWTWB',
+    '28cf6d38411215e2eef188e635216508'
+  );
 
   const search = instantsearch({
     indexName: 'gstar_demo_test',
@@ -61,7 +70,7 @@ export function renderCarouselAllProduct() {
     configure({
       hitsPerPage: 15,
       ruleContexts: ['man_page'],
-      filters: '"hierarchical_categories.lvl0":"men"'
+      filters: '"hierarchical_categories.lvl0":"men"',
     }),
     stats({
       container: '#stats-searchResultMan',
@@ -72,7 +81,9 @@ export function renderCarouselAllProduct() {
         item: `
  
       <div class="image-wrapper">
-          <img src="{{image_link}}" align="left" alt="{{name}}" class="result-img" />
+          <img
+          src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${objectID}.jpg"
+          align="left" alt="{{name}}" class="result-img" />
       </div>
       <div class="hit-name">
           <div class="hit-infos">
@@ -92,5 +103,5 @@ export function renderCarouselAllProduct() {
     }),
   ]);
 
-  search.start()
-};
+  search.start();
+}
