@@ -123,9 +123,13 @@ export function modalProductSearchResult() {
         <div class="productModal-global-Wrapper" id="product-modal">
             <div class="productModal-infos-Wrapper">
                 <div class="productModal-image-wrapper">
-                    <img src="${product.image_link}" align="left" alt="${
-      product.name
-    }" class="productModal-hit-img" />
+                    <img
+                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
+                      hit.objectID
+                    }.jpg"
+                    align="left" alt="${
+                      product.name
+                    }" class="productModal-hit-img" />
                     <div class="productModal-img-overlay"></div>
                 </div>
                 <div class="productModal-info-wrapper">
@@ -233,9 +237,11 @@ export function modalProductSearchResult() {
               return `                   
             <li class="related-ais-Hits-item related-carousel-list-item">   
               <div class="related-image-wrapper">
-                <img src="${hit.image_link}" align="left" alt="${
-                hit.name
-              }" class="related-result-img" />
+                <img
+                src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
+                  hit.objectID
+                }.jpg"
+                align="left" alt="${hit.name}" class="related-result-img" />
                 <div class="related-result-img-overlay"></div>
               </div>
               <div class="related-hit-names">
@@ -297,9 +303,11 @@ export function modalProductSearchResult() {
             return `                   
               <li class="related-ais-Hits-item related-carousel-list-item">   
                 <div class="related-image-wrapper">
-                  <img src="${hit.image_link}" align="left" alt="${
-              hit.name
-            }" class="related-result-img" />
+                  <img
+                  src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
+                    hit.objectID
+                  }.jpg"
+                  align="left" alt="${hit.name}" class="related-result-img" />
                   <div class="related-result-img-overlay"></div>
                 </div>
                 <div class="related-hit-names">

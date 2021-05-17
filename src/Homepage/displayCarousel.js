@@ -113,20 +113,23 @@ export const carousel = connectHits(function renderCarousel(
         <li data-id="${hit.objectID}">
         <i class="fas fa-heart heart"></i>
           <div class="image-wrapper" ${bindEvent(
-        'click',
-        hit,
-        'Product Clicked'
-      )} data-id="${hit.objectID}">
-            <img src="${hit.image_link}" alt="${hit.name}" data-id="${hit.objectID
-        }">
+            'click',
+            hit,
+            'Product Clicked'
+          )} data-id="${hit.objectID}">
+            <img
+            src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
+              hit.objectID
+            }.jpg"
+            alt="${hit.name}" data-id="${hit.objectID}">
             <div class="img-overlay" data-id="${hit.objectID}"></div>
           </div>
           <div class="hit-addToCart">
             <a ${bindEvent(
-          'click',
-          hit,
-          'Product Clicked'
-        )}><i class="fas fa-ellipsis-h"></i></a>
+              'click',
+              hit,
+              'Product Clicked'
+            )}><i class="fas fa-ellipsis-h"></i></a>
           </div>
           <div class="info">
             <h3 class="title">${hit.name}</h3>

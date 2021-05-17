@@ -891,11 +891,15 @@ export function searchResults() {
                 hit,
                 'Product Clicked'
               )}>
-                                    <img src="${
-                                      hit.image_link
-                                    }" align="left" alt="${
-                hit.name
-              }" class="result-img" data-id="${hit.objectID}"  />
+                                    <img 
+                                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
+                                      hit.objectID
+                                    }.jpg"
+                                    align="left" alt="${
+                                      hit.name
+                                    }" class="result-img" data-id="${
+                hit.objectID
+              }"  />
                                     <div class="result-img-overlay"></div>
                                     <div class="hit-addToCart">
                                         <a ${bindEvent(

@@ -9,7 +9,6 @@ import { connectHits } from 'instantsearch.js/es/connectors';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 import aa from 'search-insights';
 
-
 export function relatedResultModal() {
   const searchClient = algoliasearch(
     'HYDY1KWTWB',
@@ -27,14 +26,13 @@ export function relatedResultModal() {
     searchClient,
   });
 
-
   // CONFIG TO SEND INSIGHT EVENT TO THE DASHBOARD FOR PERSONALISATION
   const insightsMiddleware = createInsightsMiddleware({
     insightsClient: aa,
   });
 
   search.use(insightsMiddleware);
-  searchIndexSecond.use(insightsMiddleware)
+  searchIndexSecond.use(insightsMiddleware);
 
   const findInsightsTarget = (startElement, endElement, validator) => {
     let element = startElement;
@@ -47,7 +45,7 @@ export function relatedResultModal() {
     return element;
   };
 
-  const parseInsightsEvent = element => {
+  const parseInsightsEvent = (element) => {
     const serializedPayload = element.getAttribute('data-insights-event');
 
     if (typeof serializedPayload !== 'string') {
@@ -65,11 +63,8 @@ export function relatedResultModal() {
     }
   };
 
-
-
-
   let searchInput = document.querySelector('.autocomplete input');
-  let searchForm = document.querySelector('.autocomplete .aa-Form')
+  let searchForm = document.querySelector('.autocomplete .aa-Form');
   let timer,
     timeoutVal = 500;
 
@@ -88,7 +83,7 @@ export function relatedResultModal() {
 
   // Listen to the Dom and change the content of the relatedsearch carousel with the search
   function domListening() {
-    const observer = new MutationObserver(mutation => {
+    const observer = new MutationObserver((mutation) => {
       if (mutation) {
         getObjectID();
       }
@@ -97,16 +92,16 @@ export function relatedResultModal() {
       childList: true,
       subtree: true,
     });
-    observer.disconnect()
+    observer.disconnect();
   }
 
   const getObjectID = () => {
     let productSearchResult = document.querySelectorAll('.image-wrapper');
-    productSearchResult.forEach(item => {
+    productSearchResult.forEach((item) => {
       if (item.dataset.id !== undefined) {
-        index.getObject(item.dataset.id).then(object => {
-          item.addEventListener('click', e => {
-            let img = item.querySelector('img')
+        index.getObject(item.dataset.id).then((object) => {
+          item.addEventListener('click', (e) => {
+            let img = item.querySelector('img');
             if (e.target === item || e.target === img) {
               e.preventDefault();
               displayrelateditems(object);
@@ -114,7 +109,6 @@ export function relatedResultModal() {
             } else {
               e.preventDefault();
             }
-
           });
         });
       }
@@ -127,19 +121,21 @@ export function relatedResultModal() {
     let modalWrapper = document.querySelector('.modal-relatedItems--wrapper');
     let closeModal = document.querySelector('.modal-relatedItems--closeBtn');
     let fadeInModal = document.querySelector('.modal-relatedItems');
-    let ulFirst = document.querySelectorAll('.modal-relatedItems ul')
-
+    let ulFirst = document.querySelectorAll('.modal-relatedItems ul');
 
     modalWrapper.addEventListener('click', (e) => {
-      if (e.target !== fadeInModal && !fadeInModal.contains(e.target) || e.target === closeModal) {
+      if (
+        (e.target !== fadeInModal && !fadeInModal.contains(e.target)) ||
+        e.target === closeModal
+      ) {
         modalWrapper.classList.remove('displayBlock');
         fadeInModal.classList.remove('fadeInModal');
         modalWrapper.classList.add('fadeOutModal');
-        ulFirst.forEach(i => {
-          i.remove()
-        })
+        ulFirst.forEach((i) => {
+          i.remove();
+        });
       }
-    })
+    });
 
     if (!modalWrapper.classList.contains('displayBlock')) {
       modalWrapper.classList.add('displayBlock');
@@ -150,7 +146,6 @@ export function relatedResultModal() {
 
   // Display the related Search carousel according to the product chosen by user
   function displayrelateditems(object) {
-
     const renderHits = (renderOptions, isFirstRender) => {
       const {
         hits,
@@ -159,67 +154,81 @@ export function relatedResultModal() {
         instantSearchInstance,
       } = renderOptions;
 
-      const container = document.querySelector('.modal-relatedItems')
+      const container = document.querySelector('.modal-relatedItems');
       const firstCarousel = document.querySelector('#carousel-relatedItems');
-      const secondCarousel = document.querySelector('#carousel-relatedItemsSecond');
-
-
+      const secondCarousel = document.querySelector(
+        '#carousel-relatedItemsSecond'
+      );
 
       if (isFirstRender) {
-        let ul = document.createElement('ul')
-        let ulSecondCarousel = document.createElement('ul')
-        ul.classList.add('ais-Hits-list')
-        ulSecondCarousel.classList.add('ais-Hits-list')
-        firstCarousel.appendChild(ul)
-        secondCarousel.appendChild(ulSecondCarousel)
+        let ul = document.createElement('ul');
+        let ulSecondCarousel = document.createElement('ul');
+        ul.classList.add('ais-Hits-list');
+        ulSecondCarousel.classList.add('ais-Hits-list');
+        firstCarousel.appendChild(ul);
+        secondCarousel.appendChild(ulSecondCarousel);
 
-        container.addEventListener('click', event => {
+        container.addEventListener('click', (event) => {
           const targetWithEvent = findInsightsTarget(
             event.target,
             event.currentTarget,
-            element => element.hasAttribute('data-insights-event')
+            (element) => element.hasAttribute('data-insights-event')
           );
 
           if (targetWithEvent) {
             const payload = parseInsightsEvent(targetWithEvent);
             instantSearchInstance.sendEventToInsights(payload);
-            popUpEventClick(payload.payload.eventName, payload.payload.objectIDs[0])
+            popUpEventClick(
+              payload.payload.eventName,
+              payload.payload.objectIDs[0]
+            );
           }
         });
       }
 
       function popUpEventClick(event, object) {
         const index = searchClient.initIndex('gstar_demo_test');
-        let popUpWrapper = document.querySelector('.popUp-wrapper')
-        index.getObject(object).then(object => {
-          let div = document.createElement('div')
+        let popUpWrapper = document.querySelector('.popUp-wrapper');
+        index.getObject(object).then((object) => {
+          let div = document.createElement('div');
 
           if (event === 'Product Clicked') {
-            div.classList.add('popUpEventClick')
-            div.innerHTML = `Open product details, on ${object.name}`
+            div.classList.add('popUpEventClick');
+            div.innerHTML = `Open product details, on ${object.name}`;
           } else if (event === 'Product Added') {
-            div.classList.add('popUpEventCart')
-            div.innerHTML = `Add to cart product, on ${object.name}`
+            div.classList.add('popUpEventCart');
+            div.innerHTML = `Add to cart product, on ${object.name}`;
           }
-          popUpWrapper.appendChild(div)
+          popUpWrapper.appendChild(div);
           div.addEventListener('animationend', () => {
-            div.remove()
+            div.remove();
           });
         });
       }
 
       document.querySelector('#carousel-relatedItems ul').innerHTML = `
       ${hits
-          .map(hit => {
-
-            return `         
+        .map((hit) => {
+          return `         
             
             <li class="ais-Hits-item carousel-list-item">   
-              <div class="image-wrapper" ${bindEvent('click', hit, 'Product Clicked')}>
-                <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+              <div class="image-wrapper" ${bindEvent(
+                'click',
+                hit,
+                'Product Clicked'
+              )}>
+                <img
+                src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
+                  hit.objectID
+                }.jpg"
+                align="left" alt="${hit.name}" class="result-img" />
                 <div class="result-img-overlay"></div>
                 <div class="hit-addToCart">
-                  <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-ellipsis-h"></i></a>
+                  <a ${bindEvent(
+                    'click',
+                    hit,
+                    'Product Added'
+                  )}><i class="fas fa-ellipsis-h"></i></a>
                 </div>
                 <div class="hit-sizeFilter">
                     <p>Sizes available: <span>${hit.sizeFilter}</span></p>
@@ -234,22 +243,32 @@ export function relatedResultModal() {
               </div>
             </li>
                               `;
-
-          })
-          .join('')}`;
+        })
+        .join('')}`;
 
       document.querySelector('#carousel-relatedItemsSecond ul').innerHTML = `
           ${hits
-          .map(hit => {
-
-            return `         
+            .map((hit) => {
+              return `         
                 
                 <li class="ais-Hits-item carousel-list-item">   
-                  <div class="image-wrapper" ${bindEvent('click', hit, 'Product Clicked')}>
-                    <img src="${hit.image_link}" align="left" alt="${hit.name}" class="result-img" />
+                  <div class="image-wrapper" ${bindEvent(
+                    'click',
+                    hit,
+                    'Product Clicked'
+                  )}>
+                    <img
+                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
+                      hit.objectID
+                    }.jpg"
+                    align="left" alt="${hit.name}" class="result-img" />
                     <div class="result-img-overlay"></div>
                     <div class="hit-addToCart">
-                      <a ${bindEvent('click', hit, 'Product Added')}><i class="fas fa-ellipsis-h"></i></a>
+                      <a ${bindEvent(
+                        'click',
+                        hit,
+                        'Product Added'
+                      )}><i class="fas fa-ellipsis-h"></i></a>
                     </div>
                     <div class="hit-sizeFilter">
                         <p>Sizes available: <span>${hit.sizeFilter}</span></p>
@@ -264,18 +283,11 @@ export function relatedResultModal() {
                   </div>
                 </li>
                                   `;
-
-          })
-          .join('')}`;
-
-
+            })
+            .join('')}`;
     };
 
-
-
-    const customHits = connectHits(
-      renderHits
-    );
+    const customHits = connectHits(renderHits);
 
     const referenceHit = {
       objectID: object.objectID,
