@@ -115,6 +115,10 @@ export function searchResults() {
         // Format data to add isRefined
         if (catlist && catlist.length > 0 && catlistIsrefined.length === 0) {
           catlist.map((cat) => {
+            if (cat.toLowerCase() === query.toLowerCase()) {
+              return;
+            }
+
             catlistIsrefined.push({
               name: cat,
               isRefined: false,
@@ -173,9 +177,9 @@ export function searchResults() {
       widgetParams.container.innerHTML = `
             <div class="banner-wrapper">
               ${items
-          .map(
-            (item) =>
-              `<a href="${item.link}">
+                .map(
+                  (item) =>
+                    `<a href="${item.link}">
                             <div class="banner-overlay"></div>
                             <div class="banner-title--wrapper">
                                 <h3>${item.title}</h3>
@@ -183,8 +187,8 @@ export function searchResults() {
                             </div>
                             <img src="${item.banner}">
                         </a>`
-          )
-          .join('')}
+                )
+                .join('')}
             </div>
           `;
     } else {
@@ -200,17 +204,18 @@ export function searchResults() {
 
   const renderListItem = (item) => `
       ${item.refinements
-      .map(
-        (refinement) => `
-                <li>${refinement.attribute === 'hexColorCode'
-            ? refinement.value.split('//')[0]
-            : refinement.value
-          } (${refinement.count != undefined ? refinement.count : '$'})
+        .map(
+          (refinement) => `
+                <li>${
+                  refinement.attribute === 'hexColorCode'
+                    ? refinement.value.split('//')[0]
+                    : refinement.value
+                } (${refinement.count != undefined ? refinement.count : '$'})
             <button ${createDataAttribtues(
-            refinement
-          )} class="btnCloseRefinements">X</button></li>`
-      )
-      .join('')}
+              refinement
+            )} class="btnCloseRefinements">X</button></li>`
+        )
+        .join('')}
 `;
 
   const renderCurrentRefinements = (renderOptions, isFirstRender) => {
@@ -273,12 +278,11 @@ export function searchResults() {
     let urlQuery = urlParams.get('gstar_demo_test[query]');
 
     // REDIRECTION ON JEANS PAGE
-    let jeansbtn = document.querySelector('.jeanbtn')
+    let jeansbtn = document.querySelector('.jeanbtn');
     jeansbtn.addEventListener('click', (e) => {
-      e.preventDefault()
+      e.preventDefault();
       window.location.href = `./searchResults.html?gstar_demo_test%5Bquery%5D=jeans`;
-    })
-
+    });
 
     const renderAutocomplete = (renderOptions, isFirstRender) => {
       const { indices, refine } = renderOptions;
@@ -869,9 +873,9 @@ export function searchResults() {
 
     document.querySelector('#hits').innerHTML = `
         ${hits
-        .map((hit) => {
-          if (hit.injected) {
-            return ` <li class="carousel-list-item">
+          .map((hit) => {
+            if (hit.injected) {
+              return ` <li class="carousel-list-item">
                           <div class="image-wrapper">
                               <img class="injectImg" src="${hit.image}" alt="">
                           </div>
@@ -880,40 +884,53 @@ export function searchResults() {
                           </div>
   
                     </li>`;
-          } else {
-            return `<li
+            } else {
+              return `<li
                         
-             class="carousel-list-item carousel-list-item-modal-call" data-id="${hit.objectID
-              }">
+             class="carousel-list-item carousel-list-item-modal-call" data-id="${
+               hit.objectID
+             }">
                             <div class="badgeWrapper">
                                     <div>${displayEcoBadge(hit)}</div>
                                     <div>${displayOffBadge(hit)}</div>
                                 </div>
                             
-                                <div class="image-wrapper" data-id="${hit.objectID
-              }" ${bindEvent(
+                                <div class="image-wrapper" data-id="${
+                                  hit.objectID
+                                }" ${bindEvent(
                 'click',
                 hit,
                 'Product Clicked'
               )}>
                                     <img 
-                                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${hit.objectID
-              }.jpg"
-                                    align="left" alt="${hit.name
-              }" class="result-img" data-id="${hit.objectID
+                                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
+                                      hit.objectID
+                                    }.jpg"
+                                    align="left" alt="${
+                                      hit.name
+                                    }" class="result-img" data-id="${
+                hit.objectID
               }"  />
                                     <div class="result-img-overlay"></div>
                                     <div class="hit-addToCart">
                                         <a ${bindEvent(
-                'click',
-                hit,
-                'Product Clicked'
-              )}><i class="fas fa-ellipsis-h"></i></a>
+                                          'click',
+                                          hit,
+                                          'Product Clicked'
+                                        )}><i class="fas fa-ellipsis-h"></i></a>
                                     </div>
                                     <div class="hit-sizeFilter">
+<<<<<<< Updated upstream
                                         <p>Sizes available: <span>${hit.sizeFilter.join(
                 ', '
               )}</span></p>
+=======
+                                        <p>Sizes available: <span>${
+                                          hit.sizeFilter
+                                            ? hit.sizeFilter.join(', ')
+                                            : ''
+                                        }</span></p>
+>>>>>>> Stashed changes
                                     </div>
                                 </div>
                                
@@ -922,18 +939,20 @@ export function searchResults() {
                                         <div>${hit.name}</div>
             
                                         <div class="colorWrapper">
-                                                <div>${hit.hexColorCode
-                ? hit.hexColorCode.split(
-                  '//'
-                )[0]
-                : ''
-              }</div>
-                                                <div style="background: ${hit.hexColorCode
-                ? hit.hexColorCode.split(
-                  '//'
-                )[1]
-                : ''
-              }" class="hit-colorsHex"></div>
+                                                <div>${
+                                                  hit.hexColorCode
+                                                    ? hit.hexColorCode.split(
+                                                        '//'
+                                                      )[0]
+                                                    : ''
+                                                }</div>
+                                                <div style="background: ${
+                                                  hit.hexColorCode
+                                                    ? hit.hexColorCode.split(
+                                                        '//'
+                                                      )[1]
+                                                    : ''
+                                                }" class="hit-colorsHex"></div>
                                             </div>
             
                                         </div>
@@ -944,9 +963,9 @@ export function searchResults() {
                                 </div>
                            
                         </li>`;
-          }
-        })
-        .join('')}
+            }
+          })
+          .join('')}
     `;
   };
 
@@ -983,7 +1002,7 @@ export function searchResults() {
         showMoreLimit: 10,
       }),
       {
-        init(opts) { },
+        init(opts) {},
       },
       {
         render(options) {
@@ -1046,8 +1065,8 @@ export function searchResults() {
         container.querySelector(
           '.ais-SmartSortBanner-description'
         ).textContent = showingRelevantResults
-            ? 'We removed some search results to show you the most relevants ones.'
-            : 'Currently showing all results.';
+          ? 'We removed some search results to show you the most relevants ones.'
+          : 'Currently showing all results.';
       },
     },
     virtualSearchBox({ container: '#virtualSearch' }),
