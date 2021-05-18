@@ -271,7 +271,14 @@ export function searchResults() {
 
     const urlParams = new URLSearchParams(decodeURI(window.location.search));
     let urlQuery = urlParams.get('gstar_demo_test[query]');
-    console.log(window.location.pathname)
+
+    // REDIRECTION ON JEANS PAGE
+    let jeansbtn = document.querySelector('.jeanbtn')
+    jeansbtn.addEventListener('click', (e) => {
+      e.preventDefault()
+      window.location.href = `./searchResults.html?gstar_demo_test%5Bquery%5D=jeans`;
+    })
+
 
     const renderAutocomplete = (renderOptions, isFirstRender) => {
       const { indices, refine } = renderOptions;
