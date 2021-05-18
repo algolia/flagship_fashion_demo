@@ -920,17 +920,11 @@ export function searchResults() {
                                         )}><i class="fas fa-ellipsis-h"></i></a>
                                     </div>
                                     <div class="hit-sizeFilter">
-<<<<<<< Updated upstream
-                                        <p>Sizes available: <span>${hit.sizeFilter.join(
-                ', '
-              )}</span></p>
-=======
                                         <p>Sizes available: <span>${
                                           hit.sizeFilter
                                             ? hit.sizeFilter.join(', ')
                                             : ''
                                         }</span></p>
->>>>>>> Stashed changes
                                     </div>
                                 </div>
                                
