@@ -242,6 +242,12 @@ export function autocompleteHome() {
       `;
     }
   }
+  // REDIRECTION ON JEANS PAGE
+  let jeansbtn = document.querySelector('.jeanbtn')
+  jeansbtn.addEventListener('click', (e) => {
+    e.preventDefault()
+    window.location.href = `./searchResults.html?gstar_demo_test%5Bquery%5D=jeans`;
+  })
 
   search.start();
 }
