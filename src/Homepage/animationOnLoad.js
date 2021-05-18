@@ -23,19 +23,19 @@ export function animationOnload() {
     });
 
 
-    setInterval(() => {
-        if (document.readyState === 'complete')
-            gsap.to(".carousel .carousel-list-container li img", {
-                scrollTrigger: {
-                    trigger: '.hero-banner',
-                    start: '+=500',
-                    // markers: true,
-                },
-                clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-            });
+    // setInterval(() => {
+    //     if (document.readyState === 'complete')
+    //         gsap.to(".carousel .carousel-list-container li img", {
+    //             scrollTrigger: {
+    //                 trigger: '.hero-banner',
+    //                 start: '+=500',
+    //                 // markers: true,
+    //             },
+    //             clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+    //         });
 
 
-    }, 500)
+    // }, 500)
 
 
 

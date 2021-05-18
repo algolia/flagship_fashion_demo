@@ -307,7 +307,7 @@ li {
   align-self: center;
   margin: 1rem auto;
   filter: drop-shadow(rgb(240, 240, 239) 32px 60px 20px);
-  clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
 
   transition: 0.5s ease-in-out;
 }
