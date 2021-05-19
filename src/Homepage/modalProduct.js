@@ -11,6 +11,7 @@ import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 import aa from 'search-insights';
 
 export function modalProduct() {
+  console.log('I AM MODAL PRODUCT');
   let cardProduct = document.querySelectorAll('.carousel-list-container li');
   let cardProductSecondCarousel = document.querySelectorAll(
     '.carousel-container li'
@@ -69,24 +70,39 @@ export function modalProduct() {
   });
 
   const getObjectID = () => {
-    let cardProduct = document.querySelectorAll('.carousel-list-container li');
-    if (cardProduct.length > 0) {
-      cardProduct.forEach((product) => {
-        product.addEventListener('click', (e) => {
-          let productID = e.target.dataset.id;
-          // Retrieves all attributes
-          index.getObject(productID).then((object) => {
-            displayProduct(object);
-            if (object.objectID) {
-              // relatedItems(object);
-              recommandedItems(object);
-              boughtTogether(object);
-            }
-          });
-          showModal();
-        });
+    let carousel = document.querySelector('.carousel-list-container');
+
+    carousel.addEventListener('click', (e) => {
+      let productID = e.target.dataset.id;
+      // Retrieves all attributes
+      index.getObject(productID).then((object) => {
+        displayProduct(object);
+        if (object.objectID) {
+          // relatedItems(object);
+          recommandedItems(object);
+          boughtTogether(object);
+        }
       });
-    }
+      showModal();
+    });
+
+    // if (cardProduct.length > 0) {
+    //   cardProduct.forEach((product) => {
+    //     product.addEventListener('click', (e) => {
+    //       let productID = e.target.dataset.id;
+    //       // Retrieves all attributes
+    //       index.getObject(productID).then((object) => {
+    //         displayProduct(object);
+    //         if (object.objectID) {
+    //           // relatedItems(object);
+    //           recommandedItems(object);
+    //           boughtTogether(object);
+    //         }
+    //       });
+    //       showModal();
+    //     });
+    //   });
+    // }
   };
 
   function showModal() {
