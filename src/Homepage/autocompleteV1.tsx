@@ -18,8 +18,6 @@ import '@algolia/autocomplete-theme-classic';
 
 import { ProductHit } from './types';
 
-
-
 export function autocompleteHomePage() {
 
 
@@ -108,6 +106,7 @@ export function autocompleteHomePage() {
 
     function ProductItem({ hit, insights, components }: ProductItemProps) {
 
+        console.log(hit)
         return (
             <a href={hit.url} className="aa-ItemLink">
                 <div className="aa-ItemContent">
@@ -120,7 +119,7 @@ export function autocompleteHomePage() {
                         </div>
                         <div className="aa-ItemContentDescription">
                             From <strong>{hit.brand}</strong> in{' '}
-                            <strong>{hit.categories[0]}</strong>
+                            {/* <strong>{hit.categories[0]}</strong> */}
                         </div>
                         {hit.rating > 0 && (
                             <div className="aa-ItemContentDescription">
