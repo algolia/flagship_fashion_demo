@@ -1,3 +1,5 @@
+/** @jsx h */
+
 import {
     autocomplete,
     AutocompleteComponents,
@@ -10,7 +12,7 @@ import {
 import { createQuerySuggestionsPlugin } from '@algolia/autocomplete-plugin-query-suggestions';
 import algoliasearch from 'algoliasearch';
 import insightsClient from 'search-insights';
-import { Fragment, h } from 'preact';
+import { h, Fragment } from 'preact';
 
 import '@algolia/autocomplete-theme-classic';
 
