@@ -70,38 +70,24 @@ export function modalProduct() {
   });
 
   const getObjectID = () => {
-    let carousel = document.querySelector('.carousel-list-container');
-
-    carousel.addEventListener('click', (e) => {
-      let productID = e.target.dataset.id;
-      // Retrieves all attributes
-      index.getObject(productID).then((object) => {
-        displayProduct(object);
-        if (object.objectID) {
-          // relatedItems(object);
-          recommandedItems(object);
-          boughtTogether(object);
-        }
+    console.log('I am get object ID');
+    let carousel = document.querySelectorAll('.carousel-list-container');
+    carousel.forEach((car) => {
+      car.addEventListener('click', (e) => {
+        console.log(e);
+        let productID = e.target.dataset.id;
+        // Retrieves all attributes
+        index.getObject(productID).then((object) => {
+          displayProduct(object);
+          if (object.objectID) {
+            // relatedItems(object);
+            recommandedItems(object);
+            boughtTogether(object);
+          }
+        });
+        showModal();
       });
-      showModal();
     });
-
-    // if (cardProduct.length > 0) {
-    //   cardProduct.forEach((product) => {
-    //     product.addEventListener('click', (e) => {
-    //       let productID = e.target.dataset.id;
-    //       // Retrieves all attributes
-    //       index.getObject(productID).then((object) => {
-    //         displayProduct(object);
-    //         if (object.objectID) {
-    //           // relatedItems(object);
-    //           recommandedItems(object);
-    //           boughtTogether(object);
-    //         }
-    //       });
-    //       showModal();
-    //     });
-    //   });
     // }
   };
 

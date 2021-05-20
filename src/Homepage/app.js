@@ -14,10 +14,11 @@ burgerMenu();
 togglePersona();
 autocompleteHome();
 
-var checkExist = setInterval(function () {
-  if (document.body.contains(document.getElementById('stacked-carousels'))) {
-    cardAnimationHome();
-    modalProduct();
-    clearInterval(checkExist);
-  }
-}, 50);
+// var checkExist = setInterval(function () {
+//   if (document.querySelectorAll('.carousel-list-container').length === 6) {
+//     console.log(document.querySelectorAll('.carousel-list-container').length);
+//     cardAnimationHome();
+//     modalProduct();
+//     clearInterval(checkExist);
+//   }
+// }, 50);
