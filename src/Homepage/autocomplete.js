@@ -69,7 +69,7 @@ export function autocompleteHome() {
       if (isFirstRender) {
         autocompleteRef.current = autocomplete({
           container: '#autocomplete',
-          // debug: true,
+          debug: true,
           openOnFocus: true,
           plugins: [recentSearchesPlugin, querySuggestionsPlugin],
 
