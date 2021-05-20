@@ -70,9 +70,9 @@ export function modalProduct() {
   });
 
   const getObjectID = () => {
-    let carousel = document.querySelector('.carousel-list-container');
-    if (carousel) {
-      carousel.addEventListener('click', (e) => {
+    let carousel = document.querySelectorAll('.carousel-list-container');
+    carousel.forEach((car) => {
+      car.addEventListener('click', (e) => {
         let productID = e.target.dataset.id;
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
@@ -85,7 +85,8 @@ export function modalProduct() {
         });
         showModal();
       });
-    }
+    });
+    // }
   };
 
   function showModal() {
