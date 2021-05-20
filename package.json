@@ -67,6 +67,8 @@
     "patch-package": "^6.4.6",
     "postinstall-postinstall": "^2.1.0",
     "preact": "^10.5.13",
+    "react": "17.0.2",
+    "react-dom": "^17.0.2",
     "search-insights": "^1.7.1",
     "serve-static": "^1.14.1",
     "splitting": "^1.0.6"

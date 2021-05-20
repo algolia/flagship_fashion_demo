@@ -4,7 +4,7 @@ type ProductRecord = {
     brand: string;
     categories: string[];
     description: string;
-    image: string;
+    image_link: string;
     name: string;
     price: number;
     rating: number;
