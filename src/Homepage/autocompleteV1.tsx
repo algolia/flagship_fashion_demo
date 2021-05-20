@@ -51,9 +51,9 @@ export function autocompleteHomePage() {
     autocomplete<ProductHit>({
         container: '#autocomplete',
         placeholder: 'Search',
-        debug: true,
+        // debug: true,
         openOnFocus: true,
-        plugins: [algoliaInsightsPlugin, querySuggestionsPlugin,],
+        plugins: [algoliaInsightsPlugin, querySuggestionsPlugin],
         render({ sections, Fragment }, root) {
             // const recentSearches = sections.find(({ props }) => {
             //     return (
