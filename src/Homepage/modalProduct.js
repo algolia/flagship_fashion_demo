@@ -70,21 +70,24 @@ export function modalProduct() {
   });
 
   const getObjectID = () => {
-    let carousel = document.querySelector('.carousel-list-container');
-
-    carousel.addEventListener('click', (e) => {
-      let productID = e.target.dataset.id;
-      // Retrieves all attributes
-      index.getObject(productID).then((object) => {
-        displayProduct(object);
-        if (object.objectID) {
-          // relatedItems(object);
-          recommandedItems(object);
-          boughtTogether(object);
-        }
+    let carousel = document.querySelectorAll('.carousel-list-container');
+    carousel.forEach(car => {
+      car.addEventListener('click', (e) => {
+        console.log(e)
+        let productID = e.target.dataset.id;
+        // Retrieves all attributes
+        index.getObject(productID).then((object) => {
+          displayProduct(object);
+          if (object.objectID) {
+            // relatedItems(object);
+            recommandedItems(object);
+            boughtTogether(object);
+          }
+        });
+        showModal();
       });
-      showModal();
-    });
+    })
+
 
     // if (cardProduct.length > 0) {
     //   cardProduct.forEach((product) => {
@@ -135,12 +138,10 @@ export function modalProduct() {
             <div class="productModal-infos-Wrapper">
                 <div class="productModal-image-wrapper">
                     <img
-                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                      product.objectID
-                    }.jpg"
-                    align="left" alt="${
-                      product.name
-                    }" class="productModal-hit-img" />
+                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${product.objectID
+      }.jpg"
+                    align="left" alt="${product.name
+      }" class="productModal-hit-img" />
                     <div class="productModal-img-overlay"></div>
                 </div>
                 <div class="productModal-info-wrapper">
@@ -153,33 +154,27 @@ export function modalProduct() {
                         ${product.name}
                         </div>
                         <div class="productModal-hit-color">
-                            <div class="productModal-hit-color-text">${
-                              product.hexColorCode
-                                ? product.hexColorCode.split('//')[0]
-                                : ''
-                            }</div>
-                            <div style="background: ${
-                              product.hexColorCode
-                                ? product.hexColorCode.split('//')[1]
-                                : ''
-                            }" class="product-colorsHex"></div>
+                            <div class="productModal-hit-color-text">${product.hexColorCode
+        ? product.hexColorCode.split('//')[0]
+        : ''
+      }</div>
+                            <div style="background: ${product.hexColorCode
+        ? product.hexColorCode.split('//')[1]
+        : ''
+      }" class="product-colorsHex"></div>
                         </div>
-                        <div class="productModal-hit-description">${
-                          product.description
-                        }</div>
+                        <div class="productModal-hit-description">${product.description
+      }</div>
                         <div class="productModal-hit-rating-price">
-                            <div class="productModal-hit-price">$${
-                              product.price
-                            }</div>
+                            <div class="productModal-hit-price">$${product.price
+      }</div>
                         </div>
                         </div>
 
-                        <div class="productModal-hit-addToCart" data-id=${
-                          product.objectID
-                        }>
-                            <a href="#"class="productModal-btn" data-id=${
-                              product.objectID
-                            }><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
+                        <div class="productModal-hit-addToCart" data-id=${product.objectID
+      }>
+                            <a href="#"class="productModal-btn" data-id=${product.objectID
+      }><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
 
                         </div>
                     </div>
@@ -273,31 +268,29 @@ export function modalProduct() {
 
             document.querySelector('.boughtTogetherItems').innerHTML = `
           ${results
-            .splice(0, 8)
-            .map((hit) => {
-              return `                   
+                .splice(0, 8)
+                .map((hit) => {
+                  return `                   
             <li class="related-ais-Hits-item related-carousel-list-item">   
               <div class="related-image-wrapper">
                 <img
-                src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                  hit.objectID
-                }.jpg"
+                src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${hit.objectID
+                    }.jpg"
                 align="left" alt="${hit.name}" class="related-result-img" />
                 <div class="related-result-img-overlay"></div>
               </div>
               <div class="related-hit-names">
                   <div class="related-hit-infos">
                     <div class="related-hit-name">${hit.name}</div>
-                    <div style="background: ${
-                      hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
+                    <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
                     }" class="related-product-colorsHex"></div>
                   </div>
                   </div>
                   <div class="related-hit-price">$${hit.price}</div>
             </li>
                               `;
-            })
-            .join('')}`;
+                })
+                .join('')}`;
           });
         })
         .catch((err) => {
@@ -338,14 +331,13 @@ export function modalProduct() {
             '.productModal-global-Wrapper .recommendedItems'
           ).innerHTML = `
         ${results
-          .splice(0, 8)
-          .map((hit) => {
-            return `                   
+              .splice(0, 8)
+              .map((hit) => {
+                return `                   
               <li class="related-ais-Hits-item related-carousel-list-item">   
                 <div class="related-image-wrapper">
                   <img
-                  src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                    hit.objectID
+                  src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${hit.objectID
                   }.jpg"
                   align="left" alt="${hit.name}" class="related-result-img" />
                   <div class="related-result-img-overlay"></div>
@@ -353,16 +345,15 @@ export function modalProduct() {
                 <div class="related-hit-names">
                     <div class="related-hit-infos">
                       <div class="related-hit-name">${hit.name}</div>
-                      <div style="background: ${
-                        hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-                      }" class="related-product-colorsHex"></div>
+                      <div style="background: ${hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
+                  }" class="related-product-colorsHex"></div>
                     </div>
                     </div>
                     <div class="related-hit-price">$${hit.price}</div>
               </li>
                                 `;
-          })
-          .join('')}`;
+              })
+              .join('')}`;
         });
       });
     }
