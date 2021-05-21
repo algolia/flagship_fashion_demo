@@ -84,6 +84,11 @@ export function autocompleteHomePage() {
                 root
             );
         },
+        onSubmit(props) {
+            localStorage.setItem('querySeachBox', props.state.query);
+            window.location.href = `./searchResults.html?gstar_demo_test%5Bquery%5D=${props.state.query}`;
+
+        },
         getSources({ query, state }) {
             if (!query) {
                 return [];
