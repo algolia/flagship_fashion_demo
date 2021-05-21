@@ -90,9 +90,9 @@ export function autocompleteHomePage() {
 
         },
         getSources({ query, state }) {
-            if (!query) {
-                return [];
-            }
+            // if (!query) {
+            //     return [];
+            // }
 
 
 
