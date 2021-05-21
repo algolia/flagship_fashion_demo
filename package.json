@@ -18,6 +18,8 @@
   },
   "type": "module",
   "devDependencies": {
+    "@babel/core": "^7.14.3",
+    "@babel/plugin-transform-react-jsx": "^7.14.3",
     "@babel/plugin-transform-runtime": "^7.13.7",
     "@commitlint/cli": "^12.0.1",
     "@commitlint/config-conventional": "^12.0.1",
@@ -29,7 +31,8 @@
     "eslint-plugin-prettier": "3.3.1",
     "gh-pages": "^3.1.0",
     "prettier": "2.2.1",
-    "sass": "^1.32.12"
+    "sass": "^1.32.12",
+    "typescript": "^4.2.4"
   },
   "keywords": [
     "algolia",
@@ -38,18 +41,19 @@
     "instantsearch.js"
   ],
   "dependencies": {
-    "@algolia/autocomplete-core": "1.0.0-alpha.43",
-    "@algolia/autocomplete-js": "1.0.0-alpha.43",
-    "@algolia/autocomplete-plugin-algolia-insights": "1.0.0-alpha.43",
-    "@algolia/autocomplete-plugin-query-suggestions": "1.0.0-alpha.43",
-    "@algolia/autocomplete-plugin-recent-searches": "1.0.0-alpha.43",
-    "@algolia/autocomplete-preset-algolia": "1.0.0-alpha.43",
-    "@algolia/autocomplete-theme-classic": "1.0.0-alpha.43",
-    "@algolia/client-search": "^4.8.5",
+    "@algolia/autocomplete-js": "1.0.1",
+    "@algolia/autocomplete-plugin-algolia-insights": "1.0.1",
+    "@algolia/autocomplete-plugin-query-suggestions": "1.0.1",
+    "@algolia/autocomplete-plugin-recent-searches": "1.0.1",
+    "@algolia/autocomplete-preset-algolia": "1.0.1",
+    "@algolia/autocomplete-theme-classic": "1.0.1",
+    "@algolia/client-search": "4.9.1",
+    "@babel/preset-typescript": "^7.13.0",
     "@babel/runtime": "^7.13.7",
-    "algoliasearch": "^4.8.5",
+    "algoliasearch": "4.9.1",
     "animejs": "^3.2.1",
     "autocomplete.js": "^0.38.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-polyfill": "^6.26.0",
     "gsap": "^3.6.1",
     "htm": "^3.0.4",
@@ -62,6 +66,9 @@
     "parcel-bundler": "^1.12.4",
     "patch-package": "^6.4.6",
     "postinstall-postinstall": "^2.1.0",
+    "preact": "^10.5.13",
+    "react": "17.0.2",
+    "react-dom": "^17.0.2",
     "search-insights": "^1.7.1",
     "serve-static": "^1.14.1",
     "splitting": "^1.0.6"
