@@ -100,7 +100,7 @@ export function autocompleteHomePage() {
                 {
                     sourceId: 'products',
                     getItems() {
-                        return getAlgoliaResults<ProductHit>({
+                         return getAlgoliaResults<ProductHit>({
                             searchClient,
                             queries: [
                                 {
@@ -159,6 +159,10 @@ export function autocompleteHomePage() {
                                     },
                                 },
                             ],
+                            transformResponse({ hits }) {
+                                let uniqueArray = hits[0].filter((v,i,a)=>a.findIndex(t=>(t.category === v.category))===i)
+                                return uniqueArray;
+                              },
                         });
                     },
                     templates: {
@@ -171,7 +175,6 @@ export function autocompleteHomePage() {
                             );
                         },
                         item({ item }) {
-
                             return (
                                 <CategoryItem
                                     query={query}
@@ -232,7 +235,7 @@ export function autocompleteHomePage() {
 
     function CategoryItem({ hit, insights, components }: CategoryItemProps) {
         // const { hit } = props;
-        console.log(hit)
+        // console.log(hit)
         return (
             <Fragment>
                 <div className="aa-ItemContent">
