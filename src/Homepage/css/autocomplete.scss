@@ -5,6 +5,10 @@ a {
     text-decoration: none;
 }
 
+:root{
+    --aa-detached-modal-max-width: 95%;
+}
+
 .aa-ItemContent {
     display: flex;
     align-items: center;

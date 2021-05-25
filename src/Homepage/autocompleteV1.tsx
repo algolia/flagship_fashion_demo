@@ -18,6 +18,7 @@ import { h, Fragment, render } from 'preact';
 
 
 import '@algolia/autocomplete-theme-classic';
+import "./css/autocomplete.scss";
 
 import { ProductHit } from './types';
 
@@ -51,8 +52,9 @@ export function autocompleteHomePage() {
     autocomplete<ProductHit>({
         container: '#autocomplete',
         placeholder: 'Search',
-        // debug: true,
+        debug: true,
         openOnFocus: true,
+        detachedMediaQuery: '',
         plugins: [algoliaInsightsPlugin, querySuggestionsPlugin],
         render({ sections, Fragment }, root) {
             // const recentSearches = sections.find(({ props }) => {
