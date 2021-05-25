@@ -44,10 +44,10 @@ export function autocompleteHomePage() {
         },
     });
 
-    // const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
-    //     key: 'RECENT_SEARCH',
-    //     limit: 5,
-    // });
+    const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
+        key: 'RECENT_SEARCH',
+        limit: 5,
+    });
 
     autocomplete<ProductHit>({
         container: '#autocomplete',
@@ -55,13 +55,13 @@ export function autocompleteHomePage() {
         debug: true,
         openOnFocus: true,
         detachedMediaQuery: '',
-        plugins: [algoliaInsightsPlugin, querySuggestionsPlugin],
+        plugins: [algoliaInsightsPlugin, querySuggestionsPlugin, recentSearchesPlugin],
         render({ sections, Fragment }, root) {
-            // const recentSearches = sections.find(({ props }) => {
-            //     return (
-            //         props['data-autocomplete-source-id'] === 'recentSearchesPlugin'
-            //     );
-            // });
+            const recentSearches = sections.find(({ props }) => {
+                return (
+                    props['data-autocomplete-source-id'] === 'recentSearchesPlugin'
+                );
+            });
             const querySuggestions = sections.find(({ props }) => {
                 return (
                     props['data-autocomplete-source-id'] === 'querySuggestionsPlugin'
@@ -76,10 +76,13 @@ export function autocompleteHomePage() {
 
             render(
                 <div className="aa-PanelLayout aa-Panel--scrollable">
-                    {/* {recentSearches ? (
-                        <div className="recentSearches">{recentSearches}</div>
-                    ) : null} */}
-                    <div className="querySuggestions"><span class="aa-SourceHeaderTitle">Suggestions</span>{querySuggestions}</div>
+          
+                    <div className="querySuggestions">
+                    {recentSearches ? (
+                      
+                        <div className="recentSearches">   <span class="aa-SourceHeaderTitle">Recent Searches</span>{recentSearches}</div>
+                    ) : null}
+                    <span class="aa-SourceHeaderTitle">Suggestions</span>{querySuggestions}</div>
                     <div className="product">{product}</div>
                     <div className="categories">{categories}</div>
                 </div>,
