@@ -29,7 +29,7 @@ export function recommendations(productID) {
           </div>
           <div class="related-hit-names">
             <div class="related-hit-infos">
-              <div class="related-hit-name">${item.name}</div>
+              <div class="related-hit-name">{item.name}</div>
               <div style="background: ${
                 hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
               }" class="related-product-colorsHex"></div>
@@ -58,10 +58,12 @@ export function recommendations(productID) {
           </div>
           <div class="related-hit-names">
             <div class="related-hit-infos">
-              <div class="related-hit-name">${item.name}</div>
+              <div class="related-hit-name">{item.name}</div>
               <div style="background: ${
                 hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-              }" class="related-product-colorsHex"></div>
+              }" class="related-product-colorsHex">
+
+              </div>
             </div>
           </div>
           <div class="related-hit-price">${item.price}</div>
