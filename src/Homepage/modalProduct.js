@@ -72,6 +72,38 @@ export function modalProduct() {
     e.stopPropagation();
   });
 
+  const reRenderModal = function (productID) {
+    // wait for rp and fbt carousels to exist, keep checking
+    var checkExist = setInterval(() => {
+      // select the carousels
+      const recoList = document.querySelectorAll('.auc-Recommendations-list');
+
+      // make sure both are loaded
+      if (recoList.length === 2) {
+        // attach click event
+        recoList.forEach((node) => {
+          node.addEventListener('click', (event) => {
+            console.log(
+              event.target.id,
+              'Need to reload modal with new product'
+            );
+
+            productID = event.target.id;
+
+            // rerun the product display and reco display
+            index.getObject(productID).then((object) => {
+              displayProduct(object);
+              recommendations(event.target.id);
+            });
+          });
+        });
+
+        // stop checking for carousels
+        clearInterval(checkExist);
+      }
+    }, 500);
+  };
+
   const getObjectID = () => {
     let carousel = document.querySelectorAll('.carousel-list-container');
     carousel.forEach((car) => {
@@ -80,39 +112,9 @@ export function modalProduct() {
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
           displayProduct(object);
-          // if (object.objectID) {
-          //   // relatedItems(object);
-          //   recommandedItems(object);
-          //   boughtTogether(object);
-          // }
           showModal();
           recommendations(productID);
-
-          var checkExist = setInterval(() => {
-            const recoList = document.querySelectorAll(
-              '.auc-Recommendations-list'
-            );
-
-            if (recoList.length === 2) {
-              recoList.forEach((node) => {
-                node.addEventListener('click', (event) => {
-                  console.log(
-                    event.target.id,
-                    'Need to reload modal with new product'
-                  );
-
-                  productID = event.target.id;
-
-                  index.getObject(productID).then((object) => {
-                    displayProduct(object);
-                    recommendations(event.target.id);
-                  });
-                });
-              });
-
-              clearInterval(checkExist);
-            }
-          }, 500);
+          reRenderModal(productID);
         });
       });
     });
