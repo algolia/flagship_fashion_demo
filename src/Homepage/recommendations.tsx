@@ -11,7 +11,6 @@ const indexName = 'gstar_demo_test';
 const searchClient = algoliasearch(appId, apiKey);
 
 export function recommendations(productID) {
-  console.log('recommendations running')
   relatedProducts({
     container: '#relatedProducts',
     searchClient,
@@ -19,26 +18,25 @@ export function recommendations(productID) {
     objectIDs: [productID],
     itemComponent({ item }) {
       return (
-        <li class="related-ais-Hits-item related-carousel-list-item" id={`${item.objectID}`}>   
-        <div class="related-image-wrapper" id={`${item.objectID}`}>
-          <img
-          id={`${item.objectID}`}
-          src={`https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-            item.objectID
-          }.jpg`}
-          align="left" alt={`${item.name}`}  class="related-result-img" />
-          <div class="related-result-img-overlay"></div>
-        </div>
-        <div class="related-hit-names">
+        <li class="related-ais-Hits-item related-carousel-list-item" id={`${item.objectID}`}>
+          <div class="related-image-wrapper" id={`${item.objectID}`}>
+            <img
+              id={`${item.objectID}`}
+              src={`https://flagship-fashion-demo-images.s3.amazonaws.com/images/${item.objectID
+                }.jpg`}
+              align="left" alt={`${item.name}`} class="related-result-img" />
+            <div class="related-result-img-overlay"></div>
+          </div>
+          <div class="related-hit-names">
             <div class="related-hit-infos">
               <div class="related-hit-name">${item.name}</div>
               <div style="background: ${
                 hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
               }" class="related-product-colorsHex"></div>
             </div>
-            </div>
-            <div class="related-hit-price">${item.price}</div>
-      </li>
+          </div>
+          <div class="related-hit-price">${item.price}</div>
+        </li>
       );
     },
   });
@@ -50,28 +48,26 @@ export function recommendations(productID) {
     objectIDs: [productID],
     itemComponent({ item }) {
       return (
-        <li class="related-ais-Hits-item related-carousel-list-item" id={`${item.objectID}`}>   
-        <div class="related-image-wrapper" id={`${item.objectID}`}>
-          <img id={`${item.objectID}`}
-          src={`https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-            item.objectID
-          }.jpg`}
-          align="left" alt={`${item.name}`} class="related-result-img" />
-          <div class="related-result-img-overlay"></div>
-        </div>
-        <div class="related-hit-names">
+        <li class="related-ais-Hits-item related-carousel-list-item" id={`${item.objectID}`}>
+          <div class="related-image-wrapper" id={`${item.objectID}`}>
+            <img id={`${item.objectID}`}
+              src={`https://flagship-fashion-demo-images.s3.amazonaws.com/images/${item.objectID
+                }.jpg`}
+              align="left" alt={`${item.name}`} class="related-result-img" />
+            <div class="related-result-img-overlay"></div>
+          </div>
+          <div class="related-hit-names">
             <div class="related-hit-infos">
               <div class="related-hit-name">${item.name}</div>
               <div style="background: ${
                 hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
               }" class="related-product-colorsHex"></div>
             </div>
-            </div>
-            <div class="related-hit-price">${item.price}</div>
-      </li>
+          </div>
+          <div class="related-hit-price">${item.price}</div>
+        </li>
       );
     },
   });
- 
-  console.log('recommendations ran')
+
 }

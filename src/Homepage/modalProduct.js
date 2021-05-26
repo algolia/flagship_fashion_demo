@@ -13,7 +13,7 @@ import aa from 'search-insights';
 import { recommendations } from './recommendations.tsx';
 
 export function modalProduct() {
-  console.log('I AM MODAL PRODUCT');
+
   let cardProduct = document.querySelectorAll('.carousel-list-container li');
   let cardProductSecondCarousel = document.querySelectorAll(
     '.carousel-container li'
@@ -72,30 +72,17 @@ export function modalProduct() {
     e.stopPropagation();
   });
 
-  const reRenderModal = function (productID) {
+  const reRenderModal = (productID) => {
     // wait for rp and fbt carousels to exist, keep checking
     var checkExist = setInterval(() => {
       // select the carousels
       const recoList = document.querySelectorAll('.auc-Recommendations-list');
 
       // make sure both are loaded
-      if (recoList.length === 2) {
+      if (recoList.length > 0) {
         // attach click event
         recoList.forEach((node) => {
-          node.addEventListener('click', (event) => {
-            console.log(
-              event.target.id,
-              'Need to reload modal with new product'
-            );
-
-            productID = event.target.id;
-
-            // rerun the product display and reco display
-            index.getObject(productID).then((object) => {
-              displayProduct(object);
-              recommendations(event.target.id);
-            });
-          });
+          node.addEventListener('click', showCarousel)
         });
 
         // stop checking for carousels
@@ -103,6 +90,17 @@ export function modalProduct() {
       }
     }, 500);
   };
+
+  const showCarousel = (event) => {
+
+    let productID = event.target.id;
+    // rerun the product display and reco display
+    index.getObject(productID).then((object) => {
+      displayProduct(object);
+      recommendations(event.target.id);
+    });
+    reRenderModal()
+  }
 
   const getObjectID = () => {
     let carousel = document.querySelectorAll('.carousel-list-container');
@@ -144,7 +142,7 @@ export function modalProduct() {
   }
 
   function displayProduct(product) {
-    console.log('displayProduct running', product);
+
     let modalProduct = document.querySelector('.modalProduct');
     modalProduct.innerHTML = `
         <i class="fas fa-heart heart" id="wishlist-button"></i>
@@ -152,12 +150,10 @@ export function modalProduct() {
             <div class="productModal-infos-Wrapper">
                 <div class="productModal-image-wrapper">
                     <img
-                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                      product.objectID
-                    }.jpg"
-                    align="left" alt="${
-                      product.name
-                    }" class="productModal-hit-img" />
+                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${product.objectID
+      }.jpg"
+                    align="left" alt="${product.name
+      }" class="productModal-hit-img" />
                     <div class="productModal-img-overlay"></div>
                 </div>
                 <div class="productModal-info-wrapper">
@@ -170,33 +166,27 @@ export function modalProduct() {
                         ${product.name}
                         </div>
                         <div class="productModal-hit-color">
-                            <div class="productModal-hit-color-text">${
-                              product.hexColorCode
-                                ? product.hexColorCode.split('//')[0]
-                                : ''
-                            }</div>
-                            <div style="background: ${
-                              product.hexColorCode
-                                ? product.hexColorCode.split('//')[1]
-                                : ''
-                            }" class="product-colorsHex"></div>
+                            <div class="productModal-hit-color-text">${product.hexColorCode
+        ? product.hexColorCode.split('//')[0]
+        : ''
+      }</div>
+                            <div style="background: ${product.hexColorCode
+        ? product.hexColorCode.split('//')[1]
+        : ''
+      }" class="product-colorsHex"></div>
                         </div>
-                        <div class="productModal-hit-description">${
-                          product.description
-                        }</div>
+                        <div class="productModal-hit-description">${product.description
+      }</div>
                         <div class="productModal-hit-rating-price">
-                            <div class="productModal-hit-price">$${
-                              product.price
-                            }</div>
+                            <div class="productModal-hit-price">$${product.price
+      }</div>
                         </div>
                         </div>
 
-                        <div class="productModal-hit-addToCart" data-id=${
-                          product.objectID
-                        }>
-                            <a href="#"class="productModal-btn" data-id=${
-                              product.objectID
-                            }><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
+                        <div class="productModal-hit-addToCart" data-id=${product.objectID
+      }>
+                            <a href="#"class="productModal-btn" data-id=${product.objectID
+      }><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
 
                         </div>
                     </div>
@@ -260,7 +250,7 @@ export function modalProduct() {
         });
     });
 
-    console.log('displayProduct ran');
+
   }
 
   cardProductSecondCarousel.forEach((product) => {
@@ -268,5 +258,6 @@ export function modalProduct() {
   });
 
   getObjectID();
+
   search.start();
 }
