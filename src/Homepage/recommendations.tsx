@@ -11,6 +11,7 @@ const indexName = 'gstar_demo_test';
 const searchClient = algoliasearch(appId, apiKey);
 
 export function recommendations(productID) {
+  console.log('recommendations running')
   relatedProducts({
     container: '#relatedProducts',
     searchClient,
@@ -18,13 +19,14 @@ export function recommendations(productID) {
     objectIDs: [productID],
     itemComponent({ item }) {
       return (
-        <li class="related-ais-Hits-item related-carousel-list-item">   
-        <div class="related-image-wrapper">
+        <li class="related-ais-Hits-item related-carousel-list-item" id={`${item.objectID}`}>   
+        <div class="related-image-wrapper" id={`${item.objectID}`}>
           <img
+          id={`${item.objectID}`}
           src={`https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
             item.objectID
           }.jpg`}
-          align="left" alt="${hit.name}" class="related-result-img" />
+          align="left" alt={`${item.name}`}  class="related-result-img" />
           <div class="related-result-img-overlay"></div>
         </div>
         <div class="related-hit-names">
@@ -35,7 +37,7 @@ export function recommendations(productID) {
               }" class="related-product-colorsHex"></div>
             </div>
             </div>
-            <div class="related-hit-price">$${item.price}</div>
+            <div class="related-hit-price">${item.price}</div>
       </li>
       );
     },
@@ -48,13 +50,13 @@ export function recommendations(productID) {
     objectIDs: [productID],
     itemComponent({ item }) {
       return (
-        <li class="related-ais-Hits-item related-carousel-list-item">   
-        <div class="related-image-wrapper">
-          <img
+        <li class="related-ais-Hits-item related-carousel-list-item" id={`${item.objectID}`}>   
+        <div class="related-image-wrapper" id={`${item.objectID}`}>
+          <img id={`${item.objectID}`}
           src={`https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
             item.objectID
           }.jpg`}
-          align="left" alt="${hit.name}" class="related-result-img" />
+          align="left" alt={`${item.name}`} class="related-result-img" />
           <div class="related-result-img-overlay"></div>
         </div>
         <div class="related-hit-names">
@@ -65,9 +67,11 @@ export function recommendations(productID) {
               }" class="related-product-colorsHex"></div>
             </div>
             </div>
-            <div class="related-hit-price">$${item.price}</div>
+            <div class="related-hit-price">${item.price}</div>
       </li>
       );
     },
   });
+ 
+  console.log('recommendations ran')
 }

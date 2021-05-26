@@ -87,6 +87,32 @@ export function modalProduct() {
           // }
           showModal();
           recommendations(productID);
+
+          var checkExist = setInterval(() => {
+            const recoList = document.querySelectorAll(
+              '.auc-Recommendations-list'
+            );
+
+            if (recoList.length === 2) {
+              recoList.forEach((node) => {
+                node.addEventListener('click', (event) => {
+                  console.log(
+                    event.target.id,
+                    'Need to reload modal with new product'
+                  );
+
+                  productID = event.target.id;
+
+                  index.getObject(productID).then((object) => {
+                    displayProduct(object);
+                    recommendations(event.target.id);
+                  });
+                });
+              });
+
+              clearInterval(checkExist);
+            }
+          }, 500);
         });
       });
     });
@@ -116,6 +142,7 @@ export function modalProduct() {
   }
 
   function displayProduct(product) {
+    console.log('displayProduct running', product);
     let modalProduct = document.querySelector('.modalProduct');
     modalProduct.innerHTML = `
         <i class="fas fa-heart heart" id="wishlist-button"></i>
@@ -230,132 +257,8 @@ export function modalProduct() {
           });
         });
     });
-  }
 
-  function boughtTogether(object) {
-    if (object.objectID) {
-      const indexBT = searchClient.initIndex(
-        'ai_recommend_bought-together_gstar_demo_test_static'
-      );
-      let objectID = object.objectID;
-      indexBT
-        .getObject(objectID)
-        .then((item) => {
-          let boughtTogetherItemsArray = [];
-          item.recommendations.forEach((i) => {
-            boughtTogetherItemsArray.push(i.objectID);
-          });
-          index.getObjects(boughtTogetherItemsArray).then(({ results }) => {
-            let container = document.querySelector(
-              '.productModal-global-Wrapper'
-            );
-            let ul = document.createElement('ul');
-            let title = document.createElement('h3');
-            let div = document.createElement('div');
-
-            div.classList.add('list-wrapper');
-            title.innerHTML = 'Often bought together';
-            ul.classList.add('boughtTogetherItems');
-
-            div.appendChild(title);
-            div.appendChild(ul);
-            container.appendChild(div);
-
-            document.querySelector('.boughtTogetherItems').innerHTML = `
-          ${results
-            .splice(0, 8)
-            .map((hit) => {
-              return `                   
-            <li class="related-ais-Hits-item related-carousel-list-item">   
-              <div class="related-image-wrapper">
-                <img
-                src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                  hit.objectID
-                }.jpg"
-                align="left" alt="${hit.name}" class="related-result-img" />
-                <div class="related-result-img-overlay"></div>
-              </div>
-              <div class="related-hit-names">
-                  <div class="related-hit-infos">
-                    <div class="related-hit-name">${hit.name}</div>
-                    <div style="background: ${
-                      hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-                    }" class="related-product-colorsHex"></div>
-                  </div>
-                  </div>
-                  <div class="related-hit-price">$${hit.price}</div>
-            </li>
-                              `;
-            })
-            .join('')}`;
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }
-
-  function recommandedItems(object) {
-    if (object.objectID) {
-      let objectID = object.objectID;
-      const indexRecommand = searchClient.initIndex(
-        'ai_recommend_related_products_gstar_demo_test_static'
-      );
-
-      indexRecommand.getObject(objectID).then((item) => {
-        let recommandItems = [];
-        item.recommendations.forEach((i) => {
-          recommandItems.push(i.objectID);
-        });
-        index.getObjects(recommandItems).then(({ results }) => {
-          let container = document.querySelector(
-            '.productModal-global-Wrapper'
-          );
-          let ul = document.createElement('ul');
-          let title = document.createElement('h3');
-          let div = document.createElement('div');
-
-          div.classList.add('list-wrapper');
-          title.innerHTML = 'Recommended for you';
-          ul.classList.add('recommendedItems');
-
-          div.appendChild(title);
-          div.appendChild(ul);
-          container.appendChild(div);
-
-          document.querySelector(
-            '.productModal-global-Wrapper .recommendedItems'
-          ).innerHTML = `
-        ${results
-          .splice(0, 8)
-          .map((hit) => {
-            return `                   
-              <li class="related-ais-Hits-item related-carousel-list-item">   
-                <div class="related-image-wrapper">
-                  <img
-                  src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                    hit.objectID
-                  }.jpg"
-                  align="left" alt="${hit.name}" class="related-result-img" />
-                  <div class="related-result-img-overlay"></div>
-                </div>
-                <div class="related-hit-names">
-                    <div class="related-hit-infos">
-                      <div class="related-hit-name">${hit.name}</div>
-                      <div style="background: ${
-                        hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-                      }" class="related-product-colorsHex"></div>
-                    </div>
-                    </div>
-                    <div class="related-hit-price">$${hit.price}</div>
-              </li>
-                                `;
-          })
-          .join('')}`;
-        });
-      });
-    }
+    console.log('displayProduct ran');
   }
 
   cardProductSecondCarousel.forEach((product) => {
