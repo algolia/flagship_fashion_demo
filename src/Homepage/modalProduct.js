@@ -10,6 +10,8 @@ import { connectHits } from 'instantsearch.js/es/connectors';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 import aa from 'search-insights';
 
+import { recommendations } from './recommendations.tsx';
+
 export function modalProduct() {
   console.log('I AM MODAL PRODUCT');
   let cardProduct = document.querySelectorAll('.carousel-list-container li');
@@ -22,6 +24,7 @@ export function modalProduct() {
     '28cf6d38411215e2eef188e635216508'
   );
   const index = searchClient.initIndex('gstar_demo_test');
+  const indexName = 'gstar_demo_test';
 
   const search = instantsearch({
     indexName: 'gstar_demo_test',
@@ -77,13 +80,14 @@ export function modalProduct() {
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
           displayProduct(object);
-          if (object.objectID) {
-            // relatedItems(object);
-            recommandedItems(object);
-            boughtTogether(object);
-          }
+          // if (object.objectID) {
+          //   // relatedItems(object);
+          //   recommandedItems(object);
+          //   boughtTogether(object);
+          // }
+          showModal();
+          recommendations(productID);
         });
-        showModal();
       });
     });
     // }
@@ -168,6 +172,8 @@ export function modalProduct() {
                         </div>
                     </div>
                 </div>
+                <div id="frequentlyBoughtTogether"></div>
+                <div id="relatedProducts"></div>
             </div>
         `;
 
