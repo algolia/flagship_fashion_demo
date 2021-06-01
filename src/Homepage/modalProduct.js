@@ -13,7 +13,6 @@ import aa from 'search-insights';
 import { recommendations } from './recommendations.tsx';
 
 export function modalProduct() {
-
   let cardProduct = document.querySelectorAll('.carousel-list-container li');
   let cardProductSecondCarousel = document.querySelectorAll(
     '.carousel-container li'
@@ -82,7 +81,7 @@ export function modalProduct() {
       if (recoList.length > 0) {
         // attach click event
         recoList.forEach((node) => {
-          node.addEventListener('click', showCarousel)
+          node.addEventListener('click', showCarousel);
         });
 
         // stop checking for carousels
@@ -92,15 +91,14 @@ export function modalProduct() {
   };
 
   const showCarousel = (event) => {
-
     let productID = event.target.id;
     // rerun the product display and reco display
     index.getObject(productID).then((object) => {
       displayProduct(object);
-      recommendations(event.target.id);
+      recommendations([event.target.id]);
     });
-    reRenderModal()
-  }
+    reRenderModal();
+  };
 
   const getObjectID = () => {
     let carousel = document.querySelectorAll('.carousel-list-container');
@@ -142,7 +140,6 @@ export function modalProduct() {
   }
 
   function displayProduct(product) {
-
     let modalProduct = document.querySelector('.modalProduct');
     modalProduct.innerHTML = `
         <i class="fas fa-heart heart" id="wishlist-button"></i>
@@ -150,10 +147,12 @@ export function modalProduct() {
             <div class="productModal-infos-Wrapper">
                 <div class="productModal-image-wrapper">
                     <img
-                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${product.objectID
-      }.jpg"
-                    align="left" alt="${product.name
-      }" class="productModal-hit-img" />
+                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
+                      product.objectID
+                    }.jpg"
+                    align="left" alt="${
+                      product.name
+                    }" class="productModal-hit-img" />
                     <div class="productModal-img-overlay"></div>
                 </div>
                 <div class="productModal-info-wrapper">
@@ -166,32 +165,40 @@ export function modalProduct() {
                         ${product.name}
                         </div>
                         <div class="productModal-hit-color">
-                            <div class="productModal-hit-color-text">${product.hexColorCode
-        ? product.hexColorCode.split('//')[0]
-        : ''
-      }</div>
-                            <div style="background: ${product.hexColorCode
-        ? product.hexColorCode.split('//')[1]
-        : ''
-      }" class="product-colorsHex"></div>
+                            <div class="productModal-hit-color-text">${
+                              product.hexColorCode
+                                ? product.hexColorCode.split('//')[0]
+                                : ''
+                            }</div>
+                            <div style="background: ${
+                              product.hexColorCode
+                                ? product.hexColorCode.split('//')[1]
+                                : ''
+                            }" class="product-colorsHex"></div>
                         </div>
-                        <div class="productModal-hit-description">${product.description
-      }</div>
+                        <div class="productModal-hit-description">${
+                          product.description
+                        }</div>
                         <div class="productModal-hit-rating-price">
-                            <div class="productModal-hit-price">$${product.price
-      }</div>
+                            <div class="productModal-hit-price">$${
+                              product.price
+                            }</div>
                         </div>
                         </div>
 
-                        <div class="productModal-hit-addToCart" data-id=${product.objectID
-      }>
-                            <a href="#"class="productModal-btn" data-id=${product.objectID
-      }><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
+                        <div class="productModal-hit-addToCart" data-id=${
+                          product.objectID
+                        }>
+                            <a href="#"class="productModal-btn" data-id=${
+                              product.objectID
+                            }><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
 
                         </div>
                     </div>
                 </div>
+                <h2 class="productModal-hit-name">Frequently Bought Together</h2>
                 <div id="frequentlyBoughtTogether"></div>
+                <h2 class="productModal-hit-name">Related Products</h2>
                 <div id="relatedProducts"></div>
             </div>
         `;
@@ -249,8 +256,6 @@ export function modalProduct() {
           });
         });
     });
-
-
   }
 
   cardProductSecondCarousel.forEach((product) => {
