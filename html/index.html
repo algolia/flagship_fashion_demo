@@ -139,11 +139,13 @@
           alt=""
           loading="lazy"
           >
-        <img class="img1 luxy-el"
-          src="https://images.unsplash.com/photo-1504439904031-93ded9f93e4e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=976&q=80"
-          alt=""
-          loading="lazy"
-          >
+          <div class="img1 luxy-el">
+            <img class="image-homepage"
+            src="https://images.unsplash.com/photo-1504439904031-93ded9f93e4e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=976&q=80"
+            alt=""
+            loading="lazy"
+            >
+          </div>
         <img class="img3"
           src="https://images.unsplash.com/photo-1603251605029-3fd7c9513c44?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
           alt=""
@@ -241,6 +243,16 @@
   </div>
   <script src="../src/Homepage/app.js"></script>
   <script src="../src/shared-js/createDemoSettings.js"></script>
+  <script>
+    let elem = document.querySelector('.banner-images-wrapper');
+    let rect = elem.getBoundingClientRect();
+    let height = Math.round(rect.height);
+    let width = Math.round(rect.width);
+    console.log(width, height);
+    let image = document.querySelector('.img1');
+    console.log(image)
+    // image.src = `https://ik.imagekit.io/zl7ecmulazs/woman.webp?tr=w-${width},h-${height}`
+  </script>
 </body>
 
 </html>
