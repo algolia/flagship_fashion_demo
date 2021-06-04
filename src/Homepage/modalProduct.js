@@ -10,8 +10,9 @@ import { connectHits } from 'instantsearch.js/es/connectors';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 import aa from 'search-insights';
 
+import { recommendations } from './recommendations.tsx';
+
 export function modalProduct() {
-  console.log('I AM MODAL PRODUCT');
   let cardProduct = document.querySelectorAll('.carousel-list-container li');
   let cardProductSecondCarousel = document.querySelectorAll(
     '.carousel-container li'
@@ -22,6 +23,7 @@ export function modalProduct() {
     '28cf6d38411215e2eef188e635216508'
   );
   const index = searchClient.initIndex('gstar_demo_test');
+  const indexName = 'gstar_demo_test';
 
   const search = instantsearch({
     indexName: 'gstar_demo_test',
@@ -69,6 +71,35 @@ export function modalProduct() {
     e.stopPropagation();
   });
 
+  const reRenderModal = (productID) => {
+    // wait for rp and fbt carousels to exist, keep checking
+    var checkExist = setInterval(() => {
+      // select the carousels
+      const recoList = document.querySelectorAll('.auc-Recommendations-list');
+
+      // make sure both are loaded
+      if (recoList.length > 0) {
+        // attach click event
+        recoList.forEach((node) => {
+          node.addEventListener('click', showCarousel);
+        });
+
+        // stop checking for carousels
+        clearInterval(checkExist);
+      }
+    }, 500);
+  };
+
+  const showCarousel = (event) => {
+    let productID = event.target.id;
+    // rerun the product display and reco display
+    index.getObject(productID).then((object) => {
+      displayProduct(object);
+      recommendations([event.target.id]);
+    });
+    reRenderModal();
+  };
+
   const getObjectID = () => {
     let carousel = document.querySelectorAll('.carousel-list-container');
     carousel.forEach((car) => {
@@ -77,13 +108,10 @@ export function modalProduct() {
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
           displayProduct(object);
-          if (object.objectID) {
-            // relatedItems(object);
-            recommandedItems(object);
-            boughtTogether(object);
-          }
+          showModal();
+          recommendations(productID);
+          reRenderModal(productID);
         });
-        showModal();
       });
     });
     // }
@@ -168,6 +196,10 @@ export function modalProduct() {
                         </div>
                     </div>
                 </div>
+                <h2 class="productModal-hit-name">Frequently Bought Together</h2>
+                <div id="frequentlyBoughtTogether"></div>
+                <h2 class="productModal-hit-name">Related Products</h2>
+                <div id="relatedProducts"></div>
             </div>
         `;
 
@@ -226,136 +258,11 @@ export function modalProduct() {
     });
   }
 
-  function boughtTogether(object) {
-    if (object.objectID) {
-      const indexBT = searchClient.initIndex(
-        'ai_recommend_bought-together_gstar_demo_test_static'
-      );
-      let objectID = object.objectID;
-      indexBT
-        .getObject(objectID)
-        .then((item) => {
-          let boughtTogetherItemsArray = [];
-          item.recommendations.forEach((i) => {
-            boughtTogetherItemsArray.push(i.objectID);
-          });
-          index.getObjects(boughtTogetherItemsArray).then(({ results }) => {
-            let container = document.querySelector(
-              '.productModal-global-Wrapper'
-            );
-            let ul = document.createElement('ul');
-            let title = document.createElement('h3');
-            let div = document.createElement('div');
-
-            div.classList.add('list-wrapper');
-            title.innerHTML = 'Often bought together';
-            ul.classList.add('boughtTogetherItems');
-
-            div.appendChild(title);
-            div.appendChild(ul);
-            container.appendChild(div);
-
-            document.querySelector('.boughtTogetherItems').innerHTML = `
-          ${results
-            .splice(0, 8)
-            .map((hit) => {
-              return `                   
-            <li class="related-ais-Hits-item related-carousel-list-item">   
-              <div class="related-image-wrapper">
-                <img
-                src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                  hit.objectID
-                }.jpg"
-                align="left" alt="${hit.name}" class="related-result-img" />
-                <div class="related-result-img-overlay"></div>
-              </div>
-              <div class="related-hit-names">
-                  <div class="related-hit-infos">
-                    <div class="related-hit-name">${hit.name}</div>
-                    <div style="background: ${
-                      hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-                    }" class="related-product-colorsHex"></div>
-                  </div>
-                  </div>
-                  <div class="related-hit-price">$${hit.price}</div>
-            </li>
-                              `;
-            })
-            .join('')}`;
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }
-
-  function recommandedItems(object) {
-    if (object.objectID) {
-      let objectID = object.objectID;
-      const indexRecommand = searchClient.initIndex(
-        'ai_recommend_related_products_gstar_demo_test_static'
-      );
-
-      indexRecommand.getObject(objectID).then((item) => {
-        let recommandItems = [];
-        item.recommendations.forEach((i) => {
-          recommandItems.push(i.objectID);
-        });
-        index.getObjects(recommandItems).then(({ results }) => {
-          let container = document.querySelector(
-            '.productModal-global-Wrapper'
-          );
-          let ul = document.createElement('ul');
-          let title = document.createElement('h3');
-          let div = document.createElement('div');
-
-          div.classList.add('list-wrapper');
-          title.innerHTML = 'Recommended for you';
-          ul.classList.add('recommendedItems');
-
-          div.appendChild(title);
-          div.appendChild(ul);
-          container.appendChild(div);
-
-          document.querySelector(
-            '.productModal-global-Wrapper .recommendedItems'
-          ).innerHTML = `
-        ${results
-          .splice(0, 8)
-          .map((hit) => {
-            return `                   
-              <li class="related-ais-Hits-item related-carousel-list-item">   
-                <div class="related-image-wrapper">
-                  <img
-                  src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                    hit.objectID
-                  }.jpg"
-                  align="left" alt="${hit.name}" class="related-result-img" />
-                  <div class="related-result-img-overlay"></div>
-                </div>
-                <div class="related-hit-names">
-                    <div class="related-hit-infos">
-                      <div class="related-hit-name">${hit.name}</div>
-                      <div style="background: ${
-                        hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-                      }" class="related-product-colorsHex"></div>
-                    </div>
-                    </div>
-                    <div class="related-hit-price">$${hit.price}</div>
-              </li>
-                                `;
-          })
-          .join('')}`;
-        });
-      });
-    }
-  }
-
   cardProductSecondCarousel.forEach((product) => {
     // detailProduct(product)
   });
 
   getObjectID();
+
   search.start();
 }
