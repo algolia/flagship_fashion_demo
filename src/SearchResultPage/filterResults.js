@@ -15,12 +15,15 @@ export function filterResult() {
   let btnBackToFilter = document.querySelectorAll('.btn-backFilter');
   let filterItem = document.querySelectorAll('.filter-item-wrapper');
 
+
+
   btnFilterResults.addEventListener('click', fadeFiltersInOut);
   genderBtn.addEventListener('click', fadeFiltersGender);
   categoryBtn.addEventListener('click', fadeFiltersCategory);
   colorBtn.addEventListener('click', fadeFiltersColor);
   sizeBtn.addEventListener('click', fadeFiltersSize);
   priceBtn.addEventListener('click', fadeFiltersPrice);
+
 
   btnBackToFilter.forEach((btn) => {
     btn.addEventListener('click', backToFilters);

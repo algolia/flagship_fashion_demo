@@ -89,7 +89,14 @@ export function cardAnimation() {
 
         })
     }
+
+    // function colorPickerDisbled() {
+    //     let colorPicker = document.querySelector(".colorInput")
+    //     console.log(colorPicker)
+    //     colorPicker.disabled = true;
+    // }
     hideFilter()
     sizeAnimation()
+    // colorPickerDisbled()
     domListening()
 }

@@ -85,8 +85,9 @@
 
   .ais-SearchBox-input {
     border-radius: 30px !important;
-    background-color: transparent !important;
+    background-color: white !important;
     border: 1px solid #f5ecf1;
+    box-shadow: -15px -14px 30px 30px #f5ecf1;
 
     &:focus-within {
       outline: none;

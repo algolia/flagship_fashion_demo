@@ -5,17 +5,17 @@ a {
     text-decoration: none;
 }
 
-:root{
+:root {
     --aa-detached-modal-max-width: 95%;
 }
 
-.aa-DetachedSearchButton{
+.aa-DetachedSearchButton {
     border-radius: 30px !important;
     background-color: transparent !important;
     border: 1px solid #f5ecf1;
 }
 
-.aa-Form{
+.aa-Form {
     border-radius: 30px !important;
     background-color: transparent !important;
     border: 1px solid #f5ecf1;
@@ -464,6 +464,9 @@ a {
 
 .aa-Autocomplete .aa-Form {
     border-radius: 30px !important;
+    background-color: white !important;
+    border: 1px solid #f5ecf1;
+    box-shadow: -15px -14px 30px 30px #f5ecf1;
 }
 
 .aa-ItemContentTitle {
