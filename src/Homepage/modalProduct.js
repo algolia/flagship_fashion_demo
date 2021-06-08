@@ -10,8 +10,10 @@ import { connectHits } from 'instantsearch.js/es/connectors';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 import aa from 'search-insights';
 
+import { recommendations } from './recommendations.tsx';
+
 export function modalProduct() {
-  console.log('I AM MODAL PRODUCT');
+
   let cardProduct = document.querySelectorAll('.carousel-list-container li');
   let cardProductSecondCarousel = document.querySelectorAll(
     '.carousel-container li'
@@ -22,6 +24,7 @@ export function modalProduct() {
     '28cf6d38411215e2eef188e635216508'
   );
   const index = searchClient.initIndex('gstar_demo_test');
+  const indexName = 'gstar_demo_test';
 
   const search = instantsearch({
     indexName: 'gstar_demo_test',
@@ -69,6 +72,36 @@ export function modalProduct() {
     e.stopPropagation();
   });
 
+  const reRenderModal = (productID) => {
+    // wait for rp and fbt carousels to exist, keep checking
+    var checkExist = setInterval(() => {
+      // select the carousels
+      const recoList = document.querySelectorAll('.auc-Recommendations-list');
+
+      // make sure both are loaded
+      if (recoList.length > 0) {
+        // attach click event
+        recoList.forEach((node) => {
+          node.addEventListener('click', showCarousel)
+        });
+
+        // stop checking for carousels
+        clearInterval(checkExist);
+      }
+    }, 500);
+  };
+
+  const showCarousel = (event) => {
+
+    let productID = event.target.id;
+    // rerun the product display and reco display
+    index.getObject(productID).then((object) => {
+      displayProduct(object);
+      recommendations(event.target.id);
+    });
+    reRenderModal()
+  }
+
   const getObjectID = () => {
     let carousel = document.querySelectorAll('.carousel-list-container');
     carousel.forEach((car) => {
@@ -77,13 +110,10 @@ export function modalProduct() {
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
           displayProduct(object);
-          if (object.objectID) {
-            // relatedItems(object);
-            recommandedItems(object);
-            boughtTogether(object);
-          }
+          showModal();
+          recommendations(productID);
+          reRenderModal(productID);
         });
-        showModal();
       });
     });
     // }
@@ -112,6 +142,7 @@ export function modalProduct() {
   }
 
   function displayProduct(product) {
+
     let modalProduct = document.querySelector('.modalProduct');
     modalProduct.innerHTML = `
         <i class="fas fa-heart heart" id="wishlist-button"></i>
@@ -339,6 +370,7 @@ export function modalProduct() {
         });
       });
     }
+
   }
 
   cardProductSecondCarousel.forEach((product) => {
@@ -346,5 +378,6 @@ export function modalProduct() {
   });
 
   getObjectID();
+
   search.start();
 }
