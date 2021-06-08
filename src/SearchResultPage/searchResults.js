@@ -220,6 +220,7 @@ export function searchResults() {
 
   const renderCurrentRefinements = (renderOptions, isFirstRender) => {
     const { items, widgetParams, refine } = renderOptions;
+    items.map(item => console.log(item))
     document.querySelector('#current-refinements').innerHTML = `
             <ul class="currentRefinment-filters">
               ${items.map(renderListItem).join('')}
@@ -970,7 +971,7 @@ export function searchResults() {
         ${items
         .map(
           item => `
-            <li class="ais-RefinementList-item ais-RefinementList-label"><a class="ais-RefinementList-labelText">${item.value.split("- ")[1]}</a><span class="ais-RefinementList-count">${item.count}</span></li>`
+            <li class="ais-RefinementList-item ais-RefinementList-label"><a class="ais-RefinementList-labelText">${item.value}</a><span class="ais-RefinementList-count">${item.count}</span></li>`
         )
         .join('')}
       </ul>
@@ -1116,7 +1117,7 @@ export function searchResults() {
     //   }
     // }),
     customRefinementList({
-      attribute: 'category',
+      attribute: 'keywords',
       container: document.querySelector('#category-list'),
     }),
     refinementList({
