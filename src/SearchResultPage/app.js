@@ -1,5 +1,5 @@
 import { searchResults } from './searchResults';
-// import { filterResult } from './filterResults';
+import { colorInput } from './filterResults';
 import { burgerMenu } from '../Homepage/burgerMenu';
 // import { relatedResultModal } from './relatedResultModal';
 import { cardAnimation } from './cardAnimations';
@@ -8,6 +8,7 @@ import { modalProductSearchResult } from './modalProductSearchResult';
 
 searchResults();
 // filterResult();
+
 burgerMenu();
 togglePersona();
 
@@ -16,6 +17,7 @@ var checkExist = setInterval(function () {
     // relatedResultModal();
     cardAnimation();
     modalProductSearchResult()
+    colorInput()
     clearInterval(checkExist);
   }
 }, 500);

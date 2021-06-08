@@ -48,8 +48,14 @@
     list-style-type: none;
 }
 
+.productModal-global-Wrapper {
+    display: grid;
+    grid-template-columns: 45% 55%;
+}
+
 .productModal-infos-Wrapper {
     display: flex;
+    flex-direction: column;
 }
 
 .auc-Recommendations-list{
@@ -61,7 +67,7 @@
 }
 
 .productModal-image-wrapper {
-    width: 30%;
+    width: 40%;
     padding: 1rem;
     margin: 1rem auto;
     img {
@@ -99,7 +105,7 @@
     font-size: 0.9rem;
     font-style: italic;
     font-weight: 100;
-    width: 70%;
+    width: 85%;
 }
 
 .productModal-hit-rating-price {

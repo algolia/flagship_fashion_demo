@@ -783,6 +783,10 @@ export function searchResults() {
     userToken.addEventListener('change', (e) => {
       refine({ userToken: e.target.value });
     });
+
+
+
+
   };
 
   const customConfigure = connectConfigure(renderConfigure);
@@ -955,7 +959,52 @@ export function searchResults() {
     `;
   };
 
+
+  const renderCategoryList = (renderOptions, isFirstRender) => {
+    const { items, refine } = renderOptions;
+
+    const container = document.querySelector('#category-list');
+
+    container.innerHTML = `
+      <ul class="ais-RefinementList-list">
+        ${items
+        .map(
+          item => `
+            <li class="ais-RefinementList-item ais-RefinementList-label"><a class="ais-RefinementList-labelText">${item.value}</a><span class="ais-RefinementList-count">${item.count}</span></li>`
+        )
+        .join('')}
+      </ul>
+    `;
+
+
+
+    [...container.querySelectorAll('a')].forEach(element => {
+      element.addEventListener('click', event => {
+        event.preventDefault();
+        refine(event.target.innerText);
+      });
+    });
+  };
+
   const connectedHitsWithInjectedContent = connectHits(renderHits);
+  const customRefinementList = connectRefinementList(
+    renderCategoryList
+  );
+
+  if (window.location.pathname === "/categoryPageJeans.html") {
+    search.addWidgets([
+      configure({
+        filters: "keywords: 'jeans & bottoms'",
+      })
+    ])
+  }
+  if (window.location.pathname === "/categoryPageShoes.html") {
+    search.addWidgets([
+      configure({
+        filters: "keywords: 'shoes and accesories'",
+      })
+    ])
+  }
 
   search.addWidgets([
     customConfigure({
@@ -1064,9 +1113,25 @@ export function searchResults() {
     //   container: '#category-list',
     //   attribute: 'category',
     // }),
-    refinementList({
-      container: '#category-list',
-      attribute: 'category',
+    // refinementList({
+    //   container: '#category-list',
+    //   attribute: 'category',
+    //   transformItems(items) {
+    //     return items.map((item) => ({
+    //       ...item,
+    //       value: item.value.split("- ")[1],
+    //       count: item.count
+    //     }))
+    //   },
+    //   templates: {
+    //     item: `<ul class="ais-RefinementList-list categories-list">
+    //     <li class="ais-RefinementList-item ais-RefinementList-label"><span class="ais-RefinementList-labelText">{{value}}</span><span class="ais-RefinementList-count">{{count}}</span></li>
+    //     </ul>`
+    //   }
+    // }),
+    customRefinementList({
+      attribute: 'keywords',
+      container: document.querySelector('#category-list'),
     }),
     refinementList({
       container: '#gender-list',
@@ -1081,6 +1146,14 @@ export function searchResults() {
     refinementList({
       container: '#hexColor-list',
       attribute: 'hexColorCode',
+      // templates: {
+      //   item: `
+      //         <input type="checkbox" id="{{label.split("||")[1]}}" {{#isRefined}}checked{{/isRefined}} class="colorInput"/>
+      //         <label for="{{label.split("||")[1]}}" class="{{#isRefined}}isRefined{{/isRefined}}">
+      //           {{label.split("||")[1]}}
+      //           <span class="color" style="background-color: {{label.split("||")[0]}}"></span>
+      //         </label>`
+      // }
       transformItems(items) {
         return items.map((item) => ({
           ...item,
@@ -1090,7 +1163,7 @@ export function searchResults() {
       },
       templates: {
         item: `
-                  <input type="color" value={{color}} class="colorInput" id="{{colorCode}}" {{#isRefined}}checked{{/isRefined}}/>
+                  <input type="checkbox" value={{color}} class="colorInput" id="{{colorCode}}" {{#isRefined}}checked{{/isRefined}}/>
                   <label for="{{colorCode}}" class="{{#isRefined}}isRefined{{/isRefined}}">
                     {{colorCode}}
                     <span class="color" style="background-color: {{color}}"></span>
@@ -1101,7 +1174,7 @@ export function searchResults() {
     //   container: '#size-list',
     //   attribute: 'sizeFilter',
     // }),
-    menuSelect({
+    refinementList({
       container: '#size-list',
       attribute: 'sizeFilter',
     }),
@@ -1149,5 +1222,7 @@ export function searchResults() {
     }),
   ]);
 
+
   search.start();
+
 }

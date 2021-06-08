@@ -120,7 +120,8 @@
 
 /* CATEGORY LIST */
 
-.category-list {
+.category-list,
+.size-list {
     margin: 1rem 0;
     .ais-RefinementList-item {
         margin: 0.5rem 0;
@@ -191,32 +192,32 @@
 
 /* SIZE LIST */
 
-.size-list {
-    margin: 1rem 0;
-    .ais-MenuSelect-select {
-        padding: 0.6rem 2rem;
-        border: 1px solid #f5ecf1;
-        border-top: transparent;
-        color: black;
-        align-self: center;
-        cursor: pointer;
-        transition: 0.3s ease-in-out;
-        border-radius: 30px;
-        font-family: "Roboto";
-        font-size: 0.8rem;
-        font-weight: 300;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        margin: 0 0rem;
-        width: 90%;
-        transition: all 0.3s ease-in-out;
-    }
-}
+// .size-list {
+//     margin: 1rem 0;
+//     .ais-MenuSelect-select {
+//         padding: 0.6rem 2rem;
+//         border: 1px solid #f5ecf1;
+//         border-top: transparent;
+//         color: black;
+//         align-self: center;
+//         cursor: pointer;
+//         transition: 0.3s ease-in-out;
+//         border-radius: 30px;
+//         font-family: "Roboto";
+//         font-size: 0.8rem;
+//         font-weight: 300;
+//         display: flex;
+//         align-items: center;
+//         justify-content: flex-start;
+//         margin: 0 0rem;
+//         width: 90%;
+//         transition: all 0.3s ease-in-out;
+//     }
+// }
 
-.size-list .ais-MenuSelect-select:focus {
-    outline: none;
-}
+// .size-list .ais-MenuSelect-select:focus {
+//     outline: none;
+// }
 
 .sideBarFilter ul {
     list-style: none;
@@ -408,6 +409,50 @@
 
 // COLORS FILTERS
 
+/* .roundedOne */
+.colorInput {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    position: relative;
+    // background: #fcfff4;
+    // background: black;
+    box-shadow: 1px 1px 5px $fourth-color;
+    -webkit-appearance: none;
+    cursor: pointer;
+    &:checked {
+        border: 8px solid $fourth-color;
+    }
+    // label {
+    //     // width: 15px;
+    //     // height: 15px;
+    //     // border-radius: 50%;
+    //     // cursor: pointer;
+    //     // position: absolute;
+    //     // left: 4px;
+    //     // top: 4px;
+    //     // background: linear-gradient(top, #222 0%, #45484d 100%);
+
+    //     // box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 1);
+    //     &:after {
+    //         content: "";
+    //         width: 15px;
+    //         height: 15px;
+    //         border-radius: 50%;
+    //         position: absolute;
+    //         top: 2px;
+    //         left: 2px;
+    //         background-color: $fourth-color;
+    //         opacity: 0;
+    //         box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0, 0, 0, 0.5);
+    //     }
+    //     &:hover::after {
+    //         opacity: 0.3;
+    //     }
+    // }
+}
+/* end .roundedOne */
+
 .hexColor-list {
     margin: 1rem 0;
     .ais-RefinementList-list {
@@ -543,6 +588,8 @@
             font-size: 0.8rem;
             transition: all 0.3s ease-in-out;
             text-transform: capitalize;
+            background-color: #f5ecf1;
+            margin: 0.5rem;
 
             span {
                 color: black;
@@ -550,8 +597,8 @@
             }
 
             &:hover {
-                background-color: #f5ecf1;
-                color: white;
+                background-color: white;
+                color: black;
                 transition: 0.3s ease-in-out;
             }
         }

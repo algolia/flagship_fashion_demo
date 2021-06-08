@@ -163,6 +163,7 @@ export function modalProductSearchResult() {
                         </div>
                     </div>
                 </div>
+                <div class="recomanded-related-items"></div>
             </div>
         `;
 
@@ -208,7 +209,7 @@ export function modalProductSearchResult() {
           });
           index.getObjects(boughtTogetherItemsArray).then(({ results }) => {
             let container = document.querySelector(
-              '.productModal-global-Wrapper'
+              '.recomanded-related-items'
             );
             let ul = document.createElement('ul');
             let title = document.createElement('h3');
@@ -270,7 +271,7 @@ export function modalProductSearchResult() {
           });
           index.getObjects(recommandItems).then(({ results }) => {
             let container = document.querySelector(
-              '.productModal-global-Wrapper'
+              '.recomanded-related-items'
             );
             let ul = document.createElement('ul');
             let title = document.createElement('h3');
