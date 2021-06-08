@@ -76,13 +76,13 @@ export function autocompleteHomePage() {
 
             render(
                 <div className="aa-PanelLayout aa-Panel--scrollable">
-          
+
                     <div className="querySuggestions">
-                    {recentSearches ? (
-                      
-                        <div className="recentSearches">   <span class="aa-SourceHeaderTitle">Recent Searches</span>{recentSearches}</div>
-                    ) : null}
-                    <span class="aa-SourceHeaderTitle">Suggestions</span>{querySuggestions}</div>
+                        {recentSearches ? (
+
+                            <div className="recentSearches">   <span class="aa-SourceHeaderTitle">Recent Searches</span>{recentSearches}</div>
+                        ) : null}
+                        <span class="aa-SourceHeaderTitle">Suggestions</span>{querySuggestions}</div>
                     <div className="product">{product}</div>
                     <div className="categories">{categories}</div>
                 </div>,
@@ -105,7 +105,7 @@ export function autocompleteHomePage() {
                 {
                     sourceId: 'products',
                     getItems() {
-                         return getAlgoliaResults<ProductHit>({
+                        return getAlgoliaResults<ProductHit>({
                             searchClient,
                             queries: [
                                 {
@@ -165,9 +165,9 @@ export function autocompleteHomePage() {
                                 },
                             ],
                             transformResponse({ hits }) {
-                                let uniqueArray = hits[0].filter((v,i,a)=>a.findIndex(t=>(t.category === v.category))===i)
+                                let uniqueArray = hits[0].filter((v, i, a) => a.findIndex(t => (t.category === v.category)) === i)
                                 return uniqueArray;
-                              },
+                            },
                         });
                     },
                     templates: {

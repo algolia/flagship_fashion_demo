@@ -220,7 +220,6 @@ export function searchResults() {
 
   const renderCurrentRefinements = (renderOptions, isFirstRender) => {
     const { items, widgetParams, refine } = renderOptions;
-    items.map(item => console.log(item))
     document.querySelector('#current-refinements').innerHTML = `
             <ul class="currentRefinment-filters">
               ${items.map(renderListItem).join('')}
@@ -982,7 +981,6 @@ export function searchResults() {
     [...container.querySelectorAll('a')].forEach(element => {
       element.addEventListener('click', event => {
         event.preventDefault();
-        console.log(event)
         refine(event.target.innerText);
       });
     });
@@ -992,6 +990,21 @@ export function searchResults() {
   const customRefinementList = connectRefinementList(
     renderCategoryList
   );
+
+  if (window.location.pathname === "/categoryPageJeans.html") {
+    search.addWidgets([
+      configure({
+        filters: "keywords: 'jeans & bottoms'",
+      })
+    ])
+  }
+  if (window.location.pathname === "/categoryPageShoes.html") {
+    search.addWidgets([
+      configure({
+        filters: "keywords: 'shoes and accesories'",
+      })
+    ])
+  }
 
   search.addWidgets([
     customConfigure({
