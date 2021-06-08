@@ -1150,7 +1150,7 @@ export function searchResults() {
       },
       templates: {
         item: `
-                  <input type="color" value={{color}} class="colorInput" id="{{colorCode}}" {{#isRefined}}checked{{/isRefined}}/>
+                  <input type="checkbox" value={{color}} class="colorInput" id="{{colorCode}}" {{#isRefined}}checked{{/isRefined}}/>
                   <label for="{{colorCode}}" class="{{#isRefined}}isRefined{{/isRefined}}">
                     {{colorCode}}
                     <span class="color" style="background-color: {{color}}"></span>

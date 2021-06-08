@@ -110,3 +110,19 @@ export function filterResult() {
     }
   }
 }
+
+export const colorInput = () => {
+  let checkBox = document.querySelectorAll('.colorInput')
+  console.log(checkBox)
+  checkBox.forEach(box => {
+    let bg = box.value
+    box.style.backgroundColor = bg
+
+    box.addEventListener('click', (e) => {
+      console.log(box.style.backgroundColor)
+      if (box.checked) {
+        box.style.backgroundColor = box.value
+      }
+    })
+  })
+}
