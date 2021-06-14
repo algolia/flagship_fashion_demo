@@ -309,7 +309,7 @@ export function modalProduct() {
           let div = document.createElement('div');
 
           div.classList.add('list-wrapper');
-          title.innerHTML = 'Recommended for you';
+          title.innerHTML = 'Related Products';
           ul.classList.add('recommendedItems');
 
           div.appendChild(title);
