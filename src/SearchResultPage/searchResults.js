@@ -291,11 +291,11 @@ export function searchResults() {
   }
 
   const renderConfigure = (renderOptions, isFirstRender) => {
-    const { refine, widgetParams } = renderOptions;
+    const { refine } = renderOptions;
 
     const userToken = document.querySelector('.user-token-selector');
     userToken.addEventListener('change', (e) => {
-      refine({ userToken: e.target.value });
+      refine({ userToken: e.target.value, ruleContexts: [e.target.value] });
     });
   };
 
