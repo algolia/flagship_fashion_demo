@@ -8,10 +8,8 @@ import {
   pagination,
   rangeSlider,
   voiceSearch,
-  configure,
   menuSelect,
   searchBox,
-  index,
   EXPERIMENTAL_dynamicWidgets,
   panel,
 } from 'instantsearch.js/es/widgets';
@@ -38,6 +36,7 @@ export function searchResults() {
     extraSearchFilters = [];
   }
 
+  // Initialize instantsearch
   const searchClient = algoliasearch(
     'HYDY1KWTWB',
     '28cf6d38411215e2eef188e635216508'
@@ -49,16 +48,12 @@ export function searchResults() {
     routing: true,
   });
 
+  // Initialize insights for instantsearch
   const insightsMiddleware = createInsightsMiddleware({
     insightsClient: aa,
   });
 
   search.use(insightsMiddleware);
-
-  let suggestionIndex = algoliasearch(
-    'HYDY1KWTWB',
-    '28cf6d38411215e2eef188e635216508'
-  ).initIndex('gstar_demo_test_query_suggestions');
 
   const findInsightsTarget = (startElement, endElement, validator) => {
     let element = startElement;
@@ -81,13 +76,19 @@ export function searchResults() {
     }
 
     try {
-      return JSON.parse(atob(serializedPayload));
+      return JSON.parse(decodeURIComponent(atob(serializedPayload)));
     } catch (error) {
       throw new Error(
         'The insights middleware was unable to parse `data-insights-event`.'
       );
     }
   };
+
+  // Initialize query suggestions index
+  let suggestionIndex = algoliasearch(
+    'HYDY1KWTWB',
+    '28cf6d38411215e2eef188e635216508'
+  ).initIndex('gstar_demo_test_query_suggestions');
 
   // Declared globally for data persistence
   let catlist = [];
@@ -469,49 +470,39 @@ export function searchResults() {
   const connectedHitsWithInjectedContent = connectHits(renderHits);
 
   search.addWidgets([
-    customConfigure({
-      container: document.querySelector('#configure'),
-      searchParameters: {
-        hitsPerPage: 20,
-        enablePersonalization: true,
-      },
-    }),
     customQueryRuleCustomData({
       container: document.querySelector('#banner'),
     }),
     customCurrentRefinements({
       container: document.querySelector('#current-refinements'),
     }),
-    index({
-      indexName: 'gstar_demo_test',
-    }).addWidgets([
-      configure({
-        hitsPerPage: 5,
+    customConfigure({
+      container: document.querySelector('#configure'),
+      searchParameters: {
+        hitsPerPage: 20,
+        enablePersonalization: true,
         facetFilters: extraSearchFilters,
-      }),
-      customSearchBox({
-        container: document.querySelector('#refinement-list-SearchResult'),
-        attribute: 'keywords',
-        showMoreLimit: 10,
-      }),
-      {
-        init(opts) {},
+        query: localStorage.getItem('userQuery')
+          ? localStorage.getItem('userQuery')
+          : ``,
       },
-      {
-        render(options) {
-          const results = options.results;
-          if (results.nbHits === 0) {
-            noResult(results.nbHits, results.query);
-          }
-        },
-      },
-    ]),
-    configure({
-      query: localStorage.getItem('userQuery')
-        ? localStorage.getItem('userQuery')
-        : ``,
-      facetFilters: extraSearchFilters,
     }),
+    customSearchBox({
+      container: document.querySelector('#refinement-list-SearchResult'),
+      attribute: 'keywords',
+      showMoreLimit: 10,
+    }),
+    {
+      init(opts) {},
+    },
+    {
+      render(options) {
+        const results = options.results;
+        if (results.nbHits === 0) {
+          noResult(results.nbHits, results.query);
+        }
+      },
+    },
     {
       init() {
         const container = document.querySelector('#smart-sort-banner');
