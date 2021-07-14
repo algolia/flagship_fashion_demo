@@ -482,7 +482,6 @@ export function searchResults() {
     customCurrentRefinements({
       container: document.querySelector('#current-refinements'),
     }),
-
     index({
       indexName: 'gstar_demo_test',
     }).addWidgets([
@@ -593,12 +592,6 @@ export function searchResults() {
         },
       ],
     }),
-    rangeSlider({
-      container: '#price-list',
-      attribute: 'price',
-      tooltips: true,
-      pips: true,
-    }),
     stats({
       container: '#stats-searchResult',
     }),
@@ -618,7 +611,7 @@ export function searchResults() {
               header: 'Gender',
             },
           })(refinementList)({
-            container: '#gender-list',
+            container,
             attribute: 'genderFilter',
           }),
         (container) =>
@@ -627,7 +620,7 @@ export function searchResults() {
               header: 'Category',
             },
           })(refinementList)({
-            container: '#category-list',
+            container,
             attribute: 'category',
           }),
         (container) =>
@@ -636,7 +629,7 @@ export function searchResults() {
               header: 'Price',
             },
           })(rangeSlider)({
-            container: '#price-list',
+            container,
             attribute: 'price',
             tooltips: true,
             pips: true,
@@ -647,7 +640,7 @@ export function searchResults() {
               header: 'Color',
             },
           })(refinementList)({
-            container: '#hexColor-list',
+            container,
             attribute: 'hexColorCode',
             transformItems(items) {
               return items.map((item) => ({
@@ -671,7 +664,7 @@ export function searchResults() {
               header: 'Sizes',
             },
           })(menuSelect)({
-            container: '#size-list',
+            container,
             attribute: 'sizeFilter',
           }),
       ],
