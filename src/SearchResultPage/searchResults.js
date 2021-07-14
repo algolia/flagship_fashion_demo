@@ -12,6 +12,8 @@ import {
   menuSelect,
   searchBox,
   index,
+  EXPERIMENTAL_dynamicWidgets,
+  panel,
 } from 'instantsearch.js/es/widgets';
 import {
   connectQueryRules,
@@ -565,43 +567,6 @@ export function searchResults() {
     clearRefinements({
       container: '#clear-refinements',
     }),
-    refinementList({
-      container: '#category-list',
-      attribute: 'category',
-    }),
-    refinementList({
-      container: '#gender-list',
-      attribute: 'genderFilter',
-    }),
-    rangeSlider({
-      container: '#price-list',
-      attribute: 'price',
-      tooltips: true,
-      pips: true,
-    }),
-    refinementList({
-      container: '#hexColor-list',
-      attribute: 'hexColorCode',
-      transformItems(items) {
-        return items.map((item) => ({
-          ...item,
-          color: item.value.split('//')[1],
-          colorCode: item.value.split('//')[0],
-        }));
-      },
-      templates: {
-        item: `
-                  <input type="color" value={{color}} class="colorInput" id="{{colorCode}}" {{#isRefined}}checked{{/isRefined}}/>
-                  <label for="{{colorCode}}" class="{{#isRefined}}isRefined{{/isRefined}}">
-                    {{colorCode}}
-                    <span class="color" style="background-color: {{color}}"></span>
-                  </label>`,
-      },
-    }),
-    menuSelect({
-      container: '#size-list',
-      attribute: 'sizeFilter',
-    }),
     voiceSearch({
       container: '#voicesearch',
       searchAsYouSpeak: true,
@@ -643,6 +608,73 @@ export function searchResults() {
     connectedHitsWithInjectedContent({ container: '#hits' }),
     pagination({
       container: '#pagination',
+    }),
+    EXPERIMENTAL_dynamicWidgets({
+      container: '#dynamic-widgets',
+      widgets: [
+        (container) =>
+          panel({
+            templates: {
+              header: 'Gender',
+            },
+          })(refinementList)({
+            container: '#gender-list',
+            attribute: 'genderFilter',
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Category',
+            },
+          })(refinementList)({
+            container: '#category-list',
+            attribute: 'category',
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Price',
+            },
+          })(rangeSlider)({
+            container: '#price-list',
+            attribute: 'price',
+            tooltips: true,
+            pips: true,
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Color',
+            },
+          })(refinementList)({
+            container: '#hexColor-list',
+            attribute: 'hexColorCode',
+            transformItems(items) {
+              return items.map((item) => ({
+                ...item,
+                color: item.value.split('//')[1],
+                colorCode: item.value.split('//')[0],
+              }));
+            },
+            templates: {
+              item: `
+                        <input type="color" value={{color}} class="colorInput" id="{{colorCode}}" {{#isRefined}}checked{{/isRefined}}/>
+                        <label for="{{colorCode}}" class="{{#isRefined}}isRefined{{/isRefined}}">
+                          {{colorCode}}
+                          <span class="color" style="background-color: {{color}}"></span>
+                        </label>`,
+            },
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Sizes',
+            },
+          })(menuSelect)({
+            container: '#size-list',
+            attribute: 'sizeFilter',
+          }),
+      ],
     }),
   ]);
 
