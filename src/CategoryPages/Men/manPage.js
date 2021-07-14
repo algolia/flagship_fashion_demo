@@ -1,85 +1,85 @@
-import { carousel, renderCarouselAllProduct } from "./displayCarouselManPage";
-import { burgerMenu } from "../../Homepage/burgerMenu";
-import instantsearch from "instantsearch.js";
-import algoliasearch from "algoliasearch";
-import { configure, index, searchBox, pagination, refinementList, autocomplete, stats } from "instantsearch.js/es/widgets";
-
+import { carousel, renderCarouselAllProduct } from './displayCarouselManPage';
+import { burgerMenu } from '../../Homepage/burgerMenu';
+import instantsearch from 'instantsearch.js';
+import algoliasearch from 'algoliasearch';
+import {
+  configure,
+  index,
+  searchBox,
+  pagination,
+  refinementList,
+  autocomplete,
+  stats,
+} from 'instantsearch.js/es/widgets';
 
 function GetDataCarousel() {
+  // GET CREDENTIALS
+  const searchClient = algoliasearch(
+    'HYDY1KWTWB',
+    '28cf6d38411215e2eef188e635216508'
+  );
 
-    // GET CREDENTIALS
-    const searchClient = algoliasearch('HYDY1KWTWB', '28cf6d38411215e2eef188e635216508');
+  const search = instantsearch({
+    indexName: 'gstar_demo_test',
+    searchClient,
+  });
 
-    const search = instantsearch({
-        indexName: 'gstar_demo_test',
-        searchClient,
+  //GET THE CONFIG
+  function getCarouselConfigs() {
+    return searchClient
+      .initIndex('gstar_demo_config_man')
+      .search('', {
+        attributesToHighlight: [],
+        attributesToRetrieve: ['title', 'indexName', 'configure'],
+      })
+      .then((res) => res.hits);
+  }
+
+  //WIDGET CREATION
+  let carouselWidgets = [];
+  function createWidgets(carousels) {
+    const container = document.querySelector('#stacked-carousels');
+
+    container.innerText = '';
+
+    return carousels.map((carouselConfig) => {
+      const carouselContainer = document.createElement('div');
+      carouselContainer.className = 'carousel';
+
+      const indexWidget = index({
+        indexName: carouselConfig.indexName,
+        indexId: carouselConfig.objectID,
+      });
+
+      if (carouselConfig.configure) {
+        indexWidget.addWidgets([
+          configure({
+            ...carouselConfig.configure,
+          }),
+        ]);
+      }
+
+      indexWidget.addWidgets([
+        carousel({
+          title: carouselConfig.title,
+          container: carouselContainer,
+        }),
+      ]);
+
+      container.appendChild(carouselContainer);
+      return indexWidget;
     });
+  }
 
-
-    //GET THE CONFIG
-    function getCarouselConfigs() {
-        return searchClient
-            .initIndex("gstar_demo_config_man")
-            .search("", {
-                attributesToHighlight: [],
-                attributesToRetrieve: ["title", "indexName", "configure"],
-            })
-            .then((res) => res.hits);
-    }
-
-    //WIDGET CREATION
-    let carouselWidgets = [];
-    function createWidgets(carousels) {
-        const container = document.querySelector("#stacked-carousels");
-
-        container.innerText = "";
-
-        return carousels.map((carouselConfig) => {
-
-            const carouselContainer = document.createElement("div");
-            carouselContainer.className = "carousel";
-
-            const indexWidget = index({
-                indexName: carouselConfig.indexName,
-                indexId: carouselConfig.objectID,
-            });
-
-            if (carouselConfig.configure) {
-                indexWidget.addWidgets([
-                    configure({
-                        ...carouselConfig.configure
-                    }),
-                ]);
-            }
-
-            indexWidget.addWidgets([
-                carousel({
-                    title: carouselConfig.title,
-                    container: carouselContainer,
-                }),
-            ]);
-
-            container.appendChild(carouselContainer);
-            return indexWidget;
-        });
-    }
-
-    // retrieve the carousel configuration once
-    getCarouselConfigs().then((carousels) => {
-        carouselWidgets = createWidgets(carousels);
-        search.addWidgets(carouselWidgets);
-        search.start();
-    });
+  // retrieve the carousel configuration once
+  getCarouselConfigs().then((carousels) => {
+    carouselWidgets = createWidgets(carousels);
+    search.addWidgets(carouselWidgets);
+    search.start();
+  });
 }
 
-// REDIRECTION ON JEANS PAGE
-let jeansbtn = document.querySelector('.jeanbtn')
-jeansbtn.addEventListener('click', (e) => {
-    e.preventDefault()
-    window.location.href = `./searchResults.html?gstar_demo_test%5Bquery%5D=jeans`;
-})
-
 // APP.JS CALL
-GetDataCarousel()
-burgerMenu()
-renderCarouselAllProduct()
+GetDataCarousel();
+burgerMenu();
+renderCarouselAllProduct();
