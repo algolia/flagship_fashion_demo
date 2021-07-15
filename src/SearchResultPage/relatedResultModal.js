@@ -354,6 +354,6 @@ export function relatedResultModal() {
     ]);
   }
 
-  search.start();
-  searchIndexSecond.start();
+  // search.start();
+  // searchIndexSecond.start();
 }

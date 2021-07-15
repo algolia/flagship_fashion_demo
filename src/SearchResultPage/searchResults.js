@@ -19,6 +19,7 @@ import {
   connectSearchBox,
   connectConfigure,
   connectHits,
+  EXPERIMENTAL_connectDynamicWidgets,
 } from 'instantsearch.js/es/connectors';
 
 import aa from 'search-insights';
@@ -47,6 +48,7 @@ export function searchResults() {
     searchClient,
     routing: true,
   });
+
 
   // Initialize insights for instantsearch
   const insightsMiddleware = createInsightsMiddleware({
@@ -148,7 +150,7 @@ export function searchResults() {
               catlistIsrefined[event.target.id].isRefined = !catlistIsrefined[
                 event.target.id
               ].isRefined;
-
+            
             search.renderState[
               'gstar_demo_test'
             ].refinementList.category.refine(event.target.innerText);
@@ -466,8 +468,25 @@ export function searchResults() {
           .join('')}
     `;
   };
-
   const connectedHitsWithInjectedContent = connectHits(renderHits);
+
+  const widgets = {
+    category: {
+      widget: refinementList({container: document.querySelector('#dynamic-widgets'), attribute: 'category'}),
+      container: document.createElement('div')
+    },
+    // custom: {
+    //   widget: customWidget({container: document.querySelector('#dynamic-widgets')}),
+    //   container: document.createElement('div')
+    // }
+  
+  }
+  const renderDynamicWidget = (renderOptions, isFirstRender) => {
+      console.log(renderOptions)
+  }
+
+  const customDynamicWidgets = EXPERIMENTAL_connectDynamicWidgets(renderDynamicWidget);
+
 
   search.addWidgets([
     customQueryRuleCustomData({
@@ -593,6 +612,10 @@ export function searchResults() {
     pagination({
       container: '#pagination',
     }),
+    // customDynamicWidgets({
+    //   container: document.querySelector('#dynamic-widgets'),
+    //   widgets: Object.values(widgets).map(({widget})=> widget)
+    // })
     EXPERIMENTAL_dynamicWidgets({
       container: '#dynamic-widgets',
       widgets: [
@@ -662,5 +685,6 @@ export function searchResults() {
     }),
   ]);
 
+ 
   search.start();
 }
