@@ -49,7 +49,6 @@ export function searchResults() {
     routing: true,
   });
 
-
   // Initialize insights for instantsearch
   const insightsMiddleware = createInsightsMiddleware({
     insightsClient: aa,
@@ -150,7 +149,7 @@ export function searchResults() {
               catlistIsrefined[event.target.id].isRefined = !catlistIsrefined[
                 event.target.id
               ].isRefined;
-            
+
             search.renderState[
               'gstar_demo_test'
             ].refinementList.category.refine(event.target.innerText);
@@ -472,21 +471,24 @@ export function searchResults() {
 
   const widgets = {
     category: {
-      widget: refinementList({container: document.querySelector('#dynamic-widgets'), attribute: 'category'}),
-      container: document.createElement('div')
+      widget: refinementList({
+        container: document.querySelector('#dynamic-widgets'),
+        attribute: 'category',
+      }),
+      container: document.createElement('div'),
     },
     // custom: {
     //   widget: customWidget({container: document.querySelector('#dynamic-widgets')}),
     //   container: document.createElement('div')
     // }
-  
-  }
+  };
   const renderDynamicWidget = (renderOptions, isFirstRender) => {
-      console.log(renderOptions)
-  }
+    console.log(renderOptions);
+  };
 
-  const customDynamicWidgets = EXPERIMENTAL_connectDynamicWidgets(renderDynamicWidget);
-
+  const customDynamicWidgets = EXPERIMENTAL_connectDynamicWidgets(
+    renderDynamicWidget
+  );
 
   search.addWidgets([
     customQueryRuleCustomData({
@@ -612,13 +614,36 @@ export function searchResults() {
     pagination({
       container: '#pagination',
     }),
-    // customDynamicWidgets({
-    //   container: document.querySelector('#dynamic-widgets'),
-    //   widgets: Object.values(widgets).map(({widget})=> widget)
-    // })
     EXPERIMENTAL_dynamicWidgets({
       container: '#dynamic-widgets',
       widgets: [
+        (container) =>
+          panel({
+            templates: {
+              header: 'Fit',
+            },
+          })(refinementList)({
+            container,
+            attribute: 'non_numeric_attributes.fitFilter',
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Length',
+            },
+          })(refinementList)({
+            container,
+            attribute: 'non_numeric_attributes.lengthFilter',
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Stretch',
+            },
+          })(refinementList)({
+            container,
+            attribute: 'non_numeric_attributes.stretchFilter',
+          }),
         (container) =>
           panel({
             templates: {
@@ -685,6 +710,5 @@ export function searchResults() {
     }),
   ]);
 
- 
   search.start();
 }
