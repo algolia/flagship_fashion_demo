@@ -54,7 +54,9 @@ export function GetDataForCarousel() {
         attributesToHighlight: [],
         attributesToRetrieve: ['title', 'indexName', 'configure', 'objectID'],
       })
-      .then((res) => res.hits);
+      .then((res) => {
+        return res.hits;
+      });
   }
 
   //WIDGET CREATION
