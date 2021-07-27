@@ -26,20 +26,20 @@ import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 
 export function searchResults() {
   // ADD FILTERS FOR SPECIFIC URLS
-  let extraSearchFilters = [];
+  let extraSearchFilters = '';
 
   if (
     window.location.pathname.includes('categorypageaccessories') ||
     window.location.pathname.includes('categoryPageAccessories')
   ) {
-    extraSearchFilters.push('keywords: accessories');
+    extraSearchFilters = 'keywords:"accessories"';
   } else if (
     window.location.pathname.includes('categoryPageJeans') ||
     window.location.pathname.includes('categorypagejeans')
   ) {
-    extraSearchFilters.push('keywords: jeans');
+    extraSearchFilters = 'keywords:"jeans"';
   } else {
-    extraSearchFilters = [];
+    extraSearchFilters = '';
   }
 
   // Initialize instantsearch
@@ -486,7 +486,7 @@ export function searchResults() {
       searchParameters: {
         hitsPerPage: 20,
         enablePersonalization: true,
-        facetFilters: extraSearchFilters,
+        filters: extraSearchFilters,
         query: localStorage.getItem('userQuery')
           ? localStorage.getItem('userQuery')
           : ``,
