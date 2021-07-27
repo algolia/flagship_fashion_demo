@@ -34,6 +34,7 @@ export function GetDataForCarousel() {
     userTokenSelector.disabled = true;
     search.removeWidgets(carouselWidgets);
     getCarouselConfigs().then((carousels) => {
+      console.log(carousels);
       userTokenSelector.disabled = false;
       carouselWidgets = createWidgets(carousels);
       search.addWidgets(carouselWidgets);
@@ -54,12 +55,17 @@ export function GetDataForCarousel() {
         attributesToHighlight: [],
         attributesToRetrieve: ['title', 'indexName', 'configure', 'objectID'],
       })
-      .then((res) => res.hits);
+      .then((res) => {
+        console.log(res);
+        return res.hits;
+      });
   }
 
   //WIDGET CREATION
   let carouselWidgets = [];
   function createWidgets(carousels) {
+    console.log(carousels);
+
     const container = document.querySelector('#stacked-carousels');
 
     container.innerText = '';
