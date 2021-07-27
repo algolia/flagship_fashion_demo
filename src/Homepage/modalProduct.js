@@ -11,7 +11,6 @@ import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 import aa from 'search-insights';
 
 export function modalProduct() {
-  console.log('I AM MODAL PRODUCT');
   let cardProduct = document.querySelectorAll('.carousel-list-container li');
   let cardProductSecondCarousel = document.querySelectorAll(
     '.carousel-container li'

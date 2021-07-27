@@ -34,7 +34,6 @@ export function GetDataForCarousel() {
     userTokenSelector.disabled = true;
     search.removeWidgets(carouselWidgets);
     getCarouselConfigs().then((carousels) => {
-      console.log(carousels);
       userTokenSelector.disabled = false;
       carouselWidgets = createWidgets(carousels);
       search.addWidgets(carouselWidgets);
@@ -56,7 +55,6 @@ export function GetDataForCarousel() {
         attributesToRetrieve: ['title', 'indexName', 'configure', 'objectID'],
       })
       .then((res) => {
-        console.log(res);
         return res.hits;
       });
   }
@@ -64,8 +62,6 @@ export function GetDataForCarousel() {
   //WIDGET CREATION
   let carouselWidgets = [];
   function createWidgets(carousels) {
-    console.log(carousels);
-
     const container = document.querySelector('#stacked-carousels');
 
     container.innerText = '';
