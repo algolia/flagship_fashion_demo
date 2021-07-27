@@ -29,9 +29,9 @@ export function searchResults() {
   // ADD FILTERS FOR SPECIFIC URLS
   let extraSearchFilters = [];
 
-  if (window.location.pathname === '/categoryPageAccessories.html') {
+  if (window.location.pathname.includes('categoryPageAccessories')) {
     extraSearchFilters.push('keywords: accessories');
-  } else if (window.location.pathname === '/categoryPageJeans.html') {
+  } else if (window.location.pathname.includes('categoryPageJeans')) {
     extraSearchFilters.push('keywords: jeans');
   } else {
     extraSearchFilters = [];
