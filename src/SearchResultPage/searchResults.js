@@ -30,7 +30,7 @@ export function searchResults() {
   let extraSearchFilters = [];
 
   if (
-    window.location.pathname.includes('categorypageccessories') ||
+    window.location.pathname.includes('categorypageaccessories') ||
     window.location.pathname.includes('categoryPageAccessories')
   ) {
     extraSearchFilters.push('keywords: accessories');
