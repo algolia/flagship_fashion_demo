@@ -29,9 +29,15 @@ export function searchResults() {
   // ADD FILTERS FOR SPECIFIC URLS
   let extraSearchFilters = [];
 
-  if (window.location.pathname.includes('categoryPageAccessories')) {
+  if (
+    window.location.pathname.includes('categorypageccessories') ||
+    window.location.pathname.includes('categoryPageAccessories')
+  ) {
     extraSearchFilters.push('keywords: accessories');
-  } else if (window.location.pathname.includes('categoryPageJeans')) {
+  } else if (
+    window.location.pathname.includes('categoryPageJeans') ||
+    window.location.pathname.includes('categorypagejeans')
+  ) {
     extraSearchFilters.push('keywords: jeans');
   } else {
     extraSearchFilters = [];
