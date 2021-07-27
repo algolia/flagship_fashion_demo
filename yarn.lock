@@ -1467,10 +1467,15 @@
     "@parcel/utils" "^1.11.0"
     physical-cpu-count "^2.0.0"
 
-"@types/googlemaps@^3.39.6":
-  version "3.43.3"
-  resolved "https://registry.npmjs.org/@types/googlemaps/-/googlemaps-3.43.3.tgz"
-  integrity sha512-ZWNoz/O8MPEpiajvj7QiqCY8tTLFNqNZ/a+s+zTV58wFVNAvvqV4bdGfnsjTb5Cs4V6wEsLrX8XRhmnyYJ2Tdg==
+"@types/google.maps@^3.45.3":
+  version "3.45.6"
+  resolved "https://registry.yarnpkg.com/@types/google.maps/-/google.maps-3.45.6.tgz#441a7bc76424243b307596fc8d282a435a979ebd"
+  integrity sha512-BzGzxs8UXFxeP8uN/0nRgGbsbpYQxSCKsv/7S8OitU7wwhfFcqQSm5aAcL1nbwueMiJ/VVmIZKPq69s0kX5W+Q==
+
+"@types/hogan.js@^3.0.0":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/hogan.js/-/hogan.js-3.0.1.tgz#64c54407b30da359763e14877f5702b8ae85d61c"
+  integrity sha512-D03i/2OY7kGyMq9wdQ7oD8roE49z/ZCZThe/nbahtvuqCNZY9T2MfedOWyeBdbEpY2W8Gnh/dyJLdFtUCOkYbg==
 
 "@types/json5@^0.0.29":
   version "0.0.29"
@@ -1497,6 +1502,11 @@
   resolved "https://registry.npmjs.org/@types/q/-/q-1.5.4.tgz"
   integrity sha512-1HcDas8SEj4z1Wc696tH56G8OlRaH/sqZOynNNB+HF0WOeXPaxTtbYzJY2oEfiUxjSKjhCKr+MvR7dCHcEelug==
 
+"@types/qs@^6.5.3":
+  version "6.9.7"
+  resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.7.tgz#63bb7d067db107cc1e457c303bc25d511febf6cb"
+  integrity sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==
+
 "@yarnpkg/lockfile@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@yarnpkg/lockfile/-/lockfile-1.1.0.tgz"
@@ -1517,7 +1527,7 @@ abab@^2.0.0:
 
 abbrev@1:
   version "1.1.1"
-  resolved "https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz"
+  resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
   integrity sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
 
 acorn-globals@^4.3.0:
@@ -1568,10 +1578,10 @@ ajv@^7.0.2:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-algoliasearch-helper@^3.4.4:
-  version "3.4.4"
-  resolved "https://registry.npmjs.org/algoliasearch-helper/-/algoliasearch-helper-3.4.4.tgz"
-  integrity sha512-OjyVLjykaYKCMxxRMZNiwLp8CS310E0qAeIY2NaublcmLAh8/SL19+zYHp7XCLtMem2ZXwl3ywMiA32O9jszuw==
+algoliasearch-helper@^3.5.4:
+  version "3.5.4"
+  resolved "https://registry.yarnpkg.com/algoliasearch-helper/-/algoliasearch-helper-3.5.4.tgz#21b20ab8a258daa9dde9aef2daa5e8994cd66077"
+  integrity sha512-t+FLhXYnPZiwjYe5ExyN962HQY8mi3KwRju3Lyf6OBgtRdx30d6mqvtClXf5NeBihH45Xzj6t4Y5YyvAI432XA==
   dependencies:
     events "^1.1.1"
 
@@ -2379,9 +2389,9 @@ class-utils@^0.3.5:
     static-extend "^0.1.1"
 
 classnames@^2.2.5:
-  version "2.2.6"
-  resolved "https://registry.npmjs.org/classnames/-/classnames-2.2.6.tgz"
-  integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.1.tgz#dfcfa3891e306ec1dad105d0e88f4417b8535e8e"
+  integrity sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==
 
 cli-cursor@^2.1.0:
   version "2.1.0"
@@ -3480,7 +3490,7 @@ etag@~1.8.1:
 
 events@^1.1.0, events@^1.1.1:
   version "1.1.1"
-  resolved "https://registry.npmjs.org/events/-/events-1.1.1.tgz"
+  resolved "https://registry.yarnpkg.com/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
   integrity sha1-nr23Y1rQmccNzEwqH1AEKI6L2SQ=
 
 events@^3.0.0:
@@ -4158,7 +4168,7 @@ hmac-drbg@^1.0.1:
 
 hogan.js@^3.0.2:
   version "3.0.2"
-  resolved "https://registry.npmjs.org/hogan.js/-/hogan.js-3.0.2.tgz"
+  resolved "https://registry.yarnpkg.com/hogan.js/-/hogan.js-3.0.2.tgz#4cd9e1abd4294146e7679e41d7898732b02c7bfd"
   integrity sha1-TNnhq9QpQUbnZ55B14mHMrAse/0=
   dependencies:
     mkdirp "0.3.0"
@@ -4368,18 +4378,19 @@ ini@^1.3.4:
   integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
 
 instantsearch.js@^4.15.0:
-  version "4.15.0"
-  resolved "https://registry.npmjs.org/instantsearch.js/-/instantsearch.js-4.15.0.tgz"
-  integrity sha512-kI7MBKfQXFhgOWXo2wJ//mt9lD+TY1yqBRNZVdTCAPSBzuyL42scghGB5kz3PVzlxxYX5a/sTX6iTS8hX3jOJw==
+  version "4.25.1"
+  resolved "https://registry.yarnpkg.com/instantsearch.js/-/instantsearch.js-4.25.1.tgz#7288376705630994d064a69294743edc2f913351"
+  integrity sha512-RVJsV0wMric9ilLsZqJ3+Mw7ekKOLV5tvy7hEJlIwarWwidTEtvtdQBq3t/0zJrryRUVKJHR8YCwx6xERAtXhQ==
   dependencies:
-    "@types/googlemaps" "^3.39.6"
-    algoliasearch-helper "^3.4.4"
+    "@types/google.maps" "^3.45.3"
+    "@types/hogan.js" "^3.0.0"
+    "@types/qs" "^6.5.3"
+    algoliasearch-helper "^3.5.4"
     classnames "^2.2.5"
     events "^1.1.0"
     hogan.js "^3.0.2"
     preact "^10.0.0"
-    prop-types "^15.5.10"
-    qs "^6.5.1"
+    qs "^6.5.1 < 6.10"
 
 invert-kv@^1.0.0:
   version "1.0.0"
@@ -5028,7 +5039,7 @@ log-symbols@^2.2.0:
   dependencies:
     chalk "^2.0.1"
 
-loose-envify@^1.1.0, loose-envify@^1.4.0:
+loose-envify@^1.1.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz"
   integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
@@ -5304,7 +5315,7 @@ mixin-deep@^1.2.0:
 
 mkdirp@0.3.0:
   version "0.3.0"
-  resolved "https://registry.npmjs.org/mkdirp/-/mkdirp-0.3.0.tgz"
+  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.3.0.tgz#1bbf5ab1ba827af23575143490426455f481fe1e"
   integrity sha1-G79asbqCevI1dRQ0kEJkVfSB/h4=
 
 mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.1:
@@ -5450,7 +5461,7 @@ node-sass@^5.0.0:
 
 nopt@1.0.10:
   version "1.0.10"
-  resolved "https://registry.npmjs.org/nopt/-/nopt-1.0.10.tgz"
+  resolved "https://registry.yarnpkg.com/nopt/-/nopt-1.0.10.tgz#6ddd21bd2a31417b92727dd585f8a6f37608ebee"
   integrity sha1-bd0hvSoxQXuScn3Vhfim83YI6+4=
   dependencies:
     abbrev "1"
@@ -6491,9 +6502,9 @@ postinstall-postinstall@^2.1.0:
   integrity sha512-7hQX6ZlZXIoRiWNrbMQaLzUUfH+sSx39u8EJ9HYuDc1kLo9IXKWjM5RSquZN1ad5GnH8CGFM78fsAAQi3OKEEQ==
 
 preact@^10.0.0:
-  version "10.5.12"
-  resolved "https://registry.npmjs.org/preact/-/preact-10.5.12.tgz"
-  integrity sha512-r6siDkuD36oszwlCkcqDJCAKBQxGoeEGytw2DGMD5A/GGdu5Tymw+N2OBXwvOLxg6d1FeY8MgMV3cc5aVQo4Cg==
+  version "10.5.14"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-10.5.14.tgz#0b14a2eefba3c10a57116b90d1a65f5f00cd2701"
+  integrity sha512-KojoltCrshZ099ksUZ2OQKfbH66uquFoxHSbnwKbTJHeQNvx42EmC7wQVWNuDt6vC5s3nudRHFtKbpY4ijKlaQ==
 
 preact@^10.5.13:
   version "10.5.13"
@@ -6541,15 +6552,6 @@ progress@^2.0.0:
   version "2.0.3"
   resolved "https://registry.npmjs.org/progress/-/progress-2.0.3.tgz"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
-
-prop-types@^15.5.10:
-  version "15.7.2"
-  resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.7.2.tgz"
-  integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
-  dependencies:
-    loose-envify "^1.4.0"
-    object-assign "^4.1.1"
-    react-is "^16.8.1"
 
 psl@^1.1.28:
   version "1.8.0"
@@ -6606,9 +6608,9 @@ q@^1.1.2, q@^1.5.1:
   resolved "https://registry.npmjs.org/q/-/q-1.5.1.tgz"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
 
-qs@^6.5.1:
+"qs@^6.5.1 < 6.10":
   version "6.9.6"
-  resolved "https://registry.npmjs.org/qs/-/qs-6.9.6.tgz"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.9.6.tgz#26ed3c8243a431b2924aca84cc90471f35d5a0ee"
   integrity sha512-TIRk4aqYLNoJUbd+g2lEdz5kLWIuTMRagAXxl78Q0RiVjAOugHmeKNGdd3cwo/ktpf9aL9epCfFqWDEKysUlLQ==
 
 qs@~6.5.2:
@@ -6676,11 +6678,6 @@ react-dom@^17.0.2:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     scheduler "^0.20.2"
-
-react-is@^16.8.1:
-  version "16.13.1"
-  resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
-  integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
 react@17.0.2:
   version "17.0.2"

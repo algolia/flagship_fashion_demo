@@ -3,11 +3,24 @@
 
 <img src="https://i.ibb.co/b3FwNnp/Screenshot-2021-03-09-at-10-41-49.png" alt="Fashion demo" width="800" style="margin: 2rem auto"/>
 
-We use [Commitlint](https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/config-conventional) with a [conventional configuration](https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/config-conventional), this is enforced using a hook via [Husky](https://www.npmjs.com/package/husky)
-
 </div>
 
+<h2 style="font-family='Helvetica'; font-size=15px; font-weight=bold; color=grey;">⭐️ Dependancies</h2>
+
+This repository links to the Algolia application with the ID of "HYDY1KWTWB". It relies on certain settings, rules, data and events/analytics being present in this Algolia application.
+
+There are two private functions running in AWS (in the solutions organisation) in order to assist with the above functions:
+
+1. Flagship-settings-reset: responsible for resetting rules, synonyms and settings every hour.
+
+2. Fashion-demo-app-traffic-generator: responsible for generating fake traffic for analytics purposes.
+
+*We require one more function (currently in development), for generating the correct events in order to feed our AI models such as frequently bought together. Currently these models are hardcoded.*
+
 <h2 style="font-family='Helvetica'; font-size=15px; font-weight=bold; color=grey;">⭐️ How to contribute</h2>
+
+We use [Commitlint](https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/config-conventional) with a [conventional configuration](https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/config-conventional), this is enforced using a hook via [Husky](https://www.npmjs.com/package/husky)
+
 
 <table>
   <thead>
