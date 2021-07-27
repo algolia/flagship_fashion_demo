@@ -301,7 +301,11 @@ export function searchResults() {
 
     const userToken = document.querySelector('.user-token-selector');
     userToken.addEventListener('change', (e) => {
-      refine({ userToken: e.target.value, ruleContexts: [e.target.value] });
+      refine({
+        userToken: e.target.value,
+        ruleContexts: [e.target.value],
+        filters: extraSearchFilters,
+      });
     });
   };
 
