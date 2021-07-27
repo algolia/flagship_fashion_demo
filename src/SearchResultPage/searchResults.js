@@ -19,7 +19,6 @@ import {
   connectSearchBox,
   connectConfigure,
   connectHits,
-  EXPERIMENTAL_connectDynamicWidgets,
 } from 'instantsearch.js/es/connectors';
 
 import aa from 'search-insights';
@@ -474,27 +473,6 @@ export function searchResults() {
     `;
   };
   const connectedHitsWithInjectedContent = connectHits(renderHits);
-
-  const widgets = {
-    category: {
-      widget: refinementList({
-        container: document.querySelector('#dynamic-widgets'),
-        attribute: 'category',
-      }),
-      container: document.createElement('div'),
-    },
-    // custom: {
-    //   widget: customWidget({container: document.querySelector('#dynamic-widgets')}),
-    //   container: document.createElement('div')
-    // }
-  };
-  const renderDynamicWidget = (renderOptions, isFirstRender) => {
-    console.log(renderOptions);
-  };
-
-  const customDynamicWidgets = EXPERIMENTAL_connectDynamicWidgets(
-    renderDynamicWidget
-  );
 
   search.addWidgets([
     customQueryRuleCustomData({
