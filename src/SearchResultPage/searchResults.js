@@ -305,6 +305,7 @@ export function searchResults() {
         userToken: e.target.value,
         ruleContexts: [e.target.value],
         filters: extraSearchFilters,
+        enablePersonalization: e.target.value !== '' ? true : false,
       });
     });
   };
@@ -489,7 +490,7 @@ export function searchResults() {
       container: document.querySelector('#configure'),
       searchParameters: {
         hitsPerPage: 20,
-        enablePersonalization: true,
+        enablePersonalization: false,
         filters: extraSearchFilters,
         query: localStorage.getItem('userQuery')
           ? localStorage.getItem('userQuery')
