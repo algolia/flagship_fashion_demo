@@ -11,9 +11,9 @@ This repository links to the Algolia application with the ID of "HYDY1KWTWB". It
 
 There are two private functions running in AWS (in the solutions organisation) in order to assist with the above functions:
 
-1. Flagship-settings-reset: responsible for resetting rules, synonyms and settings every hour.
+1. [Flagship-settings-manager](https://github.com/algolia/flagship-settings-manager): responsible for resetting rules, synonyms and settings every hour.
 
-2. Fashion-demo-app-traffic-generator: responsible for generating fake traffic for analytics purposes.
+2. [Flagship-traffic-generator](https://github.com/algolia/flagship-traffic-generator): responsible for generating fake traffic for analytics purposes.
 
 *We require one more function (currently in development), for generating the correct events in order to feed our AI models such as frequently bought together. Currently these models are hardcoded.*
 
