@@ -28,18 +28,15 @@ export function searchResults() {
   // ADD FILTERS FOR SPECIFIC URLS
   let extraSearchFilters = '';
 
-  if (
-    window.location.pathname.includes('categorypageaccessories') ||
-    window.location.pathname.includes('categoryPageAccessories')
-  ) {
+  let locationPathname = window.location.pathname.toLowerCase();
+
+  // for accessories
+  if (locationPathname.includes('categorypageaccessories')) {
     extraSearchFilters = 'keywords:"accessories"';
-  } else if (
-    window.location.pathname.includes('categoryPageJeans') ||
-    window.location.pathname.includes('categorypagejeans')
-  ) {
+  }
+  // for jeans
+  else if (locationPathname.includes('categorypagejeans')) {
     extraSearchFilters = 'keywords:"jeans"';
-  } else {
-    extraSearchFilters = '';
   }
 
   // Initialize instantsearch
@@ -118,10 +115,19 @@ export function searchResults() {
       .then(({ hits }) => {
         // Initialize category
         if (hits && hits[0].category && catlist.length === 0)
-          catlist = hits[0].category;
+        catlist = hits[0].category;
+        
+        // If on jeans category, ignore suggestion "jeans"
+        if (
+          extraSearchFilters.includes('jeans') &&
+          catlist[0].toLowerCase() === 'jeans'
+        ) {
+          // Pop it out
+          catlist.shift();
+        }
 
-        // Format data to add isRefined
         if (catlist && catlist.length > 0 && catlistIsrefined.length === 0) {
+          // Format data to add isRefined
           catlist.map((cat) => {
             if (cat.toLowerCase() === query.toLowerCase()) {
               return;
@@ -135,7 +141,7 @@ export function searchResults() {
         }
 
         suggestionContainer.querySelector('ul').innerHTML = catlistIsrefined
-          .filter((item, idx) => idx < 5)
+          .filter((_, idx) => idx < 5)
           .map(
             (category, idx) => ` 
                         <li class="" id="${idx}" style="${isRefined(
