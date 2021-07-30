@@ -132,93 +132,12 @@ export function searchResults() {
         search.renderState[
           'gstar_demo_test'
         ].refinementList.category.refine(event.target.innerText);
-        // refine(event.target.innerText);
       });
      })
 
     })
   };
 
-// GUI CODE 
-// _________________________________________________________________________________________
-
-      // Declared globally for data persistence
-  // let catlist = [];
-  // let catlistIsrefined = [];
- 
-    // suggestionIndex
-    //   .search(query, {
-    //     hitsPerPage: 1,
-    //   })
-    //   .then(({ hits }) => {
-    //     console.log(hits)
-    //     // Initialize category
-    //     if (hits && hits[0].category && catlist.length === 0)
-    //     catlist = hits[0].category;
-   
-        
-    //     // If on jeans category, ignore suggestion "jeans"
-    //     if (
-    //       extraSearchFilters.includes('jeans') &&
-    //       catlist[0].toLowerCase() === 'jeans'
-    //     ) {
-    //       // Pop it out
-    //       catlist.shift();
-    //     }
-
-    //     if (catlist && catlist.length > 0 && catlistIsrefined.length === 0) {
-    //       // Format data to add isRefined
-    //       catlist.map((cat) => {
-    //         if (cat.toLowerCase() === query.toLowerCase()) {
-    //           return;
-    //         }
-
-    //         catlistIsrefined.push({
-    //           name: cat,
-    //           isRefined: false,
-    //         });
-    //       });
-    //     }
-
-    //     suggestionContainer.querySelector('ul').innerHTML = catlistIsrefined
-    //       .filter((_, idx) => idx < 5)
-    //       .map(
-    //         (category, idx) => ` 
-    //                     <li class="" id="${idx}" style="${isRefined(
-    //           category
-    //         )}">${category.name}</li>
-    //                 `
-    //       )
-    //       .join('');
-
-      //   [...suggestionContainer.querySelectorAll('li')].forEach((element) => {
-      //     element.addEventListener('click', (event) => {
-      //       event.preventDefault();
-
-      //       // Update isRefined value
-      //       if (catlistIsrefined[event.target.id])
-      //         catlistIsrefined[event.target.id].isRefined = !catlistIsrefined[
-      //           event.target.id
-      //         ].isRefined;
-
-      //       search.renderState[
-      //         'gstar_demo_test'
-      //       ].refinementList.category.refine(event.target.innerText);
-      //       // refine(event.target.innerText);
-      //     });
-      //   });
-      // });
-      
-      // _________________________________________________________________________________________
-      // GUI CODE 
-
-
-
-  function isRefined(item) {
-    if (item.isRefined) {
-      return 'color: white !important; background-color: rgba(0,0,0, 0.9)';
-    }
-  }
 
   const renderQueryRuleCustomData = (renderOptions, isFirstRender) => {
     const { items, widgetParams, refine } = renderOptions;
