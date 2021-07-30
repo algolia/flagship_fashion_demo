@@ -93,9 +93,6 @@ export function searchResults() {
     '28cf6d38411215e2eef188e635216508'
   ).initIndex('gstar_demo_test_query_suggestions');
 
-  // Declared globally for data persistence
-  let catlist = [];
-  let catlistIsrefined = [];
 
   const renderCustomSearchBar = (renderOptions, isFirstRender) => {
     const { query } = renderOptions;
@@ -108,67 +105,114 @@ export function searchResults() {
       suggestionContainer.appendChild(ul);
     }
 
-    suggestionIndex
-      .search(query, {
-        hitsPerPage: 1,
+    // Declaring an empty array to gather Categories without the keyword that we want to remove
+   let filteredCat = []
+
+
+    suggestionIndex.search(query, {
+          hitsPerPage: 1,
+        })
+    .then(({hits}) => {
+    hits.map(hit => {
+      hit.category.forEach(cat => {
+        // Just checking if "jeans" is the query or the category we're on. Checking also the synthaxe
+        if(cat.toLowerCase() !== query.toLowerCase() && cat.toLowerCase() !== extraSearchFilters.split(':')[1].slice(1, -1).toLowerCase()){
+          filteredCat.push(cat)
+        } 
       })
-      .then(({ hits }) => {
-        // Initialize category
-        if (hits && hits[0].category && catlist.length === 0)
-        catlist = hits[0].category;
-        
-        // If on jeans category, ignore suggestion "jeans"
-        if (
-          extraSearchFilters.includes('jeans') &&
-          catlist[0].toLowerCase() === 'jeans'
-        ) {
-          // Pop it out
-          catlist.shift();
-        }
+    })
+    const catList = filteredCat.slice(0,5).map((cat,idx) => {
+      return `<li id=${idx}>${cat}</li>`
+     }).join('')
+     suggestionContainer.querySelector('ul').innerHTML = catList
 
-        if (catlist && catlist.length > 0 && catlistIsrefined.length === 0) {
-          // Format data to add isRefined
-          catlist.map((cat) => {
-            if (cat.toLowerCase() === query.toLowerCase()) {
-              return;
-            }
-
-            catlistIsrefined.push({
-              name: cat,
-              isRefined: false,
-            });
-          });
-        }
-
-        suggestionContainer.querySelector('ul').innerHTML = catlistIsrefined
-          .filter((_, idx) => idx < 5)
-          .map(
-            (category, idx) => ` 
-                        <li class="" id="${idx}" style="${isRefined(
-              category
-            )}">${category.name}</li>
-                    `
-          )
-          .join('');
-
-        [...suggestionContainer.querySelectorAll('li')].forEach((element) => {
-          element.addEventListener('click', (event) => {
-            event.preventDefault();
-
-            // Update isRefined value
-            if (catlistIsrefined[event.target.id])
-              catlistIsrefined[event.target.id].isRefined = !catlistIsrefined[
-                event.target.id
-              ].isRefined;
-
-            search.renderState[
-              'gstar_demo_test'
-            ].refinementList.category.refine(event.target.innerText);
-            // refine(event.target.innerText);
-          });
-        });
+     suggestionContainer.querySelectorAll('li').forEach(el => {
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        search.renderState[
+          'gstar_demo_test'
+        ].refinementList.category.refine(event.target.innerText);
+        // refine(event.target.innerText);
       });
+     })
+
+    })
   };
+
+// GUI CODE 
+// _________________________________________________________________________________________
+
+      // Declared globally for data persistence
+  // let catlist = [];
+  // let catlistIsrefined = [];
+ 
+    // suggestionIndex
+    //   .search(query, {
+    //     hitsPerPage: 1,
+    //   })
+    //   .then(({ hits }) => {
+    //     console.log(hits)
+    //     // Initialize category
+    //     if (hits && hits[0].category && catlist.length === 0)
+    //     catlist = hits[0].category;
+   
+        
+    //     // If on jeans category, ignore suggestion "jeans"
+    //     if (
+    //       extraSearchFilters.includes('jeans') &&
+    //       catlist[0].toLowerCase() === 'jeans'
+    //     ) {
+    //       // Pop it out
+    //       catlist.shift();
+    //     }
+
+    //     if (catlist && catlist.length > 0 && catlistIsrefined.length === 0) {
+    //       // Format data to add isRefined
+    //       catlist.map((cat) => {
+    //         if (cat.toLowerCase() === query.toLowerCase()) {
+    //           return;
+    //         }
+
+    //         catlistIsrefined.push({
+    //           name: cat,
+    //           isRefined: false,
+    //         });
+    //       });
+    //     }
+
+    //     suggestionContainer.querySelector('ul').innerHTML = catlistIsrefined
+    //       .filter((_, idx) => idx < 5)
+    //       .map(
+    //         (category, idx) => ` 
+    //                     <li class="" id="${idx}" style="${isRefined(
+    //           category
+    //         )}">${category.name}</li>
+    //                 `
+    //       )
+    //       .join('');
+
+      //   [...suggestionContainer.querySelectorAll('li')].forEach((element) => {
+      //     element.addEventListener('click', (event) => {
+      //       event.preventDefault();
+
+      //       // Update isRefined value
+      //       if (catlistIsrefined[event.target.id])
+      //         catlistIsrefined[event.target.id].isRefined = !catlistIsrefined[
+      //           event.target.id
+      //         ].isRefined;
+
+      //       search.renderState[
+      //         'gstar_demo_test'
+      //       ].refinementList.category.refine(event.target.innerText);
+      //       // refine(event.target.innerText);
+      //     });
+      //   });
+      // });
+      
+      // _________________________________________________________________________________________
+      // GUI CODE 
+
+
 
   function isRefined(item) {
     if (item.isRefined) {
