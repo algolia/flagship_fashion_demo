@@ -93,7 +93,6 @@ export function searchResults() {
     '28cf6d38411215e2eef188e635216508'
   ).initIndex('gstar_demo_test_query_suggestions');
 
-
   const renderCustomSearchBar = (renderOptions, isFirstRender) => {
     const { query } = renderOptions;
     const suggestionContainer = document.querySelector(
@@ -106,38 +105,35 @@ export function searchResults() {
     }
 
     // Declaring an empty array to gather Categories without the keyword that we want to remove
-   let filteredCat = []
+    let filteredCat = [];
 
-
-    suggestionIndex.search(query, {
-          hitsPerPage: 1,
-        })
-    .then(({hits}) => {
-    hits.map(hit => {
-      hit.category.forEach(cat => {
-        // Just checking if "jeans" is the query or the category we're on. Checking also the synthaxe
-        if(cat.toLowerCase() !== query.toLowerCase() && cat.toLowerCase() !== extraSearchFilters.split(':')[1].slice(1, -1).toLowerCase()){
-          filteredCat.push(cat)
-        } 
+    suggestionIndex
+      .search(query, {
+        hitsPerPage: 10,
+        filters: extraSearchFilters,
       })
-    })
-    const catList = filteredCat.slice(0,5).map((cat,idx) => {
-      return `<li id=${idx}>${cat}</li>`
-     }).join('')
-     suggestionContainer.querySelector('ul').innerHTML = catList
+      .then(({ hits }) => {
+        hits.map((hit) => {
+          filteredCat.push(hit.query);
+        });
+        const queryList = filteredCat
+          .slice(0, 5)
+          .map((cat, idx) => {
+            return `<li id=${idx}>${cat}</li>`;
+          })
+          .join('');
+        suggestionContainer.querySelector('ul').innerHTML = queryList;
 
-     suggestionContainer.querySelectorAll('li').forEach(el => {
-      el.addEventListener('click', (event) => {
-        event.preventDefault();
-        search.renderState[
-          'gstar_demo_test'
-        ].refinementList.category.refine(event.target.innerText);
+        suggestionContainer.querySelectorAll('li').forEach((el) => {
+          el.addEventListener('click', (event) => {
+            event.preventDefault();
+            search.renderState['gstar_demo_test'].searchBox.refine(
+              event.target.innerText
+            );
+          });
+        });
       });
-     })
-
-    })
   };
-
 
   const renderQueryRuleCustomData = (renderOptions, isFirstRender) => {
     const { items, widgetParams, refine } = renderOptions;
