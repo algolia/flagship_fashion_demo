@@ -141,18 +141,21 @@ export function searchResults() {
 
               const el = el.classList.remove('selected-item');
               setTimeout(el, 1000);
-              console.log('EVENT', el);
+             
             } else {
               search.renderState['gstar_demo_test'].searchBox.refine(
                 event.target.innerText
               );
-              suggestionContainer.querySelectorAll('li').forEach((el) => {
-                console.log('NEW EL', event.target.innerText);
-                if(el.innerText === event.target.innerText){
-                  console.log('JE SUIS DANS LE IF')
-                  el.classList.add('selected-item')
-                }
-              });
+              const isRefined = () => {
+                suggestionContainer.querySelectorAll('li').forEach(elem => {
+                 if(elem.innerText === suggestion){
+                    elem.classList.add('selected-item')
+                  }
+                  
+                })
+              }
+
+              setTimeout(isRefined, 500)
               // console.log('EVENTELSE', search.renderState['gstar_demo_test'].searchBox);
               // console.log('EVENTELSE', el);
             }

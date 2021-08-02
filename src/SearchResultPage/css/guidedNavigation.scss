@@ -49,7 +49,9 @@
 }
 
 .selected-item {
-  border: 1px solid red;
+  background-color: #f5ecf1;
+    color: white;
+    transition: 0.3s ease-in-out;
 }
 
 .btn-showMore {
