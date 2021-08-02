@@ -127,9 +127,29 @@ export function searchResults() {
         suggestionContainer.querySelectorAll('li').forEach((el) => {
           el.addEventListener('click', (event) => {
             event.preventDefault();
-            search.renderState['gstar_demo_test'].searchBox.refine(
-              event.target.innerText
-            );
+            const query = search.renderState['gstar_demo_test'].searchBox.query;
+            const suggestion = event.target.innerText;
+            const suggestionBubble = event;
+
+            // remove suggestion if suggestion was already clicked
+            if (query === suggestion) {
+              search.renderState['gstar_demo_test'].searchBox.refine('');
+              const el = el.classList.remove('selected-item');
+              setTimeout(el, 1000);
+            } else {
+              search.renderState['gstar_demo_test'].searchBox.refine(
+                event.target.innerText
+              );
+              const isRefined = () => {
+                suggestionContainer.querySelectorAll('li').forEach((elem) => {
+                  if (elem.innerText === suggestion) {
+                    elem.classList.add('selected-item');
+                  }
+                });
+              };
+
+              setTimeout(isRefined, 500);
+            }
           });
         });
       });
