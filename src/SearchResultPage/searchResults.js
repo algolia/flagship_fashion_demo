@@ -129,14 +129,32 @@ export function searchResults() {
             event.preventDefault();
             const query = search.renderState['gstar_demo_test'].searchBox.query;
             const suggestion = event.target.innerText;
+            const suggestionBubble = event;
 
             // remove suggestion if suggestion was already clicked
             if (query === suggestion) {
               search.renderState['gstar_demo_test'].searchBox.refine('');
+              console.log(
+                'EVENT',
+                search.renderState['gstar_demo_test'].searchBox
+              );
+
+              const el = el.classList.remove('selected-item');
+              setTimeout(el, 1000);
+              console.log('EVENT', el);
             } else {
               search.renderState['gstar_demo_test'].searchBox.refine(
                 event.target.innerText
               );
+              suggestionContainer.querySelectorAll('li').forEach((el) => {
+                console.log('NEW EL', event.target.innerText);
+                if(el.innerText === event.target.innerText){
+                  console.log('JE SUIS DANS LE IF')
+                  el.classList.add('selected-item')
+                }
+              });
+              // console.log('EVENTELSE', search.renderState['gstar_demo_test'].searchBox);
+              // console.log('EVENTELSE', el);
             }
           });
         });
