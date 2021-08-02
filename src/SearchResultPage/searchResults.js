@@ -134,30 +134,21 @@ export function searchResults() {
             // remove suggestion if suggestion was already clicked
             if (query === suggestion) {
               search.renderState['gstar_demo_test'].searchBox.refine('');
-              console.log(
-                'EVENT',
-                search.renderState['gstar_demo_test'].searchBox
-              );
-
               const el = el.classList.remove('selected-item');
               setTimeout(el, 1000);
-             
             } else {
               search.renderState['gstar_demo_test'].searchBox.refine(
                 event.target.innerText
               );
               const isRefined = () => {
-                suggestionContainer.querySelectorAll('li').forEach(elem => {
-                 if(elem.innerText === suggestion){
-                    elem.classList.add('selected-item')
+                suggestionContainer.querySelectorAll('li').forEach((elem) => {
+                  if (elem.innerText === suggestion) {
+                    elem.classList.add('selected-item');
                   }
-                  
-                })
-              }
+                });
+              };
 
-              setTimeout(isRefined, 500)
-              // console.log('EVENTELSE', search.renderState['gstar_demo_test'].searchBox);
-              // console.log('EVENTELSE', el);
+              setTimeout(isRefined, 500);
             }
           });
         });
