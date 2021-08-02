@@ -114,7 +114,13 @@ export function searchResults() {
       })
       .then(({ hits }) => {
         hits.map((hit) => {
-          filteredCat.push(hit.query);
+          hit.category.forEach(cat => {
+            // Just checking if "jeans" is the query or the category we're on. Checking also the synthaxe
+            if(cat.toLowerCase() !== query.toLowerCase() && cat.toLowerCase() !== extraSearchFilters.split(':')[1].slice(1, -1).toLowerCase()){
+              filteredCat.push(cat)
+            } 
+          })
+         
         });
         const queryList = filteredCat
           .slice(0, 5)
@@ -154,10 +160,7 @@ export function searchResults() {
                   
                 })
               }
-
               setTimeout(isRefined, 500)
-              // console.log('EVENTELSE', search.renderState['gstar_demo_test'].searchBox);
-              // console.log('EVENTELSE', el);
             }
           });
         });
