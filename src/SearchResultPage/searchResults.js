@@ -114,13 +114,16 @@ export function searchResults() {
       })
       .then(({ hits }) => {
         hits.map((hit) => {
-          hit.category.forEach(cat => {
+          hit.category.forEach((cat) => {
             // Just checking if "jeans" is the query or the category we're on. Checking also the synthaxe
-            if(cat.toLowerCase() !== query.toLowerCase() && cat.toLowerCase() !== extraSearchFilters.split(':')[1].slice(1, -1).toLowerCase()){
-              filteredCat.push(cat)
-            } 
-          })
-         
+            if (
+              cat.toLowerCase() !== query.toLowerCase() &&
+              cat.toLowerCase() !==
+                extraSearchFilters.split(':')[1].slice(1, -1).toLowerCase()
+            ) {
+              filteredCat.push(cat);
+            }
+          });
         });
         const queryList = filteredCat
           .slice(0, 5)
@@ -151,11 +154,9 @@ export function searchResults() {
                   if (elem.innerText === suggestion) {
                     elem.classList.add('selected-item');
                   }
-                  
-                })
-              }
-              setTimeout(isRefined, 500)
-
+                });
+              };
+              setTimeout(isRefined, 500);
             }
           });
         });
@@ -683,7 +684,7 @@ export function searchResults() {
             templates: {
               header: 'Sizes',
             },
-          })(menuSelect)({
+          })(refinementList)({
             container,
             attribute: 'sizeFilter',
           }),
