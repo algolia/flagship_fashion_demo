@@ -104,64 +104,51 @@ export function searchResults() {
       suggestionContainer.appendChild(ul);
     }
 
-    // Declaring an empty array to gather Categories without the keyword that we want to remove
-    let filteredCat = [];
-
     suggestionIndex
       .search(query, {
         hitsPerPage: 10,
         filters: extraSearchFilters,
       })
       .then(({ hits }) => {
-        hits.map((hit) => {
-          hit.category.forEach((cat) => {
-            // Just checking if "jeans" is the query or the category we're on. Checking also the synthaxe
-            if (
-              cat.toLowerCase() !== query.toLowerCase() &&
-              cat.toLowerCase() !==
-                extraSearchFilters.split(':')[1].slice(1, -1).toLowerCase()
-            ) {
-              filteredCat.push(cat);
-            }
-          });
-        });
-        const queryList = filteredCat
-          .slice(0, 5)
-          .map((cat, idx) => {
-            return `<li id=${idx}>${cat}</li>`;
+      
+        const queryList = hits.slice(0,6).map((hit) => {
+
+       if(hit.query !== "jeans"){
+            return `<li id="">${hit.query}</li>`;
+          }
           })
           .join('');
-        suggestionContainer.querySelector('ul').innerHTML = queryList;
-
-        suggestionContainer.querySelectorAll('li').forEach((el) => {
-          el.addEventListener('click', (event) => {
-            event.preventDefault();
-            const query = search.renderState['gstar_demo_test'].searchBox.query;
-            const suggestion = event.target.innerText;
-            const suggestionBubble = event;
-
-            // remove suggestion if suggestion was already clicked
-            if (query === suggestion) {
-              search.renderState['gstar_demo_test'].searchBox.refine('');
-              const el = el.classList.remove('selected-item');
-              setTimeout(el, 1000);
-            } else {
-              search.renderState['gstar_demo_test'].searchBox.refine(
-                event.target.innerText
-              );
-              const isRefined = () => {
-                suggestionContainer.querySelectorAll('li').forEach((elem) => {
-                  if (elem.innerText === suggestion) {
-                    elem.classList.add('selected-item');
-                  }
-                });
-              };
-              setTimeout(isRefined, 500);
-            }
-          });
+          suggestionContainer.querySelector('ul').innerHTML = queryList;
+                  suggestionContainer.querySelectorAll('li').forEach((el) => {
+                    el.addEventListener('click', (event) => {
+                      event.preventDefault();
+                      const query = search.renderState['gstar_demo_test'].searchBox.query;
+                      const suggestion = event.target.innerText;
+                      const suggestionBubble = event;
+            
+                      // remove suggestion if suggestion was already clicked
+                      if (query === suggestion) {
+                        search.renderState['gstar_demo_test'].searchBox.refine('');
+                        const el = el.classList.remove('selected-item');
+                        setTimeout(el, 1000);
+                      } else {
+                        search.renderState['gstar_demo_test'].searchBox.refine(
+                          event.target.innerText
+                        );
+                        const isRefined = () => {
+                          suggestionContainer.querySelectorAll('li').forEach((elem) => {
+                            if (elem.innerText === suggestion) {
+                              elem.classList.add('selected-item');
+                            }
+                          });
+                        };
+                        setTimeout(isRefined, 500);
+                      }
+                    });
+                  });
         });
-      });
-  };
+      };
+  
 
   const renderQueryRuleCustomData = (renderOptions, isFirstRender) => {
     const { items, widgetParams, refine } = renderOptions;
