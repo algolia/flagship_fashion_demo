@@ -26,6 +26,7 @@
     position: relative;
     justify-content: center;
     cursor: pointer;
+    height: 90%;
 }
 .image-wrapper a {
     display: flex;
@@ -41,6 +42,7 @@
     /* filter: drop-shadow(#f0f0ef 32px 60px 20px); */
     transition: 0.2s ease-in-out;
     cursor: pointer;
+    object-fit: cover;
     border-radius: 0 30% 0 0%;
 }
 
@@ -236,7 +238,8 @@
     transition: 0.2s ease-in-out;
     cursor: pointer;
     border-radius: 0 30% 0 0%;
-    max-height: 500px;
+    // max-height: 500px;
+    object-fit: cover;
 
     &:hover {
         filter: saturate(0.8);
