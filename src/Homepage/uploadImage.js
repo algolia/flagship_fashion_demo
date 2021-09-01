@@ -42,6 +42,8 @@ export function toggleUpload() {
         )
         .then((response) => {
           console.log('RESP', response.data.objects[0].object);
+          let resp = response.data.objects[0].object
+          window.location.href = `./searchResults.html?gstar_demo_test%5Bquery%5D=${resp}`;
         })
         .catch((err) => {
           console.log('err', err);

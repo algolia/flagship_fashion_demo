@@ -3,10 +3,12 @@ import { burgerMenu } from '../Homepage/burgerMenu';
 import { cardAnimation } from './cardAnimations';
 import { togglePersona } from './persona';
 import { modalProductSearchResult } from './modalProductSearchResult';
+import { toggleUpload } from '../Homepage/uploadImage';
 
 searchResults();
 burgerMenu();
 togglePersona();
+toggleUpload();
 
 var checkExist = setInterval(function () {
   if (document.readyState != 'loading') {
