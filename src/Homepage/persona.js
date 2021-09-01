@@ -9,6 +9,7 @@ export function togglePersona() {
     labelPersona.addEventListener('click', toggleModal)
 
     function toggleModal(e) {
+        console.log('Event personna', personaChoice)
         e.preventDefault()
         if (personaChoice.classList.contains('personaFadeIn')) {
             personaChoice.classList.add('personaFadeOut')

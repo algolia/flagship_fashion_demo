@@ -1,8 +1,8 @@
-@import "../../Scss/global-variables.scss";
-@import "./carouselDetailed.scss";
-@import "./headerMenu.scss";
-@import "./autocomplete.scss";
-@import "./modalProduct.scss";
+@import '../../Scss/global-variables.scss';
+@import './carouselDetailed.scss';
+@import './headerMenu.scss';
+@import './autocomplete.scss';
+@import './modalProduct.scss';
 
 /* GENERAL STYLE */
 
@@ -188,7 +188,7 @@ li {
     z-index: 9;
 
     &::before {
-      content: "";
+      content: '';
       background-color: $fourth-color;
       height: 0.1rem;
       width: 75%;
@@ -214,7 +214,7 @@ li {
   padding: 0.6rem 2rem;
   border: 1px solid rgba(245, 236, 241, 1);
   font-size: 1;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   color: black;
   align-self: center;
   cursor: pointer;
@@ -285,7 +285,7 @@ li {
 .carousel .carousel-list-container li .title {
   text-align: center;
 
-  font-family: "Roboto";
+  font-family: 'Roboto';
 
   font-weight: 500;
   font-size: 0.8rem;
@@ -321,7 +321,7 @@ li {
 /* STAT */
 .ais-Stats {
   position: absolute;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   font-weight: 100;
   font-style: italic;
   color: black;
@@ -405,6 +405,88 @@ li {
   animation: personaOut 0.8s forwards;
 }
 
+.button-upload{
+  background-color: #F6F5F3;
+  font-size: 13px;
+  font-family: "Tropiline", serif;
+  border-radius: 5px;
+  padding: 0.6rem;
+}
+
+// Upload Selector
+.labelUserUpload {
+  position: fixed;
+  top: 20vh;
+  right: 0.5rem;
+  width: 40px;
+  height: 140px;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid rgba(240, 240, 239, 0.5);
+  z-index: 16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 2s infinite;
+  cursor: pointer;
+}
+
+.labelUserUpload p {
+  writing-mode: vertical-rl;
+  margin-left: 20px;
+  text-orientation: sideways-right;
+  font-size: 0.8rem;
+  font-family: $main-font, serif;
+  font-style: italic;
+}
+
+.userUploadImage {
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: white;
+  color: black;
+  width: 200px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  position: fixed;
+  top: 20vh;
+  right: 0;
+  z-index: 15;
+}
+
+.closeUpload {
+  cursor: pointer;
+  position: absolute;
+  top: 0.1rem;
+  right: 0.8rem;
+}
+
+.userUploadImage p {
+  color: black;
+  font-size: 0.8rem;
+  font-style: italic;
+  font-family: $main-font, serif;
+}
+.userUploadImage select {
+  background-color: rgb(246, 245, 243);
+  border: none;
+  padding: 0.6rem;
+  padding-left: 3rem;
+  border-radius: 5px;
+  font-family: $main-font, serif;
+}
+
+.userFadeIn {
+  animation: uploadIn 0.8s forwards;
+}
+.userFadeOut {
+  animation: uploadOut 0.8s forwards;
+}
+
 .img-overlay {
   opacity: 0;
   position: absolute;
@@ -453,7 +535,7 @@ li {
   border-radius: 5px;
   z-index: 500;
   animation: disapear 6s forwards;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   box-sizing: border-box;
 }
 .popUpEventCart {
@@ -466,7 +548,7 @@ li {
   border-radius: 5px;
   z-index: 500;
   animation: disapear 6s forwards;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   box-sizing: border-box;
 }
 
@@ -480,7 +562,7 @@ li {
   border-radius: 5px;
   z-index: 500;
   animation: disapear 6s forwards;
-  font-family: "Roboto";
+  font-family: 'Roboto';
   box-sizing: border-box;
 }
 
@@ -499,7 +581,11 @@ li {
   position: absolute;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(317deg, rgba(255, 255, 255, 1) 0%, rgba(0, 0, 0, 1) 100%);
+  background: linear-gradient(
+    317deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(0, 0, 0, 1) 100%
+  );
   display: flex;
   justify-content: center;
   align-items: center;
@@ -538,6 +624,26 @@ li {
   100% {
     visibility: hidden;
     transform: translate3d(-100%, 0, 0);
+  }
+}
+@keyframes uploadIn {
+  0% {
+    visibility: hidden;
+    transform: translate3d(100%, 0, 0);
+  }
+  100% {
+    visibility: visible;
+    transform: translate3d(0%, 0, 0);
+  }
+}
+@keyframes uploadOut {
+  0% {
+    visibility: visible;
+    transform: translate3d(0%, 0, 0);
+  }
+  100% {
+    visibility: hidden;
+    transform: translate3d(100%, 0, 0);
   }
 }
 @keyframes bounce {
