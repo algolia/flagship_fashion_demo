@@ -1,0 +1,87 @@
+// Upload Selector
+.labelUserUpload {
+  position: fixed;
+  top: 20vh;
+  right: 0.5rem;
+  width: 40px;
+  height: 140px;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid rgba(240, 240, 239, 0.5);
+  z-index: 16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 2s infinite;
+  cursor: pointer;
+}
+
+.labelUserUpload p {
+  writing-mode: vertical-rl;
+  margin-left: 20px;
+  text-orientation: sideways-right;
+  font-size: 0.8rem;
+  font-family: $main-font, serif;
+  font-style: italic;
+}
+
+.userUploadImage {
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: white;
+  color: black;
+  width: 200px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  position: fixed;
+  top: 20vh;
+  right: 0;
+  z-index: 15;
+}
+
+.closeUpload {
+  cursor: pointer;
+  position: absolute;
+  top: 0.1rem;
+  right: 0.8rem;
+}
+
+.userUploadImage p {
+  color: black;
+  font-size: 0.8rem;
+  font-style: italic;
+  font-family: $main-font, serif;
+}
+.userUploadImage select {
+  background-color: rgb(246, 245, 243);
+  border: none;
+  padding: 0.6rem;
+  padding-left: 3rem;
+  border-radius: 5px;
+  font-family: $main-font, serif;
+}
+
+@keyframes uploadIn {
+  0% {
+    visibility: hidden;
+    transform: translate3d(100%, 0, 0);
+  }
+  100% {
+    visibility: visible;
+    transform: translate3d(0%, 0, 0);
+  }
+}
+@keyframes uploadOut {
+  0% {
+    visibility: visible;
+    transform: translate3d(0%, 0, 0);
+  }
+  100% {
+    visibility: hidden;
+    transform: translate3d(100%, 0, 0);
+  }
+}
