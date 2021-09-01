@@ -65,10 +65,21 @@
 
 /* GENDER FILTER */
 
-.gender-list{
+
+#dynamic-widgets  {
+
+
     margin: 1rem 0;
     .ais-RefinementList-item {
         margin: 0.5rem 0;
+    }
+
+    .ais-Panel-header{
+        border-bottom: 1px solid rgba(0, 0, 0, 0.308);
+        span{
+            font-family: "Roboto";
+            color: black;
+        }
     }
 
     .ais-RefinementList-label {
