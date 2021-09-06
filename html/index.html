@@ -63,6 +63,7 @@
 </head>
 
 <body>
+  <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
   <div class="body-wrapper">
     <header class="header">
       <nav class="nav-wrapper">
@@ -77,7 +78,10 @@
             <li class="jeanbtn"><a href="./categoryPageJeans.html">JEANS</a></li>
             <li><a href="./categoryPageAccessories.html">ACCESSORIES</a></li>
             <li><a href="" class="btnPersona">PERSONA</a></li>
-            <li><a href="" class="btnUpload">UPLOAD YOUR IMAGE</a></li>
+            <li>            
+              <input type="file" name="uploadfile" id="img" style="display:none;" accept="image/*"/>
+              <label for="img" class="button-upload">Upload your image</label>
+          </li>
           </ul>
         </div>
         <div class="searchbar-wrapper">
@@ -103,16 +107,6 @@
         <option value="woman">woman</option>
         <option value="man">man</option>
       </select>
-    </div>
-
-<div class="labelUserUpload">
-      <p>Upload your image</p>
-    </div>
-    <div class="userUploadImage">
-      <p class="closeUpload">x</p>
-      <p>Choose a Picture</p>
-      <input type="file" name="uploadfile" id="img" style="display:none;" accept="image/*"/>
-      <label for="img" class="button-upload">Upload</label>
     </div>
 
     <!-- <div class="banner-carousel" id="banner-carousel">

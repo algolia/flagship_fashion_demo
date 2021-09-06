@@ -1,15 +1,15 @@
 import axios from 'axios';
 
-export function toggleUpload() {
+export function toggleUploadSearch() {
   const buttonUpload = document.querySelector('#img');
-  const banner = document.querySelector('.hero-banner');
+  const instanSearch = document.querySelector('.ais-InstantSearch');
   const loader = document.querySelector('.lds-roller');
   console.log('LABEL', loader);
 
   buttonUpload.onchange = function (e) {
     console.log('Input', e);
     loader.classList.add('lds-roller-display');
-    banner.classList.add('hero-banner-opacity');
+    instanSearch.classList.add('opacity-instantsearch');
     let url = URL.createObjectURL(e.target.files[0]);
 
     const files = e.target.files;
