@@ -65,6 +65,21 @@
   font-family: $main-font, serif;
 }
 
+.userUploadImage label{
+  background-color: rgb(246, 245, 243);
+  border: none;
+  padding: 0.6rem;
+  border-radius: 5px;
+  font-family: $main-font, serif;
+}
+
+.uploadFadeIn {
+  animation: uploadIn 0.8s forwards;
+}
+.uploadFadeOut {
+  animation: uploadOut 0.8s forwards;
+}
+
 @keyframes uploadIn {
   0% {
     visibility: hidden;

@@ -5,17 +5,16 @@ export function toggleUpload() {
   const upload = document.querySelector('.userUploadImage');
   const closeUpload = document.querySelector('.closeUpload');
   const labelUpload = document.querySelector('.labelUserUpload');
-  console.log('Event', btnUpload);
+  console.log("LABEL", labelUpload)
 
   btnUpload.addEventListener('click', toggleModal);
   closeUpload.addEventListener('click', toggleModal);
   labelUpload.addEventListener('click', toggleModal);
 
   function toggleModal(e) {
-    console.log('Event', upload);
+    console.log("COUCOU")
     const buttonUpload = document.querySelector('#img');
     e.preventDefault();
-    console.log('EEEE', buttonUpload);
     buttonUpload.onchange = function (e) {
       console.log('Input', e);
       let url = URL.createObjectURL(e.target.files[0]);
@@ -49,13 +48,13 @@ export function toggleUpload() {
           console.log('err', err);
         });
     };
-    if (upload.classList.contains('userFadeIn')) {
-      upload.classList.add('userFadeOut');
-      upload.classList.remove('userFadeIn');
+    if (upload.classList.contains('uploadFadeIn')) {
+      upload.classList.add('uploadFadeOut');
+      upload.classList.remove('uploadFadeIn');
       labelUpload.style.display = 'flex';
     } else {
-      upload.classList.add('userFadeIn');
-      upload.classList.remove('userFadeOut');
+      upload.classList.add('uploadFadeIn');
+      upload.classList.remove('uploadFadeOut');
       labelUpload.style.display = 'none';
     }
   }
