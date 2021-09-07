@@ -1,85 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="theme-color" content="#000000" />
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="theme-color" content="#000000">
-
-    <link rel="manifest" href="../manifest.webmanifest">
-    <link rel="shortcut icon" href="../favicon.png">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="manifest" href="../manifest.webmanifest" />
+    <link rel="shortcut icon" href="../favicon.png" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400;1,700&display=swap"
-        rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-        integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
-        crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+      integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+      crossorigin="anonymous"
+    />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css">
-    <link rel="stylesheet" href="../src/SearchResultPage/css/app.scss">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css"
+    />
+    <link rel="stylesheet" href="../src/SearchResultPage/css/app.scss" />
+  </head>
 
-</head>
-
-<body>
+  <body>
     <div class="body-wrapper">
-        <header class="header">
-            <nav class="nav-wrapper">
-                <div class="nav-logo">
-                    <a href="./index.html"><img src="../images/Simple.svg" alt="Brand logo"></a>
-                </div>
-                <div class="nav-list" id="nav-list">
-                    <ul>
-                        <li><a href="./searchResults.html">CATALOGUE</a></li>
-                        <li><a href="./categoryPageWoman.html">WOMEN</a></li>
-                        <li><a href="./categoryPageMan.html">MEN</a></li>
-                        <li class="jeanbtn"><a href="./categoryPageJeans.html">JEANS</a></li>
-                        <li><a href="./categoryPageAccessories.html">ACCESSORIES</a></li>
-                        <li><a href="" class="btnPersona">PERSONA</a></li>
-                    </ul>
-                </div>
-                <div class="searchbar-wrapper">
-                    <div id="autocomplete" class="autocomplete ais-SearchBox-wrapper">
-                        <span id="voicesearch" class="voicesearch"></span>
-                    </div>
-                </div>
-                <div class="burger">
-                    <div class="line1"></div>
-                    <div class="line2"></div>
-                    <div class="line3"></div>
-                </div>
-            </nav>
-        </header>
-
-        <div class="labelUserPersonna">
-            <p>Persona</p>
-        </div>
-        <div class="userPersonaSelector">
-            <p class="closePersona">x</p>
-            <p>Choose a Persona</p>
-            <select id="user-token-selector" class="user-token-selector">
-                <option value="woman">woman</option>
-                <option value="man">man</option>
-            </select>
-        </div>
-
-        <div class="ais-InstantSearch">
-            <div id="refinement-list-SearchResult" class="refinement-list-SearchResult"></div>
-            <div id="banner"></div>
-            <div class="filters-wrapper">
-                <div id="sort-by" class="sort-by"></div>
-                <div id="stats-searchResult" class="stats-searchResult filters-item-side"></div>
+      <header class="header">
+        <nav class="nav-wrapper">
+          <div class="nav-logo">
+            <a href="./index.html"
+              ><img src="../images/Simple.svg" alt="Brand logo"
+            /></a>
+          </div>
+          <div class="nav-list" id="nav-list">
+            <ul>
+              <li><a href="./searchResults.html">CATALOGUE</a></li>
+              <li><a href="./categoryPageWoman.html">WOMEN</a></li>
+              <li><a href="./categoryPageMan.html">MEN</a></li>
+              <li class="jeanbtn">
+                <a href="./categoryPageJeans.html">JEANS</a>
+              </li>
+              <li><a href="./categoryPageAccessories.html">ACCESSORIES</a></li>
+              <li><a href="" class="btnPersona">PERSONA</a></li>
+              <!-- <li>
+                <input
+                  type="file"
+                  name="uploadfile"
+                  id="img"
+                  style="display: none"
+                  accept="image/*"
+                />
+                <label for="img" class="button-upload">Upload your image</label>
+              </li> -->
+            </ul>
+          </div>
+          <div class="searchbar-wrapper">
+            <div id="autocomplete" class="autocomplete ais-SearchBox-wrapper">
+              <span
+                id="upload"
+                class="uploadImage"
+              >
+                <input
+                  type="file"
+                  name="uploadfile"
+                  id="img"
+                  accept="image/*"
+                />
+                <label for="img" class="button-upload" >
+                    <svg  viewBox="0 0 78 63" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M72.344 55.109C72.344 56.259 71.412 57.192 70.261 57.192H7.083C5.933 57.192 5 56.259 5 55.109V17.495C5 16.344 5.933 15.412 7.083 15.412H19.997H20.151C21.706 15.056 22.915 13.88 23.77 11.638C24.811 8.904 25.592 6.822 25.592 6.822C25.592 6.822 26.112 5 29.106 5H48.369C51.363 5 51.883 6.822 51.883 6.822C51.883 6.822 52.664 8.904 53.705 11.638C54.56 13.88 55.769 15.056 57.324 15.412H70.261C71.412 15.412 72.344 16.344 72.344 17.495V55.109ZM70.261 10.412H58.623C58.552 10.278 58.469 10.097 58.377 9.857C57.48 7.502 56.777 5.632 56.605 5.174C55.72 2.555 52.885 0 48.369 0H29.106C24.59 0 21.755 2.555 20.87 5.174C20.698 5.632 19.995 7.502 19.098 9.858C19.006 10.097 18.922 10.278 18.852 10.412H7.083C3.178 10.412 0 13.589 0 17.495V55.109C0 59.014 3.178 62.192 7.083 62.192H70.261C74.167 62.192 77.344 59.014 77.344 55.109V17.495C77.344 13.589 74.167 10.412 70.261 10.412ZM38.672 47.081C32.21 47.081 26.953 41.824 26.953 35.363C26.953 28.9 32.21 23.643 38.672 23.643C45.134 23.643 50.391 28.9 50.391 35.363C50.391 41.824 45.134 47.081 38.672 47.081ZM38.672 18.643C29.453 18.643 21.953 26.143 21.953 35.363C21.953 44.581 29.453 52.081 38.672 52.081C47.891 52.081 55.391 44.581 55.391 35.363C55.391 26.143 47.891 18.643 38.672 18.643Z" fill="black"/>
+                    </svg>
+                </label>
+              </span>
+              <span id="voicesearch" class="voicesearch"></span>
             </div>
-            <div id="smart-sort-banner" class="smart-sort-banner"></div>
-            <div class="container-result-wrapper">
-                <p class="hideFilters">HIDE</p>
-                <div class="left-panel">
-                    <div id="clear-refinements" class="clear-refinements"></div>
-                    <div id="current-refinements" class="current-refinements"></div>
-                    <div id="dynamic-widgets"></div>
-                    <!-- <div class="gender-wrapper filter-item-wrapper">
+          </div>
+          <div class="burger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+          </div>
+        </nav>
+      </header>
+
+      <div class="labelUserPersonna">
+        <p>Persona</p>
+      </div>
+      <div class="userPersonaSelector">
+        <p class="closePersona">x</p>
+        <p>Choose a Persona</p>
+        <select id="user-token-selector" class="user-token-selector">
+          <option value="woman">woman</option>
+          <option value="man">man</option>
+        </select>
+      </div>
+
+      <div class="lds-roller">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div class="ais-InstantSearch">
+        <div
+          id="refinement-list-SearchResult"
+          class="refinement-list-SearchResult"
+        ></div>
+        <div id="banner"></div>
+        <div class="filters-wrapper">
+          <div id="sort-by" class="sort-by"></div>
+          <div
+            id="stats-searchResult"
+            class="stats-searchResult filters-item-side"
+          ></div>
+        </div>
+        <div id="smart-sort-banner" class="smart-sort-banner"></div>
+        <div class="container-result-wrapper">
+          <p class="hideFilters">HIDE</p>
+          <div class="left-panel">
+            <div id="clear-refinements" class="clear-refinements"></div>
+            <div id="current-refinements" class="current-refinements"></div>
+            <div id="dynamic-widgets"></div>
+            <!-- <div class="gender-wrapper filter-item-wrapper">
                         <h2>Gender</h2>
                         <div id="gender-list" class="gender-list"></div>
                     </div>
@@ -99,61 +153,62 @@
                         <h2>Prices</h2>
                         <div id="price-list" class="price-list"></div>
                     </div> -->
-                </div>
+          </div>
 
-
-
-
-                <div class="right-panel">
-
-                    <div id="hex-color-list"></div>
-                    <ul id="hits" class="hitsAutocomplete displayGrid"></ul>
-                    <div id="hitsResults" class="hitsAutocomplete displayGrid"></div>
-                    <div class="container">
-                        <div id="stacked-carousels"></div>
-                    </div>
-
-                    <div id="colorHex"></div>
-                    <div id="pagination"></div>
-
-                    <div class="modal-relatedItems--wrapper">
-                        <div class="modal-relatedItems">
-                            <div class="modal-relatedItems--closeBtn">X</div>
-                            <div class="modal-carousel--wraper">
-                                <div class="modal-carousel--title">
-                                    <h2>In the same Category</h2>
-                                    <div class="underline"></div>
-                                </div>
-                                <div id="carousel-relatedItems" class="carousel-relatedItems"></div>
-
-                            </div>
-                            <div class="modal-carousel--wraper">
-                                <div class="modal-carousel--title">
-                                    <h2>You Might also like</h2>
-                                    <div class="underline"></div>
-                                </div>
-                                <div id="carousel-relatedItemsSecond" class="carousel-relatedItemsSecond">
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="popUp-wrapper"></div>
-                <div class="modalProduct-wrapper">
-                    <div class="modalProduct "></div>
-                </div>
+          <div class="right-panel">
+            <div id="hex-color-list"></div>
+            <ul id="hits" class="hitsAutocomplete displayGrid"></ul>
+            <div id="hitsResults" class="hitsAutocomplete displayGrid"></div>
+            <div class="container">
+              <div id="stacked-carousels"></div>
             </div>
-        </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
-        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.0/js/standalone/selectize.js"
-        integrity="sha512-B03hDxgZPMBobOrnBhFiKvf8XCO7IRNa26/WiQK9lU+grXd5WXVHq3togZ67YLcUnNdrtoBbn5bi0GhYd0ivCA=="
-        crossorigin="anonymous"></script>
-    <script src="../src/SearchResultPage/app.js"></script>
-</body>
 
+            <div id="colorHex"></div>
+            <div id="pagination"></div>
+
+            <div class="modal-relatedItems--wrapper">
+              <div class="modal-relatedItems">
+                <div class="modal-relatedItems--closeBtn">X</div>
+                <div class="modal-carousel--wraper">
+                  <div class="modal-carousel--title">
+                    <h2>In the same Category</h2>
+                    <div class="underline"></div>
+                  </div>
+                  <div
+                    id="carousel-relatedItems"
+                    class="carousel-relatedItems"
+                  ></div>
+                </div>
+                <div class="modal-carousel--wraper">
+                  <div class="modal-carousel--title">
+                    <h2>You Might also like</h2>
+                    <div class="underline"></div>
+                  </div>
+                  <div
+                    id="carousel-relatedItemsSecond"
+                    class="carousel-relatedItemsSecond"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="popUp-wrapper"></div>
+          <div class="modalProduct-wrapper">
+            <div class="modalProduct"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+      integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.0/js/standalone/selectize.js"
+      integrity="sha512-B03hDxgZPMBobOrnBhFiKvf8XCO7IRNa26/WiQK9lU+grXd5WXVHq3togZ67YLcUnNdrtoBbn5bi0GhYd0ivCA=="
+      crossorigin="anonymous"
+    ></script>
+    <script src="../src/SearchResultPage/app.js"></script>
+  </body>
 </html>

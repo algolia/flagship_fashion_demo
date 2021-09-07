@@ -3,6 +3,8 @@
 @import "./headerMenu.scss";
 @import "./autocomplete.scss";
 @import "./modalProduct.scss";
+@import "./upload.scss";
+@import "./loader.scss";
 
 /* GENERAL STYLE */
 
@@ -43,6 +45,17 @@ li {
   overflow-x: hidden;
   justify-items: center;
   align-items: center;
+}
+.hero-banner-opacity{
+  display: grid;
+  grid-template-columns: 30% 70%;
+  padding: 3rem;
+  background-color: #f6edf1;
+  width: 100%;
+  overflow-x: hidden;
+  justify-items: center;
+  align-items: center;
+  opacity: 0.2;
 }
 .banner-title-wrapper {
   justify-items: center;

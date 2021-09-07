@@ -94,11 +94,17 @@
   }
 }
 
+
+
 .ais-SearchBox-wrapper {
   align-self: center;
   position: absolute;
   width: 60%;
   right: 5rem;
+
+  .ais-SearchBox-submit{
+    left: .8rem;
+  }
 }
 
 .ais-SearchBox-input {
@@ -122,7 +128,7 @@
 
 .voicesearch {
   position: absolute;
-  right: 2rem;
+  right: 3rem;
   top: 6px;
   z-index: 999;
 }
@@ -132,6 +138,10 @@
 }
 
 .ais-VoiceSearch-status p {
+  display: none;
+}
+
+.ais-SearchBox-resetIcon{
   display: none;
 }
 
