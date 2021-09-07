@@ -121,17 +121,23 @@
 /* SEARCH BAR */
 .searchbar-wrapper {
   display: flex;
-  flex: 1;
-  justify-content: end;
+  // flex: 1;
+  justify-content: flex-end;
   position: relative;
   grid-area: searchbar;
   align-items: center;
+  width: 100%;
   .autocomplete {
-    width: 100%;
+    width: 90%;
+    position: relative;
+
+    .aa-DetachedSearchButtonIcon{
+      margin-left: 2rem;
+    }
   }
   .aa-Autocomplete {
-    width: 60%;
-    margin: 0 auto;
+    // width: 60%;
+    // margin: 0 auto;
 
     .aa-SubmitIcon {
       fill: black;

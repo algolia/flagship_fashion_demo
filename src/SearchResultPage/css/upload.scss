@@ -1,4 +1,27 @@
+.uploadImage{
+  position: absolute;
+  top: 51%;
+  right: 1.3rem;
+  transform: translate(0%,-50%);
+  z-index: 99;
+  cursor: pointer;
+  input{
+    display: none;
+    cursor: pointer;
+    
+  }
+
+  svg{
+    width: 18px;
+    cursor: pointer;
+  }
+}
+
+
 // Upload Selector
+
+
+
 .nav-list{
   li{
     label{
