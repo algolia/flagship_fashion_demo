@@ -11,18 +11,18 @@ import aa from 'search-insights';
 
 export function relatedResultModal() {
   const searchClient = algoliasearch(
-    'HYDY1KWTWB',
-    '28cf6d38411215e2eef188e635216508'
+    '853MYZ81KY',
+    'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
-  const index = searchClient.initIndex('gstar_demo_test');
+  const index = searchClient.initIndex('flagship_transformed_index_V2');
 
   const search = instantsearch({
-    indexName: 'gstar_demo_test',
+    indexName: 'flagship_transformed_index_V2',
     searchClient,
   });
 
   const searchIndexSecond = instantsearch({
-    indexName: 'Gstar_demo_carousel_detail',
+    indexName: 'flagship_transformed_index_V2_config',
     searchClient,
   });
 
@@ -187,7 +187,7 @@ export function relatedResultModal() {
       }
 
       function popUpEventClick(event, object) {
-        const index = searchClient.initIndex('gstar_demo_test');
+        const index = searchClient.initIndex('flagship_transformed_index_V2');
         let popUpWrapper = document.querySelector('.popUp-wrapper');
         index.getObject(object).then((object) => {
           let div = document.createElement('div');
@@ -218,9 +218,7 @@ export function relatedResultModal() {
                 'Product Clicked'
               )}>
                 <img
-                src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                  hit.objectID
-                }.jpg"
+                src="${hit.full_url_image}"
                 align="left" alt="${hit.name}" class="result-img" />
                 <div class="result-img-overlay"></div>
                 <div class="hit-addToCart">
@@ -258,9 +256,7 @@ export function relatedResultModal() {
                     'Product Clicked'
                   )}>
                     <img
-                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                      hit.objectID
-                    }.jpg"
+                    src="${hit.full_url_image}"
                     align="left" alt="${hit.name}" class="result-img" />
                     <div class="result-img-overlay"></div>
                     <div class="hit-addToCart">

@@ -19,12 +19,12 @@ import { cardAnimationHome } from './cardAnimationHome';
 export function GetDataForCarousel() {
   // GET CREDENTIALS
   const searchClient = algoliasearch(
-    'HYDY1KWTWB',
-    '28cf6d38411215e2eef188e635216508'
+    '853MYZ81KY',
+    'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
 
   const search = instantsearch({
-    indexName: 'gstar_demo_test',
+    indexName: 'flagship_transformed_index_V2',
     searchClient,
     routing: true,
   });
@@ -48,7 +48,7 @@ export function GetDataForCarousel() {
   //GET THE CONFIG
   function getCarouselConfigs() {
     return searchClient
-      .initIndex('gstar_demo_config')
+      .initIndex('flagship_transformed_index_V2_config')
       .search('', {
         facetFilters: ['userToken:' + getUserToken()],
         attributesToHighlight: [],

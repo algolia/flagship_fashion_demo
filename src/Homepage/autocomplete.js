@@ -14,12 +14,12 @@ import { html } from 'htm/preact';
 
 export function autocompleteHome() {
   const searchClient = algoliasearch(
-    'HYDY1KWTWB',
-    '28cf6d38411215e2eef188e635216508'
+    '853MYZ81KY',
+    'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
 
   const search = instantsearch({
-    indexName: 'gstar_demo_test',
+    indexName: 'flagship_transformed_index_V2',
     searchClient,
     routing: true,
   });
@@ -28,7 +28,7 @@ export function autocompleteHome() {
 
   search.addWidgets([
     index({
-      indexName: 'gstar_demo_test',
+      indexName: 'flagship_transformed_index_V2',
     }).addWidgets([
       autocompleteSearchBox({
         container: '#autocomplete',
@@ -38,8 +38,8 @@ export function autocompleteHome() {
   ]);
 
   function createAutocompleteSearchBox() {
-    const appId = 'HYDY1KWTWB';
-    const apiKey = '28cf6d38411215e2eef188e635216508';
+    const appId = '853MYZ81KY';
+    const apiKey = 'aed9b39a5a489d4a6c9a66d40f66edbf';
     const searchClient = algoliasearch(appId, apiKey);
 
     const recentSearchesPlugin = createLocalStorageRecentSearchesPlugin({
@@ -48,7 +48,7 @@ export function autocompleteHome() {
     });
     const querySuggestionsPlugin = createQuerySuggestionsPlugin({
       searchClient,
-      indexName: 'gstar_demo_test_query_suggestions',
+      indexName: 'flagship_transformed_index_V2_query_suggestions',
       getSearchParams() {
         return recentSearchesPlugin.data.getAlgoliaSearchParams({
           hitsPerPage: 3,
@@ -83,7 +83,7 @@ export function autocompleteHome() {
               queries: [
                 {
                   query,
-                  indexName: 'gstar_demo_test',
+                  indexName: 'flagship_transformed_index_V2',
                   params: {
                     hitsPerPage: 3,
                     attributesToSnippet: ['name:10'],
@@ -94,7 +94,7 @@ export function autocompleteHome() {
             }).then(async ([products]) => {
               const [categories] = await searchClient.searchForFacetValues([
                 {
-                  indexName: 'gstar_demo_test',
+                  indexName: 'flagship_transformed_index_V2',
                   params: {
                     facetName: 'name',
                     facetQuery: query,
@@ -105,7 +105,7 @@ export function autocompleteHome() {
                   },
                 },
                 {
-                  indexName: 'gstar_demo_test',
+                  indexName: 'flagship_transformed_index_V2',
                   params: {
                     facetName: 'category',
                     facetQuery: query,
@@ -178,7 +178,7 @@ export function autocompleteHome() {
           },
           onSubmit({ root, sections, state }) {
             refine(state.query);
-            window.location.href = `./searchResults.html?gstar_demo_test%5Bquery%5D=${state.query}`;
+            window.location.href = `./searchResults.html?flagship_transformed_index_V2%5Bquery%5D=${state.query}`;
           },
         });
         // During subsequent renders, refresh the autocomplete instance
@@ -201,7 +201,7 @@ export function autocompleteHome() {
       return html`
         <div class="aa-ItemContent">
           <a
-            href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}"
+            href="./searchResults.html?flagship_transformed_index_V2%5Bquery%5D=${query}"
             class="aa-ItemLink"
           >
             <div class="aa-ItemImage">
@@ -220,7 +220,7 @@ export function autocompleteHome() {
       return html`
         <div class="aa-btnShowMore-wrapper">
           <a
-            href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}"
+            href="./searchResults.html?flagship_transformed_index_V2%5Bquery%5D=${query}"
             class="aa-btnShowMore"
           >
             ${title}
@@ -233,7 +233,7 @@ export function autocompleteHome() {
       return html`
         <div class="aa-ItemContentCategory">
           <a
-            href="./searchResults.html?gstar_demo_test%5Bquery%5D=${query}"
+            href="./searchResults.html?flagship_transformed_index_V2%5Bquery%5D=${query}"
             class="aa-ItemLinkCategory"
           >
             <div class="aa-ItemTitle">${title}</div>
