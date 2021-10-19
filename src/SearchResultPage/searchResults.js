@@ -386,9 +386,7 @@ export function searchResults() {
             } else {
               return `<li
                         
-             class="carousel-list-item carousel-list-item-modal-call" data-id="${
-               hit.objectID
-             }">
+             class="carousel-list-item carousel-list-item-modal-call" data-id="${hit.objectID}">
                             <div class="badgeWrapper">
                                     <div>${displayEcoBadge(hit)}</div>
                                     <div>${displayOffBadge(hit)}</div>

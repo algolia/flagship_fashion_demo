@@ -97,9 +97,12 @@ export function relatedResultModal() {
 
   const getObjectID = () => {
     let productSearchResult = document.querySelectorAll('.image-wrapper');
+    console.log(productSearchResult)
     productSearchResult.forEach((item) => {
+     
       if (item.dataset.id !== undefined) {
         index.getObject(item.dataset.id).then((object) => {
+          
           item.addEventListener('click', (e) => {
             let img = item.querySelector('img');
             if (e.target === item || e.target === img) {

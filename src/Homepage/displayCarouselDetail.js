@@ -11,7 +11,7 @@ export function carouselDetailed() {
     'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
   const searchDetail = instantsearch({
-    indexName: 'flagship_transformed_index_V2_config',
+    indexName: 'flagship_transformed_index_V2',
     searchClient,
   });
 
@@ -134,14 +134,12 @@ export function carouselDetailed() {
                 </div>
                     <div class="carousel-detailed-display-info">
                         <div class="hit-name">
-                        ${hit.category}
+                        ${hit.name}
                         </div>
-                        <div class="hit-color">
-                        ${hit.colourFilter}
-                        </div>
-                        <div class="hit-description">${hit.description}</div>
+                       
+                        <div class="hit-description">${hit.brand}</div>
                         <div class="hit-rating-price">
-                            <div class="hit-price">$${hit.price}</div>
+                            <div class="hit-price">${hit.price}</div>
                         </div>
                     </div>
               </li>

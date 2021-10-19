@@ -75,13 +75,16 @@ export function modalProductSearchResult() {
 
   function getObjectsIDS() {
     let cardProduct = document.querySelectorAll('.hitsAutocomplete li');
+   
 
     cardProduct.forEach((product) => {
+      
       // detailProduct(product)
       product.addEventListener('click', (e) => {
         let productID = e.target.dataset.id;
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
+          console.log(object)
           displayProduct(object);
           if (object.objectID) {
             // relatedItems(object);
@@ -124,7 +127,7 @@ export function modalProductSearchResult() {
             <div class="productModal-infos-Wrapper">
                 <div class="productModal-image-wrapper">
                     <img
-                    src="${hit.full_url_image}"
+                    src="${product.full_url_image}"
                     align="left" alt="${
                       product.name
                     }" class="productModal-hit-img" />
@@ -152,7 +155,7 @@ export function modalProductSearchResult() {
                             }" class="product-colorsHex"></div>
                         </div>
                         <div class="productModal-hit-description">${
-                          product.description
+                          product.brand
                         }</div>
                         <div class="productModal-hit-rating-price">
                             <div class="productModal-hit-price">$${

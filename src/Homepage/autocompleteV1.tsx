@@ -71,7 +71,7 @@ export function autocompleteHomePage() {
                 return props['data-autocomplete-source-id'] === 'products';
             });
             const categories = sections.find(({ props }) => {
-                return props['data-autocomplete-source-id'] === 'category';
+                return props['data-autocomplete-source-id'] === 'categories';
             });
 
             render(
@@ -145,7 +145,7 @@ export function autocompleteHomePage() {
                     },
                 },
                 {
-                    sourceId: 'category',
+                    sourceId: 'categories',
                     getItems() {
                         return getAlgoliaResults({
                             searchClient,
@@ -157,7 +157,7 @@ export function autocompleteHomePage() {
                                         clickAnalytics: true,
                                         hitsPerPage: 8,
                                         attributesToSnippet: [
-                                            'product_name:10',
+                                            'categories:10',
                                             // 'product_details:35',
                                         ],
                                         snippetEllipsisText: '…',
@@ -180,6 +180,7 @@ export function autocompleteHomePage() {
                             );
                         },
                         item({ item }) {
+                            console.log(item)
                             return (
                                 <CategoryItem
                                     query={query}
@@ -240,7 +241,7 @@ export function autocompleteHomePage() {
 
     function CategoryItem({ hit, insights, components }: CategoryItemProps) {
         // const { hit } = props;
-        // console.log(hit)
+        console.log(hit)
         return (
             <Fragment>
                 <div className="aa-ItemContent">
