@@ -42,19 +42,21 @@ export function GetDataForCarousel() {
 
   function getUserToken() {
     localStorage.setItem('personaValue', userTokenSelector.value);
+    console.log(userTokenSelector.value)
     return userTokenSelector.value;
   }
 
   //GET THE CONFIG
   function getCarouselConfigs() {
     return searchClient
-      .initIndex('flagship_transformed_index_V2_config')
+      .initIndex('flagship_fashion_config')
       .search('', {
         facetFilters: ['userToken:' + getUserToken()],
-        attributesToHighlight: [],
+        // attributesToHighlight: [],
         attributesToRetrieve: ['title', 'indexName', 'configure', 'objectID'],
       })
       .then((res) => {
+        console.log(res)
         return res.hits;
       });
   }
