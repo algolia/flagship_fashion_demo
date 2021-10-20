@@ -35,7 +35,7 @@ export function toggleUpload() {
       .then((response) => {
         console.log('RESP', response.data.objects[0].object);
         let resp = response.data.objects[0].object;
-        window.location.href = `./searchResults.html?flagship_transformed_index_V2%5Bquery%5D=${resp}`;
+        window.location.href = `./searchResults.html?flagship_fashion%5Bquery%5D=${resp}`;
         loader.classList.remove('lds-roller-display');
         banner.classList.remove('hero-banner-opacity');
       })

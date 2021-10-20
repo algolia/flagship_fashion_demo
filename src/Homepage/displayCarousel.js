@@ -19,7 +19,7 @@ export const carousel = connectHits(function renderCarousel(
   );
 
   const search = instantsearch({
-    indexName: 'flagship_transformed_index_V2',
+    indexName: 'flagship_fashion',
     searchClient,
     routing: true,
   });
@@ -88,7 +88,7 @@ export const carousel = connectHits(function renderCarousel(
   }
 
   function popUpEventClick(event, object) {
-    const index = searchClient.initIndex('flagship_transformed_index_V2');
+    const index = searchClient.initIndex('flagship_fashion');
     let popUpWrapper = document.querySelector('.popUp-wrapper');
     index.getObject(object).then((object) => {
       let div = document.createElement('div');

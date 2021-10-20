@@ -15,10 +15,10 @@ export function modalProductSearchResult() {
     '853MYZ81KY',
     'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
-  const index = searchClient.initIndex('flagship_transformed_index_V2');
+  const index = searchClient.initIndex('flagship_fashion');
 
   const search = instantsearch({
-    indexName: 'flagship_transformed_index_V2',
+    indexName: 'flagship_fashion',
     searchClient,
   });
   // CONFIG TO SEND INSIGHT EVENT TO THE DASHBOARD FOR PERSONALISATION
@@ -75,16 +75,14 @@ export function modalProductSearchResult() {
 
   function getObjectsIDS() {
     let cardProduct = document.querySelectorAll('.hitsAutocomplete li');
-   
 
     cardProduct.forEach((product) => {
-      
       // detailProduct(product)
       product.addEventListener('click', (e) => {
         let productID = e.target.dataset.id;
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
-          console.log(object)
+          console.log(object);
           displayProduct(object);
           if (object.objectID) {
             // relatedItems(object);
@@ -185,7 +183,7 @@ export function modalProductSearchResult() {
         })
         .then(({ hits }) => {
           aa('clickedObjectIDs', {
-            index: 'flagship_transformed_index_V2',
+            index: 'flagship_fashion',
             eventName: 'Product Added',
             objectIDs: [e.target.dataset.id],
           });

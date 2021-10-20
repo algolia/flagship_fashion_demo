@@ -20,10 +20,10 @@ export function modalProduct() {
     '853MYZ81KY',
     'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
-  const index = searchClient.initIndex('flagship_transformed_index_V2');
+  const index = searchClient.initIndex('flagship_fashion');
 
   const search = instantsearch({
-    indexName: 'flagship_transformed_index_V2',
+    indexName: 'flagship_fashion',
     searchClient,
   });
   // CONFIG TO SEND INSIGHT EVENT TO THE DASHBOARD FOR PERSONALISATION
@@ -178,7 +178,7 @@ export function modalProduct() {
         })
         .then(({ hits }) => {
           aa('clickedObjectIDs', {
-            index: 'flagship_transformed_index_V2',
+            index: 'flagship_fashion',
             eventName: 'Product Added to Wishlist',
             objectIDs: [btnAddtoCart.dataset.id],
           });
@@ -204,7 +204,7 @@ export function modalProduct() {
         })
         .then(({ hits }) => {
           aa('clickedObjectIDs', {
-            index: 'flagship_transformed_index_V2',
+            index: 'flagship_fashion',
             eventName: 'Product Added',
             objectIDs: [e.target.dataset.id],
           });
