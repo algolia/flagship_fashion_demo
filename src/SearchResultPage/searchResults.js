@@ -636,34 +636,44 @@ export function searchResults() {
             },
           })(rangeSlider)({
             container,
-            attribute: 'price',
+            attribute: 'unformated_price',
             tooltips: true,
             pips: true,
           }),
-        (container) =>
+          (container) =>
           panel({
             templates: {
-              header: 'Color',
+              header: 'Colour',
             },
           })(refinementList)({
             container,
-            attribute: 'hexColorCode',
-            transformItems(items) {
-              return items.map((item) => ({
-                ...item,
-                color: item.value.split('//')[1],
-                colorCode: item.value.split('//')[0],
-              }));
-            },
-            templates: {
-              item: `
-                        <input type="color" value={{color}} class="colorInput" id="{{colorCode}}" {{#isRefined}}checked{{/isRefined}}/>
-                        <label for="{{colorCode}}" class="{{#isRefined}}isRefined{{/isRefined}}">
-                          {{colorCode}}
-                          <span class="color" style="background-color: {{color}}"></span>
-                        </label>`,
-            },
+            attribute: 'colour',
           }),
+        // (container) =>
+        //   panel({
+        //     templates: {
+        //       header: 'Color',
+        //     },
+        //   })(refinementList)({
+        //     container,
+        //     attribute: 'hexColorCode',
+        //     transformItems(items) {
+        //       return items.map((item) => ({
+        //         ...item,
+        //         color: item.value.split('//')[1],
+        //         colorCode: item.value.split('//')[0],
+        //       }));
+        //     },
+        //     templates: {
+        //       item: `
+        //                 <input type="color" value={{color}} class="colorInput" id="{{colorCode}}" {{#isRefined}}checked{{/isRefined}}/>
+        //                 <label for="{{colorCode}}" class="{{#isRefined}}isRefined{{/isRefined}}">
+        //                   {{colorCode}}
+        //                   <span class="color" style="background-color: {{color}}"></span>
+        //                 </label>`,
+        //     },
+        //   }),
+
         (container) =>
           panel({
             templates: {
