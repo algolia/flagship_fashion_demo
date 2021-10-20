@@ -10,6 +10,11 @@ import { connectHits } from 'instantsearch.js/es/connectors';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 import aa from 'search-insights';
 
+/** @jsx h */
+import { h } from 'preact';
+import { frequentlyBoughtTogether } from '@algolia/recommend-js';
+import recommend from '@algolia/recommend';
+
 export function modalProduct() {
   let cardProduct = document.querySelectorAll('.carousel-list-container li');
   let cardProductSecondCarousel = document.querySelectorAll(
@@ -75,12 +80,8 @@ export function modalProduct() {
         let productID = e.target.dataset.id;
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
-          displayProduct(object);
-          if (object.objectID) {
-            // relatedItems(object);
-            recommandedItems(object);
-            boughtTogether(object);
-          }
+          console.log(object);
+          displayProduct(object, productID);
         });
         showModal();
       });
@@ -110,7 +111,49 @@ export function modalProduct() {
     });
   }
 
-  function displayProduct(product) {
+  function displayProduct(product, productID) {
+    console.log(product);
+    const recommendClient = recommend(
+      '853MYZ81KY',
+      '1bc06bbf6de499f6b826a8a0e6902568'
+    );
+
+    const indexName = 'flagship_fashion';
+
+    function RelatedItem({ item }) {
+      return (
+        <li class="related-ais-Hits-item related-carousel-list-item">
+          <div class="related-image-wrapper">
+            <img
+              src={item.full_url_image}
+              align="left"
+              alt={item.name}
+              class="related-result-img"
+            />
+            <div class="related-result-img-overlay"></div>
+          </div>
+          <div class="related-hit-names">
+            <div class="related-hit-infos">
+              <div class="related-hit-name">{item.name}</div>
+              <div
+                style="background: ${
+                hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
+              }"
+                class="related-product-colorsHex"
+              ></div>
+            </div>
+          </div>
+          <div class="related-hit-price">{item.price}</div>
+        </li>
+        // <a href={item.url}>
+        //   <img src={item.image_link} alt={item.name} />
+        //   <div>{item.category}</div>
+        //   <div>{item.name}</div>
+        //   <div>${item.price}</div>
+        // </a>
+      );
+    }
+
     let modalProduct = document.querySelector('.modalProduct');
     modalProduct.innerHTML = `
         <i class="fas fa-heart heart" id="wishlist-button"></i>
@@ -119,9 +162,7 @@ export function modalProduct() {
                 <div class="productModal-image-wrapper">
                     <img
                     src="${product.full_url_image}"
-                    align="left" alt="${
-                      product.name
-                    }" class="productModal-hit-img" />
+                    align="left" alt="${product.name}" class="productModal-hit-img" />
                     <div class="productModal-img-overlay"></div>
                 </div>
                 <div class="productModal-info-wrapper">
@@ -133,38 +174,27 @@ export function modalProduct() {
                         <div class="productModal-hit-name">
                         ${product.name}
                         </div>
-                        <div class="productModal-hit-color">
-                            <div class="productModal-hit-color-text">${
-                              product.hexColorCode
-                                ? product.hexColorCode.split('//')[0]
-                                : ''
-                            }</div>
-                            <div style="background: ${
-                              product.hexColorCode
-                                ? product.hexColorCode.split('//')[1]
-                                : ''
-                            }" class="product-colorsHex"></div>
-                        </div>
-                        <div class="productModal-hit-description">${
-                          product.description
-                        }</div>
+                        <div class="productModal-hit-description">${product.brand}</div>
                         <div class="productModal-hit-rating-price">
-                            <div class="productModal-hit-price">$${
-                              product.price
-                            }</div>
+                            <div class="productModal-hit-price">$${product.price}</div>
                         </div>
                         </div>
-                        <div class="productModal-hit-addToCart" data-id=${
-                          product.objectID
-                        }>
-                            <a href="#"class="productModal-btn" data-id=${
-                              product.objectID
-                            }><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
+                        <div class="productModal-hit-addToCart" data-id=${product.objectID}>
+                            <a href="#"class="productModal-btn" data-id=${product.objectID}><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
                         </div>
                     </div>
                 </div>
+                <div class=""fbt id="relatedProducts"></div>
             </div>
         `;
+
+    frequentlyBoughtTogether({
+      container: '#relatedProducts',
+      recommendClient,
+      indexName,
+      objectIDs: [productID],
+      itemComponent: RelatedItem,
+    });
 
     let btnAddtoCart = document.querySelector('.productModal-btn');
     let btnAddtoWishlist = document.querySelector('#wishlist-button');
