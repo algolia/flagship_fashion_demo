@@ -77,22 +77,22 @@ GetDataCarousel();
 burgerMenu();
 renderCarouselAllProduct();
 
-let execQueryBtn = document.querySelector('#execQuery');
+// let execQueryBtn = document.querySelector('#execQuery');
 
-execQueryBtn.addEventListener('click', (event) => {
-  let searchBoxInput = document.querySelector('.ais-SearchBox-input');
-  searchBoxInput.focus();
-  setTimeout(() => {
-    searchBoxInput.value = event.target.innerText;
-  });
-});
+// execQueryBtn.addEventListener('click', (event) => {
+//   let searchBoxInput = document.querySelector('.ais-SearchBox-input');
+//   searchBoxInput.focus();
+//   setTimeout(() => {
+//     searchBoxInput.value = event.target.innerText;
+//   });
+// });
 
-let execQueryBtn1 = document.querySelector('#execQuery1');
+// let execQueryBtn1 = document.querySelector('#execQuery1');
 
-execQueryBtn1.addEventListener('click', (event) => {
-  let searchBoxInput = document.querySelector('.ais-SearchBox-input');
-  searchBoxInput.focus();
-  setTimeout(() => {
-    searchBoxInput.value = event.target.innerText;
-  });
-});
+// execQueryBtn1.addEventListener('click', (event) => {
+//   let searchBoxInput = document.querySelector('.ais-SearchBox-input');
+//   searchBoxInput.focus();
+//   setTimeout(() => {
+//     searchBoxInput.value = event.target.innerText;
+//   });
+// });
