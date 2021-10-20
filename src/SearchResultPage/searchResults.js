@@ -33,11 +33,11 @@ export function searchResults() {
 
   // for accessories
   if (locationPathname.includes('categorypageaccessories')) {
-    extraSearchFilters = 'keywords:"accessories"';
+    extraSearchFilters = 'categories:"Accessories"';
   }
   // for jeans
-  else if (locationPathname.includes('categorypagejeans')) {
-    extraSearchFilters = 'keywords:"jeans"';
+  else if (locationPathname.includes('categorypageshoes')) {
+    extraSearchFilters = 'categories:"Shoes"';
   }
 
   // Initialize instantsearch
@@ -661,7 +661,7 @@ export function searchResults() {
             tooltips: true,
             pips: true,
           }),
-          (container) =>
+        (container) =>
           panel({
             templates: {
               header: 'Colour',
