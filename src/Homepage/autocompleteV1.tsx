@@ -36,7 +36,7 @@ export function autocompleteHomePage() {
 
     const querySuggestionsPlugin = createQuerySuggestionsPlugin({
         searchClient,
-        indexName: 'flagship_transformed_index_V2_query_suggestions',
+        indexName: 'flagship_fashion_query_suggestions',
         getSearchParams() {
             return {
                 hitsPerPage: 8,
@@ -91,7 +91,7 @@ export function autocompleteHomePage() {
         },
         onSubmit(props) {
             localStorage.setItem('querySeachBox', props.state.query);
-            window.location.href = `./searchResults.html?flagship_transformed_index_V2%5Bquery%5D=${props.state.query}`;
+            window.location.href = `./searchResults.html?flagship_fashion%5Bquery%5D=${props.state.query}`;
 
         },
         getSources({ query, state }) {
@@ -109,7 +109,7 @@ export function autocompleteHomePage() {
                             searchClient,
                             queries: [
                                 {
-                                    indexName: 'flagship_transformed_index_V2',
+                                    indexName: 'flagship_fashion',
                                     query,
                                     params: {
                                         clickAnalytics: true,
@@ -151,7 +151,7 @@ export function autocompleteHomePage() {
                             searchClient,
                             queries: [
                                 {
-                                    indexName: 'flagship_transformed_index_V2',
+                                    indexName: 'flagship_fashion',
                                     query,
                                     params: {
                                         clickAnalytics: true,

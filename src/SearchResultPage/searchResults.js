@@ -46,7 +46,7 @@ export function searchResults() {
   );
 
   const search = instantsearch({
-    indexName: 'flagship_transformed_index_V2',
+    indexName: 'flagship_fashion',
     searchClient,
     routing: true,
   });
@@ -91,7 +91,7 @@ export function searchResults() {
   let suggestionIndex = algoliasearch(
     '853MYZ81KY',
     'aed9b39a5a489d4a6c9a66d40f66edbf'
-  ).initIndex('flagship_transformed_index_V2_query_suggestions');
+  ).initIndex('flagship_fashion_query_suggestions');
 
   const renderCustomSearchBar = (renderOptions, isFirstRender) => {
     const { query } = renderOptions;
@@ -110,45 +110,45 @@ export function searchResults() {
         filters: extraSearchFilters,
       })
       .then(({ hits }) => {
-      
-        const queryList = hits.slice(0,6).map((hit) => {
-
-       if(hit.query !== "jeans"){
-            return `<li id="">${hit.query}</li>`;
-          }
+        const queryList = hits
+          .slice(0, 6)
+          .map((hit) => {
+            if (hit.query !== 'jeans') {
+              return `<li id="">${hit.query}</li>`;
+            }
           })
           .join('');
-          suggestionContainer.querySelector('ul').innerHTML = queryList;
-                  suggestionContainer.querySelectorAll('li').forEach((el) => {
-                    el.addEventListener('click', (event) => {
-                      event.preventDefault();
-                      const query = search.renderState['flagship_transformed_index_V2'].searchBox.query;
-                      const suggestion = event.target.innerText;
-                      const suggestionBubble = event;
-            
-                      // remove suggestion if suggestion was already clicked
-                      if (query === suggestion) {
-                        search.renderState['flagship_transformed_index_V2'].searchBox.refine('');
-                        const el = el.classList.remove('selected-item');
-                        setTimeout(el, 1000);
-                      } else {
-                        search.renderState['flagship_transformed_index_V2'].searchBox.refine(
-                          event.target.innerText
-                        );
-                        const isRefined = () => {
-                          suggestionContainer.querySelectorAll('li').forEach((elem) => {
-                            if (elem.innerText === suggestion) {
-                              elem.classList.add('selected-item');
-                            }
-                          });
-                        };
-                        setTimeout(isRefined, 500);
-                      }
-                    });
-                  });
+        suggestionContainer.querySelector('ul').innerHTML = queryList;
+        suggestionContainer.querySelectorAll('li').forEach((el) => {
+          el.addEventListener('click', (event) => {
+            event.preventDefault();
+            const query =
+              search.renderState['flagship_fashion'].searchBox.query;
+            const suggestion = event.target.innerText;
+            const suggestionBubble = event;
+
+            // remove suggestion if suggestion was already clicked
+            if (query === suggestion) {
+              search.renderState['flagship_fashion'].searchBox.refine('');
+              const el = el.classList.remove('selected-item');
+              setTimeout(el, 1000);
+            } else {
+              search.renderState['flagship_fashion'].searchBox.refine(
+                event.target.innerText
+              );
+              const isRefined = () => {
+                suggestionContainer.querySelectorAll('li').forEach((elem) => {
+                  if (elem.innerText === suggestion) {
+                    elem.classList.add('selected-item');
+                  }
+                });
+              };
+              setTimeout(isRefined, 500);
+            }
+          });
         });
-      };
-  
+      });
+  };
 
   const renderQueryRuleCustomData = (renderOptions, isFirstRender) => {
     const { items, widgetParams, refine } = renderOptions;
@@ -323,7 +323,7 @@ export function searchResults() {
     }
 
     function popUpEventClick(event, object) {
-      const index = searchClient.initIndex('flagship_transformed_index_V2');
+      const index = searchClient.initIndex('flagship_fashion');
       let popUpWrapper = document.querySelector('.popUp-wrapper');
       index.getObject(object).then((object) => {
         let div = document.createElement('div');
@@ -349,8 +349,8 @@ export function searchResults() {
     const shouldInjectRecord = (position, start, end) =>
       position > start && position <= end;
 
-    if (search.renderState.flagship_transformed_index_V2.queryRules.items !== undefined) {
-      const userData = search.renderState.flagship_transformed_index_V2.queryRules.items;
+    if (search.renderState.flagship_fashion.queryRules.items !== undefined) {
+      const userData = search.renderState.flagship_fashion.queryRules.items;
 
       if (isValidUserData(userData)) {
         if (response !== undefined) {
@@ -366,13 +366,9 @@ export function searchResults() {
       }
     }
 
-  
-
-
     document.querySelector('#hits').innerHTML = `
         ${hits
           .map((hit) => {
-           
             if (hit.injected) {
               return ` <li class="carousel-list-item">
                           <div class="image-wrapper">
@@ -386,7 +382,9 @@ export function searchResults() {
             } else {
               return `<li
                         
-             class="carousel-list-item carousel-list-item-modal-call" data-id="${hit.objectID}">
+             class="carousel-list-item carousel-list-item-modal-call" data-id="${
+               hit.objectID
+             }">
                             <div class="badgeWrapper">
                                     <div>${displayEcoBadge(hit)}</div>
                                     <div>${displayOffBadge(hit)}</div>
@@ -556,19 +554,19 @@ export function searchResults() {
       container: '#sort-by',
       items: [
         {
-          value: 'flagship_transformed_index_V2',
+          value: 'flagship_fashion',
           label: 'Most relevant',
         },
         {
-          value: `flagship_transformed_index_V2_price_asc`,
+          value: `flagship_fashion_price_asc`,
           label: 'Sort by ascending price',
         },
         {
-          value: `flagship_transformed_index_V2_asc_price_smart_sort`,
+          value: `flagship_fashion_asc_price_smart_sort`,
           label: 'smart sort - Lowest price',
         },
         {
-          value: `flagship_transformed_index_V2_price_desc`,
+          value: `flagship_fashion_price_desc`,
           label: 'Sort by descending price',
         },
       ],

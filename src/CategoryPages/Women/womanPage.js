@@ -13,7 +13,7 @@ function GetDataCarousel() {
   );
 
   const search = instantsearch({
-    indexName: 'flagship_transformed_index_V2',
+    indexName: 'flagship_fashion',
     searchClient,
   });
 
