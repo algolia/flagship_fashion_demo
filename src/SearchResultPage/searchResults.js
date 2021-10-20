@@ -12,7 +12,7 @@ import {
   searchBox,
   EXPERIMENTAL_dynamicWidgets,
   panel,
-  queryRuleCustomData
+  queryRuleCustomData,
 } from 'instantsearch.js/es/widgets';
 import {
   connectQueryRules,
@@ -157,6 +157,12 @@ export function searchResults() {
     const checkBanner = items.map((item) => {
       if (items.length < 2) {
         return item.banner;
+      }
+    });
+
+    items.map((item) => {
+      if (item.isRedirected) {
+        window.open(item.redirect, '_blank');
       }
     });
 
@@ -578,19 +584,20 @@ export function searchResults() {
     searchBox({
       container: '#autocomplete',
     }),
-    queryRuleCustomData({
-      container: "#redirect",
-      templates: {
-        default: '',
-      },
-      transformItems(items) {
-        const match = items.find((data) => Boolean(data.redirect));
-        if (match && match.redirect) {
-          window.location.href = match.redirect;
-        }
-        return [];
-      },
-    }),
+    // queryRuleCustomData({
+    //   container: "#redirect",
+    //   templates: {
+    //     default: '',
+    //   },
+    //   transformItems(items) {
+    //     const match = items.find((data) => Boolean(data.redirect));
+    //     if (match && match.redirect) {
+    //       // window.location.href = match.redirect;
+    //       window.open(match.redirect, "_blank")
+    //     }
+    //     return [];
+    //   },
+    // }),
     connectedHitsWithInjectedContent({ container: '#hits' }),
     pagination({
       container: '#pagination',
