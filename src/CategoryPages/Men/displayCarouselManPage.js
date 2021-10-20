@@ -69,8 +69,8 @@ export function renderCarouselAllProduct() {
     }),
     configure({
       hitsPerPage: 15,
-      ruleContexts: ['man_page'],
-      filters: '"hierarchical_categories.lvl0":"men"',
+      // ruleContexts: ['man_page'],
+      filters: '"genderFilter":"MEN"',
     }),
     stats({
       container: '#stats-searchResultMan',
@@ -82,7 +82,7 @@ export function renderCarouselAllProduct() {
  
       <div class="image-wrapper">
           <img
-          src="${hit.full_url_image}"
+          src={{full_url_image}}
           align="left" alt="{{name}}" class="result-img" />
       </div>
       <div class="hit-name">
