@@ -382,7 +382,7 @@ export function searchResults() {
                               <img class="injectImg" src="${hit.image}" alt="">
                           </div>
                           <div class="btn-injection-content-wrapper">
-                              <a class="btn-injection-content">Check it out</a>
+                              <a href="${hit.target}" class="btn-injection-content">${hit.button}</a>
                           </div>
   
                     </li>`;
