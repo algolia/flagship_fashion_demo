@@ -8,7 +8,7 @@
   },
   "scripts": {
     "postinstall": "patch-package",
-    "start": "parcel html/index.html html/searchResults.html html/categoryPageMan.html html/categoryPageWoman.html html/categoryPageJeans.html --public-url /",
+    "start": "parcel html/index.html html/searchResults.html html/categoryPageMan.html html/categoryPageWoman.html html/categoryPageShoes.html --public-url /",
     "dev": "parcel html/*",
     "build": "parcel build html/*",
     "build2": "esbuild html/* --bundle --outdir=dist",
