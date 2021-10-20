@@ -118,7 +118,7 @@ export function modalProduct() {
             <div class="productModal-infos-Wrapper">
                 <div class="productModal-image-wrapper">
                     <img
-                    src="${hit.full_url_image}"
+                    src="${product.full_url_image}"
                     align="left" alt="${
                       product.name
                     }" class="productModal-hit-img" />

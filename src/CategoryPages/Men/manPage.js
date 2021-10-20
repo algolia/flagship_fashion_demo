@@ -27,7 +27,7 @@ function GetDataCarousel() {
   //GET THE CONFIG
   function getCarouselConfigs() {
     return searchClient
-      .initIndex('flagship_transformed_index_V2_config_man')
+      .initIndex('flagship_fashion_config_man')
       .search('', {
         attributesToHighlight: [],
         attributesToRetrieve: ['title', 'indexName', 'configure'],
