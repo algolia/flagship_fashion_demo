@@ -17,13 +17,13 @@ export function modalProduct() {
   );
 
   const searchClient = algoliasearch(
-    'HYDY1KWTWB',
-    '28cf6d38411215e2eef188e635216508'
+    '853MYZ81KY',
+    'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
-  const index = searchClient.initIndex('gstar_demo_test');
+  const index = searchClient.initIndex('flagship_transformed_index_V2');
 
   const search = instantsearch({
-    indexName: 'gstar_demo_test',
+    indexName: 'flagship_transformed_index_V2',
     searchClient,
   });
   // CONFIG TO SEND INSIGHT EVENT TO THE DASHBOARD FOR PERSONALISATION
@@ -118,9 +118,7 @@ export function modalProduct() {
             <div class="productModal-infos-Wrapper">
                 <div class="productModal-image-wrapper">
                     <img
-                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                      product.objectID
-                    }.jpg"
+                    src="${hit.full_url_image}"
                     align="left" alt="${
                       product.name
                     }" class="productModal-hit-img" />
@@ -180,7 +178,7 @@ export function modalProduct() {
         })
         .then(({ hits }) => {
           aa('clickedObjectIDs', {
-            index: 'gstar_demo_test',
+            index: 'flagship_transformed_index_V2',
             eventName: 'Product Added to Wishlist',
             objectIDs: [btnAddtoCart.dataset.id],
           });
@@ -206,7 +204,7 @@ export function modalProduct() {
         })
         .then(({ hits }) => {
           aa('clickedObjectIDs', {
-            index: 'gstar_demo_test',
+            index: 'flagship_transformed_index_V2',
             eventName: 'Product Added',
             objectIDs: [e.target.dataset.id],
           });
@@ -226,7 +224,7 @@ export function modalProduct() {
   function boughtTogether(object) {
     if (object.objectID) {
       const indexBT = searchClient.initIndex(
-        'ai_recommend_bought-together_gstar_demo_test_static'
+        'ai_recommend_bought-together_flagship_transformed_index_V2_static'
       );
       let objectID = object.objectID;
       indexBT
@@ -260,9 +258,7 @@ export function modalProduct() {
             <li class="related-ais-Hits-item related-carousel-list-item">   
               <div class="related-image-wrapper">
                 <img
-                src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                  hit.objectID
-                }.jpg"
+                src="${hit.full_url_image}"
                 align="left" alt="${hit.name}" class="related-result-img" />
                 <div class="related-result-img-overlay"></div>
               </div>
@@ -291,7 +287,7 @@ export function modalProduct() {
     if (object.objectID) {
       let objectID = object.objectID;
       const indexRecommand = searchClient.initIndex(
-        'ai_recommend_related_products_gstar_demo_test_static'
+        'ai_recommend_related_products_flagship_transformed_index_V2_static'
       );
 
       indexRecommand.getObject(objectID).then((item) => {
@@ -325,9 +321,7 @@ export function modalProduct() {
               <li class="related-ais-Hits-item related-carousel-list-item">   
                 <div class="related-image-wrapper">
                   <img
-                  src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                    hit.objectID
-                  }.jpg"
+                  src="${hit.full_url_image}"
                   align="left" alt="${hit.name}" class="related-result-img" />
                   <div class="related-result-img-overlay"></div>
                 </div>

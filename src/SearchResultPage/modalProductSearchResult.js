@@ -12,13 +12,13 @@ import aa from 'search-insights';
 
 export function modalProductSearchResult() {
   const searchClient = algoliasearch(
-    'HYDY1KWTWB',
-    '28cf6d38411215e2eef188e635216508'
+    '853MYZ81KY',
+    'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
-  const index = searchClient.initIndex('gstar_demo_test');
+  const index = searchClient.initIndex('flagship_transformed_index_V2');
 
   const search = instantsearch({
-    indexName: 'gstar_demo_test',
+    indexName: 'flagship_transformed_index_V2',
     searchClient,
   });
   // CONFIG TO SEND INSIGHT EVENT TO THE DASHBOARD FOR PERSONALISATION
@@ -75,13 +75,16 @@ export function modalProductSearchResult() {
 
   function getObjectsIDS() {
     let cardProduct = document.querySelectorAll('.hitsAutocomplete li');
+   
 
     cardProduct.forEach((product) => {
+      
       // detailProduct(product)
       product.addEventListener('click', (e) => {
         let productID = e.target.dataset.id;
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
+          console.log(object)
           displayProduct(object);
           if (object.objectID) {
             // relatedItems(object);
@@ -124,9 +127,7 @@ export function modalProductSearchResult() {
             <div class="productModal-infos-Wrapper">
                 <div class="productModal-image-wrapper">
                     <img
-                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                      product.objectID
-                    }.jpg"
+                    src="${product.full_url_image}"
                     align="left" alt="${
                       product.name
                     }" class="productModal-hit-img" />
@@ -154,7 +155,7 @@ export function modalProductSearchResult() {
                             }" class="product-colorsHex"></div>
                         </div>
                         <div class="productModal-hit-description">${
-                          product.description
+                          product.brand
                         }</div>
                         <div class="productModal-hit-rating-price">
                             <div class="productModal-hit-price">$${
@@ -184,7 +185,7 @@ export function modalProductSearchResult() {
         })
         .then(({ hits }) => {
           aa('clickedObjectIDs', {
-            index: 'gstar_demo_test',
+            index: 'flagship_transformed_index_V2',
             eventName: 'Product Added',
             objectIDs: [e.target.dataset.id],
           });
@@ -204,7 +205,7 @@ export function modalProductSearchResult() {
   function boughtTogether(object) {
     if (object.objectID) {
       const indexBT = searchClient.initIndex(
-        'ai_recommend_bought-together_gstar_demo_test'
+        'ai_recommend_bought-together_flagship_transformed_index_V2'
       );
       let objectID = object.objectID;
       indexBT
@@ -238,9 +239,7 @@ export function modalProductSearchResult() {
             <li class="related-ais-Hits-item related-carousel-list-item">   
               <div class="related-image-wrapper">
                 <img
-                src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                  hit.objectID
-                }.jpg"
+                src="${hit.full_url_image}"
                 align="left" alt="${hit.name}" class="related-result-img" />
                 <div class="related-result-img-overlay"></div>
               </div>
@@ -269,7 +268,7 @@ export function modalProductSearchResult() {
     if (object.objectID) {
       let objectID = object.objectID;
       const indexRecommand = searchClient.initIndex(
-        'ai_recommend_related-products_gstar_demo_test'
+        'ai_recommend_related-products_flagship_transformed_index_V2'
       );
       indexRecommand
         .getObject(objectID)
@@ -304,9 +303,7 @@ export function modalProductSearchResult() {
               <li class="related-ais-Hits-item related-carousel-list-item">   
                 <div class="related-image-wrapper">
                   <img
-                  src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                    hit.objectID
-                  }.jpg"
+                  src="${hit.full_url_image}"
                   align="left" alt="${hit.name}" class="related-result-img" />
                   <div class="related-result-img-overlay"></div>
                 </div>
