@@ -12,6 +12,7 @@ import {
   searchBox,
   EXPERIMENTAL_dynamicWidgets,
   panel,
+  queryRuleCustomData
 } from 'instantsearch.js/es/widgets';
 import {
   connectQueryRules,
@@ -576,6 +577,19 @@ export function searchResults() {
     }),
     searchBox({
       container: '#autocomplete',
+    }),
+    queryRuleCustomData({
+      container: "#redirect",
+      templates: {
+        default: '',
+      },
+      transformItems(items) {
+        const match = items.find((data) => Boolean(data.redirect));
+        if (match && match.redirect) {
+          window.location.href = match.redirect;
+        }
+        return [];
+      },
     }),
     connectedHitsWithInjectedContent({ container: '#hits' }),
     pagination({
