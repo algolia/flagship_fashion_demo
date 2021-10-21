@@ -42,7 +42,6 @@ export function GetDataForCarousel() {
 
   function getUserToken() {
     localStorage.setItem('personaValue', userTokenSelector.value);
-    console.log(userTokenSelector.value)
     return userTokenSelector.value;
   }
 
@@ -56,7 +55,6 @@ export function GetDataForCarousel() {
         attributesToRetrieve: ['title', 'indexName', 'configure', 'objectID'],
       })
       .then((res) => {
-        console.log(res)
         return res.hits;
       });
   }

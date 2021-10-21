@@ -180,7 +180,6 @@ export function autocompleteHomePage() {
                             );
                         },
                         item({ item }) {
-                            console.log(item)
                             return (
                                 <CategoryItem
                                     query={query}
@@ -240,8 +239,6 @@ export function autocompleteHomePage() {
     }
 
     function CategoryItem({ hit, insights, components }: CategoryItemProps) {
-        // const { hit } = props;
-        console.log(hit)
         return (
             <Fragment>
                 <div className="aa-ItemContent">
