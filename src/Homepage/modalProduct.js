@@ -80,7 +80,6 @@ export function modalProduct() {
         let productID = e.target.dataset.id;
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
-          console.log(object);
           displayProduct(object, productID);
         });
         showModal();
@@ -112,7 +111,6 @@ export function modalProduct() {
   }
 
   function displayProduct(product, productID) {
-    console.log(product);
     const recommendClient = recommend(
       '853MYZ81KY',
       '1bc06bbf6de499f6b826a8a0e6902568'

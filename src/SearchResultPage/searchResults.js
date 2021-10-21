@@ -192,12 +192,12 @@ export function searchResults() {
     }
   };
 
-  const createDataAttribtues = (refinement) =>
+   const createDataAttribtues = (refinement) =>
     Object.keys(refinement)
       .map((key) => `data-${key}="${refinement[key]}"`)
       .join(' ');
 
-  const renderListItem = (item) => `
+   const renderListItem = (item) => `
       ${item.refinements
         .map(
           (refinement) => `
@@ -213,7 +213,7 @@ export function searchResults() {
         .join('')}
 `;
 
-  const renderCurrentRefinements = (renderOptions, isFirstRender) => {
+   const renderCurrentRefinements = (renderOptions, isFirstRender) => {
     const { items, widgetParams, refine } = renderOptions;
     document.querySelector('#current-refinements').innerHTML = `
             <ul class="currentRefinment-filters">

@@ -6,8 +6,14 @@ import {
   hits,
   stats,
   searchBox,
+  EXPERIMENTAL_dynamicWidgets,
+  panel,
+  refinementList,
+  clearRefinements,
+  rangeSlider
 } from 'instantsearch.js/es/widgets';
-import { connectHits } from 'instantsearch.js/es/connectors';
+import { connectHits, connectCurrentRefinements } from 'instantsearch.js/es/connectors';
+// import {createDataAttribtues, renderListItem, renderCurrentRefinements} from '../../SearchResultPage/searchResults'
 
 export const carousel = connectHits(function renderCarousel(
   { widgetParams: { container, title }, hits },
@@ -57,6 +63,57 @@ export function renderCarouselAllProduct() {
     'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
 
+  const createDataAttribtues = (refinement) =>
+  Object.keys(refinement)
+    .map((key) => `data-${key}="${refinement[key]}"`)
+    .join(' ');
+
+  const renderListItem = (item) => `
+  ${item.refinements
+    .map(
+      (refinement) => `
+            <li>${
+              refinement.attribute === 'hexColorCode'
+                ? refinement.value.split('//')[0]
+                : refinement.value
+            } (${refinement.count != undefined ? refinement.count : '$'})
+        <button ${createDataAttribtues(
+          refinement
+        )} class="btnCloseRefinements">X</button></li>`
+    )
+    .join('')}
+`;
+
+  const renderCurrentRefinements = (renderOptions, isFirstRender) => {
+    const { items, widgetParams, refine } = renderOptions;
+    document.querySelector('#current-refinements').innerHTML = `
+            <ul class="currentRefinment-filters">
+              ${items.map(renderListItem).join('')}
+            </ul>
+          `;
+
+    [
+      ...widgetParams.container.querySelectorAll('.btnCloseRefinements'),
+    ].forEach((element) => {
+      element.addEventListener('click', (event) => {
+        const item = Object.keys(event.currentTarget.dataset).reduce(
+          (acc, key) => ({
+            ...acc,
+            [key]: event.currentTarget.dataset[key],
+          }),
+          {}
+        );
+
+        refine(item);
+      });
+    });
+  };
+
+
+  const customCurrentRefinements = connectCurrentRefinements(
+    renderCurrentRefinements
+  );
+
   const search = instantsearch({
     indexName: 'flagship_fashion',
     searchClient,
@@ -100,6 +157,106 @@ export function renderCarouselAllProduct() {
     }),
     pagination({
       container: '#pagination',
+    }),
+    customCurrentRefinements({
+      container: document.querySelector('#current-refinements'),
+    }),
+    clearRefinements({
+      container: '#clear-refinements',
+    }),
+    EXPERIMENTAL_dynamicWidgets({
+      container: '#dynamic-widgets',
+      widgets: [
+        (container) =>
+          panel({
+            templates: {
+              header: 'Fit',
+            },
+          })(refinementList)({
+            container,
+            attribute: 'non_numeric_attributes.fitFilter',
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Brands',
+            },
+          })(refinementList)({
+            container,
+            attribute: 'brand',
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Colors',
+            },
+          })(refinementList)({
+            container,
+            attribute: 'colour',
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Gender',
+            },
+          })(refinementList)({
+            container,
+            attribute: 'genderFilter',
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Category',
+            },
+          })(refinementList)({
+            container,
+            attribute: 'categories',
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Price',
+            },
+          })(rangeSlider)({
+            container,
+            attribute: 'price',
+            tooltips: true,
+            pips: true,
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Color',
+            },
+          })(refinementList)({
+            container,
+            attribute: 'hexColorCode',
+            transformItems(items) {
+              return items.map((item) => ({
+                ...item,
+                color: item.value.split('//')[1],
+                colorCode: item.value.split('//')[0],
+              }));
+            },
+            templates: {
+              item: `
+                        <input type="color" value={{color}} class="colorInput" id="{{colorCode}}" {{#isRefined}}checked{{/isRefined}}/>
+                        <label for="{{colorCode}}" class="{{#isRefined}}isRefined{{/isRefined}}">
+                          {{colorCode}}
+                          <span class="color" style="background-color: {{color}}"></span>
+                        </label>`,
+            },
+          }),
+        (container) =>
+          panel({
+            templates: {
+              header: 'Sizes',
+            },
+          })(refinementList)({
+            container,
+            attribute: 'sizeFilter',
+          }),
+      ],
     }),
   ]);
 

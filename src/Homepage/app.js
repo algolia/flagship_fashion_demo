@@ -14,15 +14,7 @@ GetDataForCarousel();
 carouselDetailed();
 burgerMenu();
 togglePersona();
-// autocompleteHome();
 autocompleteHomePage();
 toggleUpload();
 
-// var checkExist = setInterval(function () {
-//   if (document.querySelectorAll('.carousel-list-container').length === 6) {
-//     console.log(document.querySelectorAll('.carousel-list-container').length);
-//     cardAnimationHome();
-//     modalProduct();
-//     clearInterval(checkExist);
-//   }
-// }, 50);
+

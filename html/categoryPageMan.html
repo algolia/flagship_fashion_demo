@@ -60,21 +60,29 @@
             </nav>
         </header>
 
-        <div class="container">
-            <!--HIDE DEMO SETTINGS COMPONENT AS NOT COMPLETE-->
-            <!-- <div id="demo-settings-container"></div> -->
-            <div id="stats-searchResultMan"></div>
-            <div class="search-panel">
-                <div class="search-panel__filters">
-                    <div id="brand-list"></div>
-                </div>
-                <div class="search-panel__results">
-                    <div id="hits"></div>
-                    <div id="pagination"></div>
-                    <div id="stacked-carousels"></div>
+        <div class="container-result-wrapper">
+            <div class="left-panel left-panel__category">
+                <div id="clear-refinements" class="clear-refinements"></div>
+                <div id="current-refinements" class="current-refinements"></div>
+                <div id="dynamic-widgets"></div>
+            </div>
+            <div class="right-panel">
+                <div class="container">
+                    <div id="stats-searchResultMan"></div>
+                    <div class="search-panel">
+                        <div class="search-panel__filters">
+                            <div id="brand-list"></div>
+                        </div>
+                        <div class="search-panel__results">
+                            <div id="hits"></div>
+                            <div id="pagination"></div>
+                           
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <div id="stacked-carousels"></div>
     </div>
     <script src="../src/CategoryPages/Men/manPage.js"></script>
     <script src="../src/shared-js/createDemoSettings.js"></script>
