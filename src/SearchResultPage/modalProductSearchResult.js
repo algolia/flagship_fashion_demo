@@ -9,6 +9,9 @@ import {
 import { connectHits } from 'instantsearch.js/es/connectors';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 import aa from 'search-insights';
+import { h } from 'preact';
+import { frequentlyBoughtTogether } from '@algolia/recommend-js';
+import recommend from '@algolia/recommend';
 
 export function modalProductSearchResult() {
   const searchClient = algoliasearch(
@@ -21,6 +24,9 @@ export function modalProductSearchResult() {
     indexName: 'flagship_fashion',
     searchClient,
   });
+
+
+
   // CONFIG TO SEND INSIGHT EVENT TO THE DASHBOARD FOR PERSONALISATION
   const insightsMiddleware = createInsightsMiddleware({
     insightsClient: aa,
@@ -82,13 +88,12 @@ export function modalProductSearchResult() {
         let productID = e.target.dataset.id;
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
-          console.log(object);
-          displayProduct(object);
-          if (object.objectID) {
-            // relatedItems(object);
-            recommandedItems(object);
-            boughtTogether(object);
-          }
+          displayProduct(object,productID);
+          // if (object.objectID) {
+          //   // relatedItems(object);
+          //   recommandedItems(object);
+          //   boughtTogether(object);
+          // }
         });
         showModal();
       });
@@ -98,6 +103,7 @@ export function modalProductSearchResult() {
   function showModal() {
     let modalWrapper = document.querySelector('.modalProduct-wrapper');
     let modalProduct = document.querySelector('.modalProduct');
+    let body = document.querySelector('body')
 
     if (
       modalWrapper.classList.contains('fadeOut') ||
@@ -106,6 +112,7 @@ export function modalProductSearchResult() {
       modalWrapper.classList.add('fadeIn');
       modalWrapper.classList.remove('fadeOut');
       modalWrapper.classList.add('fade');
+      body.style.overflowY = 'hidden'
     }
 
     modalWrapper.addEventListener('click', (e) => {
@@ -113,11 +120,56 @@ export function modalProductSearchResult() {
         modalWrapper.classList.remove('fade');
         modalWrapper.classList.remove('fadeIn');
         modalWrapper.classList.add('fadeOut');
+        body.style.overflowY = 'visible'
       }
     });
   }
 
-  function displayProduct(product) {
+  function displayProduct(product, productID) {
+    console.log(productID)
+
+    const recommendClient = recommend(
+      '853MYZ81KY',
+      '1bc06bbf6de499f6b826a8a0e6902568'
+    );
+
+    const indexName = 'flagship_fashion';
+
+    function RelatedItem({ item }) {
+      console.log(item)
+      return (
+        <li class="related-ais-Hits-item related-carousel-list-item">
+          <div class="related-image-wrapper">
+            <img
+              src={item.full_url_image}
+              align="left"
+              alt={item.name}
+              class="related-result-img"
+            />
+            <div class="related-result-img-overlay"></div>
+          </div>
+          <div class="related-hit-names">
+            <div class="related-hit-infos">
+              <div class="related-hit-name">{item.name}</div>
+              <div
+                style="background: ${
+                hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
+              }"
+                class="related-product-colorsHex"
+              ></div>
+            </div>
+          </div>
+          <div class="related-hit-price">{item.price}</div>
+        </li>
+        // <a href={item.url}>
+        //   <img src={item.image_link} alt={item.name} />
+        //   <div>{item.category}</div>
+        //   <div>{item.name}</div>
+        //   <div>${item.price}</div>
+        // </a>
+      );
+    }
+
     let modalProduct = document.querySelector('.modalProduct');
     modalProduct.innerHTML = `
         <i class="fas fa-heart heart"></i>
@@ -156,7 +208,7 @@ export function modalProductSearchResult() {
                           product.brand
                         }</div>
                         <div class="productModal-hit-rating-price">
-                            <div class="productModal-hit-price">$${
+                            <div class="productModal-hit-price">${
                               product.price
                             }</div>
                         </div>
@@ -166,12 +218,21 @@ export function modalProductSearchResult() {
                         }>
                             <a href="#"class="productModal-btn" data-id=${
                               product.objectID
-                            }><span>Add to cart  <i class="fas fa-angle-down"></i></span></a>
+                            }><span><p>Add to cart</p><i class="fas fa-shopping-cart"></i></span></a>
                         </div>
                     </div>
                 </div>
+                <div class="relatedProducts" fbt id="relatedProducts"></div>
             </div>
         `;
+
+    frequentlyBoughtTogether({
+      container: '#relatedProducts',
+      recommendClient,
+      indexName,
+      objectIDs: [productID],
+      itemComponent: RelatedItem,
+    });
 
     let btnAddtoCart = document.querySelector('.productModal-btn');
     btnAddtoCart.addEventListener('click', (e) => {
@@ -200,131 +261,131 @@ export function modalProductSearchResult() {
     });
   }
 
-  function boughtTogether(object) {
-    if (object.objectID) {
-      const indexBT = searchClient.initIndex(
-        'ai_recommend_bought-together_flagship_transformed_index_V2'
-      );
-      let objectID = object.objectID;
-      indexBT
-        .getObject(objectID)
-        .then((item) => {
-          let boughtTogetherItemsArray = [];
-          item.recommendations.forEach((i) => {
-            boughtTogetherItemsArray.push(i.objectID);
-          });
-          index.getObjects(boughtTogetherItemsArray).then(({ results }) => {
-            let container = document.querySelector(
-              '.productModal-global-Wrapper'
-            );
-            let ul = document.createElement('ul');
-            let title = document.createElement('h3');
-            let div = document.createElement('div');
+  // function boughtTogether(object) {
+  //   if (object.objectID) {
+  //     const indexBT = searchClient.initIndex(
+  //       'ai_recommend_bought-together_flagship_transformed_index_V2'
+  //     );
+  //     let objectID = object.objectID;
+  //     indexBT
+  //       .getObject(objectID)
+  //       .then((item) => {
+  //         let boughtTogetherItemsArray = [];
+  //         item.recommendations.forEach((i) => {
+  //           boughtTogetherItemsArray.push(i.objectID);
+  //         });
+  //         index.getObjects(boughtTogetherItemsArray).then(({ results }) => {
+  //           let container = document.querySelector(
+  //             '.productModal-global-Wrapper'
+  //           );
+  //           let ul = document.createElement('ul');
+  //           let title = document.createElement('h3');
+  //           let div = document.createElement('div');
 
-            div.classList.add('list-wrapper');
-            title.innerHTML = 'Often bought together';
-            ul.classList.add('boughtTogetherItems');
+  //           div.classList.add('list-wrapper');
+  //           title.innerHTML = 'Often bought together';
+  //           ul.classList.add('boughtTogetherItems');
 
-            div.appendChild(title);
-            div.appendChild(ul);
-            container.appendChild(div);
+  //           div.appendChild(title);
+  //           div.appendChild(ul);
+  //           container.appendChild(div);
 
-            document.querySelector('.boughtTogetherItems').innerHTML = `
-          ${results
-            .splice(0, 8)
-            .map((hit) => {
-              return `                   
-            <li class="related-ais-Hits-item related-carousel-list-item">   
-              <div class="related-image-wrapper">
-                <img
-                src="${hit.full_url_image}"
-                align="left" alt="${hit.name}" class="related-result-img" />
-                <div class="related-result-img-overlay"></div>
-              </div>
-              <div class="related-hit-names">
-                  <div class="related-hit-infos">
-                    <div class="related-hit-name">${hit.name}</div>
-                    <div style="background: ${
-                      hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-                    }" class="related-product-colorsHex"></div>
-                  </div>
-                  </div>
-                  <div class="related-hit-price">$${hit.price}</div>
-            </li>
-                              `;
-            })
-            .join('')}`;
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }
+  //           document.querySelector('.boughtTogetherItems').innerHTML = `
+  //         ${results
+  //           .splice(0, 8)
+  //           .map((hit) => {
+  //             return `                   
+  //           <li class="related-ais-Hits-item related-carousel-list-item">   
+  //             <div class="related-image-wrapper">
+  //               <img
+  //               src="${hit.full_url_image}"
+  //               align="left" alt="${hit.name}" class="related-result-img" />
+  //               <div class="related-result-img-overlay"></div>
+  //             </div>
+  //             <div class="related-hit-names">
+  //                 <div class="related-hit-infos">
+  //                   <div class="related-hit-name">${hit.name}</div>
+  //                   <div style="background: ${
+  //                     hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
+  //                   }" class="related-product-colorsHex"></div>
+  //                 </div>
+  //                 </div>
+  //                 <div class="related-hit-price">$${hit.price}</div>
+  //           </li>
+  //                             `;
+  //           })
+  //           .join('')}`;
+  //         });
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  // }
 
-  function recommandedItems(object) {
-    if (object.objectID) {
-      let objectID = object.objectID;
-      const indexRecommand = searchClient.initIndex(
-        'ai_recommend_related-products_flagship_transformed_index_V2'
-      );
-      indexRecommand
-        .getObject(objectID)
-        .then((item) => {
-          let recommandItems = [];
-          item.recommendations.forEach((i) => {
-            recommandItems.push(i.objectID);
-          });
-          index.getObjects(recommandItems).then(({ results }) => {
-            let container = document.querySelector(
-              '.productModal-global-Wrapper'
-            );
-            let ul = document.createElement('ul');
-            let title = document.createElement('h3');
-            let div = document.createElement('div');
+  // function recommandedItems(object) {
+  //   if (object.objectID) {
+  //     let objectID = object.objectID;
+  //     const indexRecommand = searchClient.initIndex(
+  //       'ai_recommend_related-products_flagship_transformed_index_V2'
+  //     );
+  //     indexRecommand
+  //       .getObject(objectID)
+  //       .then((item) => {
+  //         let recommandItems = [];
+  //         item.recommendations.forEach((i) => {
+  //           recommandItems.push(i.objectID);
+  //         });
+  //         index.getObjects(recommandItems).then(({ results }) => {
+  //           let container = document.querySelector(
+  //             '.productModal-global-Wrapper'
+  //           );
+  //           let ul = document.createElement('ul');
+  //           let title = document.createElement('h3');
+  //           let div = document.createElement('div');
 
-            div.classList.add('list-wrapper');
-            title.innerHTML = 'Related products';
-            ul.classList.add('recommendedItems');
+  //           div.classList.add('list-wrapper');
+  //           title.innerHTML = 'Related products';
+  //           ul.classList.add('recommendedItems');
 
-            div.appendChild(title);
-            div.appendChild(ul);
-            container.appendChild(div);
+  //           div.appendChild(title);
+  //           div.appendChild(ul);
+  //           container.appendChild(div);
 
-            document.querySelector(
-              '.productModal-global-Wrapper .recommendedItems'
-            ).innerHTML = `
-        ${results
-          .splice(0, 8)
-          .map((hit) => {
-            return `                   
-              <li class="related-ais-Hits-item related-carousel-list-item">   
-                <div class="related-image-wrapper">
-                  <img
-                  src="${hit.full_url_image}"
-                  align="left" alt="${hit.name}" class="related-result-img" />
-                  <div class="related-result-img-overlay"></div>
-                </div>
-                <div class="related-hit-names">
-                    <div class="related-hit-infos">
-                      <div class="related-hit-name">${hit.name}</div>
-                      <div style="background: ${
-                        hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-                      }" class="related-product-colorsHex"></div>
-                    </div>
-                    </div>
-                    <div class="related-hit-price">$${hit.price}</div>
-              </li>
-                                `;
-          })
-          .join('')}`;
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }
+  //           document.querySelector(
+  //             '.productModal-global-Wrapper .recommendedItems'
+  //           ).innerHTML = `
+  //       ${results
+  //         .splice(0, 8)
+  //         .map((hit) => {
+  //           return `                   
+  //             <li class="related-ais-Hits-item related-carousel-list-item">   
+  //               <div class="related-image-wrapper">
+  //                 <img
+  //                 src="${hit.full_url_image}"
+  //                 align="left" alt="${hit.name}" class="related-result-img" />
+  //                 <div class="related-result-img-overlay"></div>
+  //               </div>
+  //               <div class="related-hit-names">
+  //                   <div class="related-hit-infos">
+  //                     <div class="related-hit-name">${hit.name}</div>
+  //                     <div style="background: ${
+  //                       hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
+  //                     }" class="related-product-colorsHex"></div>
+  //                   </div>
+  //                   </div>
+  //                   <div class="related-hit-price">$${hit.price}</div>
+  //             </li>
+  //                               `;
+  //         })
+  //         .join('')}`;
+  //         });
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  // }
 
   getObjectsIDS();
   search.start();
