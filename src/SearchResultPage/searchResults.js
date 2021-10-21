@@ -477,9 +477,9 @@ export function searchResults() {
         hitsPerPage: 20,
         enablePersonalization: false,
         filters: extraSearchFilters,
-        query: localStorage.getItem('userQuery')
-          ? localStorage.getItem('userQuery')
-          : ``,
+        // query: localStorage.getItem('userQuery')
+        //   ? localStorage.getItem('userQuery')
+        //   : ``,
       },
     }),
     customSearchBox({
