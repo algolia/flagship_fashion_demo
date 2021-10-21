@@ -5,6 +5,13 @@
   position: relative;
 }
 
+.container-result-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 3rem auto;
+  position: relative;
+}
+
 /* CAROUSEL */
 
 .container {
@@ -150,7 +157,7 @@
 /* MAN PAGE RESULT */
 
 .ais-Hits-list {
-  width: 90vw;
+  // width: 90vw;
   margin: 2rem auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -236,6 +243,10 @@
 
 .ais-Highlight-highlighted {
   background-color: rgb(240, 240, 239);
+}
+
+.left-panel__category{
+  width: 25% !important;
 }
 
 /* MEDIA QUERIES / BREAKPOINT */

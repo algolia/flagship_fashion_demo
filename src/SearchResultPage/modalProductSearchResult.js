@@ -82,7 +82,6 @@ export function modalProductSearchResult() {
         let productID = e.target.dataset.id;
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
-          console.log(object);
           displayProduct(object);
           if (object.objectID) {
             // relatedItems(object);

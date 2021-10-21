@@ -97,7 +97,6 @@ export function relatedResultModal() {
 
   const getObjectID = () => {
     let productSearchResult = document.querySelectorAll('.image-wrapper');
-    console.log(productSearchResult);
     productSearchResult.forEach((item) => {
       if (item.dataset.id !== undefined) {
         index.getObject(item.dataset.id).then((object) => {
