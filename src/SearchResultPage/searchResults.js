@@ -12,7 +12,7 @@ import {
   searchBox,
   EXPERIMENTAL_dynamicWidgets,
   panel,
-  hierarchicalMenu
+  hierarchicalMenu,
 } from 'instantsearch.js/es/widgets';
 import {
   connectQueryRules,
@@ -608,6 +608,20 @@ export function searchResults() {
         (container) =>
           panel({
             templates: {
+              header: 'Categories',
+            },
+          })(hierarchicalMenu)({
+            container,
+            attributes: [
+              'hierarchicalCategories.lvl0',
+              'hierarchicalCategories.lvl1',
+              'hierarchicalCategories.lvl2',
+              'hierarchicalCategories.lvl3',
+            ],
+          }),
+        (container) =>
+          panel({
+            templates: {
               header: 'Fit',
             },
           })(refinementList)({
@@ -641,15 +655,15 @@ export function searchResults() {
             container,
             attribute: 'genderFilter',
           }),
-        (container) =>
-          panel({
-            templates: {
-              header: 'Category',
-            },
-          })(refinementList)({
-            container,
-            attribute: 'category',
-          }),
+        // (container) =>
+        //   panel({
+        //     templates: {
+        //       header: 'Category',
+        //     },
+        //   })(refinementList)({
+        //     container,
+        //     attribute: 'category',
+        //   }),
         (container) =>
           panel({
             templates: {
@@ -706,15 +720,15 @@ export function searchResults() {
           }),
       ],
     }),
-    hierarchicalMenu({
-      container: '#hierarchical-menu',
-      attributes: [
-        'hierarchicalCategories.lvl0',
-        'hierarchicalCategories.lvl1',
-        'hierarchicalCategories.lvl2',
-        'hierarchicalCategories.lvl3',
-      ],
-    }),
+    // hierarchicalMenu({
+    //   container: '#hierarchical-menu',
+    //   attributes: [
+    //     'hierarchicalCategories.lvl0',
+    //     'hierarchicalCategories.lvl1',
+    //     'hierarchicalCategories.lvl2',
+    //     'hierarchicalCategories.lvl3',
+    //   ],
+    // }),
   ]);
 
   search.start();
