@@ -12,7 +12,10 @@ import aa from 'search-insights';
 
 /** @jsx h */
 import { h } from 'preact';
-import { frequentlyBoughtTogether } from '@algolia/recommend-js';
+import {
+  frequentlyBoughtTogether,
+  relatedProducts,
+} from '@algolia/recommend-js';
 import recommend from '@algolia/recommend';
 
 export function modalProduct() {
@@ -75,7 +78,7 @@ export function modalProduct() {
 
   const getObjectID = () => {
     let carousel = document.querySelectorAll('.carousel-list-container');
-   
+
     carousel.forEach((car) => {
       car.addEventListener('click', (e) => {
         let productID = e.target.dataset.id;
@@ -92,7 +95,7 @@ export function modalProduct() {
   function showModal() {
     let modalWrapper = document.querySelector('.modalProduct-wrapper');
     let modalProduct = document.querySelector('.modalProduct');
-    let body = document.querySelector('body')
+    let body = document.querySelector('body');
 
     if (
       modalWrapper.classList.contains('fadeOut') ||
@@ -101,7 +104,7 @@ export function modalProduct() {
       modalWrapper.classList.add('fadeIn');
       modalWrapper.classList.remove('fadeOut');
       modalWrapper.classList.add('fade');
-      body.style.overflowY = 'hidden'
+      body.style.overflowY = 'hidden';
     }
 
     modalWrapper.addEventListener('click', (e) => {
@@ -109,7 +112,7 @@ export function modalProduct() {
         modalWrapper.classList.remove('fade');
         modalWrapper.classList.remove('fadeIn');
         modalWrapper.classList.add('fadeOut');
-        body.style.overflowY = 'visible'
+        body.style.overflowY = 'visible';
       }
     });
   }
@@ -186,11 +189,20 @@ export function modalProduct() {
                         </div>
                     </div>
                 </div>
+                <div class="relatedProducts" fbt id="frequentlyBoughtTogether"></div>
                 <div class="relatedProducts" fbt id="relatedProducts"></div>
             </div>
         `;
 
     frequentlyBoughtTogether({
+      container: '#frequentlyBoughtTogether',
+      recommendClient,
+      indexName,
+      objectIDs: [productID],
+      itemComponent: RelatedItem,
+    });
+
+    relatedProducts({
       container: '#relatedProducts',
       recommendClient,
       indexName,

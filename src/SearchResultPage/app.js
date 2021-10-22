@@ -13,7 +13,7 @@ toggleUploadSearch();
 var checkExist = setInterval(function () {
   if (document.readyState != 'loading') {
     cardAnimation();
-    modalProductSearchResult();
+    // modalProductSearchResult();
     clearInterval(checkExist);
   }
 }, 500);
