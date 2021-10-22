@@ -12,7 +12,7 @@ import {
   searchBox,
   EXPERIMENTAL_dynamicWidgets,
   panel,
-  queryRuleCustomData,
+  hierarchicalMenu
 } from 'instantsearch.js/es/widgets';
 import {
   connectQueryRules,
@@ -704,6 +704,15 @@ export function searchResults() {
             container,
             attribute: 'sizeFilter',
           }),
+      ],
+    }),
+    hierarchicalMenu({
+      container: '#hierarchical-menu',
+      attributes: [
+        'hierarchicalCategories.lvl0',
+        'hierarchicalCategories.lvl1',
+        'hierarchicalCategories.lvl2',
+        'hierarchicalCategories.lvl3',
       ],
     }),
   ]);
