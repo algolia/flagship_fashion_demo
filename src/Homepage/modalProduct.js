@@ -81,7 +81,6 @@ export function modalProduct() {
         let productID = e.target.dataset.id;
         // Retrieves all attributes
         index.getObject(productID).then((object) => {
-          console.log(object);
           displayProduct(object, productID);
         });
         showModal();
@@ -116,7 +115,6 @@ export function modalProduct() {
   }
 
   function displayProduct(product, productID) {
-    console.log(product);
     const recommendClient = recommend(
       '853MYZ81KY',
       '1bc06bbf6de499f6b826a8a0e6902568'
@@ -254,132 +252,6 @@ export function modalProduct() {
         });
     });
   }
-
-  // function boughtTogether(object) {
-  //   if (object.objectID) {
-  //     const indexBT = searchClient.initIndex(
-  //       'ai_recommend_bought-together_flagship_transformed_index_V2_static'
-  //     );
-  //     let objectID = object.objectID;
-  //     indexBT
-  //       .getObject(objectID)
-  //       .then((item) => {
-  //         let boughtTogetherItemsArray = [];
-  //         item.recommendations.forEach((i) => {
-  //           boughtTogetherItemsArray.push(i.objectID);
-  //         });
-  //         index.getObjects(boughtTogetherItemsArray).then(({ results }) => {
-  //           let container = document.querySelector(
-  //             '.productModal-global-Wrapper'
-  //           );
-  //           let ul = document.createElement('ul');
-  //           let title = document.createElement('h3');
-  //           let div = document.createElement('div');
-
-  //           div.classList.add('list-wrapper');
-  //           title.innerHTML = 'Often bought together';
-  //           ul.classList.add('boughtTogetherItems');
-
-  //           div.appendChild(title);
-  //           div.appendChild(ul);
-  //           container.appendChild(div);
-
-  //           document.querySelector('.boughtTogetherItems').innerHTML = `
-  //         ${results
-  //           .splice(0, 8)
-  //           .map((hit) => {
-  //             return `                   
-  //           <li class="related-ais-Hits-item related-carousel-list-item">   
-  //             <div class="related-image-wrapper">
-  //               <img
-  //               src="${hit.full_url_image}"
-  //               align="left" alt="${hit.name}" class="related-result-img" />
-  //               <div class="related-result-img-overlay"></div>
-  //             </div>
-  //             <div class="related-hit-names">
-  //                 <div class="related-hit-infos">
-  //                   <div class="related-hit-name">${hit.name}</div>
-  //                   <div style="background: ${
-  //                     hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-  //                   }" class="related-product-colorsHex"></div>
-  //                 </div>
-  //                 </div>
-  //                 <div class="related-hit-price">$${hit.price}</div>
-  //           </li>
-  //                             `;
-  //           })
-  //           .join('')}`;
-  //         });
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   }
-  // }
-
-  // function recommandedItems(object) {
-  //   if (object.objectID) {
-  //     let objectID = object.objectID;
-  //     const indexRecommand = searchClient.initIndex(
-  //       'ai_recommend_related_products_flagship_transformed_index_V2_static'
-  //     );
-
-  //     indexRecommand.getObject(objectID).then((item) => {
-  //       let recommandItems = [];
-  //       item.recommendations.forEach((i) => {
-  //         recommandItems.push(i.objectID);
-  //       });
-  //       index.getObjects(recommandItems).then(({ results }) => {
-  //         let container = document.querySelector(
-  //           '.productModal-global-Wrapper'
-  //         );
-  //         let ul = document.createElement('ul');
-  //         let title = document.createElement('h3');
-  //         let div = document.createElement('div');
-
-  //         div.classList.add('list-wrapper');
-  //         title.innerHTML = 'Related Products';
-  //         ul.classList.add('recommendedItems');
-
-  //         div.appendChild(title);
-  //         div.appendChild(ul);
-  //         container.appendChild(div);
-
-  //         document.querySelector(
-  //           '.productModal-global-Wrapper .recommendedItems'
-  //         ).innerHTML = `
-  //       ${results
-  //         .splice(0, 8)
-  //         .map((hit) => {
-  //           return `                   
-  //             <li class="related-ais-Hits-item related-carousel-list-item">   
-  //               <div class="related-image-wrapper">
-  //                 <img
-  //                 src="${hit.full_url_image}"
-  //                 align="left" alt="${hit.name}" class="related-result-img" />
-  //                 <div class="related-result-img-overlay"></div>
-  //               </div>
-  //               <div class="related-hit-names">
-  //                   <div class="related-hit-infos">
-  //                     <div class="related-hit-name">${hit.name}</div>
-  //                     <div style="background: ${
-  //                       hit.hexColorCode ? hit.hexColorCode.split('//')[1] : ''
-  //                     }" class="related-product-colorsHex"></div>
-  //                   </div>
-  //                   </div>
-  //                   <div class="related-hit-price">$${hit.price}</div>
-  //             </li>
-  //                               `;
-  //         })
-  //         .join('')}`;
-  //       });
-  //     });
-  //   }
-  // }
-
-  // cardProductSecondCarousel.forEach((product) => {
-  //   // detailProduct(product)
-  // });
 
   getObjectID();
   search.start();
