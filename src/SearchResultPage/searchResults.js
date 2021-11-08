@@ -1,6 +1,6 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
-import carousel from '../CategoryPages/Women/displayCarouselWomanPage';
+import { carousel } from '../CategoryPages/Women/displayCarouselWomanPage';
 
 import {
   clearRefinements,
@@ -780,7 +780,7 @@ export function searchResults() {
     // }),
   ]);
   const noResult = (query) => {
-    document.querySelector('#no-results-banner').innerHTML = `<p>Unfortunately there are no results for ${query} :(`
+    document.querySelector('#no-results-banner').innerHTML = `<p>Unfortunately there are no results for ${query} but check out our bestsellers below: `
     const carouselContainer = document.createElement('div');
     document.querySelector('#no-results-banner').append(carouselContainer);
     carouselContainer.className = 'carousel';
