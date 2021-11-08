@@ -39,7 +39,7 @@ export const carousel = connectHits(function renderCarousel(
         <li>
           <div class="image-wrapper">
             <img
-            src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${hit.objectID}.jpg"
+            src="${hit.full_url_image}"
             alt="${hit.name}">
           </div>
           <div class="info">
@@ -53,12 +53,12 @@ export const carousel = connectHits(function renderCarousel(
 
 export function renderCarouselAllProduct() {
   const searchClient = algoliasearch(
-    'HYDY1KWTWB',
-    '28cf6d38411215e2eef188e635216508'
+    '853MYZ81KY',
+    'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
 
   const search = instantsearch({
-    indexName: 'gstar_demo_test',
+    indexName: 'flagship_fashion',
     searchClient,
   });
 
@@ -69,8 +69,8 @@ export function renderCarouselAllProduct() {
     }),
     configure({
       hitsPerPage: 15,
-      ruleContexts: ['woman_page'],
-      filters: '"hierarchical_categories.lvl0":"women"',
+      // ruleContexts: ['woman_page'],
+      filters: '"genderFilter":"WOMEN"',
     }),
     stats({
       container: '#stats-searchResultWoman',
@@ -81,7 +81,7 @@ export function renderCarouselAllProduct() {
         item: `
  
       <div class="image-wrapper">
-          src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${objectID}.jpg"
+        <img  src={{full_url_image}}
           align="left" alt="{{name}}" class="result-img" />
       </div>
       <div class="hit-name">
@@ -101,8 +101,6 @@ export function renderCarouselAllProduct() {
       container: '#pagination',
     }),
   ]);
-
-
 
   search.start();
 }

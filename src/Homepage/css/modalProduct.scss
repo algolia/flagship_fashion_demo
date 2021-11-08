@@ -10,13 +10,14 @@
     left: 0;
     visibility: hidden;
     overflow: clip;
+    
 }
 
 .modalProduct {
     position: absolute;
     z-index: 10;
-    height: 60vh;
-    width: 80vw;
+    height: 90vh;
+    width: 70vw;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -24,6 +25,9 @@
     padding: 1rem 2rem;
     background-color: white;
     border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
     .fa-heart {
         font-size: 2rem;
@@ -50,6 +54,7 @@
 
 .productModal-infos-Wrapper {
     display: flex;
+    align-items: center;
 }
 
 .auc-Recommendations-list{
@@ -61,7 +66,7 @@
 }
 
 .productModal-image-wrapper {
-    width: 30%;
+    width: 20%;
     padding: 1rem;
     margin: 1rem auto;
     img {
@@ -71,8 +76,16 @@
 }
 
 .productModal-info-wrapper {
-    padding: 1rem;
+    padding: 2rem;
     margin: 1rem auto;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    background-color: #f5ecf1;
+    width: 40%;
+    border-radius: 10px;
+    justify-content: center;
 
     img {
         width: 100%;
@@ -95,7 +108,7 @@
 }
 
 .productModal-hit-description {
-    margin: 2rem 0rem;
+    margin: 0rem 0rem 2rem 0;
     font-size: 0.9rem;
     font-style: italic;
     font-weight: 100;
@@ -104,13 +117,16 @@
 
 .productModal-hit-rating-price {
     font-family: $main-font;
+    .productModal-hit-price{
+        font-size: 1.5rem;
+    }
 }
 .productModal-hit-addToCart {
-    margin: 2rem auto;
+    margin: 2rem 0;
 }
 
 .productModal-btn {
-    padding: 0.6rem 2rem;
+    padding: 0.6rem 1rem;
     border: 1px solid #f5ecf1;
     font-size: 1;
     font-family: "Roboto";
@@ -123,14 +139,22 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 15rem;
+    width: 10rem;
+    background-color: white;
+   
 
     span {
         display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        p{
+            margin-right: 0.5rem;
+        }
     }
 
     &:hover {
-        background-color: #f5ecf1;
+        background-color: black;
         color: white;
         transition: 0.3s ease-in-out;
     }
@@ -163,8 +187,8 @@
 /* RELATED ITEM MODAL */
 
 .related-ais-Hits-item {
-    width: 250px;
-    height: 300px;
+    width: 240px;
+    height: 280px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -255,4 +279,26 @@
         opacity: 0;
         visibility: hidden;
     }
+}
+
+
+.fbt {
+    display:flex;
+    flex-direction: row;
+}
+
+.auc-Recommend-title{
+    font-family: "Roboto";
+    font-size: 1.2rem;
+    margin: 1rem 0 2rem 0;
+}
+
+.auc-Recommend-list {
+    display:flex;
+    flex-direction: row;
+}
+
+.relatedProducts{
+    display: flex;
+    justify-content: center;
 }

@@ -25,8 +25,8 @@ import { ProductHit } from './types';
 export function autocompleteHomePage() {
 
 
-    const appId = 'HYDY1KWTWB';
-    const apiKey = '28cf6d38411215e2eef188e635216508';
+    const appId = '853MYZ81KY';
+    const apiKey = 'aed9b39a5a489d4a6c9a66d40f66edbf';
     const searchClient = algoliasearch(appId, apiKey);
 
     // @ts-expect-error type error in search-insights
@@ -36,7 +36,7 @@ export function autocompleteHomePage() {
 
     const querySuggestionsPlugin = createQuerySuggestionsPlugin({
         searchClient,
-        indexName: 'gstar_demo_test_query_suggestions',
+        indexName: 'flagship_fashion_query_suggestions',
         getSearchParams() {
             return {
                 hitsPerPage: 8,
@@ -71,7 +71,7 @@ export function autocompleteHomePage() {
                 return props['data-autocomplete-source-id'] === 'products';
             });
             const categories = sections.find(({ props }) => {
-                return props['data-autocomplete-source-id'] === 'category';
+                return props['data-autocomplete-source-id'] === 'categories';
             });
 
             render(
@@ -91,7 +91,7 @@ export function autocompleteHomePage() {
         },
         onSubmit(props) {
             localStorage.setItem('querySeachBox', props.state.query);
-            window.location.href = `./searchResults.html?gstar_demo_test%5Bquery%5D=${props.state.query}`;
+            window.location.href = `./searchResults.html?flagship_fashion%5Bquery%5D=${props.state.query}`;
 
         },
         getSources({ query, state }) {
@@ -109,7 +109,7 @@ export function autocompleteHomePage() {
                             searchClient,
                             queries: [
                                 {
-                                    indexName: 'gstar_demo_test',
+                                    indexName: 'flagship_fashion',
                                     query,
                                     params: {
                                         clickAnalytics: true,
@@ -145,19 +145,19 @@ export function autocompleteHomePage() {
                     },
                 },
                 {
-                    sourceId: 'category',
+                    sourceId: 'categories',
                     getItems() {
                         return getAlgoliaResults({
                             searchClient,
                             queries: [
                                 {
-                                    indexName: 'gstar_demo_test',
+                                    indexName: 'flagship_fashion',
                                     query,
                                     params: {
                                         clickAnalytics: true,
                                         hitsPerPage: 8,
                                         attributesToSnippet: [
-                                            'product_name:10',
+                                            'categories:10',
                                             // 'product_details:35',
                                         ],
                                         snippetEllipsisText: '…',
@@ -221,7 +221,7 @@ export function autocompleteHomePage() {
             <div>
                 <div class="related-image-wrapper">
                     <img
-                        src={hit.image_link}
+                        src={hit.full_url_image}
                         align="left" alt={hit.name} class="related-result-img" />
                     <div class="related-result-img-overlay"></div>
                 </div>
@@ -239,8 +239,6 @@ export function autocompleteHomePage() {
     }
 
     function CategoryItem({ hit, insights, components }: CategoryItemProps) {
-        // const { hit } = props;
-        // console.log(hit)
         return (
             <Fragment>
                 <div className="aa-ItemContent">

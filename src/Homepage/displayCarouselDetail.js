@@ -7,11 +7,11 @@ import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 
 export function carouselDetailed() {
   const searchClient = algoliasearch(
-    'HYDY1KWTWB',
-    '28cf6d38411215e2eef188e635216508'
+    '853MYZ81KY',
+    'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
   const searchDetail = instantsearch({
-    indexName: 'Gstar_demo_carousel_detail',
+    indexName: 'flagship_fashion',
     searchClient,
   });
 
@@ -85,7 +85,7 @@ export function carouselDetailed() {
     }
 
     function popUpEventClick(event, object) {
-      const index = searchClient.initIndex('gstar_demo_test');
+      const index = searchClient.initIndex('flagship_fashion');
       let popUpWrapper = document.querySelector('.popUp-wrapper');
       index.getObject(object).then((object) => {
         let div = document.createElement('div');
@@ -120,9 +120,7 @@ export function carouselDetailed() {
                   'Product Clicked'
                 )}>
                     <img
-                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-                      hit.objectID
-                    }.jpg"
+                    src="${hit.full_url_image}"
 
                     align="left" alt="${hit.name}" class="hit-img" />
                     <div class="img-overlay"></div>
@@ -136,14 +134,12 @@ export function carouselDetailed() {
                 </div>
                     <div class="carousel-detailed-display-info">
                         <div class="hit-name">
-                        ${hit.category}
+                        ${hit.name}
                         </div>
-                        <div class="hit-color">
-                        ${hit.colourFilter}
-                        </div>
-                        <div class="hit-description">${hit.description}</div>
+                       
+                        <div class="hit-description">${hit.brand}</div>
                         <div class="hit-rating-price">
-                            <div class="hit-price">$${hit.price}</div>
+                            <div class="hit-price">${hit.price}</div>
                         </div>
                     </div>
               </li>

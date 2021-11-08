@@ -12,6 +12,7 @@ import {
   searchBox,
   EXPERIMENTAL_dynamicWidgets,
   panel,
+  hierarchicalMenu,
 } from 'instantsearch.js/es/widgets';
 import {
   connectQueryRules,
@@ -32,21 +33,21 @@ export function searchResults() {
 
   // for accessories
   if (locationPathname.includes('categorypageaccessories')) {
-    extraSearchFilters = 'keywords:"accessories"';
+    extraSearchFilters = 'categories:"Accessories"';
   }
   // for jeans
-  else if (locationPathname.includes('categorypagejeans')) {
-    extraSearchFilters = 'keywords:"jeans"';
+  else if (locationPathname.includes('categorypageshoes')) {
+    extraSearchFilters = 'categories:"Shoes"';
   }
 
   // Initialize instantsearch
   const searchClient = algoliasearch(
-    'HYDY1KWTWB',
-    '28cf6d38411215e2eef188e635216508'
+    '853MYZ81KY',
+    'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
 
   const search = instantsearch({
-    indexName: 'gstar_demo_test',
+    indexName: 'flagship_fashion',
     searchClient,
     routing: true,
   });
@@ -89,9 +90,9 @@ export function searchResults() {
 
   // Initialize query suggestions index
   let suggestionIndex = algoliasearch(
-    'HYDY1KWTWB',
-    '28cf6d38411215e2eef188e635216508'
-  ).initIndex('gstar_demo_test_query_suggestions');
+    '853MYZ81KY',
+    'aed9b39a5a489d4a6c9a66d40f66edbf'
+  ).initIndex('flagship_fashion_query_suggestions');
 
   const renderCustomSearchBar = (renderOptions, isFirstRender) => {
     const { query } = renderOptions;
@@ -110,29 +111,30 @@ export function searchResults() {
         filters: extraSearchFilters,
       })
       .then(({ hits }) => {
-
-        const queryList = hits.slice(0, 6).map((hit) => {
-
-          if (hit.query !== "jeans") {
-            return `<li id="">${hit.query}</li>`;
-          }
-        })
+        const queryList = hits
+          .slice(0, 6)
+          .map((hit) => {
+            if (hit.query !== 'jeans') {
+              return `<li id="">${hit.query}</li>`;
+            }
+          })
           .join('');
         suggestionContainer.querySelector('ul').innerHTML = queryList;
         suggestionContainer.querySelectorAll('li').forEach((el) => {
           el.addEventListener('click', (event) => {
             event.preventDefault();
-            const query = search.renderState['gstar_demo_test'].searchBox.query;
+            const query =
+              search.renderState['flagship_fashion'].searchBox.query;
             const suggestion = event.target.innerText;
             const suggestionBubble = event;
 
             // remove suggestion if suggestion was already clicked
             if (query === suggestion) {
-              search.renderState['gstar_demo_test'].searchBox.refine('');
+              search.renderState['flagship_fashion'].searchBox.refine('');
               const el = el.classList.remove('selected-item');
               setTimeout(el, 1000);
             } else {
-              search.renderState['gstar_demo_test'].searchBox.refine(
+              search.renderState['flagship_fashion'].searchBox.refine(
                 event.target.innerText
               );
               const isRefined = () => {
@@ -164,8 +166,7 @@ export function searchResults() {
          <li>
           <div class="image-wrapper">
             <img
-            src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${hit.objectID}.jpg"
-            alt="${hit.name}">
+src="${hit.full_url_image}"            alt="${hit.name}">
           </div>
           <div class="info">
             <h3 class="title">${hit.name}</h3>
@@ -184,6 +185,12 @@ export function searchResults() {
     const checkBanner = items.map((item) => {
       if (items.length < 2) {
         return item.banner;
+      }
+    });
+
+    items.map((item) => {
+      if (item.isRedirected) {
+        window.open(item.redirect, '_blank');
       }
     });
 
@@ -269,10 +276,10 @@ export function searchResults() {
 
   function displayPrice(hit) {
     if (hit.newPrice) {
-      return `<p class="cross-price">$${hit.price}</p>
-                    <p class="price">$${hit.newPrice}</p>`;
+      return `<p class="cross-price">${hit.price}</p>
+                    <p class="price">${hit.newPrice}</p>`;
     } else {
-      return `<p>$${hit.price}</p>`;
+      return `<p>${hit.price}</p>`;
     }
   }
 
@@ -351,7 +358,7 @@ export function searchResults() {
     }
 
     function popUpEventClick(event, object) {
-      const index = searchClient.initIndex('gstar_demo_test');
+      const index = searchClient.initIndex('flagship_fashion');
       let popUpWrapper = document.querySelector('.popUp-wrapper');
       index.getObject(object).then((object) => {
         let div = document.createElement('div');
@@ -377,8 +384,8 @@ export function searchResults() {
     const shouldInjectRecord = (position, start, end) =>
       position > start && position <= end;
 
-    if (search.renderState.gstar_demo_test.queryRules.items !== undefined) {
-      const userData = search.renderState.gstar_demo_test.queryRules.items;
+    if (search.renderState.flagship_fashion.queryRules.items !== undefined) {
+      const userData = search.renderState.flagship_fashion.queryRules.items;
 
       if (isValidUserData(userData)) {
         if (response !== undefined) {
@@ -403,7 +410,7 @@ export function searchResults() {
                               <img class="injectImg" src="${hit.image}" alt="">
                           </div>
                           <div class="btn-injection-content-wrapper">
-                              <a class="btn-injection-content">Check it out</a>
+                              <a href="${hit.target}" class="btn-injection-content">${hit.button}</a>
                           </div>
   
                     </li>`;
@@ -426,9 +433,7 @@ export function searchResults() {
                 'Product Clicked'
               )}>
                                     <img 
-                                    src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-              hit.objectID
-              }.jpg"
+                                    src="${hit.full_url_image}"
                                     align="left" alt="${
               hit.name
               }" class="result-img" data-id="${
@@ -500,9 +505,9 @@ export function searchResults() {
         hitsPerPage: 20,
         enablePersonalization: false,
         filters: extraSearchFilters,
-        query: localStorage.getItem('userQuery')
-          ? localStorage.getItem('userQuery')
-          : ``,
+        // query: localStorage.getItem('userQuery')
+        //   ? localStorage.getItem('userQuery')
+        //   : ``,
       },
     }),
     customSearchBox({
@@ -590,19 +595,19 @@ export function searchResults() {
       container: '#sort-by',
       items: [
         {
-          value: 'gstar_demo_test',
+          value: 'flagship_fashion',
           label: 'Most relevant',
         },
         {
-          value: `gstar_demo_test_asc_price`,
+          value: `flagship_fashion_price_asc`,
           label: 'Sort by ascending price',
         },
         {
-          value: `gstar_demo_test_asc_price_smart_sort`,
+          value: `flagship_fashion_asc_price_smart_sort`,
           label: 'smart sort - Lowest price',
         },
         {
-          value: `gstar_demo_test_desc_price`,
+          value: `flagship_fashion_price_desc`,
           label: 'Sort by descending price',
         },
       ],
@@ -613,6 +618,20 @@ export function searchResults() {
     searchBox({
       container: '#autocomplete',
     }),
+    // queryRuleCustomData({
+    //   container: "#redirect",
+    //   templates: {
+    //     default: '',
+    //   },
+    //   transformItems(items) {
+    //     const match = items.find((data) => Boolean(data.redirect));
+    //     if (match && match.redirect) {
+    //       // window.location.href = match.redirect;
+    //       window.open(match.redirect, "_blank")
+    //     }
+    //     return [];
+    //   },
+    // }),
     connectedHitsWithInjectedContent({ container: '#hits' }),
     pagination({
       container: '#pagination',
@@ -620,6 +639,20 @@ export function searchResults() {
     EXPERIMENTAL_dynamicWidgets({
       container: '#dynamic-widgets',
       widgets: [
+        (container) =>
+          panel({
+            templates: {
+              header: 'Categories',
+            },
+          })(hierarchicalMenu)({
+            container,
+            attributes: [
+              'hierarchicalCategories.lvl0',
+              'hierarchicalCategories.lvl1',
+              'hierarchicalCategories.lvl2',
+              'hierarchicalCategories.lvl3',
+            ],
+          }),
         (container) =>
           panel({
             templates: {
@@ -656,15 +689,15 @@ export function searchResults() {
             container,
             attribute: 'genderFilter',
           }),
-        (container) =>
-          panel({
-            templates: {
-              header: 'Category',
-            },
-          })(refinementList)({
-            container,
-            attribute: 'category',
-          }),
+        // (container) =>
+        //   panel({
+        //     templates: {
+        //       header: 'Category',
+        //     },
+        //   })(refinementList)({
+        //     container,
+        //     attribute: 'category',
+        //   }),
         (container) =>
           panel({
             templates: {
@@ -672,34 +705,44 @@ export function searchResults() {
             },
           })(rangeSlider)({
             container,
-            attribute: 'price',
+            attribute: 'unformated_price',
             tooltips: true,
             pips: true,
           }),
         (container) =>
           panel({
             templates: {
-              header: 'Color',
+              header: 'Colour',
             },
           })(refinementList)({
             container,
-            attribute: 'hexColorCode',
-            transformItems(items) {
-              return items.map((item) => ({
-                ...item,
-                color: item.value.split('//')[1],
-                colorCode: item.value.split('//')[0],
-              }));
-            },
-            templates: {
-              item: `
-                        <input type="color" value={{color}} class="colorInput" id="{{colorCode}}" {{#isRefined}}checked{{/isRefined}}/>
-                        <label for="{{colorCode}}" class="{{#isRefined}}isRefined{{/isRefined}}">
-                          {{colorCode}}
-                          <span class="color" style="background-color: {{color}}"></span>
-                        </label>`,
-            },
+            attribute: 'colour',
           }),
+        // (container) =>
+        //   panel({
+        //     templates: {
+        //       header: 'Color',
+        //     },
+        //   })(refinementList)({
+        //     container,
+        //     attribute: 'hexColorCode',
+        //     transformItems(items) {
+        //       return items.map((item) => ({
+        //         ...item,
+        //         color: item.value.split('//')[1],
+        //         colorCode: item.value.split('//')[0],
+        //       }));
+        //     },
+        //     templates: {
+        //       item: `
+        //                 <input type="color" value={{color}} class="colorInput" id="{{colorCode}}" {{#isRefined}}checked{{/isRefined}}/>
+        //                 <label for="{{colorCode}}" class="{{#isRefined}}isRefined{{/isRefined}}">
+        //                   {{colorCode}}
+        //                   <span class="color" style="background-color: {{color}}"></span>
+        //                 </label>`,
+        //     },
+        //   }),
+
         (container) =>
           panel({
             templates: {
@@ -711,6 +754,15 @@ export function searchResults() {
           }),
       ],
     }),
+    // hierarchicalMenu({
+    //   container: '#hierarchical-menu',
+    //   attributes: [
+    //     'hierarchicalCategories.lvl0',
+    //     'hierarchicalCategories.lvl1',
+    //     'hierarchicalCategories.lvl2',
+    //     'hierarchicalCategories.lvl3',
+    //   ],
+    // }),
   ]);
   const noResult = (query) => {
     console.log("no results")

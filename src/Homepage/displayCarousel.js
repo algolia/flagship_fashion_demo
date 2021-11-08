@@ -14,12 +14,12 @@ export const carousel = connectHits(function renderCarousel(
   isFirstRender
 ) {
   const searchClient = algoliasearch(
-    'HYDY1KWTWB',
-    '28cf6d38411215e2eef188e635216508'
+    '853MYZ81KY',
+    'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
 
   const search = instantsearch({
-    indexName: 'gstar_demo_test',
+    indexName: 'flagship_fashion',
     searchClient,
     routing: true,
   });
@@ -88,7 +88,7 @@ export const carousel = connectHits(function renderCarousel(
   }
 
   function popUpEventClick(event, object) {
-    const index = searchClient.initIndex('gstar_demo_test');
+    const index = searchClient.initIndex('flagship_fashion');
     let popUpWrapper = document.querySelector('.popUp-wrapper');
     index.getObject(object).then((object) => {
       let div = document.createElement('div');
@@ -118,9 +118,7 @@ export const carousel = connectHits(function renderCarousel(
             'Product Clicked'
           )} data-id="${hit.objectID}">
             <img
-            src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${
-              hit.objectID
-            }.jpg"
+            src="${hit.full_url_image}"
             alt="${hit.name}" data-id="${hit.objectID}">
             <div class="img-overlay" data-id="${hit.objectID}"></div>
           </div>

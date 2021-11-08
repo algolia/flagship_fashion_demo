@@ -75,6 +75,7 @@
     }
 
     .ais-Panel-header{
+        margin-top: 1em;
         border-bottom: 1px solid rgba(0, 0, 0, 0.308);
         span{
             font-family: "Roboto";
@@ -126,6 +127,47 @@
     .ais-RefinementList-checkbox {
         visibility: hidden;
         display: none;
+    }
+
+    .ais-HierarchicalMenu-link{
+        padding: 0.6rem 2rem;
+        border: 1px solid #f5ecf1;
+        border-top: transparent;
+        color: black;
+        align-self: center;
+        cursor: pointer;
+        transition: 0.3s ease-in-out;
+        border-radius: 30px;
+        font-family: "Roboto";
+        font-weight: 300;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        margin: 0 0rem;
+        width: 90%;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+            background-color: #f5ecf1;
+            color: white;
+            transition: 0.3s ease-in-out;
+        }
+
+        .ais-HierarchicalMenu-label {
+            color: black;
+            font-size: 0.8rem;
+            text-transform: capitalize;
+        }
+
+        .ais-HierarchicalMenu-count {
+            width: 30px;
+            height: 20px;
+            font-size: 0.6rem;
+            font-style: italic;
+            color: black;
+            background-color: transparent;
+            align-self: center;
+        }
     }
 }
 
