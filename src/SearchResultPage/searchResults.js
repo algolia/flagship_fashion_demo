@@ -150,6 +150,33 @@ export function searchResults() {
         });
       });
   };
+  const renderCarousel = ({ widgetParams, hits }, isFirstRender) => {
+    const container = document.querySelector(widgetParams.container);
+
+    if (isFirstRender) {
+      const carouselUl = document.createElement('ul');
+      carouselUl.classList.add('carousel-list-container');
+      container.appendChild(carouselUl);
+    }
+
+    container.querySelector('ul').innerHTML = hits
+      .map(
+        (hit) => `
+         <li>
+          <div class="image-wrapper">
+            <img
+            src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${hit.objectID}.jpg"
+            alt="${hit.name}">
+          </div>
+          <div class="info">
+            <h3 class="title">${hit.name}</h3>
+          </div>
+        </li>
+      `
+      )
+      .join('');
+  };
+  const carousel = connectHits(renderCarousel);
 
   const renderQueryRuleCustomData = (renderOptions, isFirstRender) => {
     const { items, widgetParams, refine } = renderOptions;
@@ -172,9 +199,9 @@ export function searchResults() {
       widgetParams.container.innerHTML = `
             <div class="banner-wrapper">
               ${items
-                .map(
-                  (item) =>
-                    `<a href="${item.link}">
+          .map(
+            (item) =>
+              `<a href="${item.link}">
                             <div class="banner-overlay"></div>
                             <div class="banner-title--wrapper">
                                 <h3>${item.title}</h3>
@@ -182,8 +209,8 @@ export function searchResults() {
                             </div>
                             <img src="${item.banner}">
                         </a>`
-                )
-                .join('')}
+          )
+          .join('')}
             </div>
           `;
     } else {
@@ -199,18 +226,18 @@ export function searchResults() {
 
   const renderListItem = (item) => `
       ${item.refinements
-        .map(
-          (refinement) => `
+      .map(
+        (refinement) => `
                 <li>${
-                  refinement.attribute === 'hexColorCode'
-                    ? refinement.value.split('//')[0]
-                    : refinement.value
-                } (${refinement.count != undefined ? refinement.count : '$'})
+          refinement.attribute === 'hexColorCode'
+            ? refinement.value.split('//')[0]
+            : refinement.value
+          } (${refinement.count != undefined ? refinement.count : '$'})
             <button ${createDataAttribtues(
-              refinement
-            )} class="btnCloseRefinements">X</button></li>`
-        )
-        .join('')}
+            refinement
+          )} class="btnCloseRefinements">X</button></li>`
+      )
+      .join('')}
 `;
 
   const renderCurrentRefinements = (renderOptions, isFirstRender) => {
@@ -375,9 +402,9 @@ export function searchResults() {
 
     document.querySelector('#hits').innerHTML = `
         ${hits
-          .map((hit) => {
-            if (hit.injected) {
-              return ` <li class="carousel-list-item">
+        .map((hit) => {
+          if (hit.injected) {
+            return ` <li class="carousel-list-item">
                           <div class="image-wrapper">
                               <img class="injectImg" src="${hit.image}" alt="">
                           </div>
@@ -386,20 +413,20 @@ export function searchResults() {
                           </div>
   
                     </li>`;
-            } else {
-              return `<li
+          } else {
+            return `<li
                         
              class="carousel-list-item carousel-list-item-modal-call" data-id="${
-               hit.objectID
-             }">
+              hit.objectID
+              }">
                             <div class="badgeWrapper">
                                     <div>${displayEcoBadge(hit)}</div>
                                     <div>${displayOffBadge(hit)}</div>
                                 </div>
                             
                                 <div class="image-wrapper" data-id="${
-                                  hit.objectID
-                                }" ${bindEvent(
+              hit.objectID
+              }" ${bindEvent(
                 'click',
                 hit,
                 'Product Clicked'
@@ -407,24 +434,24 @@ export function searchResults() {
                                     <img 
                                     src="${hit.full_url_image}"
                                     align="left" alt="${
-                                      hit.name
-                                    }" class="result-img" data-id="${
-                hit.objectID
+              hit.name
+              }" class="result-img" data-id="${
+              hit.objectID
               }"  />
                                     <div class="result-img-overlay"></div>
                                     <div class="hit-addToCart">
                                         <a ${bindEvent(
-                                          'click',
-                                          hit,
-                                          'Product Clicked'
-                                        )}><i class="fas fa-ellipsis-h"></i></a>
+                'click',
+                hit,
+                'Product Clicked'
+              )}><i class="fas fa-ellipsis-h"></i></a>
                                     </div>
                                     <div class="hit-sizeFilter">
                                         <p>Sizes available: <span>${
-                                          hit.sizeFilter
-                                            ? hit.sizeFilter.join(', ')
-                                            : ''
-                                        }</span></p>
+              hit.sizeFilter
+                ? hit.sizeFilter.join(', ')
+                : ''
+              }</span></p>
                                     </div>
                                 </div>
                                
@@ -434,19 +461,19 @@ export function searchResults() {
             
                                         <div class="colorWrapper">
                                                 <div>${
-                                                  hit.hexColorCode
-                                                    ? hit.hexColorCode.split(
-                                                        '//'
-                                                      )[0]
-                                                    : ''
-                                                }</div>
+              hit.hexColorCode
+                ? hit.hexColorCode.split(
+                  '//'
+                )[0]
+                : ''
+              }</div>
                                                 <div style="background: ${
-                                                  hit.hexColorCode
-                                                    ? hit.hexColorCode.split(
-                                                        '//'
-                                                      )[1]
-                                                    : ''
-                                                }" class="hit-colorsHex"></div>
+              hit.hexColorCode
+                ? hit.hexColorCode.split(
+                  '//'
+                )[1]
+                : ''
+              }" class="hit-colorsHex"></div>
                                             </div>
             
                                         </div>
@@ -457,9 +484,9 @@ export function searchResults() {
                                 </div>
                            
                         </li>`;
-            }
-          })
-          .join('')}
+          }
+        })
+        .join('')}
     `;
   };
   const connectedHitsWithInjectedContent = connectHits(renderHits);
@@ -488,13 +515,19 @@ export function searchResults() {
       showMoreLimit: 10,
     }),
     {
-      init(opts) {},
+      init(opts) { },
     },
     {
       render(options) {
         const results = options.results;
         if (results.nbHits === 0) {
-          noResult(results.nbHits, results.query);
+          document.getElementById("instantsearch").style.display = 'none'
+          noResult(results.query);
+
+        }
+        else {
+          document.getElementById("instantsearch").style.display = null
+          document.querySelector('#no-results-banner').innerHTML = ``
         }
       },
     },
@@ -545,8 +578,8 @@ export function searchResults() {
         container.querySelector(
           '.ais-SmartSortBanner-description'
         ).textContent = showingRelevantResults
-          ? 'We removed some search results to show you the most relevants ones.'
-          : 'Currently showing all results.';
+            ? 'We removed some search results to show you the most relevants ones.'
+            : 'Currently showing all results.';
       },
     },
     clearRefinements({
@@ -730,6 +763,21 @@ export function searchResults() {
     //   ],
     // }),
   ]);
+  const noResult = (query) => {
+    console.log("no results")
+    document.querySelector('#no-results-banner').innerHTML = `<p>Unfortunately there are no results for ${query} :(</p><div id="no-results-instantsearch"></div>`
+    const noResultsSearch = instantsearch({
+      indexName: 'gstar_demo_test',
+      searchClient
+    });
+    noResultsSearch.addWidgets([carousel({
+      container: '#no-results-instantsearch'
+    })]);
+    noResultsSearch.start();
+
+
+
+  }
 
   search.start();
 }
