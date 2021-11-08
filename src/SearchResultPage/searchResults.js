@@ -1,5 +1,7 @@
 import instantsearch from 'instantsearch.js';
 import algoliasearch from 'algoliasearch';
+import carousel from '../CategoryPages/Women/displayCarouselWomanPage';
+
 import {
   clearRefinements,
   refinementList,
@@ -150,33 +152,47 @@ export function searchResults() {
         });
       });
   };
-  const renderCarousel = ({ widgetParams, hits }, isFirstRender) => {
-    const container = document.querySelector(widgetParams.container);
+  // const renderCarousel = ({ widgetParams, hits, }, isFirstRender) => {
+  //   const container = document.querySelector(widgetParams.container);
 
-    if (isFirstRender) {
-      const carouselUl = document.createElement('ul');
-      carouselUl.classList.add('carousel-list-container');
-      container.appendChild(carouselUl);
-    }
+  //   if (isFirstRender) {
+  //     const section = document.createElement('section');
+  //     section.classList.add('section-carousel-winter');
+  //     container.appendChild(section);
+  //     const divSection = document.createElement('div');
+  //     divSection.classList.add('title-carousel-winter');
+  //     section.appendChild(divSection);
+  //     const titleSection = document.createElement('h2');
+  //     titleSection.innerText = title;
+  //     divSection.appendChild(titleSection);
+  //     const btnSection = document.createElement('a');
+  //     btnSection.classList.add('btn-carousel-winter');
+  //     btnSection.innerHTML = 'See All';
+  //     btnSection.href = './index.html';
+  //     divSection.appendChild(btnSection);
+  //     const ul = document.createElement('ul');
+  //     ul.classList.add('carousel-list-container');
+  //     section.appendChild(ul);
+  //   }
 
-    container.querySelector('ul').innerHTML = hits
-      .map(
-        (hit) => `
-         <li>
-          <div class="image-wrapper">
-            <img
-            src="${hit.full_url_image}"
-            alt="${hit.name}">
-          </div>
-          <div class="info">
-            <h3 class="title">${hit.name}</h3>
-          </div>
-        </li>
-      `
-      )
-      .join('');
-  };
-  const carousel = connectHits(renderCarousel);
+  //   container.querySelector('ul').innerHTML = hits
+  //     .map(
+  //       (hit) => `
+  //        <li>
+  //         <div class="image-wrapper">
+  //           <img
+  //           src="${hit.full_url_image}"
+  //           alt="${hit.name}">
+  //         </div>
+  //         <div class="info">
+  //           <h3 class="title">${hit.name}</h3>
+  //         </div>
+  //       </li>
+  //     `
+  //     )
+  //     .join('');
+  // };
+  // const carousel = connectHits(renderCarousel);
 
   const renderQueryRuleCustomData = (renderOptions, isFirstRender) => {
     const { items, widgetParams, refine } = renderOptions;
@@ -764,13 +780,17 @@ export function searchResults() {
     // }),
   ]);
   const noResult = (query) => {
-    document.querySelector('#no-results-banner').innerHTML = `<p>Unfortunately there are no results for ${query} :(</p><div id="no-results-instantsearch"></div>`
+    document.querySelector('#no-results-banner').innerHTML = `<p>Unfortunately there are no results for ${query} :(`
+    const carouselContainer = document.createElement('div');
+    document.querySelector('#no-results-banner').append(carouselContainer);
+    carouselContainer.className = 'carousel';
     const noResultsSearch = instantsearch({
       indexName: 'flagship_fashion',
       searchClient
     });
     noResultsSearch.addWidgets([carousel({
-      container: '#no-results-instantsearch'
+      container: carouselContainer,
+      title: "Best sellers"
     })]);
     noResultsSearch.start();
 
