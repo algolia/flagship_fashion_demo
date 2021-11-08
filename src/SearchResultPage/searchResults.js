@@ -165,7 +165,7 @@ export function searchResults() {
          <li>
           <div class="image-wrapper">
             <img
-            src="https://flagship-fashion-demo-images.s3.amazonaws.com/images/${hit.objectID}.jpg"
+            src="${hit.full_url_image}"
             alt="${hit.name}">
           </div>
           <div class="info">
@@ -764,10 +764,9 @@ export function searchResults() {
     // }),
   ]);
   const noResult = (query) => {
-    console.log("no results")
     document.querySelector('#no-results-banner').innerHTML = `<p>Unfortunately there are no results for ${query} :(</p><div id="no-results-instantsearch"></div>`
     const noResultsSearch = instantsearch({
-      indexName: 'gstar_demo_test',
+      indexName: 'flagship_fashion',
       searchClient
     });
     noResultsSearch.addWidgets([carousel({
