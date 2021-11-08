@@ -780,7 +780,7 @@ export function searchResults() {
     // }),
   ]);
   const noResult = (query) => {
-    document.querySelector('#no-results-banner').innerHTML = `<p>Unfortunately there are no results for ${query} but check out our bestsellers below: `
+    document.querySelector('#no-results-banner').innerHTML = `<p class="noResult-Text">Unfortunately there are no results for <span>${query}</span> but check out our bestsellers below: `
     const carouselContainer = document.createElement('div');
     document.querySelector('#no-results-banner').append(carouselContainer);
     carouselContainer.className = 'carousel';
