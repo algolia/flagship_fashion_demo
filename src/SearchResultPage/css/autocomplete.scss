@@ -272,6 +272,16 @@
   text-decoration: underline;
 }
 
+.noResult-Text{
+  text-align: center;
+  font-family: "Roboto", sans-serif;
+  margin: 2rem auto;
+
+  span{
+    font-weight: bold;
+  }
+}
+
 /* RESULT */
 
 .displayFalse {
