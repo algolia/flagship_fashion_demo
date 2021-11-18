@@ -34,11 +34,11 @@ export function searchResults() {
   let locationPathname = window.location.pathname.toLowerCase();
 
   // for accessories
-  if (locationPathname.includes('categorypageaccessories')) {
-    extraSearchFilters = 'categories:"Accessories"';
-  }
+  // if (locationPathname.includes('categorypageaccessories')) {
+  //   extraSearchFilters = 'categories:"Accessories"';
+  // }
   // for jeans
-  else if (locationPathname.includes('categorypageshoes')) {
+  if (locationPathname.includes('categorypageshoes')) {
     extraSearchFilters = 'categories:"Shoes"';
   }
 
@@ -94,7 +94,7 @@ export function searchResults() {
   let suggestionIndex = algoliasearch(
     '853MYZ81KY',
     'aed9b39a5a489d4a6c9a66d40f66edbf'
-  ).initIndex('flagship_fashion_query_suggestions');
+  ).initIndex('sunrise_query_suggestions');
 
   const renderCustomSearchBar = (renderOptions, isFirstRender) => {
     const { query } = renderOptions;
@@ -570,15 +570,11 @@ export function searchResults() {
           label: 'Most relevant',
         },
         {
-          value: `flagship_fashion_price_asc`,
+          value: `sunrise_price_asc`,
           label: 'Sort by ascending price',
         },
         {
-          value: `flagship_fashion_asc_price_smart_sort`,
-          label: 'smart sort - Lowest price',
-        },
-        {
-          value: `flagship_fashion_price_desc`,
+          value: `sunrise_price_desc`,
           label: 'Sort by descending price',
         },
       ],

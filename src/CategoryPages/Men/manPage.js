@@ -27,7 +27,7 @@ function GetDataCarousel() {
   //GET THE CONFIG
   function getCarouselConfigs() {
     return searchClient
-      .initIndex('flagship_fashion_config_man')
+      .initIndex('sunrise_config_man')
       .search('', {
         attributesToHighlight: [],
         attributesToRetrieve: ['title', 'indexName', 'configure'],

@@ -48,7 +48,7 @@ export function GetDataForCarousel() {
   //GET THE CONFIG
   function getCarouselConfigs() {
     return searchClient
-      .initIndex('flagship_fashion_config')
+      .initIndex('sunrise_config')
       .search('', {
         facetFilters: ['userToken:' + getUserToken()],
         // attributesToHighlight: [],

@@ -36,7 +36,7 @@ export function autocompleteHomePage() {
 
     const querySuggestionsPlugin = createQuerySuggestionsPlugin({
         searchClient,
-        indexName: 'flagship_fashion_query_suggestions',
+        indexName: 'sunrise_query_suggestions',
         getSearchParams() {
             return {
                 hitsPerPage: 8,

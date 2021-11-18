@@ -48,7 +48,7 @@ export function autocompleteHome() {
     });
     const querySuggestionsPlugin = createQuerySuggestionsPlugin({
       searchClient,
-      indexName: 'flagship_fashion_query_suggestions',
+      indexName: 'sunrise_query_suggestions',
       getSearchParams() {
         return recentSearchesPlugin.data.getAlgoliaSearchParams({
           hitsPerPage: 3,

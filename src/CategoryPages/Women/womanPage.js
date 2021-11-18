@@ -20,7 +20,7 @@ function GetDataCarousel() {
   //GET THE CONFIG
   function getCarouselConfigs() {
     return searchClient
-      .initIndex('flagship_fashion_config_woman')
+      .initIndex('sunrise_config_woman')
       .search('', {
         attributesToHighlight: [],
         attributesToRetrieve: ['title', 'indexName', 'configure'],

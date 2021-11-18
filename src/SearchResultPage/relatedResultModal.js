@@ -22,7 +22,7 @@ export function relatedResultModal() {
   });
 
   const searchIndexSecond = instantsearch({
-    indexName: 'flagship_fashion_config',
+    indexName: 'sunrise_config',
     searchClient,
   });
 
