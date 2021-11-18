@@ -24,7 +24,7 @@ export function GetDataForCarousel() {
   );
 
   const search = instantsearch({
-    indexName: 'flagship_fashion',
+    indexName: 'sunrise',
     searchClient,
     routing: true,
   });
@@ -77,6 +77,8 @@ export function GetDataForCarousel() {
       });
 
       if (carouselConfig.configure) {
+        console.log('config', carouselConfig.configure);
+        console.log('index', carouselConfig.indexName);
         indexWidget.addWidgets([
           configure({
             ...carouselConfig.configure,

@@ -19,7 +19,7 @@ export const carousel = connectHits(function renderCarousel(
   );
 
   const search = instantsearch({
-    indexName: 'flagship_fashion',
+    indexName: 'sunrise',
     searchClient,
     routing: true,
   });
@@ -88,7 +88,7 @@ export const carousel = connectHits(function renderCarousel(
   }
 
   function popUpEventClick(event, object) {
-    const index = searchClient.initIndex('flagship_fashion');
+    const index = searchClient.initIndex('sunrise');
     let popUpWrapper = document.querySelector('.popUp-wrapper');
     index.getObject(object).then((object) => {
       let div = document.createElement('div');
@@ -107,6 +107,8 @@ export const carousel = connectHits(function renderCarousel(
     });
   }
 
+  console.log('carousel', hits);
+
   container.querySelector('ul').innerHTML = hits
     .map(
       (hit) => `
@@ -118,7 +120,7 @@ export const carousel = connectHits(function renderCarousel(
             'Product Clicked'
           )} data-id="${hit.objectID}">
             <img
-            src="${hit.full_url_image}"
+            src="${hit.image}"
             alt="${hit.name}" data-id="${hit.objectID}">
             <div class="img-overlay" data-id="${hit.objectID}"></div>
           </div>

@@ -11,7 +11,7 @@ export function carouselDetailed() {
     'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
   const searchDetail = instantsearch({
-    indexName: 'flagship_fashion',
+    indexName: 'sunrise',
     searchClient,
   });
 
@@ -85,7 +85,7 @@ export function carouselDetailed() {
     }
 
     function popUpEventClick(event, object) {
-      const index = searchClient.initIndex('flagship_fashion');
+      const index = searchClient.initIndex('sunrise');
       let popUpWrapper = document.querySelector('.popUp-wrapper');
       index.getObject(object).then((object) => {
         let div = document.createElement('div');
@@ -104,6 +104,8 @@ export function carouselDetailed() {
       });
     }
 
+    console.log('carousel-detailed', hits);
+
     document.querySelector('.carousel-container ul').innerHTML = `
         ${hits
           .map((hit) => {
@@ -120,7 +122,7 @@ export function carouselDetailed() {
                   'Product Clicked'
                 )}>
                     <img
-                    src="${hit.full_url_image}"
+                    src="${hit.image}"
 
                     align="left" alt="${hit.name}" class="hit-img" />
                     <div class="img-overlay"></div>
@@ -137,7 +139,7 @@ export function carouselDetailed() {
                         ${hit.name}
                         </div>
                        
-                        <div class="hit-description">${hit.brand}</div>
+                        <div class="hit-description">${hit.color}</div>
                         <div class="hit-rating-price">
                             <div class="hit-price">${hit.price}</div>
                         </div>
@@ -148,6 +150,7 @@ export function carouselDetailed() {
           .join('')}`;
   };
   const customHits = connectHits(renderHits);
+
   searchDetail.addWidgets([
     configure({
       hitsPerPage: 8,

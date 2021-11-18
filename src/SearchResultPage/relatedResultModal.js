@@ -14,10 +14,10 @@ export function relatedResultModal() {
     '853MYZ81KY',
     'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
-  const index = searchClient.initIndex('flagship_fashion');
+  const index = searchClient.initIndex('sunrise');
 
   const search = instantsearch({
-    indexName: 'flagship_fashion',
+    indexName: 'sunrise',
     searchClient,
   });
 
@@ -187,7 +187,7 @@ export function relatedResultModal() {
       }
 
       function popUpEventClick(event, object) {
-        const index = searchClient.initIndex('flagship_fashion');
+        const index = searchClient.initIndex('sunrise');
         let popUpWrapper = document.querySelector('.popUp-wrapper');
         index.getObject(object).then((object) => {
           let div = document.createElement('div');
@@ -218,7 +218,7 @@ export function relatedResultModal() {
                 'Product Clicked'
               )}>
                 <img
-                src="${hit.full_url_image}"
+                src="${hit.image}"
                 align="left" alt="${hit.name}" class="result-img" />
                 <div class="result-img-overlay"></div>
                 <div class="hit-addToCart">
@@ -256,7 +256,7 @@ export function relatedResultModal() {
                     'Product Clicked'
                   )}>
                     <img
-                    src="${hit.full_url_image}"
+                    src="${hit.image}"
                     align="left" alt="${hit.name}" class="result-img" />
                     <div class="result-img-overlay"></div>
                     <div class="hit-addToCart">

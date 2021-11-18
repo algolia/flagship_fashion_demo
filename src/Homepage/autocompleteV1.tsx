@@ -91,7 +91,7 @@ export function autocompleteHomePage() {
         },
         onSubmit(props) {
             localStorage.setItem('querySeachBox', props.state.query);
-            window.location.href = `./searchResults.html?flagship_fashion%5Bquery%5D=${props.state.query}`;
+            window.location.href = `./searchResults.html?sunrise%5Bquery%5D=${props.state.query}`;
 
         },
         getSources({ query, state }) {
@@ -109,7 +109,7 @@ export function autocompleteHomePage() {
                             searchClient,
                             queries: [
                                 {
-                                    indexName: 'flagship_fashion',
+                                    indexName: 'sunrise',
                                     query,
                                     params: {
                                         clickAnalytics: true,
@@ -151,7 +151,7 @@ export function autocompleteHomePage() {
                             searchClient,
                             queries: [
                                 {
-                                    indexName: 'flagship_fashion',
+                                    indexName: 'sunrise',
                                     query,
                                     params: {
                                         clickAnalytics: true,
@@ -221,7 +221,7 @@ export function autocompleteHomePage() {
             <div>
                 <div class="related-image-wrapper">
                     <img
-                        src={hit.full_url_image}
+                        src={hit.image}
                         align="left" alt={hit.name} class="related-result-img" />
                     <div class="related-result-img-overlay"></div>
                 </div>

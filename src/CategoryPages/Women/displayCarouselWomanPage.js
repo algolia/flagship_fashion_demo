@@ -39,7 +39,7 @@ export const carousel = connectHits(function renderCarousel(
         <li>
           <div class="image-wrapper">
             <img
-            src="${hit.full_url_image}"
+            src="${hit.image}"
             alt="${hit.name}">
           </div>
           <div class="info">
@@ -58,7 +58,7 @@ export function renderCarouselAllProduct() {
   );
 
   const search = instantsearch({
-    indexName: 'flagship_fashion',
+    indexName: 'sunrise',
     searchClient,
   });
 
@@ -81,7 +81,7 @@ export function renderCarouselAllProduct() {
         item: `
  
       <div class="image-wrapper">
-        <img  src={{full_url_image}}
+        <img  src={{image}}
           align="left" alt="{{name}}" class="result-img" />
       </div>
       <div class="hit-name">

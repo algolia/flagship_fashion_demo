@@ -9,7 +9,7 @@ type ProductRecord = {
     price: number;
     rating: number;
     url: string;
-    full_url_image:string;
+    image:string;
 };
 
 type WithAutocompleteAnalytics<THit> = THit & {

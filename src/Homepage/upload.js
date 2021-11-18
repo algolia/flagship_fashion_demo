@@ -31,7 +31,7 @@ export function toggleUpload() {
       )
       .then((response) => {
         let resp = response.data.objects[0].object;
-        window.location.href = `./searchResults.html?flagship_fashion%5Bquery%5D=${resp}`;
+        window.location.href = `./searchResults.html?sunrise%5Bquery%5D=${resp}`;
         loader.classList.remove('lds-roller-display');
         banner.classList.remove('hero-banner-opacity');
       })

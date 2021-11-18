@@ -25,10 +25,10 @@ export function modalProduct() {
     '853MYZ81KY',
     'aed9b39a5a489d4a6c9a66d40f66edbf'
   );
-  const index = searchClient.initIndex('flagship_fashion');
+  const index = searchClient.initIndex('sunrise');
 
   const search = instantsearch({
-    indexName: 'flagship_fashion',
+    indexName: 'sunrise',
     searchClient,
   });
   // CONFIG TO SEND INSIGHT EVENT TO THE DASHBOARD FOR PERSONALISATION
@@ -75,7 +75,7 @@ export function modalProduct() {
 
   const getObjectID = () => {
     let carousel = document.querySelectorAll('.carousel-list-container');
-   
+
     carousel.forEach((car) => {
       car.addEventListener('click', (e) => {
         let productID = e.target.dataset.id;
@@ -92,7 +92,7 @@ export function modalProduct() {
   function showModal() {
     let modalWrapper = document.querySelector('.modalProduct-wrapper');
     let modalProduct = document.querySelector('.modalProduct');
-    let body = document.querySelector('body')
+    let body = document.querySelector('body');
 
     if (
       modalWrapper.classList.contains('fadeOut') ||
@@ -101,7 +101,7 @@ export function modalProduct() {
       modalWrapper.classList.add('fadeIn');
       modalWrapper.classList.remove('fadeOut');
       modalWrapper.classList.add('fade');
-      body.style.overflowY = 'hidden'
+      body.style.overflowY = 'hidden';
     }
 
     modalWrapper.addEventListener('click', (e) => {
@@ -109,7 +109,7 @@ export function modalProduct() {
         modalWrapper.classList.remove('fade');
         modalWrapper.classList.remove('fadeIn');
         modalWrapper.classList.add('fadeOut');
-        body.style.overflowY = 'visible'
+        body.style.overflowY = 'visible';
       }
     });
   }
@@ -120,14 +120,14 @@ export function modalProduct() {
       '1bc06bbf6de499f6b826a8a0e6902568'
     );
 
-    const indexName = 'flagship_fashion';
+    const indexName = 'sunrise';
 
     function RelatedItem({ item }) {
       return (
         <li class="related-ais-Hits-item related-carousel-list-item">
           <div class="related-image-wrapper">
             <img
-              src={item.full_url_image}
+              src={item.image}
               align="left"
               alt={item.name}
               class="related-result-img"
@@ -163,7 +163,7 @@ export function modalProduct() {
             <div class="productModal-infos-Wrapper">
                 <div class="productModal-image-wrapper">
                     <img
-                    src="${product.full_url_image}"
+                    src="${product.image}"
                     align="left" alt="${product.name}" class="productModal-hit-img" />
                     <div class="productModal-img-overlay"></div>
                 </div>
@@ -210,7 +210,7 @@ export function modalProduct() {
         })
         .then(({ hits }) => {
           aa('clickedObjectIDs', {
-            index: 'flagship_fashion',
+            index: 'sunrise',
             eventName: 'Product Added to Wishlist',
             objectIDs: [btnAddtoCart.dataset.id],
           });
@@ -236,7 +236,7 @@ export function modalProduct() {
         })
         .then(({ hits }) => {
           aa('clickedObjectIDs', {
-            index: 'flagship_fashion',
+            index: 'sunrise',
             eventName: 'Product Added',
             objectIDs: [e.target.dataset.id],
           });

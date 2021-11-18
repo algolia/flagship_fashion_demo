@@ -20,7 +20,7 @@ function GetDataCarousel() {
   );
 
   const search = instantsearch({
-    indexName: 'flagship_fashion',
+    indexName: 'sunrise',
     searchClient,
   });
 

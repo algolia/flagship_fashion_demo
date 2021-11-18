@@ -19,7 +19,7 @@ export function autocompleteHome() {
   );
 
   const search = instantsearch({
-    indexName: 'flagship_fashion',
+    indexName: 'sunrise',
     searchClient,
     routing: true,
   });
@@ -28,7 +28,7 @@ export function autocompleteHome() {
 
   search.addWidgets([
     index({
-      indexName: 'flagship_fashion',
+      indexName: 'sunrise',
     }).addWidgets([
       autocompleteSearchBox({
         container: '#autocomplete',
@@ -83,7 +83,7 @@ export function autocompleteHome() {
               queries: [
                 {
                   query,
-                  indexName: 'flagship_fashion',
+                  indexName: 'sunrise',
                   params: {
                     hitsPerPage: 3,
                     attributesToSnippet: ['name:10'],
@@ -94,7 +94,7 @@ export function autocompleteHome() {
             }).then(async ([products]) => {
               const [categories] = await searchClient.searchForFacetValues([
                 {
-                  indexName: 'flagship_fashion',
+                  indexName: 'sunrise',
                   params: {
                     facetName: 'name',
                     facetQuery: query,
@@ -105,7 +105,7 @@ export function autocompleteHome() {
                   },
                 },
                 {
-                  indexName: 'flagship_fashion',
+                  indexName: 'sunrise',
                   params: {
                     facetName: 'category',
                     facetQuery: query,
@@ -178,7 +178,7 @@ export function autocompleteHome() {
           },
           onSubmit({ root, sections, state }) {
             refine(state.query);
-            window.location.href = `./searchResults.html?flagship_fashion%5Bquery%5D=${state.query}`;
+            window.location.href = `./searchResults.html?sunrise%5Bquery%5D=${state.query}`;
           },
         });
         // During subsequent renders, refresh the autocomplete instance
@@ -201,7 +201,7 @@ export function autocompleteHome() {
       return html`
         <div class="aa-ItemContent">
           <a
-            href="./searchResults.html?flagship_fashion%5Bquery%5D=${query}"
+            href="./searchResults.html?sunrise%5Bquery%5D=${query}"
             class="aa-ItemLink"
           >
             <div class="aa-ItemImage">
@@ -220,7 +220,7 @@ export function autocompleteHome() {
       return html`
         <div class="aa-btnShowMore-wrapper">
           <a
-            href="./searchResults.html?flagship_fashion%5Bquery%5D=${query}"
+            href="./searchResults.html?sunrise%5Bquery%5D=${query}"
             class="aa-btnShowMore"
           >
             ${title}
@@ -233,7 +233,7 @@ export function autocompleteHome() {
       return html`
         <div class="aa-ItemContentCategory">
           <a
-            href="./searchResults.html?flagship_fashion%5Bquery%5D=${query}"
+            href="./searchResults.html?sunrise%5Bquery%5D=${query}"
             class="aa-ItemLinkCategory"
           >
             <div class="aa-ItemTitle">${title}</div>
