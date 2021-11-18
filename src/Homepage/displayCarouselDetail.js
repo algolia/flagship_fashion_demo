@@ -141,7 +141,7 @@ export function carouselDetailed() {
                        
                         <div class="hit-description">${hit.color}</div>
                         <div class="hit-rating-price">
-                            <div class="hit-price">${hit.price}</div>
+                            <div class="hit-price">${hit.price}€</div>
                         </div>
                     </div>
               </li>

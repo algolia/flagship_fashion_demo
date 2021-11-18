@@ -452,7 +452,7 @@ export function searchResults() {
             
                                         </div>
                                         <div class="hit-price">
-                                        ${displayPrice(hit)}
+                                        ${displayPrice(hit)}€
                                     </div>
             
                                 </div>
