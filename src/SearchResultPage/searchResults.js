@@ -249,10 +249,10 @@ export function searchResults() {
 
   function displayPrice(hit) {
     if (hit.newPrice) {
-      return `<p class="cross-price">${hit.price}</p>
-                    <p class="price">${hit.newPrice}</p>`;
+      return `<p class="cross-price">${hit.price}€</p>
+                    <p class="price">${hit.newPrice}€</p>`;
     } else {
-      return `<p>${hit.price}</p>`;
+      return `<p>${hit.price}€</p>`;
     }
   }
 
@@ -452,7 +452,7 @@ export function searchResults() {
             
                                         </div>
                                         <div class="hit-price">
-                                        ${displayPrice(hit)}€
+                                        ${displayPrice(hit)}
                                     </div>
             
                                 </div>
