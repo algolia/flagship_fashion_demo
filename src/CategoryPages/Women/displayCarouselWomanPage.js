@@ -90,7 +90,7 @@ export function renderCarouselAllProduct() {
           <div>{{#helpers.highlight}}{ "attribute": "name" }{{/helpers.highlight}}</div>
               <div class="hit-colors">{{colourFilter}}</div>
           </div>
-          <div class="hit-price">\${{price}}</div>
+          <div class="hit-price">\${{price}}€</div>
       </div>
       
 
