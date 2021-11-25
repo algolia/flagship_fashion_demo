@@ -11,13 +11,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,300;1,400;1,700&display=swap"
-    rel="stylesheet" />
+    rel="stylesheet" defer />
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <!-- <link href="https://fonts.googleapis.com/css2?family=$main-font&display=swap" rel="stylesheet" /> -->
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
     integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
-    crossorigin="anonymous" />
+    crossorigin="anonymous" defer />
 
   <!-- Required Core Stylesheet GLIDE.JS 
   <link rel="stylesheet" href="../node_modules/@glidejs/glide/dist/css/glide.core.min.css" />
@@ -147,21 +147,11 @@
         <p class="content__paragraph"><span class="hidden-text">We're wishing you a good visit.</span></p>
       </div>
       <div class="banner-images-wrapper" id="luxy">
-        <img class="img2 luxy-el"
-          src="https://images.unsplash.com/photo-1565486522364-007f974a2adc?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1055&q=80"
-          alt=""
-          loading="lazy"
-          >
-        <img class="img1 luxy-el"
-          src="https://images.unsplash.com/photo-1504439904031-93ded9f93e4e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=976&q=80"
-          alt=""
-          loading="lazy"
-          >
-        <img class="img3"
-          src="https://images.unsplash.com/photo-1603251605029-3fd7c9513c44?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
-          alt=""
-          loading="lazy"
-          >
+        <img class="img2 luxy-el" src="https://ik.imagekit.io/zl7ecmulazs/man.webp" alt="man" loading="lazy">
+
+        <img class="img1 luxy-el" src="https://ik.imagekit.io/zl7ecmulazs/woman.webp" alt="woman" loading="lazy">
+
+        <img class="img3" src="https://ik.imagekit.io/zl7ecmulazs/white.webp" alt="white" loading="lazy">
 
         <svg class="img4" viewBox="0 0 1072 294" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -249,12 +239,24 @@
   </div>
 
   <div class="footer">
-    <img src="../images/footer.png" alt="" loading="lazy">
+    <img src="https://ik.imagekit.io/zl7ecmulazs/footer.webp" alt="" loading="lazy">
   </div>
 
   </div>
   <script src="../src/Homepage/app.js"></script>
   <script src="../src/shared-js/createDemoSettings.js"></script>
+  <script>
+    let elem = document.querySelector('.banner-images-wrapper');
+    let elem2 = document.querySelector('.banner-images-wrapper .img1');
+    let rect = elem.getBoundingClientRect();
+    console.log(rect)
+    let height = Math.round(rect.height / 1.614);
+    let width = Math.round(rect.width / 3);
+    console.log(width / 3, height / 1.614);
+    let image = document.querySelector('.img1');
+    console.log(elem2.height, elem2.width)
+    image.src = `https://ik.imagekit.io/zl7ecmulazs/woman.webp?tr=w-${width},h-${height}`
+  </script>
 </body>
 
 </html>
