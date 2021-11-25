@@ -53,6 +53,8 @@
     "@algolia/js-recommendations": "^1.0.0-experimental.2",
     "@algolia/recommend": "^4.11.0",
     "@algolia/recommend-js": "^1.1.0",
+    "@algolia/ui-components-horizontal-slider-js": "^1.0.0",
+    "@algolia/ui-components-horizontal-slider-theme": "^1.0.0",
     "@algolia/ui-components-js-horizontal-slider": "^1.0.0-experimental.2",
     "@babel/preset-typescript": "^7.13.0",
     "@babel/runtime": "^7.13.7",
